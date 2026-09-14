@@ -16,14 +16,14 @@ Windows PowerShell 5.1 安装检查使用临时目录，覆盖首次安装、相
 
 `scripts/package_trial.py` 校验构建包和当前源码清单，打包生成 `ContextOverlay-0.3.2-Windows.zip`。从此 ZIP 重新解压，在临时目录中运行其自带安装器，实际安装所得 MOD 摘要与最终 0.3.2 包一致。
 
-- ZIP 大小：7,122,148 字节。
-- ZIP SHA-256：`23931f045b1b1818fcc2344302449b4d13e3509bbfb5bfee6b4103766f2ecc2c`。
+- ZIP 大小：7,122,181 字节。
+- ZIP SHA-256：`954487e7be3275c4cb11a7425fd359fc9add2c598f12c4154f549d38a39bdc4d`。
 - MOD SHA-256：`23646ede254868d02e4bcccd21a70b07060bee3b4081385eddf35cb79c7fca89`。
 - 包含双击入口、PowerShell 安装器、MOD、构建清单、安装和接入说明及消费示例；不要求同事安装 Python。
 
 ## 飞书更新
 
-已将现有[《Context for Overlay》](https://omgwowai.feishu.cn/wiki/AAvPw03vJiR1NSkdDtmcxP04ng6)从开发预告更新为内部试用说明，正文首次更新为修订 31，最终附件更新并回读至修订 33。三部分分别介绍安装／使用／界面、后端数据／调用、后续方向；最后一部分仅列“完善当前的 MOD，欢迎其他人提出更多需求”。保留四处明确截图占位，供用户补图。
+已将现有[《Context for Overlay》](https://omgwowai.feishu.cn/wiki/AAvPw03vJiR1NSkdDtmcxP04ng6)从开发预告更新为内部试用说明，正文首次更新为修订 31，最终附件更新并回读至修订 35。三部分分别介绍安装／使用／界面、后端数据／调用、后续方向；最后一部分仅列“完善当前的 MOD，欢迎其他人提出更多需求”。保留四处明确截图占位，供用户补图。
 
 安装章节已放入 ZIP 文件附件，并通过飞书下载接口重新下载，对比 SHA-256 与本地包一致。旧页面修订 28 的完整 XML 备份和上传回执保存在忽略的 `.validation/` 中；仓库保留本次发布正文底稿 `docs/internal-preview.md`，后续编辑飞书时应先读取最新内容，保留用户补充的截图和需求。
 

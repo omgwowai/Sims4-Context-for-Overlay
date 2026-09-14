@@ -54,7 +54,7 @@ class WindowsInstallChecks(unittest.TestCase):
         installer = str(ROOT / "scripts/install.ps1").replace("'", "''")
         wrapper.write_text(
             "[CmdletBinding(SupportsShouldProcess=$true)]\n"
-            "param([string]$Profile,[string]$PackageDirectory,[switch]$NonInteractive)\n"
+            "param([Alias('Profile')][string]$UserData,[string]$PackageDirectory,[switch]$NonInteractive)\n"
             "$ErrorActionPreference='Stop'\n"
             "Import-Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Management\n"
             "function Get-Process { param($Name,$ErrorAction) " + process + " }\n"

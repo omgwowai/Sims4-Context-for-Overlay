@@ -1,7 +1,7 @@
 # Windows PowerShell 5.1; no Python, admin rights or persistent policy change.
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [string]$Profile,
+    [Alias('Profile')][string]$UserData,
     [string]$PackageDirectory = (Join-Path $PSScriptRoot '..\dist'),
     [switch]$NonInteractive
 )
@@ -73,7 +73,7 @@ try {
     }
 } finally { $archive.Dispose() }
 
-if (-not $Profile) {
+if (-not $UserData) {
     $documentRoots = @([Environment]::GetFolderPath('MyDocuments'), (Join-Path $env:USERPROFILE 'Documents'))
     foreach ($oneDriveRoot in @($env:OneDrive, $env:OneDriveCommercial)) {
         if ($oneDriveRoot) { $documentRoots += Join-Path $oneDriveRoot 'Documents' }
@@ -82,19 +82,19 @@ if (-not $Profile) {
         Join-Path $_ 'Electronic Arts\The Sims 4'
     } | Sort-Object -Unique | Where-Object { Test-Profile $_ })
     if ($candidates.Count -eq 1) {
-        $Profile = $candidates[0]
+        $UserData = $candidates[0]
     } elseif ($NonInteractive -or $WhatIfPreference) {
         throw 'Cannot select one user-data folder. Pass -Profile with the folder containing Mods and Options.ini.'
     } else {
         Write-Host 'Select the actual user-data folder, NOT the game installation folder.'
         $candidates | ForEach-Object { Write-Host ('Found: ' + $_) }
-        $Profile = (Read-Host 'Paste the folder containing Mods and Options.ini').Trim().Trim('"')
+        $UserData = (Read-Host 'Paste the folder containing Mods and Options.ini').Trim().Trim('"')
     }
 }
-if (-not $Profile -or -not (Test-Profile $Profile)) {
+if (-not $UserData -or -not (Test-Profile $UserData)) {
     throw 'Invalid user-data folder. Start the game once, exit it, and select the folder containing Mods and Options.ini.'
 }
-$profileRoot = (Resolve-Path -LiteralPath $Profile).Path
+$profileRoot = (Resolve-Path -LiteralPath $UserData).Path
 $mods = Join-Path $profileRoot 'Mods'
 $destination = [IO.Path]::GetFullPath((Join-Path $mods 'ContextOverlay\ContextOverlay.ts4script'))
 $duplicates = @(Get-ChildItem -LiteralPath $mods -Filter '*.ts4script' -File -Recurse | Where-Object {

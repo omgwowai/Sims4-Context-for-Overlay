@@ -1,6 +1,6 @@
 # 开发环境与参考基线
 
-核验日期：2026-09-14。状态：本地路径、版本元数据和源码清单已核对；尚未运行或部署本项目 MOD。
+核验日期：2026-09-14。状态：首轮构建、加载和限定场景验证完成，原游戏环境已恢复，见[验证记录](validation/2026-09-14-first-round.md)。
 
 ## 1. 来源优先级
 
@@ -15,14 +15,14 @@
 
 ## 2. 本地运行环境
 
-| 项目 | 已核对的信息 | 尚需验证 |
+| 项目 | 已核对的信息 | 验证边界 |
 | --- | --- | --- |
-| 游戏安装根目录 | `D:/Games/The Sims 4`，目录存在 | 首次加载本项目 MOD |
-| 游戏可执行文件 | `D:/Games/The Sims 4/Game/Bin/TS4_x64.exe` | 实机进程与加载行为 |
+| 游戏安装根目录 | `D:/Games/The Sims 4` | 已加载本项目 MOD 并运行测试场景 |
+| 游戏可执行文件 | `D:/Games/The Sims 4/Game/Bin/TS4_x64.exe` | 已核验实际进程与脚本加载日志 |
 | 目标版本 | 程序 FileVersion、ProductVersion 及 `Game/Bin/Default.ini` 均为 `1.126.73.1030` | 游戏更新后重新核对 |
-| 游戏 Python 资源 | `Data/Simulation/Gameplay/` 下存在 `base.zip`、`core.zip`、`simulation.zip` | 实际字节码、编译与脚本包加载兼容性 |
-| 用户数据目录候选 | `C:/Users/ZixuanMin/Documents/Electronic Arts/The Sims 4`，目录存在 | 通过运行日志确认游戏实际使用的用户数据目录 |
-| DLC、MOD 与测试场景 | 未完成当前运行清单核验 | 首次实测记录启用组合、语言、测试存档与场景 |
+| 游戏 Python 资源 | `Data/Simulation/Gameplay/` 下的 `base.zip`、`core.zip`、`simulation.zip`；魔数 `420d0d0a` | 实际解释器 Python 3.7.0；CPython 3.7.9 编译包已加载 |
+| 实际用户数据目录 | `C:/Users/ZixuanMin/Documents/Electronic Arts/The Sims 4` | 由已加载包路径、日志和输出确认 |
+| DLC、MOD 与测试场景 | 简体中文；`Slot_00000008.save` 副本；测试时仅本 MOD；运行输出附可用资料片列表 | 住宅做饭/吃饭与公园旅行；不代表所有资料片玩法或其他 MOD 组合通过 |
 
 安装目录与用户数据目录分别管理。Mods、日志和存档通常位于游戏用户数据目录；正式部署前确认实际路径，不把脚本包默认写入安装目录。
 
@@ -59,9 +59,11 @@ Atlas 版本来自 [export-manifest.json](../../Sims4-Context-Atlas/export-manif
 
 ## 5. Python 与构建基线
 
-源码仓库将 EA 字节码标识为 Python 3.7；项目目标解释器和脚本打包流程仍需通过本地加载实验确定。开发机器上可运行的通用 Python 版本，不自动等于游戏可加载的字节码版本。
+源码仓库将 EA 字节码标识为 Python 3.7。已使用独立 CPython 3.7.9 构建首版，编译魔数与本地 `simulation.zip` 匹配；游戏日志确认实际解释器为 Python 3.7.0，脚本包已加载并通过首轮场景验证。开发机器默认 Python 3.14 不用于脚本包编译。
 
-第一轮应记录编译解释器、字节码兼容性、脚本包结构、安装目标、模块加载证据与日志位置。尚未确定的内容保留为待验证项，不把旧 MOD 的编译命令写成本项目已可用命令。
+独立解释器位于 `%LOCALAPPDATA%/Sims4ContextDev/python37/`，来自 [Python 官方 embedded distribution](https://www.python.org/ftp/python/3.7.9/python-3.7.9-embed-amd64.zip)，下载包 SHA-256 为 `18627a097adf47829a847053febac5532376075243e233bd9ec61d6ea09dee1f`。构建脚本与本地资源输入见[运行说明](runtime-usage.md)。
+
+构建清单、运行来源和实际输出可相互核对；本次没有引用旧 Experience 实现，也不使用其历史样本作为新模块的通过证据。
 
 ## 6. 历史资料
 

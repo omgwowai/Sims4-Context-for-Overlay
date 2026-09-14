@@ -2,9 +2,11 @@
 
 为 The Sims 4 的 Overlay 提供可选择、可追溯的当前状态、历史事件与可读表达。
 
+**内部试用 0.3.2：** 从[飞书成果与试用说明](https://omgwowai.feishu.cn/wiki/AAvPw03vJiR1NSkdDtmcxP04ng6)下载 Windows 安装包，完整解压后双击 `Install.cmd`，无需 Python。详见[安装说明](docs/install.md)；其他 MOD 的文件与运行时调用方式见[开发接入说明](docs/mod-integration.md)。源码 ZIP 不包含已编译脚本包。
+
 ## 当前目标与状态
 
-同一项目开发三个核心模块，以一个 MOD 交付、统一版本，默认三个模块全部启用；模块可单独关闭与调试。具体打包文件、内部 schema 和首批采集项在实现时逐步核定。
+同一项目开发三个核心模块，以一个 MOD 交付、统一版本，默认三个模块全部启用；模块可单独关闭与调试。首版交付 `ContextOverlay.ts4script`，采用 schema v1；字段与入口见[接口登记](docs/runtime-interfaces.md)。
 
 | 模块 | 职责 | 设计 |
 | --- | --- | --- |
@@ -12,7 +14,9 @@
 | Context 采集器 | 按目标、字段和范围读取当前状态，按需加入历史 | [Context 采集模块](docs/context-collector.md) |
 | 数据语义化 | 将约定格式的数据转换为规范含义和可读文本，保留原始证据 | [数据语义化模块](docs/semanticizer.md) |
 
-当前处于实现准备阶段，三个核心模块尚未实现或游戏实测。旧离线工具、测试及临时目录已清除；旧输出不作为新实现的验收结果。下一步按[首轮实现与验收](docs/implementation-and-validation.md)验证一条贯通三个模块的流程。
+首轮开发验证已完成：三个模块在本地游戏中贯通，独立开关和离线语义转换均有验证证据。范围限定为当前地块内已实例化的 Sim 和物件，以做饭与吃饭为主要场景，采集行为、触发来源及需求/Buff/关系/物件常用状态，导出 JSON 和逐条中文解释。具体要求见[首轮实现与验收](docs/implementation-and-validation.md)，完成状态见[实际验证记录](docs/validation/2026-09-14-first-round.md)。旧原型不作为本次新实现的验收依据。
+
+当前代码为 **0.3.2**，已安装，用户实看后确认本轮布局调整已足够好：首页按钮依次为“当前状态 → 历史事件 → 刷新 → 关闭”，状态和历史列表改为横向文字行，去掉空图标／红色 X 区域，长详情使用文字正文。沿用默认关闭连续需求变化历史、当前需求快照及 200,000 条事件上限。助手已在游戏中确认首页顺序、状态文字列表及 Sim 菜单入口；完整历史分页流程未在本轮逐项复测。使用方式见[窗口说明](docs/inspector-manual-test.md)，证据与具体范围见[布局验证记录](docs/validation/2026-09-14-inspector-layout.md)。此前的[容量测量](docs/validation/2026-09-14-history-optimization.md)对应 0.2.0，上面的首轮实机结论对应 0.1.0。
 
 设计师配置、Prompt、模型调用和 Overlay 展示属于下游消费侧。长期记忆、任意历史时刻状态重建、LLM 事件执行及 Autonomy 改造放在后续扩展范围。
 
@@ -33,17 +37,19 @@
 
 1. [三模块总体设计](docs/modular-context-provider.md)：职责、依赖、组合运行与共同边界。
 2. [开发与参考基线](docs/reference-baseline.md)：源码依据、实际运行环境、来源优先级与核验状态。
-3. [事件记录](docs/event-recorder.md)、[Context 采集](docs/context-collector.md)、[数据语义化](docs/semanticizer.md)：各模块设计及待定事项。
+3. [事件记录](docs/event-recorder.md)、[Context 采集](docs/context-collector.md)、[数据语义化](docs/semanticizer.md)：各模块职责、接口和扩展边界。
 4. [技术获取方式与接口](docs/context-acquisition-interfaces.md)：按查询、通知、Hook、资源等入口选择方案。
 5. [Context 内容分类](docs/runtime-context-taxonomy.md)：候选数据目录，不代表全部纳入首版或已支持。
 6. [首轮实现与验收](docs/implementation-and-validation.md)：首个完整场景、开发顺序和验证要求。
+7. [运行与调试](docs/runtime-usage.md)、[接口与证据登记](docs/runtime-interfaces.md)：首版构建、命令、数据契约及源码入口。
+8. [游戏内窗口与手动试验](docs/inspector-manual-test.md)：菜单入口、浏览方式、试验步骤和错误定位。
 
 ## 历史资料与后续扩展
 
 - [归档索引](docs/archive/README.md)：旧 Experience/Atlas 调研、原型方案、审计结果和静态输出。
 - [后续扩展与产品愿景](docs/vision/README.md)：历史状态重建、记忆、事件生成和 Overlay 示例。
 - [项目变更记录](docs/CHANGELOG.md)：阶段演变与本次整理记录。
-- [Context for Overlay 策划预告（飞书）](https://omgwowai.feishu.cn/wiki/AAvPw03vJiR1NSkdDtmcxP04ng6)：此前发布的玩法说明；当前工程范围以本仓库开发文档为准。
+- [Context for Overlay 内部试用（飞书）](https://omgwowai.feishu.cn/wiki/AAvPw03vJiR1NSkdDtmcxP04ng6)：安装包、界面说明、数据与 MOD 接入方式；正文底稿见[内部试用介绍](docs/internal-preview.md)。
 
 ## 文档维护
 

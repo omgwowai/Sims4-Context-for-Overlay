@@ -1,0 +1,75 @@
+{
+  "kind": "inspector_refinement",
+  "date": "2026-09-14",
+  "branch": "zixuan/first-runtime-implementation",
+  "user_feedback": {
+    "version": "0.3.0",
+    "window_opened": true,
+    "issues": [
+      "need changes crowd recent events",
+      "red X placeholder on recent event rows"
+    ]
+  },
+  "build_manifest": {
+    "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+    "game_bytecode_magic": "420d0d0a",
+    "files": {
+      "context_overlay/__init__.py": "0ecad5158e2087cd1aee6667db5c1f85332eea117db5fd79d787c13e7d6d36ef",
+      "context_overlay/collector.py": "1d4e17aea9d718621546d3259b49fb38deb61ea3c1570ed646ca34458a91c5f9",
+      "context_overlay/ea_adapter.py": "9f6e33c316c9dc95d94be22bda1d49398ee0033f28fead2e888a6c54eb81262d",
+      "context_overlay/game_runtime.py": "91daba836c17bab3e839065903e433460f929b2045aed6807055e4600d1c5068",
+      "context_overlay/history.py": "82dd740db8aba2e232c59a136598be7379de11ed75e99b72b58dd8542446a2b9",
+      "context_overlay/hooks.py": "0241a69aaadf873e0095000e610abc7f535d0fac13de59797c905cf177369ab0",
+      "context_overlay/inspector.py": "7c922536462e9ecc2a578dfaf59446a1b915bd4e3b7ac15830e0fc76596e6606",
+      "context_overlay/model.py": "afd21f983f43e7d8e16e0df8a5a75ac027f8d01d1d01ee60088df44c55648042",
+      "context_overlay/native_ui.py": "48a194ed8b5bde5896499da178433c5c437443606cebbf79f3539e9f3a55083d",
+      "context_overlay/profiles.py": "cc36ef4948faecfbc75ba652b4dbb858aec5ed2a085da347fa44648e044247cd",
+      "context_overlay/recorder.py": "c43b35b4327dee7fa98283ab8ce32750f3d13395f03a32b396fcec11339e2576",
+      "context_overlay/semanticizer.py": "605aafb7f9878f6478ec0f1b0cde6f8684c3dc802273aca19cbbcd206fb1faf7",
+      "context_overlay/storage.py": "215a392edd905d9fd98042a44a2043790bb85fc1dc0fb178a594ce616d682747",
+      "context_overlay/test_driver.py": "f654fa408a29ce7db66c2cd9d3f54554c654f4537488f3ba7d17f2433a62f9dc",
+      "context_overlay_bootstrap.py": "409d81629dedd0db02eae59094ec7ccb81af025c7bf2157dc6d398cb88e5b945"
+    },
+    "strings_sha256": "77a525e461ce5318378509c601353ade5973f1e7f78188cc778a05637cd329d3",
+    "build_info": {
+      "module_version": "0.3.1",
+      "build_game_version": "1.126.73.1030",
+      "game_version_source": "Game/Bin/Default.ini at build time",
+      "game_bytecode_magic": "420d0d0a",
+      "ea_reference_project": "sims4-python",
+      "ea_reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+      "source_sha256": "6c528130b81a89a2601751a93aa3e7f08c9f50b827e0a0d2449f6ababa1c7c0a",
+      "strings_sha256": "77a525e461ce5318378509c601353ade5973f1e7f78188cc778a05637cd329d3"
+    },
+    "package_sha256": "6c802ee54499f14b225f1b278ea00fd40fc896f2d20be1099c1ac6f7a82dfea5"
+  },
+  "offline_tests": {
+    "count": 66,
+    "passed": true,
+    "interpreter": "CPython 3.7.9",
+    "native_bridge_uses_test_doubles": true
+  },
+  "installation": {
+    "installed_at_utc": "20260914T090514245265Z",
+    "module_version": "0.3.1",
+    "destination": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\Mods\\ContextOverlay\\ContextOverlay.ts4script",
+    "package_sha256": "6c802ee54499f14b225f1b278ea00fd40fc896f2d20be1099c1ac6f7a82dfea5",
+    "previous_sha256": "2984df0458dfb9024f26dd0124426214e402c892e12faa68293bec37a629eea3",
+    "backup": "C:\\sources\\Sims4-Context-for-Overlay\\.validation\\install-backups\\20260914T090514245265Z\\ContextOverlay.ts4script",
+    "options_and_config_unchanged": true,
+    "protected_files": {
+      "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\Options.ini": "80fa2c9164485591297fd62c1558b31cc267565990772e8f293b6fef68a74381",
+      "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\config.json": "1a2d50c7c5d1e4c26deb6bd3177dc4d51192eee056d03e1758018547489d913c"
+    },
+    "game_started": false,
+    "validation": "offline_only_pending_user_game_test"
+  },
+  "game_started_for_this_change": false,
+  "new_layout_in_game_validation": "pending_user_test",
+  "validation_sources": {
+    "tests/test_core.py": "b155f9c00d8334edf236f70519f9071eefca430e91bd525d5f2690c645e1c43a",
+    "tests/test_history.py": "ab503b44eb58c96f86e73241fae11fafbef8c9e53edb55009a3dc4dfc764be7b",
+    "tests/test_inspector.py": "aa352ed28e452421350d720f95e9a461791847176062b4d51dba887e2a4ffd90",
+    "scripts/install.py": "743f707b5fd5817023de3b92b6fffc15e18671b18690f23477e7472a8cb317ce"
+  }
+}

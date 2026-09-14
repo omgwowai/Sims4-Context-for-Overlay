@@ -1,10 +1,10 @@
 # Context 的技术获取方式与接口分类
 
-版本：v0.1。日期：2026-09-11。
+版本：v0.2。更新日期：2026-09-14。状态：源码入口与技术候选目录；本项目尚未实现或游戏实测。
 
 本文按“采集代码接入哪里、怎样取得数据”分类，用于选择采集适配器。前一份[运行时内容分类](runtime-context-taxonomy.md)描述数据的游戏含义；同一类内容通常需要组合多种技术入口。
 
-接口名来自[当前参考版本](reference-baseline.md)的源码核对。本轮没有运行游戏；以下游戏内部 Python 接口不代表 EA 承诺兼容的公开 SDK，也不能在普通外部 Python 进程中直接 `import services` 使用。
+接口名主要依据[开发基线](reference-baseline.md)中的 EA 逆向源码；具体发送条件、字段和行为仍需在 `D:/Games/The Sims 4` 中实测。自研 MOD 与提取工具单独标为示例，不作为游戏本体接口。Atlas 辅助定位，旧 Experience 仅在具体问题需要时参考。以下内部接口不能在普通外部 Python 进程中直接 `import services` 使用。
 
 ## 1. 技术分类总览
 
@@ -17,12 +17,12 @@
 | T05 | Tuning 与资源读取 | instance manager、`sims4.resources`、DBPF / STBL 解析 | 定义、规则参数、名称、资源身份与文本 | 游戏内或离线工具 |
 | T06 | 持久化状态读取 | `PersistenceService.get_*_proto_buff`、存档数据解析 | 已维护/已保存的 Sim、家庭、地块等持久化表示 | 游戏内；离线解析需专用工具 |
 | T07 | Python 执行跟踪 | `sys.setprofile`、线程 profile、调用帧；必要时单独评估 `sys.settrace` | 调用路径、参数摘要、返回值、部分临时上下文 | 游戏内，通常限诊断窗口 |
-| T08 | MOD 自有数据与协作接口 | 自定义 provider、JSONL/JSON、已有本地 HTTP/SSE 服务 | 已记录经历、画像、Overlay 历史、第三方 MOD 数据 | 游戏内外协作 |
+| T08 | MOD 自有数据与协作接口 | 约定的内部接口、JSON 导出及按需传输 | 已记录历史、后续消费者与第三方 MOD 数据 | 游戏内外协作 |
 | T09 | Native / 客户端补充观测 | Native 专项插桩、客户端接口、同步消息观测、截图/视觉解析 | Python 未暴露的状态，或实际画面/UI 信息 | 客户端或 Native/外部工具 |
 
 这是**工程接入分类**，不是互斥的数据集合。例如，T04 的 GSI 数据常通过 T03 的包装方法截获；一个底层调用 C++ 的普通 getter 仍可以通过 T01 使用。记录采集来源时，建议同时保存“数据面”和“接入机制”，而不是把不同入口看到的同一次发生计成多个事件。
 
-这些分类也不全是“游戏本体已经保存好的数据”：运行时观察需要 MOD 留存才能形成历史，T08 还包含派生记忆和 Overlay 自有内容，T09 部分能力需额外开发。Experience 各类事件的具体归属，以及能否用于状态重建、日回顾和在线生成，见[状态与经历应用说明](state-history-and-generated-events.md)。
+这些分类也不全是“游戏本体已经保存好的数据”：运行时观察需要本项目记录模块留存才能形成历史，T08 也可承载后续消费者自有内容。首轮范围见[实现与验收](implementation-and-validation.md)；历史重建、日回顾和在线生成的研究见[后续扩展](vision/README.md)。
 
 ## 2. T01：运行时对象查询
 
@@ -48,7 +48,9 @@
 - `add=False` / `initialize=False` 可以避免部分显式创建路径，但 getter 仍可能有惰性恢复、缓存或计算行为；本版本 `get_statistic()` 就包含恢复逻辑。
 - 快照要记录时点、枚举范围及失败项。周期轮询可以发现净变化，不能证明两次快照间没有先增后减。
 
-**依据：**[服务入口](../../sims4-python/ea-source/EA/simulation/services/__init__.py)、[统计 tracker](../../sims4-python/ea-source/EA/simulation/statistics/base_statistic_tracker.py)、[关系 tracker](../../sims4-python/ea-source/EA/simulation/relationships/relationship_tracker.py)、[Observer 状态采集](<../../sims4-python/ea-source/My Script Mods/autonomy_observer/Scripts/autonomy_observer/state_capture.py>)。
+**EA 源码依据：**[服务入口](../../sims4-python/ea-source/EA/simulation/services/__init__.py)、[统计 tracker](../../sims4-python/ea-source/EA/simulation/statistics/base_statistic_tracker.py)、[关系 tracker](../../sims4-python/ea-source/EA/simulation/relationships/relationship_tracker.py)。
+
+**可选自研示例：**[Observer 状态采集](<../../sims4-python/ea-source/My Script Mods/autonomy_observer/Scripts/autonomy_observer/state_capture.py>)，用于必要时对照实现，不作为游戏本体接口。
 
 ## 3. T02：事件与变化订阅
 
@@ -79,7 +81,7 @@
 
 **方式：**保存原函数并安装包装器，在真实调用前后采集信息；生成器则需要按 yield 生命周期处理。用于补齐没有合适通知的入口，或取得事件总线不提供的参数、结果和调用关系。
 
-| Hook 位置 | 已有采集示例 | 可补充的信息 |
+| Hook 位置 | EA 源码候选入口 | 可补充的信息 |
 | --- | --- | --- |
 | Buff 增删 | `BuffComponent.add_buff` / `remove_buff` | Buff 类型、handle、来源参数、效果生命周期 |
 | Loot 容器 | `LootActions.apply_to_resolver`、`get_loot_ops_gen` | resolver、容器、嵌套来源与实际 op |
@@ -87,7 +89,7 @@
 | 情境成员 | `BaseSituation._on_add_sim_to_situation` / `_on_remove_sim_from_situation` | Situation 实例、加入离开与成员身份 |
 | 状态写入或交互边界 | 经过核验的 setter、生命周期方法、选择/推送入口 | 真正的 before/after、执行阶段、嵌套调用关联 |
 
-Experience 提供了自定义工具 `injector.observe`、`injector.wrap`、`injector.wrap_generator`。它们是参考 MOD 的包装实现，不是游戏官方注册 API。其中 `observe` 在原函数正常返回后调用观察者，原函数抛异常时不会经过该观察回调。
+本项目按实际缺口实现必要包装。观察记录需区分原函数正常返回与抛异常；原返回值、异常及调用协议保持不变。旧 MOD 的包装器只作必要的经验参考，不直接列为本项目依赖。
 
 **适合：**实际调用的证据、显式参数、来源传播、操作前后值和没有专用 callback 的变化。
 
@@ -99,7 +101,7 @@ Experience 提供了自定义工具 `injector.observe`、`injector.wrap`、`inje
 - 返回 `None` 不能自动证明成功或空转；需要核验返回语义或读取实际前后状态。
 - 读取参数引用后再延迟序列化，值可能已经变化；应在回调中提取必要的稳定字段，并保持原函数行为与异常语义。
 
-**依据：**[Experience injector](../../Sims4-Experience-Mod/src/experience_recorder/injector.py)、[Loot/Buff hook](../../Sims4-Experience-Mod/src/experience_recorder/hooks/loot_hook.py)、[Situation hook](../../Sims4-Experience-Mod/src/experience_recorder/hooks/situation_hook.py)。
+**EA 源码依据：**[BuffComponent](../../sims4-python/ea-source/EA/simulation/objects/components/buff_component.py)、[LootActions](../../sims4-python/ea-source/EA/simulation/interactions/utils/loot.py)、[BaseSituation](../../sims4-python/ea-source/EA/simulation/situations/base_situation.py)、[Interaction](../../sims4-python/ea-source/EA/simulation/interactions/base/interaction.py)。
 
 ## 5. T04：GSI 与既有调试归档
 
@@ -111,7 +113,7 @@ Experience 提供了自定义工具 `injector.observe`、`injector.wrap`、`inje
 | 自主决策归档 | `gsi_handlers.autonomy_handlers.archive_autonomy_data(sim, result, mode_name, gsi_data)` | 候选、对象、需求、评分、概率表、部分选择结果 |
 | 开关管理 | `sims4.gsi.archive.set_archive_enabled(archive_type, enable=True)` | 对已注册 archiver 开启数据归档；用 `is_archive_enabled` 核对状态 |
 
-本地源码的交互模块名是 `interaction_archive_handlers`。Experience 的 `_ia_module()` 先导入它，再尝试旧名 `interaction_archive`；文档中不能把旧名字直接当成所有版本都存在的模块。
+本地源码的交互模块名是 `interaction_archive_handlers`。以实际源码模块和调用点为准；其他版本的旧名称或兼容分支只有在验证需求成立时才增加。
 
 **适合：**快速取得较丰富的交互/决策上下文，检查业务采集的解释能力。
 
@@ -120,9 +122,9 @@ Experience 提供了自定义工具 `injector.observe`、`injector.wrap`、`inje
 - 数据生成可能受 archiver 开关门禁控制。当前源码区分 `interaction_archive` 与 `interaction_archive_mixer`，应分别检查；`autonomy` 又是另一归档。
 - 内存归档有记录数限制。本版本默认设置为 50，但具体保留量受 archiver 配置影响；它不是完整历史日志。
 - 调试 schema、模块名、启用方式和返回字段都可能随版本改变，字段还可能已经字符串化或聚合。
-- GSI 没记录的内容，不能从这个接口补回来。Observer 自建的 DecisionCase/Test Readset 也不应全部标成游戏原生 GSI 数据，它们还组合了 Hook 和快照。
+- GSI 没记录的内容，不能从这个接口补回来。自研 MOD 组合 Hook/快照得到的派生诊断信息，不应全部标成游戏原生 GSI 数据。
 
-**依据：**[交互归档](../../sims4-python/ea-source/EA/simulation/gsi_handlers/interaction_archive_handlers.py)、[Autonomy 归档](../../sims4-python/ea-source/EA/simulation/gsi_handlers/autonomy_handlers.py)、[GSI archive](../../sims4-python/ea-source/EA/core/sims4/gsi/archive.py)、[Experience 兼容处理](../../Sims4-Experience-Mod/src/experience_recorder/hooks/interaction_hook.py)。
+**依据：**[交互归档](../../sims4-python/ea-source/EA/simulation/gsi_handlers/interaction_archive_handlers.py)、[Autonomy 归档](../../sims4-python/ea-source/EA/simulation/gsi_handlers/autonomy_handlers.py)、[GSI archive](../../sims4-python/ea-source/EA/core/sims4/gsi/archive.py)。
 
 ## 6. T05：Tuning 与资源读取
 
@@ -132,8 +134,8 @@ Experience 提供了自定义工具 `injector.observe`、`injector.wrap`、`inje
 | --- | --- | --- |
 | 已加载 tuning | `services.get_instance_manager(resource_type).get(id_or_key)`；manager 的 `types` | 当前已加载的 tuned class 及其字段 |
 | 资源管理器 | `sims4.resources.get_resource_key(...)`、`get_all_resources_of_type(...)`、`ResourceLoader(key).load()` | 资源键、枚举结果、资源内容 |
-| DBPF 包解析 | 参考工具 `dbpf.read_index(path)`、`read_resource(path, entry)` | `.package` 索引及资源字节 |
-| Tuning / 本地化解析 | `tools/extract_tuning.py`；`stbl.parse_stbl(bytes)`、`load_language(...)` | tuning XML 和 STBL 文本表 |
+| DBPF 包解析 | `sims4-python` 自研工具 `dbpf.read_index(path)`、`read_resource(path, entry)` | `.package` 索引及资源字节 |
+| Tuning / 本地化解析 | `sims4-python/tools/extract_tuning.py`；自研 `stbl.parse_stbl(bytes)`、`load_language(...)` | tuning XML 和 STBL 文本表 |
 
 **适合：**解释 Buff/交互/物件的 ID，提供规则条件与参数，建立可缓存的定义目录。
 
@@ -171,13 +173,13 @@ services.get_persistence_service()
 - 游戏内 protobuf 对象读取与磁盘 `.save` 的容器解码是两项工作。本轮核验了前者接口，没有验证一套可直接使用的完整离线存档解析方案。
 - 只提取需要的字段，避免修改共享 proto；加载/保存边界、存档标识、另存与回滚分支需要分别记录。
 
-**依据：**[PersistenceService](../../sims4-python/ea-source/EA/simulation/services/persistence_service.py)、[Experience 地块名称读取](../../Sims4-Experience-Mod/src/experience_recorder/hooks/zone_hook.py)。
+**EA 源码依据：**[PersistenceService](../../sims4-python/ea-source/EA/simulation/services/persistence_service.py)。
 
 ## 8. T07：Python 执行跟踪与调用帧
 
 **方式：**在解释器执行层观察调用，而不是为每个业务函数单独编写包装器。
 
-Observer 的 `tracer.py` 使用 `sys.setprofile` 和 `threading.setprofile`，并从 `frame.f_code`、`frame.f_locals` 等提取函数身份和参数摘要，记录调用/返回及 Python 可见的 C 调用边界。
+作为可选的自研 MOD 示例，Observer 的 `tracer.py` 使用 `sys.setprofile` 和 `threading.setprofile`，并从 `frame.f_code`、`frame.f_locals` 等提取函数身份和参数摘要，记录调用/返回及 Python 可见的 C 调用边界。
 
 **适合：**发现真实执行路径、寻找 Hook 位置、短窗口检查 Hook 是否漏掉调用、调查临时参数和返回值。
 
@@ -189,30 +191,28 @@ Observer 的 `tracer.py` 使用 `sys.setprofile` 和 `threading.setprofile`，�
 - 跟踪仅覆盖实际执行、已安装 profile 的线程与时间窗口；`threading.setprofile` 对既存线程的覆盖不能默认成立。
 - 通常开销较高，优先用于诊断和验证，再把稳定的必要字段下沉为 T01–T04 的定向采集。
 
-**依据：**[Observer tracer](<../../sims4-python/ea-source/My Script Mods/autonomy_observer/Scripts/autonomy_observer/tracer.py>)、[采集模式说明](<../../sims4-python/ea-source/My Script Mods/autonomy_observer/README.md>)。
+**示例实现（非游戏本体）：**[Observer tracer](<../../sims4-python/ea-source/My Script Mods/autonomy_observer/Scripts/autonomy_observer/tracer.py>)、[采集模式说明](<../../sims4-python/ea-source/My Script Mods/autonomy_observer/README.md>)。
 
 ## 9. T08：MOD 自有数据与协作接口
 
 **方式：**读取已由 MOD 保存的数据，或由拥有该数据的 MOD 提供快照/事件接口。适合采集器之间协作，以及把采集结果送到游戏外。
 
-| 入口 | 现有实例或拟议接口 | 状态 |
+| 能力 | 本项目使用方式 | 当前状态 |
 | --- | --- | --- |
-| 事件文件 | Experience 的 `events/<slot>/<sim>.jsonl` | 已有，实现的是其采集范围内的事件 |
-| 快照/派生文件 | `profiles/<slot>/*.cards.json`、`health/session.json` | 已有，包含画像和采集健康信息 |
-| 本地查询 | Experience Debug Server 的 `/api/events`、`/api/event/<id>`、`/api/cards`、`/api/health`、`/api/slots` | 已有外部服务路由；需要服务运行，它们不是游戏本体接口 |
-| 增量传输 | Debug Server 的 `/api/stream` | 已有 SSE 路由；恢复边界需要按实现核验 |
-| 协作 provider | 由 MOD 提供 `get_snapshot` / `subscribe` / `export_since` 一类契约 | 建议的接口形态，本项目尚未实现，也不是通用 Sims 4 API |
-
-**适合：**经历和印象复用、Overlay 连续状态、第三方 MOD 私有数据，以及向 LLM 服务提供查询结果。
+| 历史记录与查询 | 事件记录模块保存事实，按目标和范围提供历史 | 待实现；格式由新契约确定 |
+| 当前 Context 输出 | 采集器组合所选字段与历史，提供完整数据包 | 待实现；可先用文件导出验证 |
+| 模块内部协作 | 约定的 Python 接口与普通数据结构 | 不需要为内部调用另建 HTTP 服务 |
+| 第三方 MOD 数据 | 为实际需要的来源建立版本化适配器 | 按需求评估，不预设旧 Experience 接口 |
+| 后续消费者状态 | 记忆、画像、Overlay 内容与原始事实分别保存 | 后续扩展 |
 
 **边界：**
 
-- 读取 JSONL 或 HTTP 只能取得上游实际保留的内容，无法补回上游过滤掉的事件。
-- JSONL、HTTP、SSE、IPC 是传输/消费方式。最初事实可能来自 T01/T02/T03/T04，原始来源应继续保留。
-- 需要版本、命名空间、事件 ID、水位、分页和重复消费约定。当前 `/api/events` 默认 limit 为 500，返回一批结果不能代表完整历史。
-- 画像、推断和原始事件分开读取。第三方 MOD 不提供接口时，要针对它实际使用的游戏状态或私有实现另做适配，不能假定存在统一查询 API。
+- 读取文件或服务只能取得上游实际保留的内容，无法补回未采集或已过滤的事实。
+- JSONL、HTTP、SSE、IPC 是传输方式；原始事实的 T01–T06 来源继续保留。
+- 需要范围、版本、命名空间、身份、分页/数量和重复消费约定；一批结果不能代表完整历史。
+- 没有第三方接口时需单独适配，不能假定存在统一的游戏外查询 API。
 
-**依据：**[Experience writer](../../Sims4-Experience-Mod/src/experience_recorder/writer.py)、[Debug Server 路由](../../Sims4-Experience-Mod/tools/debug_server.py)、[Experience README](../../Sims4-Experience-Mod/README.md)。
+**设计入口：**[事件记录](event-recorder.md)、[Context 采集](context-collector.md)。旧 Experience 的文件与服务实例见[历史调研](archive/README.md)，仅在必要时查阅。
 
 ## 10. T09：Native / 客户端补充观测
 
@@ -254,8 +254,8 @@ LLM / Overlay
 | --- | --- |
 | 当前饥饿值及变化 | T05 定位 statistic 定义；T01 初始值；T02 watcher/阈值；必要时 T03 补来源；T01 对账 |
 | 关系状态和“为何改变” | T01 关系快照；T02 相关事件；T03 实际效果/写入及调用上下文 |
-| 交互完成、取消及参与者 | T04 既有归档；T03 补开始/中断等缺口；T01 读取当前队列和运行交互 |
-| 自主选择的依据 | T04 决策归档 + Observer 定向 T03/T01；T05 解释规则；T07 短窗口核验 |
+| 交互完成、取消及参与者 | 先核验 T02 发送点与 payload；按缺口选择 T03/T04；T01 读取当前队列和运行交互 |
+| 自主选择的依据 | T04 决策归档 + 定向 T03/T01；T05 解释规则；必要时 T07 短窗口核验 |
 | 未实例化 Sim 的已保存资料 | T01 SimInfo + T06 持久化表示；分别注明 LOD 和数据时点 |
 | 物件/交互名称与效果配置 | T05；若要知道本次真实效果，再用 T02/T03 |
 | 长期记忆和 Overlay 上轮内容 | T08；记忆保留其底层 T01–T06 证据和派生标记 |
@@ -270,3 +270,4 @@ LLM / Overlay
 | 日期 | 版本 | 变更 |
 | --- | --- | --- |
 | 2026-09-11 | v0.1 | 从获取方式与接口建立 9 类技术分类，核对具体源码入口，区分游戏内采集与游戏外传输。 |
+| 2026-09-14 | v0.2 | 以 EA 源码与本地实测为主要依据；区分自研示例，移除旧 Experience 包装器、文件格式和服务作为默认路径的叙述。 |

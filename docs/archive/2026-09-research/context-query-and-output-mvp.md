@@ -1,14 +1,16 @@
 # 历史方案：当前状态 + 已记录经历的查询与输出 MVP
 
-版本：v0.2。日期：2026-09-11。
+> 归档说明（2026-09-14）：本文保留整理前的阶段研究和结论，文中的“当前”“下一步”均属于原阶段，不作为新实现要求。仅修正位置相关链接及失效锚点。当前开发以[三模块总体设计](../../modular-context-provider.md)和[开发与参考基线](../../reference-baseline.md)为准。原路径：`docs/context-query-and-output-mvp.md`。
 
-**当前定位：历史查询方案及既有离线原型说明。** 已确认的总体方向见[三模块设计共识](modular-context-provider.md)：同一项目内解耦调试，最终全部启用，可整合为一个 MOD。本文保留原方案，具体接口和实施顺序待细化，查询入口可作为阶段验收工具。
+版本：v0.3。日期：2026-09-14。
+
+**当前定位：历史查询方案及已移除原型的验证记录。** 旧离线工具及配套测试已于 2026-09-14 删除，Experience 部分准备重新开发。已确认的总体方向见[三模块设计共识](../../modular-context-provider.md)：同一项目内解耦调试，最终全部启用，可整合为一个 MOD。本文保留原方案，具体接口和实施顺序待细化；下文的原型行为与验证结果均指已删除的旧实现。
 
 目标是在选定游戏时刻，构建一份 Context：**当前状态由游戏即时查询，过去经历从事件与记忆层检索，两者携带时间、来源和覆盖范围；同一份结果用于游戏内展示和未来的 LLM 输入。** 当前不设计 Prompt、模型调用、生成结果或游戏效果执行。
 
-v0.2 的采集架构建议调整为[本项目独立的事件核心](event-memory-architecture.md)。Experience 提供采集参考和历史输入；本轮既有离线原型仍读取旧格式，不代表新事件核心已经实现。
+v0.2 的采集架构建议调整为[本项目独立的事件核心](event-memory-architecture.md)。Experience 提供采集参考和历史输入；旧离线原型读取的是旧格式，不代表新事件核心已经实现。
 
-本轮完成了源码接入点核验、接口设计和一个离线历史导出原型。游戏内实时采集、鼠标菜单、悬浮提示及自动输出队列尚未实现、安装或实测。离线原型中的 `snapshot.status` 明确为 `unavailable`。
+2026-09-11 完成了源码接入点核验、接口设计和一个离线历史导出原型，现仅保留文档及输出样例。游戏内实时采集、鼠标菜单、悬浮提示及自动输出队列尚未实现、安装或实测。历史样例中的 `snapshot.status` 明确为 `unavailable`。
 
 ## 1. 推荐的整体实现
 
@@ -28,7 +30,7 @@ flowchart LR
 
 这样，点击查询和 LLM 出口不会分别维护两套解释逻辑。更换通知窗口、添加悬浮提示或接入模型，都消费相同的数据契约。
 
-**这一目标不要求先还原完整历史世界状态。** 查询时直接读取现在，历史部分只回答已捕获的经历。任意历史时点的状态重建属于[另一项扩展能力](state-history-and-generated-events.md)，不作为本阶段前置条件。
+**这一目标不要求先还原完整历史世界状态。** 查询时直接读取现在，历史部分只回答已捕获的经历。任意历史时点的状态重建属于[另一项扩展能力](../../vision/state-history-and-generated-events.md)，不作为本阶段前置条件。
 
 建议由本仓库维护采集适配器、共享事件及查询核心，分批移植已验证的游戏入口。通过旧格式 importer 继续使用 Experience 样本；修改 Experience 的公共接口不再作为新系统的必要前置步骤。
 
@@ -42,7 +44,7 @@ flowchart LR
 | 可读描述 | Web 的 `verbCN/eventPhrase/humanFields` 有初步规则 | 独立于网页的语义层、结果状态、参与角色、来源和回退规则 |
 | 游戏内显示 | Experience `notify.show(title, text)` 使用 `UiDialogNotification` | “查看最近交互经历”的目标菜单与查询回调 |
 | 对外提供历史 | 调试服务器有 `/api/events` 等接口，另有特定 Situation 的 LLM 证据包构建函数 | 包含实时状态的通用 ContextPacket 与输出适配器 |
-| 本仓库离线原型 | 本轮新增 `preview_context.py`、文件输出与测试 | 用实际游戏 provider 替换离线数据源后完成游戏实测 |
+| 本仓库历史原型 | 旧离线历史查询、文件输出及测试已移除，保留输出样例 | 按重新开发的接口建立实现与测试，并完成游戏实测 |
 
 Experience 的调试 HTTP 接口来自外部 Python 服务器，不是游戏本体 API。它已有的 `llm_memory_packages(situation_id)` 面向特定情境下的 owner→entity 记忆证据，并不等于任意目标的“实时状态 + 历史”接口。
 
@@ -83,7 +85,7 @@ publish_context(packet) -> ExportReceipt
 
 例如区分 `observed`、`absent`、`unavailable`、`unsupported`、`error`；空 Buff 集合只有成功枚举后才能解释为“没有 Buff”。需求数值附实际 statistic、单位/范围，不默认所有需求都是 0–100。
 
-读取使用游戏线程及允许的生命周期；避免为了查询而创建 statistic、增加 Buff 或触发交互。具体源码入口沿用[技术分类](context-acquisition-interfaces.md)，逐项登记版本、读取副作用与游戏实测状态。
+读取使用游戏线程及允许的生命周期；避免为了查询而创建 statistic、增加 Buff 或触发交互。具体源码入口沿用[技术分类](../../context-acquisition-interfaces.md)，逐项登记版本、读取副作用与游戏实测状态。
 
 ### 3.2 时间一致性
 
@@ -227,16 +229,7 @@ Experience 的旧格式兼容路径仍有边界：`emit()` 将记录放入私有
 
 原始字段和文本一起输出：程序可以按 ID 关联/过滤，LLM 可以消费文本与结构化事实，用户也能回查一句话从哪里来。不同消费者可以做有界裁剪，但不能把文本推断重新写回事实字段。
 
-本轮已实现的文件接口是：
-
-```python
-# tools/preview_context.py；离线函数，不能直接访问当前游戏状态
-packet = build_preview(events, target_kind, target_id, source_scope,
-                       names=names, limit=5, locations=locations)
-write_packet(packet, output_path)
-```
-
-`write_packet` 写 UTF-8 JSON，先写同目录临时文件再替换目标，避免消费者读取半份 JSON。这是一个真实可运行的输出接口，但当前 provider 仅支持离线历史。
+旧原型曾提供 UTF-8 JSON 文件输出，先写同目录临时文件再替换目标，避免消费者读取半份 JSON。该实现现已删除，文件输出接口及其验证需随新实现重新建立。
 
 正式游戏接入建议先采用文件 outbox：
 
@@ -251,34 +244,23 @@ write_packet(packet, output_path)
 
 ## 9. 分阶段验收
 
-| 阶段 | 可验证结果 | 验收重点 | 本轮状态 |
+| 阶段 | 可验证结果 | 验收重点 | 当前状态 |
 | --- | --- | --- | --- |
-| M0：离线历史查询与语义输出 | 指定 Sim/Object 输出最近最多 5 条及证据 | ID 精度、实例隔离、关联视角、状态翻译、周边界排序、未知回退 | 已实现并用真实样本运行；13 项自动检查通过 |
+| M0：离线历史查询与语义输出 | 指定 Sim/Object 输出最近最多 5 条及证据 | ID 精度、实例隔离、关联视角、状态翻译、周边界排序、未知回退 | 旧实现曾通过 13 项检查；工具与测试现已删除 |
 | M1：游戏内命令查询 | `context.inspect` 输出实时快照和近期历史 | 目标区别于活动 Sim；未落盘事件可见；字段值与同一时点直接查询一致 | 待实现/游戏实测 |
 | M2：点击查看 | Sim 与已支持 Object 的菜单可显示同一查询结果 | 正常/取消交互、少于 5 条、无记录、目标卸载、同型号不同实例；暂停可用性及窗口容纳 5 条 | 待实现/游戏实测 |
-| M3：触发时自动输出 | 指定触发点写出与 UI 共用的 ContextPacket | 源版本/分支/时点明确、队列有界、文件完整、重试去重、游戏线程不等待外部消费者 | 离线文件 sink 已实现；游戏接入待实现 |
+| M3：触发时自动输出 | 指定触发点写出与 UI 共用的 ContextPacket | 源版本/分支/时点明确、队列有界、文件完整、重试去重、游戏线程不等待外部消费者 | 旧离线文件输出已移除；新输出与游戏接入待实现 |
 | M4：悬浮入口 | 在验证过的目标提示样式中展示缓存摘要 | 不覆盖原提示、不高频扫描、悬浮切换刷新、其他 MOD 兼容性 | 后续可选 |
 
 最小人工场景：同一 Sim 依次使用两张同型号棋桌，完成一次、取消一次，再查询各个目标。核对窗口目标、结果状态、最近记录和原始证据。交互刚结束且尚未落盘时立即查询；切换地块及读旧档后再查，确认不会显示另一个对象或另一条分支的历史。
 
 性能验收先记录测试机和支持的对象/记录规模，测量 p50/p95 查询耗时、读取 tick 跨度、历史延迟和输出队列长度，再设可执行阈值。本轮离线运行时间不能冒充游戏内性能结论。
 
-## 10. 本轮可运行样例
+## 10. 历史输出样例
 
-原型只读取一个明确的 `events/<recording>/` 叶目录，不默认跨启动槽合并。它不导入或执行参考仓库代码，也不读取正在运行的游戏。
+以下 JSON 为旧原型已生成的静态结果。生成工具和配套测试已删除，当前仓库不再提供运行命令。旧原型只读取一个明确的 `events/<recording>/` 叶目录，不默认跨启动槽合并；它不导入或执行参考仓库代码，也不读取正在运行的游戏。
 
-```powershell
-python tools/preview_context.py --events-dir C:/sources/Sims4-Experience-Mod/win0910/events/2026-09-10T15-10-09 --names C:/sources/Sims4-Experience-Mod/win0910/names/names.json --source-scope win0910/2026-09-10T15-10-09 --target-kind sim --target-id 620677770788405884 --output docs/examples/context-sim-preview.json
-```
-
-将目标改为 Object 的命令：
-
-```powershell
-python tools/preview_context.py --events-dir C:/sources/Sims4-Experience-Mod/win0910/events/2026-09-10T15-10-09 --names C:/sources/Sims4-Experience-Mod/win0910/names/names.json --source-scope win0910/2026-09-10T15-10-09 --target-kind object --target-id 932260978336661594 --output docs/examples/context-object-preview.json
-python -m unittest discover -s tests -v
-```
-
-| 输出 | 本轮结果 |
+| 输出 | 历史结果 |
 | --- | --- |
 | [Sim Context 样例](examples/context-sim-preview.json) | Dave NPCAI；127 条匹配的交互记录中返回最近 5 条，包含 8 条原始视角证据 |
 | [Object Context 样例](examples/context-object-preview.json) | 指定国际象棋桌；18 条直接 target 交互记录中返回最近 5 条，包含 5 条原始证据 |
@@ -287,7 +269,7 @@ python -m unittest discover -s tests -v
 
 Object 样例中尚未映射的 `Chess_Social`、`chess_setup` 会保留原名。Sim 样例保留内部交互记录，并标明本人作为另一人交互参与方的关系。这些输出用于直观看到“原始记录 → 可读经历”还需要补哪些映射和聚合规则。
 
-测试使用独立合成数据与临时目录，覆盖与本接口正确性有关的边界；未执行 Experience 仓库可能访问真实用户数据的测试。代码保持普通标准库实现，当前验证解释器为本机 Python 3.14；游戏侧编译/兼容目标应按参考项目的 Python 3.7 工具链单独验证，不能直接把本机 `.pyc` 打包进游戏。
+旧测试曾使用独立合成数据与临时目录，在 Python 3.14 下验证离线查询边界；这些结果不作为重新开发后实现的验收依据。新测试和游戏侧兼容验证需按新实现及目标游戏版本重新建立。
 
 ## 11. 本轮源码证据
 
@@ -295,17 +277,17 @@ Object 样例中尚未映射的 `Chess_Social`、`chess_setup` 会保留原名�
 
 | 结论 | 定位 |
 | --- | --- |
-| 已有游戏通知实现 | [Experience notify.py](../../Sims4-Experience-Mod/src/experience_recorder/notify.py)：`_show`、`show` |
-| 已有网页名称与动词释义；简单汇总存在使用边界 | [Experience app.js](../../Sims4-Experience-Mod/web/app.js)：`verbCN`、`eventPhrase`、`humanFields`、`summarizeEvs`、`tsMinutes` |
-| 已有历史引用查询和特定情境 LLM 证据包 | [debug_server.py](../../Sims4-Experience-Mod/tools/debug_server.py)：`entity_events`、`_event_refs`、`llm_memory_packages` |
-| emit 先入缓冲，公开列表通知在落盘后执行 | [writer.py](../../Sims4-Experience-Mod/src/experience_recorder/writer.py)：`emit`、`flush`、`FLUSH_LISTENERS` |
-| received 由目标归档或参与者列表生成；终态订阅不是完整事件总线 | [interaction_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/interaction_hook.py)：`subscribe_terminal`、`_on_archive` |
-| Sim/SimInfo、Part/宿主与对象引用规则 | [model.py](../../Sims4-Experience-Mod/src/experience_recorder/model.py)：`obj_ref`、`make_event` |
-| 点击菜单的 affordance 枚举路径 | [script_object.py](../../sims4-python/ea-source/EA/simulation/objects/script_object.py)：`super_affordances`、`potential_interactions`；[interaction_commands.py](../../sims4-python/ea-source/EA/simulation/server_commands/interaction_commands.py)：`generate_choices` |
-| 即时交互类型 | [immediate_interaction.py](../../sims4-python/ea-source/EA/simulation/interactions/base/immediate_interaction.py)：`ImmediateSuperInteraction` |
-| 悬浮请求、字段与刷新机制 | [ui_commands.py](../../sims4-python/ea-source/EA/simulation/server_commands/ui_commands.py)：`ui_create_hovertip`；[tooltip_component.py](../../sims4-python/ea-source/EA/simulation/objects/components/tooltip_component.py)：`on_hovertip_requested`、`update_tooltip_field`；[hovertip.py](../../sims4-python/ea-source/EA/simulation/objects/hovertip.py) |
-| 本地化值由 hash/token 组成 | [localization](../../sims4-python/ea-source/EA/core/sims4/localization/__init__.py)：`_create_localized_string`、`LocalizationHelperTuning`；[interaction.py](../../sims4-python/ea-source/EA/simulation/interactions/base/interaction.py)：`get_name` |
-| 游戏字符串时间中的 day 为周内日序 | [date_and_time.py](../../sims4-python/ea-source/EA/simulation/date_and_time.py)：`__str__`、`day`、`week` |
+| 已有游戏通知实现 | [Experience notify.py](../../../../Sims4-Experience-Mod/src/experience_recorder/notify.py)：`_show`、`show` |
+| 已有网页名称与动词释义；简单汇总存在使用边界 | [Experience app.js](../../../../Sims4-Experience-Mod/web/app.js)：`verbCN`、`eventPhrase`、`humanFields`、`summarizeEvs`、`tsMinutes` |
+| 已有历史引用查询和特定情境 LLM 证据包 | [debug_server.py](../../../../Sims4-Experience-Mod/tools/debug_server.py)：`entity_events`、`_event_refs`、`llm_memory_packages` |
+| emit 先入缓冲，公开列表通知在落盘后执行 | [writer.py](../../../../Sims4-Experience-Mod/src/experience_recorder/writer.py)：`emit`、`flush`、`FLUSH_LISTENERS` |
+| received 由目标归档或参与者列表生成；终态订阅不是完整事件总线 | [interaction_hook.py](../../../../Sims4-Experience-Mod/src/experience_recorder/hooks/interaction_hook.py)：`subscribe_terminal`、`_on_archive` |
+| Sim/SimInfo、Part/宿主与对象引用规则 | [model.py](../../../../Sims4-Experience-Mod/src/experience_recorder/model.py)：`obj_ref`、`make_event` |
+| 点击菜单的 affordance 枚举路径 | [script_object.py](../../../../sims4-python/ea-source/EA/simulation/objects/script_object.py)：`super_affordances`、`potential_interactions`；[interaction_commands.py](../../../../sims4-python/ea-source/EA/simulation/server_commands/interaction_commands.py)：`generate_choices` |
+| 即时交互类型 | [immediate_interaction.py](../../../../sims4-python/ea-source/EA/simulation/interactions/base/immediate_interaction.py)：`ImmediateSuperInteraction` |
+| 悬浮请求、字段与刷新机制 | [ui_commands.py](../../../../sims4-python/ea-source/EA/simulation/server_commands/ui_commands.py)：`ui_create_hovertip`；[tooltip_component.py](../../../../sims4-python/ea-source/EA/simulation/objects/components/tooltip_component.py)：`on_hovertip_requested`、`update_tooltip_field`；[hovertip.py](../../../../sims4-python/ea-source/EA/simulation/objects/hovertip.py) |
+| 本地化值由 hash/token 组成 | [localization](../../../../sims4-python/ea-source/EA/core/sims4/localization/__init__.py)：`_create_localized_string`、`LocalizationHelperTuning`；[interaction.py](../../../../sims4-python/ea-source/EA/simulation/interactions/base/interaction.py)：`get_name` |
+| 游戏字符串时间中的 day 为周内日序 | [date_and_time.py](../../../../sims4-python/ea-source/EA/simulation/date_and_time.py)：`__str__`、`day`、`week` |
 
 ## 迭代记录
 
@@ -313,3 +295,4 @@ Object 样例中尚未映射的 `Chess_Social`、`chess_setup` 会保留原名�
 | --- | --- | --- |
 | 2026-09-11 | v0.1 | 确定状态/历史双来源、点击查询优先、确定性语义化及统一输出契约；新增离线原型、两类样例与边界测试；列明游戏接入和悬浮验证的剩余工作。 |
 | 2026-09-11 | v0.2 | 建议采用本仓库独立事件核心，Experience 转为采集参考与历史兼容输入；更新即时查询和持久化边界，旧离线原型保持不变。 |
+| 2026-09-14 | v0.3 | Experience 部分准备重新开发；删除旧离线工具与配套测试，移除运行命令和可用接口说明，保留历史方案与静态输出样例。 |

@@ -1,10 +1,12 @@
 # 从采集数据到状态、经历回顾与 LLM 事件
 
+> 后续扩展资料（2026-09-14 整理）：本文保留历史研究或产品愿景，旧阶段的实施顺序不作为首轮要求。当前开发以[三模块总体设计](../modular-context-provider.md)和[首轮实现与验收](../implementation-and-validation.md)为准。这里的 Experience 可表示历史能力，不要求依赖旧 Experience MOD。
+
 版本：v0.1。日期：2026-09-11。
 
 本文回答三个问题：技术分类是否都是游戏本体已有数据；Sims4-Experience-Mod 的经历属于哪类；如何用它们恢复 Sim/Object 的状态和历史，以及在线生成新的事件。
 
-依据为[参考资料基线](reference-baseline.md)中的本地源码及历史样本。本轮补查 Experience 的事件构造、时长、Loot 明细和卡片折叠，并只读检查 `win0910`；没有运行游戏或实现新的采集/事件执行功能。下文架构与字段属于建议设计。
+依据为[参考资料基线](../archive/2026-09-research/reference-baseline.md)中的本地源码及历史样本。本轮补查 Experience 的事件构造、时长、Loot 明细和卡片折叠，并只读检查 `win0910`；没有运行游戏或实现新的采集/事件执行功能。下文架构与字段属于建议设计。
 
 ## 1. 结论与能力边界
 
@@ -20,11 +22,11 @@
 
 在线生成可以先使用实时状态和有关历史，不要求先完成全量历史状态重建。历史重建能力可以按玩法逐项扩展。
 
-本阶段已进一步收敛为[当前状态 + 已记录经历的查询与输出 MVP](context-query-and-output-mvp.md)：先验证最近交互记录的展示、确定性语义化和统一数据出口，暂不实现模型生成、效果执行或完整历史重建。下文保留这些扩展目标的研究依据。
+本阶段已进一步收敛为[当前状态 + 已记录经历的查询与输出 MVP](../archive/2026-09-research/context-query-and-output-mvp.md)：先验证最近交互记录的展示、确定性语义化和统一数据出口，暂不实现模型生成、效果执行或完整历史重建。下文保留这些扩展目标的研究依据。
 
 ## 2. 哪些属于游戏内置，哪些由 MOD 新增
 
-前一份[技术分类](context-acquisition-interfaces.md)包括获取入口、观测机制和数据通道，不表示每类都存在一份可直接查询的完整原生数据库。
+前一份[技术分类](../context-acquisition-interfaces.md)包括获取入口、观测机制和数据通道，不表示每类都存在一份可直接查询的完整原生数据库。
 
 | 数据层 | 游戏本体与 MOD 的关系 | 例子 |
 | --- | --- | --- |
@@ -184,14 +186,14 @@ LLM 响应有延迟，执行前需要再次核对目标实体是否仍存在、�
 
 | 结论 | 来源与定位 |
 | --- | --- |
-| did/received 主要在终态构造；时长来自游戏时间跨度 | [interaction_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/interaction_hook.py)：`_on_archive`、`_duration`、`install` |
-| Loot amount/value 来自操作属性，不是通用 before/after | [loot_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/loot_hook.py)：`_op_summary`、`_on_op_applied` |
-| Buff 移除无配对时不记录；时长按现实时间计算 | [loot_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/loot_hook.py)：`_on_add_buff`、`_on_remove_buff` |
-| Situation 时长同样使用现实时间差 | [situation_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/situation_hook.py)：`_on_add`、`_on_remove` |
-| 卡片是汇总，证据上限 20；重放排序以 ts_real 为主 | [folding.py](../../Sims4-Experience-Mod/src/experience_recorder/folding.py)：`EVIDENCE_CAP`、`event_sort_key`、`new_card` |
-| 累积快照保存卡片、watermark 和已处理场次 | [tagger.py](../../Sims4-Experience-Mod/src/experience_recorder/tagger.py)：`_write_cumulative`、`bootstrap_from_disk` |
-| 名字/人格记录不等于完整状态快照 | [names.py](../../Sims4-Experience-Mod/src/experience_recorder/names.py)：`_personality_traits`、`collect` |
-| 上午时间范围和事件字段统计 | [win0910 原始事件目录](../../Sims4-Experience-Mod/win0910/events/)；仅解析 JSONL，按 `week/day/hour/minute/second` 数值比较时间，检查 loot detail 字段集合和 `context_ref`；既有输入摘要见[审计报告](research/2026-09-11-reference-audit.json) |
+| did/received 主要在终态构造；时长来自游戏时间跨度 | [interaction_hook.py](../../../Sims4-Experience-Mod/src/experience_recorder/hooks/interaction_hook.py)：`_on_archive`、`_duration`、`install` |
+| Loot amount/value 来自操作属性，不是通用 before/after | [loot_hook.py](../../../Sims4-Experience-Mod/src/experience_recorder/hooks/loot_hook.py)：`_op_summary`、`_on_op_applied` |
+| Buff 移除无配对时不记录；时长按现实时间计算 | [loot_hook.py](../../../Sims4-Experience-Mod/src/experience_recorder/hooks/loot_hook.py)：`_on_add_buff`、`_on_remove_buff` |
+| Situation 时长同样使用现实时间差 | [situation_hook.py](../../../Sims4-Experience-Mod/src/experience_recorder/hooks/situation_hook.py)：`_on_add`、`_on_remove` |
+| 卡片是汇总，证据上限 20；重放排序以 ts_real 为主 | [folding.py](../../../Sims4-Experience-Mod/src/experience_recorder/folding.py)：`EVIDENCE_CAP`、`event_sort_key`、`new_card` |
+| 累积快照保存卡片、watermark 和已处理场次 | [tagger.py](../../../Sims4-Experience-Mod/src/experience_recorder/tagger.py)：`_write_cumulative`、`bootstrap_from_disk` |
+| 名字/人格记录不等于完整状态快照 | [names.py](../../../Sims4-Experience-Mod/src/experience_recorder/names.py)：`_personality_traits`、`collect` |
+| 上午时间范围和事件字段统计 | [win0910 原始事件目录](../../../Sims4-Experience-Mod/win0910/events)；仅解析 JSONL，按 `week/day/hour/minute/second` 数值比较时间，检查 loot detail 字段集合和 `context_ref`；既有输入摘要见[审计报告](../archive/2026-09-research/research/2026-09-11-reference-audit.json) |
 
 ## 迭代记录
 

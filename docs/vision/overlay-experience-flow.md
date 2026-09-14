@@ -1,8 +1,10 @@
 # 游戏本体、Experience 与 Overlay 流程图
 
+> 后续扩展资料（2026-09-14 整理）：本文保留历史研究或产品愿景，旧阶段的实施顺序不作为首轮要求。当前开发以[三模块总体设计](../modular-context-provider.md)和[首轮实现与验收](../implementation-and-validation.md)为准。这里的 Experience 可表示历史能力，不要求依赖旧 Experience MOD。
+
 版本：v0.1 · 日期：2026-09-11 · 性质：概念架构与示例，尚非游戏实机验收结果。
 
-范围说明：本图包含后续记忆能力。当前总体方向见[三模块设计共识](modular-context-provider.md)：最终三个模块全部启用，设计师按请求选择是否包含历史；调试时可单独验证当前快照到 Overlay 的通路。
+范围说明：本图包含后续记忆能力。当前总体方向见[三模块设计共识](../modular-context-provider.md)：最终三个模块全部启用，设计师按请求选择是否包含历史；调试时可单独验证当前快照到 Overlay 的通路。
 
 **游戏本体负责产生行为与后果；Overlay 依据当时的事件、状态和相关经历生成解释；Experience 为后续解释保留事件与叙事。**
 
@@ -51,7 +53,7 @@ Experience 扩展的是 LLM 的解释输入。图中的 Game Context 是概念�
 
 例如“我们下次还来这里”可以形成叙事中的约定，但不会自动安排游戏内约会，也不能证明后来已经再次到访。生成但没有展示的候选可以作为调试记录保存，不应被检索成角色已经说过的话。
 
-内部数据组织进一步见[共享事件、实体视角与记忆的架构建议](event-memory-architecture.md)：这里的 Experience 是历史层的概念名称，不要求依赖同名的现有 MOD。一个共享事件可以被不同 Sim 的经历视角和记忆引用；普通 Object 使用关联事件时间线。
+内部数据组织进一步见[共享事件、实体视角与记忆的架构建议](../archive/2026-09-research/event-memory-architecture.md)：这里的 Experience 是历史层的概念名称，不要求依赖同名的现有 MOD。一个共享事件可以被不同 Sim 的经历视角和记忆引用；普通 Object 使用关联事件时间线。
 
 ## 4. 牛排约会示例
 
@@ -76,7 +78,7 @@ Experience 扩展的是 LLM 的解释输入。图中的 Game Context 是概念�
 - **保留身份与来源：**事件 ID、实体身份、存档 / 读档分支、游戏时间、来源类型与角色知识范围需要可追溯，避免重复记录或跨分支误用经历。
 - **保持初版边界：**当前图只描述解释和历史记录；涉及修改游戏行为、关系或状态的后续功能需要单独设计执行与实际结果确认链路。
 
-相关依据：[运行时 Context 分类](runtime-context-taxonomy.md)、[状态与经历分层](state-history-and-generated-events.md)、[Context 覆盖研究](context-coverage-study.md)。
+相关依据：[运行时 Context 分类](../runtime-context-taxonomy.md)、[状态与经历分层](state-history-and-generated-events.md)、[Context 覆盖研究](../archive/2026-09-research/context-coverage-study.md)。
 
 ## 6. 可编辑的 Mermaid 版本
 

@@ -1,10 +1,12 @@
 # 阶段研究：规则语义化与面向设计师的 Context 接口
 
+> 归档说明（2026-09-14）：本文保留整理前的阶段研究和结论，文中的“当前”“下一步”均属于原阶段，不作为新实现要求。仅修正位置相关链接及失效锚点。当前开发以[三模块总体设计](../../modular-context-provider.md)和[开发与参考基线](../../reference-baseline.md)为准。原路径：`docs/semantic-catalog-and-context-api.md`。
+
 版本：v0.1。日期：2026-09-11。
 
-本文保留语义字典、运行时 Context 与设计师工具的阶段研究。**当前总体方向已确认为[同一项目内的三个功能模块](modular-context-provider.md)，最终全部启用，可以整合为一个 MOD。** 内部接口统一定义，模块解耦用于调整与调试，并可增加阶段验证工具或小插件；下面的接口、工具和执行顺序仍是供下一阶段讨论的草案，不是已冻结的实现要求。
+本文保留语义字典、运行时 Context 与设计师工具的阶段研究。**当前总体方向已确认为[同一项目内的三个功能模块](../../modular-context-provider.md)，最终全部启用，可以整合为一个 MOD。** 内部接口统一定义，模块解耦用于调整与调试，并可增加阶段验证工具或小插件；下面的接口、工具和执行顺序仍是供下一阶段讨论的草案，不是已冻结的实现要求。
 
-下述字段名、配置、接口和流程属于设计建议；新的字典系统、游戏采集 MOD、设计师工具和 Overlay 返回接口尚未实现。本仓库已有工具仍是旧格式历史数据的离线预览原型。
+下述字段名、配置、接口和流程属于设计建议；新的字典系统、游戏采集 MOD、设计师工具和 Overlay 返回接口尚未实现。旧离线工具及配套测试已于 2026-09-14 删除，Experience 部分准备重新开发。
 
 ## 1. 两条主线及其关系
 
@@ -241,10 +243,10 @@ Overlay 适配器检查请求是否仍有效、目标是否存在、场景是否
 
 ## 8. 与既有材料的关系
 
-- [技术获取分类](context-acquisition-interfaces.md)用于挑选字段的读取入口；[运行时内容分类](runtime-context-taxonomy.md)用于组织设计师字段目录。
-- [共享事件与记忆架构](event-memory-architecture.md)和[历史查询 MVP](context-query-and-output-mvp.md)保留为事件记录与历史兼容的参考，按[三模块总体方案](modular-context-provider.md)再细化。
-- [原流程图](overlay-experience-flow.md)包含未来的 Experience/记忆层；当前快照到 Overlay 也可以作为不依赖历史模块的独立通路。
-- 已有离线历史预览工具可提供少量文本规则思路，但不等于本文件的语义注册表或运行时服务已经完成。
+- [技术获取分类](../../context-acquisition-interfaces.md)用于挑选字段的读取入口；[运行时内容分类](../../runtime-context-taxonomy.md)用于组织设计师字段目录。
+- [共享事件与记忆架构](event-memory-architecture.md)和[历史查询 MVP](context-query-and-output-mvp.md)保留为事件记录与历史兼容的参考，按[三模块总体方案](../../modular-context-provider.md)再细化。
+- [原流程图](../../vision/overlay-experience-flow.md)包含未来的 Experience/记忆层；当前快照到 Overlay 也可以作为不依赖历史模块的独立通路。
+- 旧离线历史预览的输出样例保留为文本规则研究参考；工具与测试已删除，本文件的语义注册表和运行时服务尚未实现。
 
 ## 迭代记录
 

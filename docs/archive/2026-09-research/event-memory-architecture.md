@@ -1,8 +1,10 @@
 # 事件事实、实体视角与记忆：新采集系统的架构建议
 
+> 归档说明（2026-09-14）：本文保留整理前的阶段研究和结论，文中的“当前”“下一步”均属于原阶段，不作为新实现要求。仅修正位置相关链接及失效锚点。当前开发以[三模块总体设计](../../modular-context-provider.md)和[开发与参考基线](../../reference-baseline.md)为准。原路径：`docs/event-memory-architecture.md`。
+
 版本：v0.1。日期：2026-09-11。状态：设计建议，尚未实现新的游戏采集器或冻结数据契约。
 
-**当前定位：事件记录模块与后续记忆层的参考设计。** 事件记录已纳入获确认的[三模块设计共识](modular-context-provider.md)，内部契约由同一项目统一定义，最终三个模块全部启用；长期记忆和 Autonomy 仍属后续扩展。本文的细节需先与模块职责和独立调试要求对齐，再决定实施顺序。
+**当前定位：事件记录模块与后续记忆层的参考设计。** 事件记录已纳入获确认的[三模块设计共识](../../modular-context-provider.md)，内部契约由同一项目统一定义，最终三个模块全部启用；长期记忆和 Autonomy 仍属后续扩展。本文的细节需先与模块职责和独立调试要求对齐，再决定实施顺序。
 
 ## 1. 建议：在本项目重建核心，分批复用已有采集经验
 
@@ -199,7 +201,7 @@ build_context(request)                → ContextPacket
 
 旧 `event_id` 在导入后保留为带 source scope 的来源记录 ID；新的共享 `event_id` 由规范化层管理，不能默认二者含义一致。无法关联的旧记录以 incomplete / unresolved 形式保存。
 
-本仓库已有 `preview_context.py` 仍是读取旧格式的离线原型，不是新规范事件账本。其已有样例和检查可以保留，用来验证导入前后事实和角色关系是否一致。
+本仓库旧离线历史预览原型及配套测试已于 2026-09-14 删除，Experience 部分准备重新开发。历史输出样例保留为研究参考；新实现的事实与角色关系检查需重新建立。
 
 新旧采集器并行对照时，应为每个 source 指定身份和比较范围。默认每类事实只有一个权威生产路径；如需同时读取多源，则通过明确关联规则处理，不能把两套采集输出直接混成两次发生。
 
@@ -221,7 +223,7 @@ build_context(request)                → ContextPacket
 - 重启重放或重复投递不重复计数；写入失败、半条尾记录和消费者异常都有可验证行为。
 - 读旧档后产生独立分支；角色第二天才得知的事实不会泄露到第一天的角色 Context。
 
-本轮只形成架构建议并调整实施文档；上述新核心和验收用例尚未实现/运行。既有离线原型的 13 项检查仅覆盖其旧格式查询能力。
+本轮只形成架构建议并调整实施文档；上述新核心和验收用例尚未实现/运行。旧离线原型曾通过的 13 项检查仅覆盖旧格式查询能力，其测试文件现已删除。
 
 ## 9. 本轮依据
 
@@ -229,14 +231,14 @@ build_context(request)                → ContextPacket
 
 | 结论 | 源码定位 |
 | --- | --- |
-| 事件要求 Sim 主体 | [model.py](../../Sims4-Experience-Mod/src/experience_recorder/model.py)：`make_event`；[writer.py](../../Sims4-Experience-Mod/src/experience_recorder/writer.py)：`emit` |
-| did/received 来源与关联、终态/取消采集、最近决策关联 | [interaction_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/interaction_hook.py)：`_on_archive`、`_parent_for`、`_after_cancel`、`_duration` |
-| Loot 配置、非 Sim 主体过滤、现实时间窗去重 | [loot_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/loot_hook.py)：`_op_summary`、`_on_op_applied` |
-| 卡片 owner/net_effect 与里程碑归因 | [folding.py](../../Sims4-Experience-Mod/src/experience_recorder/folding.py)：`new_card`、`fold_event` |
-| 情境单一主锚点和时间单位 | [situation_hook.py](../../Sims4-Experience-Mod/src/experience_recorder/hooks/situation_hook.py)：`_on_add`、`_on_remove` |
-| 采集前过滤与类型推定 inert | [filters.py](../../Sims4-Experience-Mod/src/experience_recorder/filters.py)：黑名单、`loot_list_inert` |
-| 缓冲/落盘顺序、启动槽、共享归因表 | [writer.py](../../Sims4-Experience-Mod/src/experience_recorder/writer.py)：`begin_launch`、`emit`、`flush` 及模块级状态 |
-| 原函数行为隔离及 after 的异常信息限制 | [injector.py](../../Sims4-Experience-Mod/src/experience_recorder/injector.py)：`observe`、`wrap`、`wrap_generator` |
+| 事件要求 Sim 主体 | [model.py](../../../../Sims4-Experience-Mod/src/experience_recorder/model.py)：`make_event`；[writer.py](../../../../Sims4-Experience-Mod/src/experience_recorder/writer.py)：`emit` |
+| did/received 来源与关联、终态/取消采集、最近决策关联 | [interaction_hook.py](../../../../Sims4-Experience-Mod/src/experience_recorder/hooks/interaction_hook.py)：`_on_archive`、`_parent_for`、`_after_cancel`、`_duration` |
+| Loot 配置、非 Sim 主体过滤、现实时间窗去重 | [loot_hook.py](../../../../Sims4-Experience-Mod/src/experience_recorder/hooks/loot_hook.py)：`_op_summary`、`_on_op_applied` |
+| 卡片 owner/net_effect 与里程碑归因 | [folding.py](../../../../Sims4-Experience-Mod/src/experience_recorder/folding.py)：`new_card`、`fold_event` |
+| 情境单一主锚点和时间单位 | [situation_hook.py](../../../../Sims4-Experience-Mod/src/experience_recorder/hooks/situation_hook.py)：`_on_add`、`_on_remove` |
+| 采集前过滤与类型推定 inert | [filters.py](../../../../Sims4-Experience-Mod/src/experience_recorder/filters.py)：黑名单、`loot_list_inert` |
+| 缓冲/落盘顺序、启动槽、共享归因表 | [writer.py](../../../../Sims4-Experience-Mod/src/experience_recorder/writer.py)：`begin_launch`、`emit`、`flush` 及模块级状态 |
+| 原函数行为隔离及 after 的异常信息限制 | [injector.py](../../../../Sims4-Experience-Mod/src/experience_recorder/injector.py)：`observe`、`wrap`、`wrap_generator` |
 
 ## 迭代记录
 

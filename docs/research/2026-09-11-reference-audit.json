@@ -1,0 +1,427 @@
+{
+  "schema": "sims4-context.reference-audit/1",
+  "method": "Read-only static data audit; no game execution or reference-code imports.",
+  "atlas": {
+    "export_site_version": 25,
+    "export_source_commit": "f5117cee19d55f2efb537978e9762a0a8e48bdd4",
+    "source_revisions": {
+      "python": "1003b2507e5e68dd59eb10135140187bb5ed7750",
+      "ledger": "4dec7ebaaf3ecba38f462827dbbbf4fee212d88c"
+    },
+    "input_digest": {
+      "files": 6,
+      "sha256": "90f2517d8c755f8e5a71ace01b35bf2d361bbbb6e8549672cc555e1adfb8709a"
+    },
+    "groups": {
+      "registered": {
+        "rows": 12687,
+        "unique_ids": 12687,
+        "duplicate_id_extra_rows": 0,
+        "declared_rows": 12687
+      },
+      "attributes": {
+        "rows": 19057,
+        "unique_ids": 19057,
+        "duplicate_id_extra_rows": 0,
+        "declared_rows": 19057
+      },
+      "locals": {
+        "rows": 239390,
+        "unique_ids": 239390,
+        "duplicate_id_extra_rows": 0,
+        "declared_rows": 239390
+      }
+    },
+    "total_rows": 271134,
+    "unique_ids_across_groups": 271134,
+    "duplicate_id_extra_rows_across_groups": 0,
+    "ledger_relation_statuses": {
+      "accepted": 5878,
+      "pending": 38941,
+      "unresolved": 359
+    },
+    "parse_failures_declared": [
+      {
+        "file": "simulation/TimelineHandleArchiver.py",
+        "line": 42
+      },
+      {
+        "file": "simulation/family_tree/family_tree_commands.py",
+        "line": 83
+      },
+      {
+        "file": "simulation/luck/luck_commands.py",
+        "line": 36
+      },
+      {
+        "file": "simulation/luck/luck_option.py",
+        "line": 11
+      },
+      {
+        "file": "simulation/postures/posture_scoring.py",
+        "line": 552
+      },
+      {
+        "file": "simulation/relationships/attraction_commands.py",
+        "line": 53
+      },
+      {
+        "file": "simulation/relationships/data/relationship_data.py",
+        "line": 264
+      },
+      {
+        "file": "simulation/routing/waypoints/waypoint_generator_pool.py",
+        "line": 129
+      }
+    ],
+    "limits": [
+      "Identity uniqueness is not runtime alias resolution.",
+      "Relation statuses are source labels, not new runtime verification.",
+      "Parse failures are declared by the source manifest; AST was not rebuilt."
+    ]
+  },
+  "experience_datasets": {
+    "win0910": {
+      "input_digest": {
+        "files": 26,
+        "sha256": "961354c3379eabe344895ff9d31d5f4cd3def479789d6ed0802fd25b6cd35bd3"
+      },
+      "event_files": 25,
+      "events": 3934,
+      "unique_event_ids": 3934,
+      "duplicate_id_extra_rows": 0,
+      "kinds": {
+        "changed": 2628,
+        "decided": 482,
+        "did": 667,
+        "joined": 46,
+        "perceived": 52,
+        "received": 59
+      },
+      "parent_link_rows": 1028,
+      "dangling_parent_rows": 2,
+      "dangling_parent_verbs": {
+        "loot:RefreshAttractionLootOp": 2
+      },
+      "container_link_rows": 1610,
+      "dangling_container_rows": 0,
+      "received_same_parent_duplicate_candidate_groups": 0,
+      "received_same_parent_duplicate_candidate_extra_rows": 0,
+      "did_rows": 667,
+      "did_co_present_field_present": 0,
+      "did_co_present_nonempty": 0,
+      "events_with_context_ref": 0,
+      "health": {
+        "present": true,
+        "declared_mod_version": "0.7.24",
+        "reported_dropped_total": 1110,
+        "reported_errors_total": 664,
+        "reported_dedup_hits_total": 44,
+        "hooks": [
+          {
+            "hook": "interaction",
+            "injected": true,
+            "emitted": 726,
+            "dropped": 343,
+            "errors": 664,
+            "dedup_hits": 0,
+            "last_error": "zone object enumeration unavailable"
+          },
+          {
+            "hook": "decision",
+            "injected": true,
+            "emitted": 482,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "loot",
+            "injected": true,
+            "emitted": 2332,
+            "dropped": 767,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "buff",
+            "injected": true,
+            "emitted": 296,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "situation",
+            "injected": true,
+            "emitted": 43,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "perception",
+            "injected": true,
+            "emitted": 52,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 44,
+            "last_error": null
+          },
+          {
+            "hook": "save_flush",
+            "injected": true,
+            "emitted": 0,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "zone",
+            "injected": false,
+            "emitted": 3,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          }
+        ]
+      }
+    },
+    "win0903": {
+      "input_digest": {
+        "files": 34,
+        "sha256": "2a17ee8a555cf41d653a91db50292b24d1d28138c5addce6e22a760ef63fe118"
+      },
+      "event_files": 33,
+      "events": 1962,
+      "unique_event_ids": 1962,
+      "duplicate_id_extra_rows": 0,
+      "kinds": {
+        "changed": 576,
+        "decided": 450,
+        "did": 720,
+        "joined": 107,
+        "perceived": 46,
+        "received": 63
+      },
+      "parent_link_rows": 833,
+      "dangling_parent_rows": 0,
+      "dangling_parent_verbs": {},
+      "container_link_rows": 170,
+      "dangling_container_rows": 0,
+      "received_same_parent_duplicate_candidate_groups": 0,
+      "received_same_parent_duplicate_candidate_extra_rows": 0,
+      "did_rows": 720,
+      "did_co_present_field_present": 0,
+      "did_co_present_nonempty": 0,
+      "events_with_context_ref": 0,
+      "health": {
+        "present": true,
+        "declared_mod_version": null,
+        "reported_dropped_total": 1842,
+        "reported_errors_total": 720,
+        "reported_dedup_hits_total": 22,
+        "hooks": [
+          {
+            "hook": "interaction",
+            "injected": true,
+            "emitted": 783,
+            "dropped": 604,
+            "errors": 720,
+            "dedup_hits": 0,
+            "last_error": "zone object enumeration unavailable"
+          },
+          {
+            "hook": "decision",
+            "injected": true,
+            "emitted": 450,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "loot",
+            "injected": true,
+            "emitted": 461,
+            "dropped": 1238,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "buff",
+            "injected": true,
+            "emitted": 115,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "situation",
+            "injected": true,
+            "emitted": 95,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "perception",
+            "injected": true,
+            "emitted": 46,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 22,
+            "last_error": null
+          },
+          {
+            "hook": "save_flush",
+            "injected": true,
+            "emitted": 0,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "zone",
+            "injected": false,
+            "emitted": 12,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          }
+        ]
+      }
+    },
+    "aotrace0903": {
+      "input_digest": {
+        "files": 32,
+        "sha256": "ef6b6ec0b17f68e5775e072e64b54f8eb8f6675e6d5795aff65ed63dd1e7b1bd"
+      },
+      "event_files": 31,
+      "events": 3055,
+      "unique_event_ids": 3055,
+      "duplicate_id_extra_rows": 0,
+      "kinds": {
+        "changed": 760,
+        "decided": 955,
+        "did": 1120,
+        "joined": 89,
+        "perceived": 29,
+        "received": 102
+      },
+      "parent_link_rows": 1644,
+      "dangling_parent_rows": 3,
+      "dangling_parent_verbs": {
+        "loot:AddTraitLootOp": 1,
+        "loot:BuffOp": 2
+      },
+      "container_link_rows": 1609,
+      "dangling_container_rows": 0,
+      "received_same_parent_duplicate_candidate_groups": 0,
+      "received_same_parent_duplicate_candidate_extra_rows": 0,
+      "did_rows": 1120,
+      "did_co_present_field_present": 0,
+      "did_co_present_nonempty": 0,
+      "events_with_context_ref": 0,
+      "health": {
+        "present": true,
+        "declared_mod_version": null,
+        "reported_dropped_total": 1822,
+        "reported_errors_total": 0,
+        "reported_dedup_hits_total": 65,
+        "hooks": [
+          {
+            "hook": "interaction",
+            "injected": true,
+            "emitted": 1222,
+            "dropped": 348,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "decision",
+            "injected": true,
+            "emitted": 955,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "loot",
+            "injected": true,
+            "emitted": 569,
+            "dropped": 1474,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "buff",
+            "injected": true,
+            "emitted": 191,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "situation",
+            "injected": true,
+            "emitted": 82,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "perception",
+            "injected": true,
+            "emitted": 29,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 65,
+            "last_error": null
+          },
+          {
+            "hook": "save_flush",
+            "injected": true,
+            "emitted": 0,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          },
+          {
+            "hook": "zone",
+            "injected": false,
+            "emitted": 7,
+            "dropped": 0,
+            "errors": 0,
+            "dedup_hits": 0,
+            "last_error": null
+          }
+        ]
+      }
+    }
+  },
+  "limits": [
+    "Missing references are missing in the supplied dataset; the cause is undetermined.",
+    "Distinct event IDs do not establish absence of semantically duplicated events.",
+    "Health counters are reported values and may describe a different time boundary.",
+    "Dropped counters can include policy filters and buffer losses; do not infer a loss rate.",
+    "Historical datasets do not validate the current collector revision."
+  ]
+}

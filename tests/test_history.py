@@ -77,8 +77,8 @@ class IndexedHistoryChecks(unittest.TestCase):
     def test_type_field_tuning_and_internal_filters(self):
         main = self.add(1, 10)
         internal = self.add(2, 11, tier="internal")
-        change = self.recorder.change([facts()["actor"]], "needs.hunger", 1, 2, 20, "sample", {"from": 15, "to": 20})
-        q = self.recorder.query_history(ACTOR, event_types=["state_change"], fields=["needs.hunger"], from_ticks=20, to_ticks=21)
+        change = self.recorder.change([facts()["actor"]], "buffs", None, {"id": "42"}, 20, "TestEvent.BuffBeganEvent")
+        q = self.recorder.query_history(ACTOR, event_types=["state_change"], fields=["buffs"], from_ticks=20, to_ticks=21)
         self.assertEqual([e["event_id"] for e in q["events"]], [change["event_id"]])
         interactions = self.recorder.query_history(ACTOR, event_types=["interaction"], tuning_ids=["321"])
         self.assertEqual([e["event_id"] for e in interactions["events"]], [main["event_id"]])

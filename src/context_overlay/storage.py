@@ -201,6 +201,8 @@ def replay(path, include_observations=True):
                 next_sequence += 1
                 if record["kind"] == "event_revision":
                     event = record["event"]
+                    for removed in record.get("evicted_event_ids", []):
+                        events.pop(removed, None)
                     previous = events.get(event["event_id"])
                     if previous is not None and event["revision"] <= previous["revision"]:
                         raise ValueError("Non-increasing event revision")

@@ -31,6 +31,8 @@ RESOURCE_LABELS = dict(OBJECT_STATES, **{
     "13433": ("generic_consume_food", "吃东西"),
     "13377": ("Food_Eat_Active", "进食内部步骤（主动）"),
     "13378": ("Food_Eat_Passive", "进食内部步骤（被动）"),
+    "13744": ("MotionGameRig_Family_Active", "动作捕捉游戏内部步骤（主动）"),
+    "13745": ("MotionGameRig_Family_Passive", "动作捕捉游戏内部步骤（被动）"),
 })
 
 

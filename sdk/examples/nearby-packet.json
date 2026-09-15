@@ -1,0 +1,245 @@
+{
+  "schema_version": "1",
+  "module_version": "0.6.0",
+  "kind": "nearby_entities",
+  "session_id": "nearby-run",
+  "recorded_at": "2026-09-15T09:27:45.793694+00:00",
+  "request_id": "c7f57843f8f143b999df55bbbf4abd91",
+  "target": {
+    "kind": "sim",
+    "id": "100",
+    "name": "Entity 100",
+    "key": "sim:100"
+  },
+  "scope": {
+    "kind": "active_lot_instantiated",
+    "zone_id": "42",
+    "lot_id": "84",
+    "off_lot": "excluded"
+  },
+  "provenance": {
+    "source": "fake_game",
+    "synthetic": true,
+    "warning": "SYNTHETIC EXAMPLE - not game evidence"
+  },
+  "query": {
+    "kinds": [
+      "sim",
+      "object"
+    ],
+    "radius": 8.0,
+    "metric": "horizontal",
+    "same_level": true,
+    "same_room": false,
+    "include_self": false,
+    "limit": 32,
+    "unit": "game_world_units",
+    "distance_basis": "entity_position",
+    "order": "distance_then_kind_then_numeric_id"
+  },
+  "read_started": {
+    "ticks": "1000",
+    "display": "Synthetic game time (not a live reading)"
+  },
+  "origin": {
+    "room": {
+      "status": "available",
+      "value": {
+        "zone_id": "42",
+        "id": "10"
+      },
+      "source": "build_buy.get_room_id(zone_id, position, level)"
+    },
+    "position": {
+      "status": "available",
+      "value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "source": "GameObject.position (world transform)"
+    },
+    "level": {
+      "status": "available",
+      "value": 0,
+      "source": "GameObject/Sim.level"
+    },
+    "routing_surface": {
+      "status": "available",
+      "value": {
+        "primary_id": "42",
+        "secondary_id": 0,
+        "type": "WORLD"
+      },
+      "source": "GameObject/Sim.routing_surface"
+    }
+  },
+  "results": [
+    {
+      "entity": {
+        "kind": "sim",
+        "id": "2",
+        "name": "Entity 2",
+        "key": "sim:2"
+      },
+      "identity_status": {
+        "status": "available",
+        "value": true,
+        "source": "EAAdapter.reference"
+      },
+      "distance": {
+        "horizontal": 2.0,
+        "vertical": 0.0,
+        "euclidean": 2.0
+      },
+      "spatial": {
+        "room": {
+          "status": "available",
+          "value": {
+            "zone_id": "42",
+            "id": "10"
+          },
+          "source": "build_buy.get_room_id(zone_id, position, level)"
+        },
+        "position": {
+          "status": "available",
+          "value": {
+            "x": 2.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "source": "GameObject.position (world transform)"
+        },
+        "level": {
+          "status": "available",
+          "value": 0,
+          "source": "GameObject/Sim.level"
+        },
+        "routing_surface": {
+          "status": "available",
+          "value": {
+            "primary_id": "42",
+            "secondary_id": 0,
+            "type": "WORLD"
+          },
+          "source": "GameObject/Sim.routing_surface"
+        }
+      },
+      "relative": {
+        "same_lot": {
+          "status": "available",
+          "value": true,
+          "source": "active_lot_scope"
+        },
+        "same_level": {
+          "status": "available",
+          "value": true,
+          "source": "spatial_comparison.level"
+        },
+        "same_room": {
+          "status": "available",
+          "value": true,
+          "source": "zone_id + level + game_room_id"
+        },
+        "same_routing_surface": {
+          "status": "available",
+          "value": true,
+          "source": "spatial_comparison.routing_surface"
+        }
+      }
+    },
+    {
+      "entity": {
+        "kind": "object",
+        "id": "3",
+        "name": "Entity 3",
+        "key": "object:3",
+        "definition_id": "77"
+      },
+      "identity_status": {
+        "status": "available",
+        "value": true,
+        "source": "EAAdapter.reference"
+      },
+      "distance": {
+        "horizontal": 5.0,
+        "vertical": 0.0,
+        "euclidean": 5.0
+      },
+      "spatial": {
+        "room": {
+          "status": "available",
+          "value": {
+            "zone_id": "42",
+            "id": "10"
+          },
+          "source": "build_buy.get_room_id(zone_id, position, level)"
+        },
+        "position": {
+          "status": "available",
+          "value": {
+            "x": 3.0,
+            "y": 0.0,
+            "z": 4.0
+          },
+          "source": "GameObject.position (world transform)"
+        },
+        "level": {
+          "status": "available",
+          "value": 0,
+          "source": "GameObject/Sim.level"
+        },
+        "routing_surface": {
+          "status": "available",
+          "value": {
+            "primary_id": "42",
+            "secondary_id": 0,
+            "type": "WORLD"
+          },
+          "source": "GameObject/Sim.routing_surface"
+        }
+      },
+      "relative": {
+        "same_lot": {
+          "status": "available",
+          "value": true,
+          "source": "active_lot_scope"
+        },
+        "same_level": {
+          "status": "available",
+          "value": true,
+          "source": "spatial_comparison.level"
+        },
+        "same_room": {
+          "status": "available",
+          "value": true,
+          "source": "zone_id + level + game_room_id"
+        },
+        "same_routing_surface": {
+          "status": "available",
+          "value": true,
+          "source": "spatial_comparison.routing_surface"
+        }
+      }
+    }
+  ],
+  "count": 2,
+  "matched_count": 2,
+  "matched_count_exact": true,
+  "truncated": false,
+  "coverage": {
+    "complete": true,
+    "enumeration_complete": true,
+    "scanned_count": 3,
+    "candidate_count": 2,
+    "unresolved_count": 0,
+    "reasons": {},
+    "scan_limit": 10000
+  },
+  "read_finished": {
+    "ticks": "1000",
+    "display": "Synthetic game time (not a live reading)"
+  },
+  "status": "complete",
+  "api_version": "1.1.0"
+}

@@ -1,5 +1,7 @@
 """Canonical event revisions and bounded recent history."""
 
+from collections import OrderedDict
+
 from context_overlay.history import DEFAULT_EVENT_CAPACITY, DEFAULT_MEMORY_BYTES, HistoryError, HistoryIndex
 from context_overlay.model import copy_data, envelope, new_id, outcome, utc_now
 from context_overlay.storage import StorageError
@@ -18,9 +20,11 @@ class Recorder:
         self.events = self.index.events
         self.evicted = 0
         self.started_at = utc_now()
-        self._samples = {}
         self._scopes = {}
         self._relationship_bits = {}
+        self._relationship_event_keys = {}
+        self._retired_interactions = OrderedDict()
+        self.references = {}
 
     def fail(self, message):
         self.paused = True
@@ -54,6 +58,14 @@ class Recorder:
     def _save(self, event):
         if not self.enabled or self.paused:
             return None
+        actor = (event.get("cause") or {}).get("actor")
+        if actor:
+            if actor["key"] not in event["entities"]:
+                event["entities"].append(actor["key"])
+                event.setdefault("participants", []).append(copy_data(actor))
+            if not any(role["entity_key"] == actor["key"] for role in event.get("roles", [])):
+                event.setdefault("roles", []).append({"entity_key": actor["key"], "role": "initiator",
+                                                      "basis": event["cause"].get("basis", "recorded_cause_actor")})
         try:
             event, charge = self.index.prepare(event)
         except HistoryError as exc:
@@ -62,11 +74,47 @@ class Recorder:
             return None
         record = envelope("event_revision", self.session_id)
         record["event"] = event
+        eviction = self.index.eviction_for(event["event_id"])
+        if eviction:
+            record["evicted_event_ids"] = [eviction]
         sequence = self._write(record)
         if sequence is None:
             return None
-        self.index.publish(event, sequence, charge)
+        discarded = self.index.publish(event, sequence, charge)
+        if discarded:
+            self.evicted = self.index.evicted
+            if discarded["event_type"] == "interaction":
+                self._retired_interactions[discarded["event_id"]] = None
+                if len(self._retired_interactions) > self.capacity:
+                    self._retired_interactions.popitem(last=False)
+            identity = self._relationship_event_keys.pop(discarded["event_id"], None)
+            if identity is not None:
+                self._relationship_bits.pop(identity, None)
+            for key in discarded["entities"]:
+                if key not in self.index.entities and not self._scopes.get(key, {}).get("currently_observed"):
+                    self._scopes.pop(key, None)
+                    self.references.pop(key, None)
+        refs = list(event.get("participants", []))
+        facts = event.get("facts", {})
+        refs.extend(item for item in (facts.get("actor"), facts.get("target")) if item)
+        refs.extend(facts.get("participants", []))
+        for reference in refs:
+            self.references[reference["key"]] = copy_data(reference)
         return event
+
+    def fact(self, category, participants, payload, game_time, source, roles=None,
+             cause=None, tier="main", event_id=None, evidence="notification"):
+        event_id = event_id or self.session_id + ":fact:" + new_id()
+        previous = self.events.get(event_id)
+        event = {"event_id": event_id, "revision": previous["revision"] + 1 if previous else 1,
+                 "event_type": "game_event", "category": category, "field": category,
+                 "tier": tier, "entities": [ref["key"] for ref in participants],
+                 "participants": copy_data(participants), "roles": copy_data(roles or []),
+                 "payload": copy_data(payload), "last_observed_time": game_time,
+                 "source": source, "evidence_type": evidence, "cause": copy_data(cause)}
+        if previous:
+            event["first_observed_time"] = previous["first_observed_time"]
+        return self._save(event)
 
     def interaction(self, phase, facts, game_time, source):
         if not self.enabled or self.paused:
@@ -74,6 +122,8 @@ class Recorder:
         actor = facts["actor"]
         interaction_id = str(facts["interaction_id"])
         event_id = "{}:interaction:{}:{}".format(self.session_id, actor["id"], interaction_id)
+        if event_id in self._retired_interactions:
+            return None
         previous = self.events.get(event_id)
         if previous and any(item["phase"] == phase and item["source"] == source for item in previous["observations"]):
             return previous
@@ -92,6 +142,11 @@ class Recorder:
         target = facts.get("target")
         if target and target["key"] not in event["entities"]:
             event["entities"].append(target["key"])
+        for participant in facts.get("participants", []):
+            if participant["key"] not in event["entities"]:
+                event["entities"].append(participant["key"])
+        event["participants"] = copy_data(facts.get("participants", [actor] + ([target] if target else [])))
+        event["roles"] = copy_data(facts.get("roles", []))
         event["tier"] = facts.get("tier", "internal")
         event["revision"] += 1
         event["last_observed_time"] = game_time
@@ -112,22 +167,27 @@ class Recorder:
                                       "game_time": game_time, "recorded_at": utc_now()})
         return self._save(event)
 
-    def change(self, entities, field_name, before, after, game_time, source, interval=None, metadata=None):
+    def change(self, entities, field_name, before, after, game_time, source, metadata=None,
+               cause=None, tier="main", roles=None):
         if before == after:
             return None
         event = {"event_id": self.session_id + ":change:" + new_id(), "revision": 1,
-                 "event_type": "state_change", "tier": "main",
+                 "event_type": "state_change", "tier": tier,
                  "entities": [item["key"] for item in entities],
                  "participants": copy_data(entities), "field": field_name,
                  "before": copy_data(before), "after": copy_data(after),
                  "last_observed_time": game_time, "source": source,
-                 "interval": copy_data(interval),
-                 "evidence_type": "sample_difference" if interval else "notification"}
+                 "evidence_type": "notification"}
+        event["roles"] = copy_data(roles if roles is not None else [
+            {"entity_key": ref["key"], "role": "subject" if i == 0 else "target", "basis": "state_change_owner"}
+            for i, ref in enumerate(entities)])
+        if cause:
+            event["cause"] = copy_data(cause)
         if metadata:
             event["metadata"] = copy_data(metadata)
         return self._save(event)
 
-    def relationship_bit(self, actor, other, bit, added, game_time, source, bidirectional):
+    def relationship_bit(self, actor, other, bit, added, game_time, source, bidirectional, cause=None):
         keys = (actor["key"], other["key"])
         pair = tuple(sorted(keys)) if bidirectional else keys
         identity = pair + (bit["id"], bidirectional)
@@ -140,40 +200,27 @@ class Recorder:
             self.fail("Relationship identity capacity reached; recording paused")
             return None
         event = self.change([actor, other], "relationship.bits", None if added else bit, bit if added else None,
-                            game_time, source, metadata={"bidirectional": bidirectional, "reporting_actor": actor})
+                            game_time, source, metadata={"bidirectional": bidirectional, "reporting_actor": actor}, cause=cause)
         if event is not None:
+            if previous:
+                self._relationship_event_keys.pop(previous[1], None)
             self._relationship_bits[identity] = (added, event["event_id"])
+            self._relationship_event_keys[event["event_id"]] = identity
         return event
-
-    def sample(self, target, values, game_time, related=None):
-        key = target["key"]
-        current = copy_data(values)
-        previous = self._samples.get(key)
-        if self.note("sample_baseline" if previous is None else "state_sample",
-                     {"target": target, "values": current, "related": related or {}}, game_time) is None:
-            return
-        if previous is None:
-            self._samples[key] = (game_time, current)
-            return
-        previous_time, previous_values = previous
-        for field_name, value in current.items():
-            if field_name in previous_values:
-                participants = [target] + (related or {}).get(field_name, [])
-                label = "relationships." + field_name.rsplit(".", 1)[-1] if field_name.startswith("relationship.") else field_name
-                self.change(participants, label, previous_values[field_name], value,
-                            game_time, "continuous_sample",
-                            {"from": previous_time, "to": game_time})
-        if not self.paused:
-            self._samples[key] = (game_time, current)
 
     def _scope_change(self, target, game_time, entering):
         if not self.enabled or self.paused:
             return
         key = target["key"]
-        if key not in self._scopes and len(self._scopes) >= self.capacity:
-            self.note("recording_error", {"error": "Scope identity capacity reached; recording paused"}, game_time)
-            self.fail("Scope identity capacity reached; recording paused")
-            return
+        if key not in self._scopes and len(self._scopes) >= max(4096, self.capacity):
+            retired = next((item for item, scope in self._scopes.items()
+                            if not scope.get("currently_observed") and item not in self.index.entities), None)
+            if retired is None:
+                self.note("recording_error", {"error": "Scope identity capacity reached; recording paused"}, game_time)
+                self.fail("Scope identity capacity reached; recording paused")
+                return
+            self._scopes.pop(retired)
+            self.references.pop(retired, None)
         previous = self._scopes.get(key, {"first_entry": None, "last_entry": None,
                                           "last_exit": None, "entry_count": 0})
         current = copy_data(previous)
@@ -187,34 +234,30 @@ class Recorder:
             current["last_exit"] = game_time
         if self.note("scope_entry" if entering else "scope_exit", {"target": target}, game_time) is not None:
             self._scopes[key] = current
+            self.references[key] = copy_data(target)
 
     def enter(self, target, game_time):
         self._scope_change(target, game_time, True)
 
     def leave(self, target, game_time):
-        self._samples.pop(target["key"], None)
         if target["kind"] == "sim":
             for identity in tuple(self._relationship_bits):
                 if target["key"] in identity[:2]:
+                    self._relationship_event_keys.pop(self._relationship_bits[identity][1], None)
                     del self._relationship_bits[identity]
-            # A relationship sampled on the other participant must also lose
-            # its baseline across an unobserved interval.
-            prefix = "relationship." + target["id"] + "."
-            for sample_time, values in self._samples.values():
-                for name in tuple(values):
-                    if name.startswith(prefix):
-                        del values[name]
         self._scope_change(target, game_time, False)
 
-    def history(self, entity_key, limit=50, include_internal=False):
+    def history(self, entity_key, limit=50, include_internal=False, group_effects=False):
         if not 1 <= limit <= 500:
             raise ValueError("History limit must be between 1 and 500")
         state = self.status()
-        selected, truncated = self.index.recent(entity_key, limit, include_internal)
+        selected, truncated = self.index.recent(entity_key, limit, include_internal, group_effects)
         durable = state["persistence"]["durable_sequence"]
         records = copy_data(selected)
         for record in records:
             record["persistence"] = "written" if record["accepted_sequence"] <= durable else "accepted"
+            for effect in record.get("effects", []):
+                effect["persistence"] = "written" if effect["accepted_sequence"] <= durable else "accepted"
         return {"status": state["state"], "events": records, "coverage": state,
                 "target_observation": copy_data(self._scopes.get(entity_key, {"currently_observed": False, "status": "not_observed"})),
                 "limit": limit, "truncated": truncated or self.evicted > 0,

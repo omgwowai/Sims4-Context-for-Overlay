@@ -26,6 +26,12 @@ def main():
              "docs/validation/2026-09-15-semantic-resolution.md",
              "docs/validation/2026-09-15-semantic-resolution.json", "docs/public-api-v1.md",
              "docs/validation/2026-09-15-public-api.md", "docs/validation/2026-09-15-public-api.json",
+             "docs/event-coverage-0.6.0.md", "docs/event-expansion-plan.md", "docs/event-recorder.md",
+             "docs/validation/2026-09-15-event-expansion.md", "docs/validation/2026-09-15-event-expansion.json",
+             "docs/validation/2026-09-15-event-expansion-first-live.md", "docs/validation/2026-09-15-event-expansion-first-live.json",
+             "docs/validation/2026-09-15-event-quality-fixes.md", "docs/validation/2026-09-15-event-quality-fixes.json",
+             "docs/nearby-entities.md", "docs/validation/2026-09-15-nearby-entities.md",
+             "docs/validation/2026-09-15-nearby-entities.json",
              "examples/mod_consumer.py"]
     files.extend(path.relative_to(ROOT).as_posix() for path in sorted((ROOT / "sdk").rglob("*"))
                  if path.is_file() and path.suffix in (".py", ".json", ".md"))

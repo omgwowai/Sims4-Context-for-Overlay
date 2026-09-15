@@ -1,6 +1,6 @@
-# 运行与调试（0.5.0）
+# 运行与调试（0.6.0 试用版）
 
-日期：2026-09-15。0.5.0 增加[公共 API v1 与 SDK](public-api-v1.md)，完成离线验证，尚未安装或实机验收，见[接口验证记录](validation/2026-09-15-public-api.md)。本版包含 0.4.0 名称与动态参数改进，实机测试仍待进行，见[语义解析验证](validation/2026-09-15-semantic-resolution.md)。已安装／内部试用版仍为 0.3.2；窗口操作见[手动试验说明](inspector-manual-test.md)，实机范围见[布局验证记录](validation/2026-09-14-inspector-layout.md)。
+日期：2026-09-15。本机已安装 0.6.0 并取得首局事件样本，飞书附件仍为 0.3.2。新增 API／SDK 1.1.0 附近实体查询，尚未实机复测。游戏中可使用 `co.nearby active 8 all` 导出附近 Sim／物件，`co.nearby active room sim` 查询同房间 Sim；输出为当前运行目录中的 context-<request_id>.json。完整参数与限制见[附近接口](nearby-entities.md)。事件采集范围见[当前覆盖](event-coverage-0.6.0.md)，界面基础见[手动说明](inspector-manual-test.md)。
 
 ## 1. 构建
 
@@ -17,7 +17,7 @@
 
 ## 2. 安装与输出
 
-将脚本包放在实际用户数据目录的 `Mods/ContextOverlay/ContextOverlay.ts4script`。启动游戏并进入地块后，加载层建立独立运行 ID、注册事件并启动采样。
+将脚本包放在实际用户数据目录的 `Mods/ContextOverlay/ContextOverlay.ts4script`。启动游戏并进入地块后，加载层建立独立运行 ID、注册事件并监测实体进出观测范围。
 
 内部试用包完整解压后双击根目录 `Install.cmd`，无需 Python；支持自动发现实际文档目录、手动指定 `-Profile` 和 `-WhatIf` 预览。详见[安装说明](install.md)。开发机也保留 `scripts/install.py --profile "C:/Users/ZixuanMin/Documents/Electronic Arts/The Sims 4"`：该旧入口依赖 Python，回执保存在仓库 `.validation/`。普通安装不使用隔离实机验收的 prepare/restore 脚本。
 
@@ -65,7 +65,7 @@ co.restart
 ```text
 co.history_query sim active 50 false
 co.history_query sim active 50 false ended none none interaction all completed
-co.history_query sim active 50 false first_observed 20181020 20215250 state_change needs.hunger
+co.history_query sim active 50 false first_observed 20181020 20215250 game_event skill.level
 co.history_next 上次返回的next_cursor
 co.history_close 此查询返回的任意cursor
 ```
@@ -78,8 +78,8 @@ co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [�
 
 - 每页 1–500 条；时间范围是游戏 ticks 的 `[from, to)`，`none` 表示该端不设限。示例 ticks 来自验收样本，使用时应取目标运行的实际时间。
 - 时间字段为 `first_observed`、`started`、`ended`，默认首次观测时间倒序；时间相同按事件首次接收顺序确定顺序。缺失开始/结束时间的事件不匹配相应查询。
-- 事件类型为 `interaction`、`state_change`；变化字段可用 `buffs`、`relationship.bits`、`needs.hunger`、`relationships.friendship`、`object_states.15188` 等精确字段名。交互结果为 `completed`、`cancelled`、`failed`、`unknown`。列表参数以逗号分隔，多项条件之间取交集。
-- 采样变化按发现差异的时刻筛选，仍保留原采样区间。此次未实现区间重叠查询或跨运行查询。
+- 事件类型为 `interaction`、`state_change`、`game_event`；变化字段包括 `buffs`、`relationship.bits`、`object_states.15188`，生活事件使用 `skill.level`、`statistic.direct` 等 category。交互结果为 `completed`、`cancelled`、`failed`、`unknown`。列表参数以逗号分隔，多项条件取交集。新类别详见[覆盖说明](event-coverage-0.6.0.md)。
+- 状态变化按通知被观测到的时刻筛选；没有开始／结束时间的变化不匹配相应时间字段。跨运行查询尚未实现。
 - 返回 `cursor`、`next_cursor`、`has_more`、`total_matches`；导出的 `history` 还包含筛选条件、`as_of_sequence`、观测范围和查询创建时的持久化状态。
 - 所有页面固定为首次查询时的成员及修订版本；后续新事件或完成通知不会改变已有查询。需要最新内容时重新发起查询。
 - 游标默认 120 秒现实时间后过期，暂停游戏也计时。最多同时保留 8 个查询，总引用数最多 100,000，并受 256 MiB 的保守版本保留预算限制。过宽查询明确返回 `query_budget`；可缩小时间范围、类型或关闭旧查询。
@@ -94,8 +94,6 @@ co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [�
   "recorder_enabled": true,
   "collector_enabled": true,
   "semanticizer_enabled": true,
-  "sample_interval_sim_minutes": 5,
-  "record_need_changes": false,
   "max_entities": 4096,
   "max_interactions_per_sim": 128,
   "max_buffs_per_sim": 256,
@@ -118,13 +116,15 @@ co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [�
 
 单次运行的日志与导出共用 2 GiB 输出预算，写入前检查磁盘仍能保留 1 GiB 空间；写入队列同时受 2,048 个任务和 32 MiB 预算约束。已有日志不自动删除。磁盘不足或预算耗尽会显式失败，未写完的记录不会标为持久化成功。
 
-`record_need_changes` 默认 false，关闭连续需求的后台历史采样；设为 true 并重启可恢复。Context 仍可按请求读取当前需求。关系数值采样及 Buff／关系标记／物件状态等离散记录不受此开关影响，旧运行日志也不修改。
+0.6.0 删除了 `record_need_changes` 和 `sample_interval_sim_minutes`，不提供恢复连续数值采样的配置。升级前若 `ContextOverlay/config.json` 中有这两个字段，直接删除它们；保留其他设置。配置校验会拒绝未知字段，不会静默接受失效设置。未配置过这两项的用户无需调整。
 
-采样使用游戏时间，查询与验证请求由游戏线程上的每秒现实时间回调协调。当前预算通过离线容量测量，尚未做新版本的游戏负载测量。记录容量、记录内存、写盘或采集预算耗尽时明确报错并暂停受影响采集；仅查询快照超预算时拒绝该查询，采集继续。写入确认在后台文件刷新和 `fsync` 成功后推进。
+每秒现实时间回调只检查实体进出范围、登记进场时已有交互，并处理启用时的开发验证请求；不读取需求或关系值。当前值由 Context 读取。数值历史只来自明确 Loot 操作内真实通知的前后值；不是定时采样，也不保留活动边界数值。
 
-目前使用对象管理器的可见对象集合，并通过 `is_on_active_lot()` 筛选；隐藏实例和场外实体明确排除，不能据此推断它们没有活动。关系仅查询范围内已存在的关系；友谊和浪漫主轨道按一对参与者采样一次。
+200,000 条为逻辑事件数量上限。满时 FIFO 淘汰首次接收最早的事件，修订不刷新年龄；清理关联索引并报告淘汰数。已有分页快照保持不变，追加 JSONL 仍保留证据，重放应用淘汰标记。记录内存、写盘或采集预算耗尽仍报错并暂停；只有查询快照超预算时拒绝查询、采集继续。写入确认在后台刷新和 fsync 成功后推进。新[容量测量](validation/2026-09-15-event-expansion.md)显示重型样本会先触发默认 1536 MiB 保护，不能承诺所有事件都能存满 20 万。
 
-实体进出范围由每秒回调观察，时间表示发现边界的时刻，不宣称精确到跨边界的那一帧。历史结果显示该实体最近的进出范围时间；任一关系参与者离场会清除关系采样基线。离场后再次出现时从新基线开始，不生成跨越观测空档的关系差异。
+目前使用对象管理器的可见对象集合，并通过 `is_on_active_lot()` 筛选；隐藏实例和场外实体明确排除，不能据此推断它们没有活动。Context 的关系字段只查询范围内已存在的关系。
+
+实体进出范围由每秒回调观察，时间表示发现边界的时刻，不宣称精确到跨边界的那一帧。历史结果显示该实体最近的进出范围时间；任一关系参与者离场会清除相关关系标记的通知去重状态，再次进场的新通知不会与离场前合并。
 
 ## 5. 离线语义化与日志审计
 

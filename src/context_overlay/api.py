@@ -12,12 +12,13 @@ from context_overlay import SCHEMA_VERSION, VERSION
 from context_overlay.collector import FIELDS
 from context_overlay.history import HistoryError
 from context_overlay.model import copy_data, envelope, new_id
+from context_overlay.nearby import MAX_RESULTS, MAX_SCANNED, NearbyError, validate as validate_nearby
 from context_overlay.semanticizer import render
 
 
-API_VERSION = "1.0.0"
+API_VERSION = "1.1.0"
 __all__ = ["API_VERSION", "APIError", "get_api_info", "get_status", "get_context",
-           "query_history", "get_history_page", "close_history"]
+           "query_history", "get_history_page", "close_history", "get_nearby_entities"]
 _PRESETS = {"sim": ("identity", "time", "location", "needs", "buffs", "relationships", "interactions"),
             "object": ("identity", "time", "location", "object_states")}
 
@@ -46,6 +47,8 @@ def _endpoint(function):
             return function(*args, **kwargs)
         except APIError:
             raise
+        except NearbyError as exc:
+            raise APIError(exc.code, str(exc), exc.details) from None
         except HistoryError as exc:
             raise APIError(exc.code, str(exc)) from None
         except Exception as exc:
@@ -122,8 +125,16 @@ def _resolve(runtime, kind, identifier):
 @_endpoint
 def get_api_info():
     """Pure capability/version discovery, safe before game load or on a worker."""
+    from context_overlay.event_sources import LABELS
     return {"api_version": API_VERSION, "module_version": VERSION, "schema_version": SCHEMA_VERSION,
-            "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN"],
+            "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
+                             "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
+                             "context.nearby_entities"],
+            "nearby": {"kinds": ["sim", "object"], "metrics": ["horizontal", "euclidean"],
+                       "max_results": MAX_RESULTS, "max_scanned": MAX_SCANNED,
+                       "max_radius": 1000000, "unit": "game_world_units", "room_filter": True},
+            "event_types": ["interaction", "state_change", "game_event"], "event_categories": list(LABELS),
+            "retention_policy": "fifo_first_accepted",
             "context_fields": list(FIELDS), "default_fields": copy_data(_PRESETS),
             "max_history_page_size": 500, "max_context_history_limit": 500,
             "thread_policy": "simulation_thread", "transport": "in_process_python",
@@ -146,6 +157,8 @@ def get_status():
                                         "max_references": runtime.recorder.index.snapshot_ref_limit,
                                         "max_bytes": runtime.recorder.index.snapshot_byte_limit,
                                         "ttl_seconds": runtime.recorder.index.snapshot_ttl}})
+        result["event_coverage"] = runtime.sources.status() if hasattr(runtime, "sources") else {}
+        result["event_diagnostics"] = runtime.sources.diagnostics() if hasattr(runtime, "sources") else {}
     return copy_data(result)
 
 
@@ -176,6 +189,22 @@ def get_context(kind="sim", identifier="active", *, fields=None, include_history
     return copy_data(packet)
 
 
+@_endpoint
+def get_nearby_entities(identifier="active", *, kinds=("sim",), radius=None,
+                        metric="horizontal", same_level=True, same_room=False,
+                        include_self=False, limit=32, expected_session_id=None):
+    """Find world entities near a Sim; no history, persistence or query handle."""
+    identifier = _identifier("sim", identifier)
+    query = validate_nearby(kinds, radius, metric, same_level, same_room, include_self, limit)
+    runtime = _current(expected_session_id)
+    if not runtime.collector.enabled:
+        raise APIError("collector_disabled", "Context collection is disabled")
+    target = _resolve(runtime, "sim", identifier)
+    packet = runtime.collector.nearby(target, query)
+    packet["api_version"] = API_VERSION
+    return copy_data(packet)
+
+
 def _history_packet(runtime, page, representation):
     packet = envelope("history", runtime.session_id)
     packet.update({"api_version": API_VERSION, "request_id": new_id(), "target": page["target"],
@@ -194,15 +223,18 @@ def _history_packet(runtime, page, representation):
 def query_history(kind="sim", identifier="active", *, page_size=15, include_internal=False,
                   time_field="first_observed", from_ticks=None, to_ticks=None, event_types=None,
                   fields=None, outcomes=None, tuning_ids=None, order="desc", representation="both",
-                  expected_session_id=None):
+                  expected_session_id=None, group_effects=False):
     """Create a bounded snapshot; its cursors must be closed or allowed to expire."""
     identifier = _identifier(kind, identifier)
     _representation(representation)
     runtime = _current(expected_session_id)
-    target = _resolve(runtime, kind, identifier)
+    target = runtime.recorder.references.get("{}:{}".format(kind, identifier))
+    if target is None:
+        target = _resolve(runtime, kind, identifier)
     page = runtime.recorder.query_history(target["key"], target=target, page_size=page_size,
         include_internal=include_internal, time_field=time_field, from_ticks=from_ticks, to_ticks=to_ticks,
-        event_types=event_types, fields=fields, outcomes=outcomes, tuning_ids=tuning_ids, order=order)
+        event_types=event_types, fields=fields, outcomes=outcomes, tuning_ids=tuning_ids, order=order,
+        group_effects=group_effects)
     try:
         return _history_packet(runtime, page, representation)
     except Exception:

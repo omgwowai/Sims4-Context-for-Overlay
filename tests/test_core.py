@@ -86,50 +86,39 @@ class RecorderChecks(unittest.TestCase):
         self.assertEqual(len(self.recorder.history("object:111", include_internal=True)["events"]), 2)
         self.assertEqual(len(self.recorder.history("object:222")["events"]), 1)
 
-    def test_sample_interval_and_scope_reentry_baseline(self):
-        target = facts()["actor"]
-        self.recorder.sample(target, {"needs.hunger": 40}, 10)
-        self.recorder.sample(target, {"needs.hunger": 35}, 20)
-        result = self.recorder.history(target["key"])["events"][0]
-        self.assertEqual(result["interval"], {"from": 10, "to": 20})
-        self.recorder.leave(target, 21)
-        self.recorder.sample(target, {"needs.hunger": 80}, 80)
-        self.assertEqual(len(self.recorder.events), 1)
-
-    def test_capacity_failure_does_not_evict_or_corrupt_active_event(self):
+    def test_capacity_evicts_oldest_and_continues_recording(self):
         recorder = Recorder(self.journal, capacity=1)
-        recorder.interaction("started", facts(1), 1, "native")
-        self.assertIsNone(recorder.interaction("started", facts(2), 2, "native"))
-        self.assertEqual(recorder.status()["state"], "failed")
+        oldest = recorder.interaction("started", facts(1), 1, "native")
+        newest = recorder.interaction("started", facts(2), 2, "native")
+        self.assertIsNotNone(newest)
+        self.assertEqual(recorder.status()["state"], "recording")
+        self.assertEqual(recorder.status()["evicted_events"], 1)
+        self.assertNotIn(oldest["event_id"], recorder.events)
+        self.assertIsNone(recorder.interaction("exited", facts(1), 3, "native"))
         self.assertEqual(len(recorder.events), 1)
 
-    def test_relationship_sample_is_queryable_from_both_participants(self):
+    def test_event_values_are_queryable_from_both_participants(self):
         actor = facts()["actor"]
         other = entity("sim", 22, "阿青")
-        key = "relationship.22.friendship"
-        related = {key: [other]}
-        self.recorder.sample(actor, {key: 10}, 10, related)
-        self.recorder.sample(actor, {key: 20}, 20, related)
+        event = self.recorder.change([actor, other], "relationships.friendship", 10, 20, 20, "test_notification")
         a = self.recorder.history(actor["key"])["events"]
         b = self.recorder.history(other["key"])["events"]
         self.assertEqual(a[0]["event_id"], b[0]["event_id"])
         self.assertEqual(a[0]["field"], "relationships.friendship")
+        self.assertEqual((event["before"], event["after"]), (10, 20))
+        self.assertEqual(event["evidence_type"], "notification")
+        self.assertEqual(event["last_observed_time"], 20)
+        self.assertIsNone(self.recorder.change([actor, other], "relationships.friendship", 20, 20, 21, "test_notification"))
+        self.assertEqual(len(self.recorder.events), 1)
 
-    def test_relationship_delta_does_not_span_other_participants_scope_gap(self):
-        actor = entity("sim", 10, "阿明")
+    def test_scope_reentry_keeps_observation_boundaries_without_creating_events(self):
         other = entity("sim", 22, "阿青")
-        key = "relationship.22.friendship"
-        related = {key: [other]}
         self.recorder.enter(other, 9)
-        self.recorder.sample(actor, {key: 10}, 10, related)
         self.recorder.leave(other, 11)
         self.assertFalse(self.recorder.history(other["key"])["target_observation"]["currently_observed"])
         self.recorder.enter(other, 19)
-        self.recorder.sample(actor, {key: 50}, 20, related)
         self.assertEqual(len(self.recorder.events), 0)
-        self.recorder.sample(actor, {key: 55}, 30, related)
         history = self.recorder.history(other["key"])
-        self.assertEqual(history["events"][0]["interval"], {"from": 20, "to": 30})
         self.assertEqual(history["target_observation"]["last_exit"], 11)
         self.assertEqual(history["target_observation"]["entry_count"], 2)
 
@@ -257,6 +246,8 @@ class LifecycleChecks(unittest.TestCase):
             runtime.recorder = Recorder(runtime.writer, session_id="cleanup")
             runtime.session_id = "cleanup"
             runtime.adapter = SimpleNamespace(clock=lambda: {"ticks": "7"})
+            runtime.sources = SimpleNamespace(status=lambda: {"source": {"state": "installed"}},
+                diagnostics=lambda: {"callbacks": {"source": 3}, "suppressed_statistics": {"timer": 2}})
             runtime.closed = False
             runtime.alarm = None
             closed_views = []
@@ -287,6 +278,8 @@ class LifecycleChecks(unittest.TestCase):
             self.assertIn("first subscription failed", runtime.recorder.error)
             records = replay(runtime.writer.path)
             self.assertEqual(records["observations"][-1]["category"], "session_end")
+            self.assertEqual(records["observations"][-1]["data"]["event_diagnostics"]["callbacks"]["source"], 3)
+            self.assertEqual(records["observations"][-1]["data"]["event_coverage"]["source"]["state"], "installed")
 
     def test_poll_stops_immediately_when_driver_restarts_its_run(self):
         runtime = game_runtime.Runtime.__new__(game_runtime.Runtime)

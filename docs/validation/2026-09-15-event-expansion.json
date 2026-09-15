@@ -1,0 +1,1102 @@
+{
+  "date": "2026-09-15",
+  "module_version": "0.6.0",
+  "public_api_version": "1.0.0",
+  "sdk_version": "1.0.0",
+  "scope": "source_verified_offline_trial_not_game_validated",
+  "tests": {
+    "command": "python37 -m unittest discover -s tests -q",
+    "passed": 126,
+    "failed": 0
+  },
+  "installer_preview": {
+    "windows_powershell": "5.1",
+    "what_if": true,
+    "passed": true,
+    "writes": false
+  },
+  "symbols": {
+    "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+    "game_archive": "D:\\Games\\The Sims 4\\Data\\Simulation\\Gameplay\\simulation.zip",
+    "archive_sha256": "85269a4690b264b8e6ff10c6ae0169ef39866bf751e66df8c47ee5d76a4976ad",
+    "symbols": [
+      {
+        "hook": "statistics.base_statistic.BaseStatistic._notify_change",
+        "kind": "numeric",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "old_value",
+          "unclamped_target_value",
+          "from_load",
+          "notify_watchers"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "statistics.skill.Skill.set_value",
+        "kind": "skill",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "value",
+          "from_load",
+          "interaction"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "statistics.skill.Skill._update_value",
+        "kind": "skill",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "careers.career_base.CareerBase._demote_within_track",
+        "kind": "demotion",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "levels_to_demote",
+          "reason"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "careers.career_tracker.CareerTracker.retire_career",
+        "kind": "retirement",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "career_uid"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "careers.career_tracker.CareerTracker.end_retirement",
+        "kind": "retirement",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.buff_component.BuffComponent.add_buff",
+        "kind": "buff_add",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "buff_type",
+          "buff_reason",
+          "update_mood",
+          "commodity_guid",
+          "replacing_buff",
+          "timeout_string",
+          "timeout_string_no_next_buff",
+          "transition_into_buff_id",
+          "change_rate",
+          "immediate",
+          "from_load",
+          "apply_buff_loot",
+          "additional_static_commodities_to_add",
+          "remove_on_zone_unload",
+          "buff_source"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.buff_component.BuffComponent.remove_buff",
+        "kind": "buff_remove",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "handle_id",
+          "update_mood",
+          "immediate",
+          "on_destroy"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.buff_component.BuffComponent.remove_buff_entry",
+        "kind": "buff_remove",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "buff_entry",
+          "on_destroy"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.pregnancy.pregnancy_tracker.PregnancyTracker.start_pregnancy",
+        "kind": "pregnancy",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "parent_a",
+          "parent_b",
+          "pregnancy_origin",
+          "single_sim_is_allowed"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.pregnancy.pregnancy_tracker.PregnancyTracker.clear_pregnancy",
+        "kind": "pregnancy",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.pregnancy.pregnancy_tracker.PregnancyTracker.complete_pregnancy",
+        "kind": "local_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "sim_infos"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.aging.aging_mixin.AgingMixin.advance_age",
+        "kind": "age",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.utils.death.DeathTracker._set_death_type",
+        "kind": "death",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "death_type",
+          "is_off_lot_death",
+          "remove_from_household",
+          "set_to_min_lod"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.utils.death.DeathTracker.clear_death_type",
+        "kind": "death",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.sim_info.SimInfo.assign_to_household",
+        "kind": "household",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "household",
+          "assign_is_npc"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "developmental_milestones.developmental_milestone_tracker.DevelopmentalMilestoneTracker.unlock_milestone",
+        "kind": "milestone",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "milestone",
+          "telemetry_context",
+          "send_ui_update"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sentiment_track_tracker.SentimentTrackTracker.add_statistic",
+        "kind": "sentiment",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "new_track",
+          "owner"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sentiment_track_tracker.SentimentTrackTracker.remove_statistic",
+        "kind": "sentiment",
+        "inherited_from": "statistics.base_statistic_tracker.BaseStatisticTracker",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "stat_type",
+          "on_destroy"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent._insert_item",
+        "kind": "inventory_insert",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj",
+          "force_add_to_hidden_inventory",
+          "compact"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.try_remove_object_by_id",
+        "kind": "inventory_remove",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj_id",
+          "count",
+          "on_manager_remove",
+          "sold"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.try_split_object_from_stack_by_id",
+        "kind": "inventory_split",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj_id",
+          "count"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.try_move_object_to_hidden_inventory",
+        "kind": "inventory_move",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj",
+          "count",
+          "compact"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.add_from_load",
+        "kind": "load_guard",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj",
+          "hidden"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.funds.FamilyFunds.add",
+        "kind": "money",
+        "inherited_from": "sims.funds._Funds",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "amount",
+          "reason",
+          "sim",
+          "tags",
+          "count_as_earnings"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.funds.FamilyFunds.try_remove_amount",
+        "kind": "money",
+        "inherited_from": "sims.funds._Funds",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "amount",
+          "reason",
+          "sim",
+          "require_full_amount"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "aspirations.aspirations.AspirationTracker.complete_objective",
+        "kind": "objective_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "objective_instance",
+          "aspiration"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "aspirations.aspirations.AspirationTracker.complete_milestone",
+        "kind": "objective_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "aspiration",
+          "sim_info"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.unlock_tracker.UnlockTracker.add_unlock",
+        "kind": "unlock_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "tuning_class",
+          "name",
+          "mark_as_new"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_known_trait",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "trait",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_known_trait",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "trait",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_romantic_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_romantic_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_woohoo_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_woohoo_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_relationship_expectations",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_relationship_expectations",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_relationship_status",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_career",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_career",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.set_known_net_worth",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "net_worth",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_known_stat",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "stat",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_known_rel_track",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "rel_track",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_major",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_major",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.set_unconfronted_secret",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "secret",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.make_secret_known",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "blackmailed",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.utils.loot_basic_op.BaseLootOperation._apply_to_subject_and_target",
+        "kind": "operation",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "subject",
+          "target",
+          "resolver"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "broadcasters.broadcaster_effect._BroadcasterEffect.apply_broadcaster_effect",
+        "kind": "broadcast_test_gate",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "broadcaster",
+          "affected_object"
+        ],
+        "generator": false
+      }
+    ],
+    "unresolved": 0,
+    "limitation": "Static bytecode only; EA code was not imported or executed; no game validation."
+  },
+  "fifo_stress": {
+    "module_version": "0.6.0",
+    "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+    "kind": "offline_fifo_capacity",
+    "shape": "rich",
+    "source_journal_sha256": "d9ba839948b0c3f8d23824f207c6acd4f4b11a8f419c0897ca14a35697c16495",
+    "captured_interaction_shapes": 571,
+    "requested_capacity": 200000,
+    "requested_extra": 10000,
+    "generated_types": {
+      "interaction": 63000,
+      "game_event": 147000
+    },
+    "seconds": 36.8714651,
+    "baseline_process_memory": {
+      "working_set": 35815424,
+      "peak_working_set": 35815424,
+      "private_bytes": 26234880
+    },
+    "final_process_memory": {
+      "working_set": 2777116672,
+      "peak_working_set": 2777116672,
+      "private_bytes": 2776141824
+    },
+    "checkpoints": [
+      {
+        "accepted_events": 25000,
+        "retained": 25000,
+        "evicted": 0,
+        "charged_bytes": 301509211,
+        "elapsed_seconds": 4.0575649,
+        "process": {
+          "working_set": 377434112,
+          "peak_working_set": 377434112,
+          "private_bytes": 368959488
+        }
+      },
+      {
+        "accepted_events": 50000,
+        "retained": 50000,
+        "evicted": 0,
+        "charged_bytes": 603095459,
+        "elapsed_seconds": 8.3129964,
+        "process": {
+          "working_set": 720068608,
+          "peak_working_set": 720068608,
+          "private_bytes": 712495104
+        }
+      },
+      {
+        "accepted_events": 75000,
+        "retained": 75000,
+        "evicted": 0,
+        "charged_bytes": 904654193,
+        "elapsed_seconds": 12.8334523,
+        "process": {
+          "working_set": 1054961664,
+          "peak_working_set": 1054961664,
+          "private_bytes": 1048268800
+        }
+      },
+      {
+        "accepted_events": 100000,
+        "retained": 100000,
+        "evicted": 0,
+        "charged_bytes": 1206186625,
+        "elapsed_seconds": 17.2703983,
+        "process": {
+          "working_set": 1405120512,
+          "peak_working_set": 1405120512,
+          "private_bytes": 1399668736
+        }
+      },
+      {
+        "accepted_events": 125000,
+        "retained": 125000,
+        "evicted": 0,
+        "charged_bytes": 1507882096,
+        "elapsed_seconds": 21.5325216,
+        "process": {
+          "working_set": 1738231808,
+          "peak_working_set": 1738231808,
+          "private_bytes": 1733812224
+        }
+      },
+      {
+        "accepted_events": 150000,
+        "retained": 150000,
+        "evicted": 0,
+        "charged_bytes": 1809535458,
+        "elapsed_seconds": 25.9195703,
+        "process": {
+          "working_set": 2075107328,
+          "peak_working_set": 2075107328,
+          "private_bytes": 2071920640
+        }
+      },
+      {
+        "accepted_events": 175000,
+        "retained": 175000,
+        "evicted": 0,
+        "charged_bytes": 2111188922,
+        "elapsed_seconds": 30.5344334,
+        "process": {
+          "working_set": 2443415552,
+          "peak_working_set": 2443546624,
+          "private_bytes": 2441322496
+        }
+      },
+      {
+        "accepted_events": 200000,
+        "retained": 200000,
+        "evicted": 0,
+        "charged_bytes": 2412864776,
+        "elapsed_seconds": 34.124949799999996,
+        "process": {
+          "working_set": 2775736320,
+          "peak_working_set": 2775736320,
+          "private_bytes": 2774814720
+        }
+      },
+      {
+        "accepted_events": 210000,
+        "retained": 200000,
+        "evicted": 10000,
+        "charged_bytes": 2412948368,
+        "elapsed_seconds": 36.5732117,
+        "process": {
+          "working_set": 2777116672,
+          "peak_working_set": 2777116672,
+          "private_bytes": 2776141824
+        }
+      }
+    ],
+    "serialized_journal_bytes": 419149163,
+    "assertions": {
+      "bounded_count": true,
+      "expected_fifo_evictions": true,
+      "oldest_gone": true,
+      "fixed_snapshot_survives": true,
+      "stale_identities_removed": true,
+      "exact_reference_count": true,
+      "indexes_match_live_events": true,
+      "snapshot_released": true
+    },
+    "recorder": {
+      "state": "recording",
+      "error": null,
+      "session_id": "fifo-capacity",
+      "started_at": "2026-09-15T07:41:53.923368+00:00",
+      "retained_events": 200000,
+      "evicted_events": 10000,
+      "persistence": {
+        "accepted_sequence": 210000,
+        "durable_sequence": 0,
+        "error": null
+      },
+      "history_index": {
+        "entities": 200004,
+        "event_references": 400000,
+        "estimated_memory_bytes": 2412948368,
+        "memory_budget_bytes": 3221225472,
+        "event_capacity": 200000,
+        "snapshots": 1,
+        "retention_policy": "fifo_first_accepted",
+        "evicted_events": 10000,
+        "last_evicted_time": 9999,
+        "snapshot_references": 1,
+        "snapshot_charged_bytes": 19810,
+        "snapshot_memory_budget_bytes": 268435456
+      }
+    },
+    "limitations": [
+      "Synthetic load, not a game run. Compact: 10% captured actions, 20% causal facts; rich: 30% actions, 70% causal facts.",
+      "Unique object references stress entity churn. Not a prediction of all gameplay event sizes.",
+      "Counting sink measures serialized bytes; it does not write/fsync a real 200000-event journal.",
+      "Snapshots, game, other mods and source-hook caches add memory beyond the event index budget."
+    ]
+  },
+  "default_memory_guard": {
+    "rich": {
+      "module_version": "0.6.0",
+      "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+      "kind": "offline_fifo_capacity",
+      "source_journal_sha256": "d9ba839948b0c3f8d23824f207c6acd4f4b11a8f419c0897ca14a35697c16495",
+      "captured_interaction_shapes": 571,
+      "requested_capacity": 200000,
+      "requested_extra": 10000,
+      "generated_types": {
+        "interaction": 40056,
+        "game_event": 93459
+      },
+      "seconds": 23.9821223,
+      "baseline_process_memory": {
+        "working_set": 35463168,
+        "peak_working_set": 35856384,
+        "private_bytes": 25653248
+      },
+      "final_process_memory": {
+        "working_set": 1852837888,
+        "peak_working_set": 1852837888,
+        "private_bytes": 1848324096
+      },
+      "checkpoints": [
+        {
+          "accepted_events": 25000,
+          "retained": 25000,
+          "evicted": 0,
+          "charged_bytes": 301509211,
+          "elapsed_seconds": 4.2158165,
+          "process": {
+            "working_set": 377692160,
+            "peak_working_set": 377692160,
+            "private_bytes": 368885760
+          }
+        },
+        {
+          "accepted_events": 50000,
+          "retained": 50000,
+          "evicted": 0,
+          "charged_bytes": 603095459,
+          "elapsed_seconds": 8.6307806,
+          "process": {
+            "working_set": 719945728,
+            "peak_working_set": 719945728,
+            "private_bytes": 712212480
+          }
+        },
+        {
+          "accepted_events": 75000,
+          "retained": 75000,
+          "evicted": 0,
+          "charged_bytes": 904654193,
+          "elapsed_seconds": 13.2249972,
+          "process": {
+            "working_set": 1054425088,
+            "peak_working_set": 1054425088,
+            "private_bytes": 1047556096
+          }
+        },
+        {
+          "accepted_events": 100000,
+          "retained": 100000,
+          "evicted": 0,
+          "charged_bytes": 1206186625,
+          "elapsed_seconds": 17.9888272,
+          "process": {
+            "working_set": 1404559360,
+            "peak_working_set": 1404559360,
+            "private_bytes": 1398767616
+          }
+        },
+        {
+          "accepted_events": 125000,
+          "retained": 125000,
+          "evicted": 0,
+          "charged_bytes": 1507882096,
+          "elapsed_seconds": 22.6240473,
+          "process": {
+            "working_set": 1737777152,
+            "peak_working_set": 1737777152,
+            "private_bytes": 1732919296
+          }
+        }
+      ],
+      "serialized_journal_bytes": 265871161,
+      "assertions": {},
+      "recorder": {
+        "state": "failed",
+        "error": "history_memory: Estimated history memory budget reached; recording paused",
+        "session_id": "fifo-capacity",
+        "started_at": "2026-09-15T07:39:59.354737+00:00",
+        "retained_events": 133515,
+        "evicted_events": 0,
+        "persistence": {
+          "accepted_sequence": 133516,
+          "durable_sequence": 0,
+          "error": null
+        },
+        "history_index": {
+          "entities": 133519,
+          "event_references": 267030,
+          "estimated_memory_bytes": 1610612626,
+          "memory_budget_bytes": 1610612736,
+          "event_capacity": 200000,
+          "snapshots": 1,
+          "retention_policy": "fifo_first_accepted",
+          "evicted_events": 0,
+          "last_evicted_time": null,
+          "snapshot_references": 0,
+          "snapshot_charged_bytes": 5374,
+          "snapshot_memory_budget_bytes": 268435456
+        }
+      },
+      "limitations": [
+        "Synthetic load, not a game run; 30% captured interaction shapes, 70% new-adapter fixture shapes.",
+        "Unique object references stress entity churn. Not a prediction of all gameplay event sizes.",
+        "Counting sink measures serialized bytes; it does not write/fsync a real 200000-event journal.",
+        "Snapshots, game, other mods and source-hook caches add memory beyond the event index budget."
+      ]
+    },
+    "compact": {
+      "module_version": "0.6.0",
+      "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+      "kind": "offline_fifo_capacity",
+      "shape": "compact",
+      "source_journal_sha256": "d9ba839948b0c3f8d23824f207c6acd4f4b11a8f419c0897ca14a35697c16495",
+      "captured_interaction_shapes": 571,
+      "requested_capacity": 200000,
+      "requested_extra": 10000,
+      "generated_types": {
+        "interaction": 16785,
+        "game_event": 151056
+      },
+      "seconds": 26.3462644,
+      "baseline_process_memory": {
+        "working_set": 35852288,
+        "peak_working_set": 35852288,
+        "private_bytes": 26247168
+      },
+      "final_process_memory": {
+        "working_set": 1846345728,
+        "peak_working_set": 1846345728,
+        "private_bytes": 1842520064
+      },
+      "checkpoints": [
+        {
+          "accepted_events": 25000,
+          "retained": 25000,
+          "evicted": 0,
+          "charged_bytes": 239845864,
+          "elapsed_seconds": 3.6030205,
+          "process": {
+            "working_set": 308322304,
+            "peak_working_set": 308326400,
+            "private_bytes": 299401216
+          }
+        },
+        {
+          "accepted_events": 50000,
+          "retained": 50000,
+          "evicted": 0,
+          "charged_bytes": 479739588,
+          "elapsed_seconds": 7.6643874,
+          "process": {
+            "working_set": 581525504,
+            "peak_working_set": 581525504,
+            "private_bytes": 573718528
+          }
+        },
+        {
+          "accepted_events": 75000,
+          "retained": 75000,
+          "evicted": 0,
+          "charged_bytes": 719610625,
+          "elapsed_seconds": 11.5075024,
+          "process": {
+            "working_set": 847630336,
+            "peak_working_set": 847630336,
+            "private_bytes": 840470528
+          }
+        },
+        {
+          "accepted_events": 100000,
+          "retained": 100000,
+          "evicted": 0,
+          "charged_bytes": 959478584,
+          "elapsed_seconds": 15.0381452,
+          "process": {
+            "working_set": 1127374848,
+            "peak_working_set": 1127374848,
+            "private_bytes": 1121234944
+          }
+        },
+        {
+          "accepted_events": 125000,
+          "retained": 125000,
+          "evicted": 0,
+          "charged_bytes": 1199430067,
+          "elapsed_seconds": 18.871713500000002,
+          "process": {
+            "working_set": 1391206400,
+            "peak_working_set": 1391206400,
+            "private_bytes": 1385689088
+          }
+        },
+        {
+          "accepted_events": 150000,
+          "retained": 150000,
+          "evicted": 0,
+          "charged_bytes": 1439369777,
+          "elapsed_seconds": 22.9797985,
+          "process": {
+            "working_set": 1659006976,
+            "peak_working_set": 1659006976,
+            "private_bytes": 1654513664
+          }
+        }
+      ],
+      "serialized_journal_bytes": 248618779,
+      "assertions": {},
+      "recorder": {
+        "state": "failed",
+        "error": "history_memory: Estimated history memory budget reached; recording paused",
+        "session_id": "fifo-capacity",
+        "started_at": "2026-09-15T07:41:19.110601+00:00",
+        "retained_events": 167841,
+        "evicted_events": 0,
+        "persistence": {
+          "accepted_sequence": 167842,
+          "durable_sequence": 0,
+          "error": null
+        },
+        "history_index": {
+          "entities": 167845,
+          "event_references": 335682,
+          "estimated_memory_bytes": 1610610032,
+          "memory_budget_bytes": 1610612736,
+          "event_capacity": 200000,
+          "snapshots": 1,
+          "retention_policy": "fifo_first_accepted",
+          "evicted_events": 0,
+          "last_evicted_time": null,
+          "snapshot_references": 1,
+          "snapshot_charged_bytes": 19810,
+          "snapshot_memory_budget_bytes": 268435456
+        }
+      },
+      "limitations": [
+        "Synthetic load, not a game run. Compact: 10% captured actions, 20% causal facts; rich: 30% actions, 70% causal facts.",
+        "Unique object references stress entity churn. Not a prediction of all gameplay event sizes.",
+        "Counting sink measures serialized bytes; it does not write/fsync a real 200000-event journal.",
+        "Snapshots, game, other mods and source-hook caches add memory beyond the event index budget."
+      ]
+    }
+  },
+  "build": {
+    "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+    "game_bytecode_magic": "420d0d0a",
+    "files": {
+      "context_overlay/__init__.py": "1ff287558dea958c6ad7a9ac7ddd38ecf7cadacb1ddffc14e750e5b10ad1ebbf",
+      "context_overlay/api.py": "09c9739a7f6e1e954a9cdde4689289dfeac21c95d5f1f1d8b004296c146c3ddc",
+      "context_overlay/collector.py": "3a3349cf525a886690ffe1076bee8e2b4af5240db7040bb8ad34285b87cb8bc7",
+      "context_overlay/ea_adapter.py": "49a04acdccba412b0a947293d1fdf67aea522318dc4e156fd761f1b99a6fd3b6",
+      "context_overlay/event_sources.py": "ed1811636edcd8141b3de0f626cf26779715befeb2e50198c1d4d8b3bb9ee03f",
+      "context_overlay/game_runtime.py": "91f021c0eaf528485b14ccf8f4a3ef455896ea80ac980d148d5bbfb803f1b349",
+      "context_overlay/history.py": "7bcf15302f85cdaeccfcfd234c1bcf425a882a2bd17cc44b1574a94674fc674e",
+      "context_overlay/hooks.py": "82b65928ea2fd86893007e2a2d63bc5defe61be1b6144e7d7b570b64fcf7b3da",
+      "context_overlay/inspector.py": "426d2620addf751c8ffa2784e505c5405a8cf1523cea972168be2ae20663d175",
+      "context_overlay/localization.py": "47b535483bdd6b72c9d61caa55d7c3a60f06155892c8721218530cb3cb5d35f2",
+      "context_overlay/model.py": "de69eaaec13344b3dc3f1bb5a1a46983bcdb9d89beb884e9c29151c687ad3ddb",
+      "context_overlay/name_catalog.py": "2db681bc598e19bd8c8bb38cad58b44f68cb1702b8870626dfc6cfff27e13142",
+      "context_overlay/native_ui.py": "fdabaf8640fe642764371d331554f197359f23dfe087b3039abc304e81932389",
+      "context_overlay/profiles.py": "e2a4a1c15cf9874239e2670cf41afaad95445eef9cfb47815b7374d9820dfe47",
+      "context_overlay/recorder.py": "1e39f8f7b597ba24682bffe8981d0d32521d4fc07ce08cae2dc8229a7fb289b0",
+      "context_overlay/semanticizer.py": "6152572b8b9837a7c0ad7b22efb84b51277c7e1be440eb500699e424d051a1fa",
+      "context_overlay/storage.py": "4c5d60b40c502d318362cbb20f456e7832009394fdf7c49966ce769b217fd6cb",
+      "context_overlay/test_driver.py": "7f85e5ca41ba9dced422eb1649b6ff84bec3974782f4edd8868537814efd5536",
+      "context_overlay_bootstrap.py": "6644d714d38ecc5d2934766cfaa517255d7ba889b417ed5690c2a067edf86f90"
+    },
+    "strings_sha256": "77a525e461ce5318378509c601353ade5973f1e7f78188cc778a05637cd329d3",
+    "build_info": {
+      "module_version": "0.6.0",
+      "public_api_version": "1.0.0",
+      "build_game_version": "1.126.73.1030",
+      "game_version_source": "Game/Bin/Default.ini at build time",
+      "game_bytecode_magic": "420d0d0a",
+      "ea_reference_project": "sims4-python",
+      "ea_reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+      "source_sha256": "c7bb10ec9987219e86bd0318a792fbaadbb0c7a71fc4319067ed6339573997e6",
+      "strings_sha256": "77a525e461ce5318378509c601353ade5973f1e7f78188cc778a05637cd329d3"
+    },
+    "package_sha256": "4efb56a09d67c0186b3e1d93ee766b275667aa0d6d96a66c8c7d8984aa67a6d1"
+  },
+  "installed_package": {
+    "version": "0.3.2",
+    "sha256": "912367edd331ae5b9ba456b8f3e128227f498efe91f40b12e029a4ff26c406a6",
+    "changed_this_turn": false
+  },
+  "source_files": {
+    "src/context_overlay_bootstrap.py": "6644d714d38ecc5d2934766cfaa517255d7ba889b417ed5690c2a067edf86f90",
+    "src/context_overlay/api.py": "09c9739a7f6e1e954a9cdde4689289dfeac21c95d5f1f1d8b004296c146c3ddc",
+    "src/context_overlay/collector.py": "3a3349cf525a886690ffe1076bee8e2b4af5240db7040bb8ad34285b87cb8bc7",
+    "src/context_overlay/ea_adapter.py": "49a04acdccba412b0a947293d1fdf67aea522318dc4e156fd761f1b99a6fd3b6",
+    "src/context_overlay/event_sources.py": "ed1811636edcd8141b3de0f626cf26779715befeb2e50198c1d4d8b3bb9ee03f",
+    "src/context_overlay/game_runtime.py": "91f021c0eaf528485b14ccf8f4a3ef455896ea80ac980d148d5bbfb803f1b349",
+    "src/context_overlay/history.py": "7bcf15302f85cdaeccfcfd234c1bcf425a882a2bd17cc44b1574a94674fc674e",
+    "src/context_overlay/hooks.py": "82b65928ea2fd86893007e2a2d63bc5defe61be1b6144e7d7b570b64fcf7b3da",
+    "src/context_overlay/inspector.py": "426d2620addf751c8ffa2784e505c5405a8cf1523cea972168be2ae20663d175",
+    "src/context_overlay/localization.py": "47b535483bdd6b72c9d61caa55d7c3a60f06155892c8721218530cb3cb5d35f2",
+    "src/context_overlay/model.py": "de69eaaec13344b3dc3f1bb5a1a46983bcdb9d89beb884e9c29151c687ad3ddb",
+    "src/context_overlay/name_catalog.py": "2db681bc598e19bd8c8bb38cad58b44f68cb1702b8870626dfc6cfff27e13142",
+    "src/context_overlay/native_ui.py": "fdabaf8640fe642764371d331554f197359f23dfe087b3039abc304e81932389",
+    "src/context_overlay/profiles.py": "e2a4a1c15cf9874239e2670cf41afaad95445eef9cfb47815b7374d9820dfe47",
+    "src/context_overlay/recorder.py": "1e39f8f7b597ba24682bffe8981d0d32521d4fc07ce08cae2dc8229a7fb289b0",
+    "src/context_overlay/semanticizer.py": "6152572b8b9837a7c0ad7b22efb84b51277c7e1be440eb500699e424d051a1fa",
+    "src/context_overlay/storage.py": "4c5d60b40c502d318362cbb20f456e7832009394fdf7c49966ce769b217fd6cb",
+    "src/context_overlay/test_driver.py": "7f85e5ca41ba9dced422eb1649b6ff84bec3974782f4edd8868537814efd5536",
+    "src/context_overlay/__init__.py": "1ff287558dea958c6ad7a9ac7ddd38ecf7cadacb1ddffc14e750e5b10ad1ebbf",
+    "tests/test_core.py": "64ae07f5ee1ee642376235b9367b6f219f7bbce8b59c6100a74b782b54599b92",
+    "tests/test_event_expansion.py": "0da7629df9e65dfe6e294560020892c0ad026397da62ab0280ea43fac61e6660",
+    "tests/test_history.py": "2f1c7a3190e7bb2d4a6ff7d86e024da78f14ec54c5a9aff62aababa1158aa4fc",
+    "tests/test_inspector.py": "3a31ccf0b0caf00d9548d9bcfc54d8b8b4c0268b0123356a5fc44d27844134fe",
+    "tests/test_install.py": "630cc60d108cf9f991938d89abb92d0d1073488a6cc274496452b1ba33aa32be",
+    "tests/test_localization.py": "1151ff1c78d436ce8e79e07d256c0e2c62ad7c9139c0b71545e020481930c76a",
+    "tests/test_mod_consumer.py": "b53dfffd726578f9f396694177756e74adb5eb044a98854395a0d1f42e6553d1",
+    "tests/test_public_api.py": "b1eafa1dbac37dfe59d282519b18d6cc0ec25b74d5496f1f3f803e139e320f35",
+    "tests/test_runtime_observation.py": "aee8951e57dff755252925ef9bd5887eee9446338105cf82beebe5665a7256e6"
+  },
+  "not_performed": [
+    "game_launch",
+    "installation",
+    "live_mod_integration",
+    "feishu_publication",
+    "git_commit_push_merge"
+  ],
+  "limitations": [
+    "Static symbols verify method availability only, not runtime behavior or third-party patch compatibility.",
+    "FIFO stress uses a counting sink and synthetic event expansion; it does not measure disk fsync or game frame time.",
+    "The rich FIFO run raises only the benchmark memory budget to 3072 MiB. Runtime default stays 1536 MiB.",
+    "Two earlier default-budget runs exposed history_memory protection before count capacity."
+  ]
+}

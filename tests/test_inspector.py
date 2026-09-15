@@ -67,6 +67,18 @@ class InspectorChecks(unittest.TestCase):
         for i in range(count):
             self.recorder.interaction("started", facts(i + 1), self.now - count + i, "native")
 
+    def test_grouped_effect_details_and_standalone_life_filter(self):
+        action = self.recorder.interaction("started", facts(1), self.now - 1, "native")
+        self.recorder.fact("skill.level", [self.target], {"before": 1, "after": 2}, self.now, "native",
+                           cause={"event_id": action["event_id"], "basis": "resolver.interaction"})
+        self.session.refresh()
+        self.assertEqual(len(self.session.recent["events"]), 1)
+        self.session.event_details(self.session.recent["events"][0], self.session.overview)
+        self.assertIn("技能等级变化", self.view.windows[-1][1])
+        self.session.event_type = "game_event"
+        self.session.new_history()
+        self.assertEqual(self.session.page["events"][0]["category"], "skill.level")
+
     def test_overview_pins_target_reads_memory_and_caps_recent_preview(self):
         self.add_events(20)
         original_count = len(self.journal.records)
@@ -135,7 +147,7 @@ class InspectorChecks(unittest.TestCase):
     def test_filters_apply_time_type_and_internal_without_recording_mutation(self):
         self.recorder.interaction("started", facts(1), self.now - 200, "native")
         self.recorder.interaction("started", facts(2, main=False), self.now - 1, "native")
-        self.recorder.change([self.target], "needs.hunger", 20, 25, self.now, "sample")
+        self.recorder.change([self.target], "buffs", None, {"id": "42"}, self.now, "TestEvent.BuffBeganEvent")
         self.session.hours = 1
         self.session.event_type = "interaction"
         self.session.new_history()
@@ -143,7 +155,7 @@ class InspectorChecks(unittest.TestCase):
         self.session.set_filter("internal", True)
         self.assertEqual(self.session.page["total_matches"], 1)
         self.session.set_filter("event_type", "state_change")
-        self.assertEqual(self.session.page["events"][0]["field"], "needs.hunger")
+        self.assertEqual(self.session.page["events"][0]["field"], "buffs")
 
     def test_expiry_is_reported_and_refresh_recovers(self):
         self.add_events(40)
@@ -193,45 +205,6 @@ class InspectorChecks(unittest.TestCase):
         adapter.interaction = lambda item: item.id
         sim = SimpleNamespace(is_sim=True, si_state=[tool, ordinary], queue=[])
         self.assertEqual(adapter.read_interactions(sim)["value"], [2])
-
-
-class NeedSamplingChecks(unittest.TestCase):
-    def make_adapter(self):
-        adapter = EAAdapter.__new__(EAAdapter)
-        adapter.config = dict(game_runtime.DEFAULTS)
-        values = {"need": 50, "relationship": 10}
-        reads = []
-        def needs(_):
-            reads.append(True)
-            return field({"hunger": field({"value": values["need"]})})
-        adapter.read_needs = needs
-        adapter.read_relationships = lambda _: field([{"target": entity("sim", 2),
-            "tracks": {"friendship": field(values["relationship"])}}])
-        sim = SimpleNamespace(sim_info=SimpleNamespace(sim_id=1))
-        return adapter, sim, values, reads
-
-    def test_default_disables_need_history_but_keeps_relationships_and_current_needs(self):
-        adapter, sim, values, reads = self.make_adapter()
-        self.assertFalse(adapter.config["record_need_changes"])
-        recorder = Recorder(MemoryJournal())
-        recorder.sample(entity("sim", 1), adapter.continuous(sim), 1)
-        values.update(need=40, relationship=20)
-        recorder.sample(entity("sim", 1), adapter.continuous(sim), 2)
-        self.assertEqual(reads, [])
-        changes = recorder.history("sim:1")["events"]
-        self.assertEqual([change["field"] for change in changes], ["relationships.friendship"])
-        self.assertEqual(adapter.read_needs(sim)["value"]["hunger"]["value"]["value"], 40)
-
-    def test_opt_in_need_sampling_and_unavailable_needs_do_not_block_relationships(self):
-        adapter, sim, values, reads = self.make_adapter()
-        adapter.config["record_need_changes"] = True
-        recorder = Recorder(MemoryJournal())
-        recorder.sample(entity("sim", 1), adapter.continuous(sim), 1)
-        values["need"] = 30
-        recorder.sample(entity("sim", 1), adapter.continuous(sim), 2)
-        self.assertEqual(recorder.history("sim:1")["events"][0]["field"], "needs.hunger")
-        adapter.read_needs = lambda _: field(status="error")
-        self.assertEqual(adapter.continuous(sim), {"relationship.2.friendship": 10})
 
 
 def native_modules():

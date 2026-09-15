@@ -66,6 +66,18 @@ class ContractChecks(unittest.TestCase):
         for index in range(count):
             self.recorder.interaction("started", facts(index + 1), index + 10, "test")
 
+    def test_retained_identity_and_sdk_grouped_effects(self):
+        action = self.recorder.interaction("started", facts(1), 10, "test")
+        self.recorder.fact("skill.level", [facts()["actor"]], {"before": 1, "after": 2}, 11, "test",
+                           cause={"event_id": action["event_id"], "basis": "resolver.interaction"})
+        client = sdk.Client()
+        with patch.object(self.adapter, "resolve", side_effect=AssertionError("Historical identity must not resolve live")):
+            packet = client.query_history(identifier=facts()["actor"]["id"], group_effects=True)
+            self.assertEqual(packet["history"]["total_matches"], 1)
+            self.assertEqual(packet["history"]["events"][0]["effects"][0]["category"], "skill.level")
+            client.close_history(packet["history"]["cursor"], expected_session_id=packet["session_id"])
+        self.assertEqual(self.recorder.index.status()["snapshots"], 0)
+
     def test_import_and_metadata_do_not_initialize_runtime_or_game(self):
         script = "import sys; sys.path[:0] = {0!r}; from context_overlay import api; import context_overlay_client as s; s.Client(); api.get_api_info(); assert 'services' not in sys.modules; assert 'context_overlay.game_runtime' not in sys.modules".format(
             [str(ROOT / "src"), str(ROOT / "sdk")])
@@ -88,7 +100,7 @@ class ContractChecks(unittest.TestCase):
     def test_worker_rejected_before_game_reads_and_query_mutations(self):
         result = []
         def worker():
-            self.assertEqual(api.get_api_info()["api_version"], "1.0.0")
+            self.assertEqual(api.get_api_info()["api_version"], "1.1.0")
             for function in (api.get_status, api.get_context, api.query_history):
                 try:
                     function()
@@ -105,7 +117,7 @@ class ContractChecks(unittest.TestCase):
     def test_context_defaults_active_pin_detachment_and_no_file_write(self):
         self.add_events()
         packet = api.get_context()
-        self.assertEqual(packet["api_version"], "1.0.0")
+        self.assertEqual(packet["api_version"], "1.1.0")
         self.assertEqual(len(packet["history"]["events"]), 3)
         self.assertEqual(self.adapter.resolutions[:2], [("sim", "active"), ("sim", facts()["actor"]["id"])])
         self.assertEqual(packet["target"]["id"], "18446744073709550001")

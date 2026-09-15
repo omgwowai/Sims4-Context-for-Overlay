@@ -1,4 +1,4 @@
-"""ContextOverlay Python 3.7 SDK 1.0.0; vendor under your own MOD namespace.
+"""ContextOverlay Python 3.7 SDK 1.1.0; vendor under your own MOD namespace.
 
 No game/provider imports occur until a method is called. The SDK negotiates
 API v1, not an exact MOD version. It never starts a game, thread, or network job.
@@ -7,7 +7,7 @@ API v1, not an exact MOD version. It never starts a game, thread, or network job
 import importlib
 
 
-SDK_VERSION = "1.0.0"
+SDK_VERSION = "1.1.0"
 __all__ = ["SDK_VERSION", "ContextOverlayError", "Client", "HistoryQuery"]
 
 
@@ -56,7 +56,11 @@ class Client:
         return provider, info
 
     def _call(self, method, *args, **kwargs):
-        provider, _ = self._api()
+        provider, info = self._api()
+        if method == "get_nearby_entities" and "context.nearby_entities" not in info.get("capabilities", []):
+            raise ContextOverlayError("capability_unavailable", "Provider does not support nearby queries",
+                                      {"required_capability": "context.nearby_entities",
+                                       "api_version": info.get("api_version")})
         try:
             return getattr(provider, method)(*args, **kwargs)
         except Exception as exc:
@@ -75,6 +79,10 @@ class Client:
 
     def get_context(self, kind="sim", identifier="active", **options):
         return self._call("get_context", kind, identifier, **options)
+
+    def get_nearby_entities(self, identifier="active", **options):
+        """API 1.1 capability; older providers still support the existing methods."""
+        return self._call("get_nearby_entities", identifier, **options)
 
     def query_history(self, kind="sim", identifier="active", **options):
         """Low-level first page; caller owns explicit close_history cleanup."""

@@ -1,6 +1,6 @@
 # ContextOverlay 公共 API v1 与 SDK 方案
 
-日期：2026-09-15。提供方 MOD：**0.5.0**；公共 API：**1.0.0**；数据 schema：**1**；Python SDK：**1.0.0**。本版已实现并完成离线契约测试，尚未安装或进行真实下游 MOD 的游戏接入验收。0.4.0 名称解析也仍待实机测试。
+日期：2026-09-15。提供方 MOD：**0.6.0 试用版**；公共 API：**1.1.0**；数据 schema：**1**；Python SDK：**1.1.0**。已完成离线契约测试，真实下游 MOD 接入验收仍待补。新增 `get_nearby_entities` 与 `context.nearby_entities` 能力，按半径、楼层和房间筛选 Sim／物件；完整参数、返回包和限制见[附近实体接口](nearby-entities.md)。原有方法保持兼容。0.6.0 事件支持情况及首局修正见[覆盖说明](event-coverage-0.6.0.md)。
 
 ## 1. 交付与边界
 
@@ -19,7 +19,7 @@ flowchart LR
     Worker --> UI[下游游戏线程展示]
 ```
 
-首版接口是同步、只读的，不要求打开控制台或写文件，也不改变游戏行为。历史查询会占用有界查询资源，需要关闭。接口不启动游戏、打开窗口、改变配置、触发事件或连接模型；跨线程调度、推送订阅、HTTP 服务和批量实体采集不属于 API v1。
+接口是同步、只读的，不要求打开控制台或写文件，也不改变游戏行为。历史查询会占用有界查询资源，需要关闭。接口不启动游戏、打开窗口、改变配置、触发事件或连接模型；跨线程调度、推送订阅、HTTP 服务和批量完整 Context 展开不属于当前 API；附近查询只返回有限的身份与空间数据。
 
 这样下游可以先用简单回调完成“选定实体 → 读取 Context → 生成文本 → 展示”，后续 API 1.x 可增加可选能力，不再要求消费方跟随内部 Collector／Recorder 的变化。
 
@@ -64,11 +64,12 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 | 字段 | 含义 |
 | --- | --- |
-| `api_version` | 当前公共契约版本 `1.0.0` |
-| `module_version` | 提供方 MOD 版本，目前 `0.5.0` |
+| `api_version` | 当前公共契约版本 `1.1.0` |
+| `module_version` | 提供方 MOD 版本，目前 `0.6.0` |
 | `schema_version` | 数据协议版本 `1` |
 | `capabilities` | `context.read`、`history.query`、`history.page`、`history.close`、`text.zh-CN` |
 | `context_fields`、`default_fields` | 支持的字段与 Sim／Object 的默认选择 |
+| `nearby` | 附近查询类型、指标、单位、返回数、扫描预算和半径限制；能力为 `context.nearby_entities` |
 | `max_history_page_size`、`max_context_history_limit` | 请求单页／近期条数上限，各为 500 |
 | `thread_policy`、`transport` | `simulation_thread`、`in_process_python` |
 | `scope`、`history_scope` | 当前地块已实例化实体、本次运行历史 |
@@ -128,7 +129,7 @@ rendered? = {language, rules_version, current, history} 或 {status:"disabled", 
 query_history(kind="sim", identifier="active", *, page_size=15,
               include_internal=False, time_field="first_observed",
               from_ticks=None, to_ticks=None, event_types=None, fields=None,
-              outcomes=None, tuning_ids=None, order="desc",
+              outcomes=None, tuning_ids=None, order="desc", group_effects=False,
               representation="both", expected_session_id=None)
 
 get_history_page(cursor, *, expected_session_id, representation="both")
@@ -142,13 +143,22 @@ close_history(cursor, *, expected_session_id)
 | `page_size` | 每页 1–500 条；默认 15 |
 | `time_field` | `first_observed`、`started` 或 `ended`，默认首次观测 |
 | `from_ticks/to_ticks` | 游戏整数 ticks 或整数字符串，范围 `[from, to)`，None 不设边界。不是现实秒／Unix 时间 |
-| `event_types` | 非空 list／tuple，可含 `interaction`、`state_change` |
-| `fields` | 变化字段，例如 `["buffs", "relationship.bits"]`；这里不是 Context 的字段选择 |
+| `event_types` | 非空 list／tuple，可含 `interaction`、`state_change`、`game_event` |
+| `fields` | 变化字段或新增 category，例如 `["buffs", "relationship.bits"]`、`["skill.level", "statistic.direct"]`；不是 Context 字段选择 |
 | `outcomes` | 交互结果：`completed/cancelled/failed/unknown` |
 | `tuning_ids` | 交互定义 ID 的字符串列表，不是交互实例 ID |
 | `order` | `asc` 或 `desc`，默认倒序 |
+| `group_effects` | 默认 false；true 将与同一结果集内动作明确关联的事实放入其 `effects`，未匹配的效果仍单独显示 |
 
-列表筛选最多 64 个非空字符串；None 表示不筛选。不同条件取交集。没有开始／结束时间的事件不匹配对应时间筛选，采样变化按观测差异时刻筛选，仍保留采样区间。
+列表筛选最多 64 个非空字符串；None 表示不筛选。不同条件取交集。没有开始／结束时间的事件不匹配对应时间筛选，状态变化按通知观测时间筛选。
+
+0.6.0 不生成需求／关系定时差值，也不返回采样区间。`state_change` 保留 Buff、关系标记、物件状态前后值；新增 `game_event` 使用 `category/field/payload`。`statistic.direct` 的 `payload.before/after` 只来自明确 Loot 操作内真实通知，`cause` 保留可核验操作／交互依据。当前数值仍使用 `get_context(fields=["needs", "relationships"])`。没有记录不证明数值未变化。
+
+新增能力标识为 `history.effects`、`history.retained_identity`、`history.fifo`、`events.gameplay`；`get_api_info()` 返回 `event_types/event_categories/retention_policy`，`get_status()` 返回具体源的 `event_coverage`。SDK 1.0.0 已支持透传筛选参数，无需升级 SDK 主版本。按能力发现后再使用新参数，0.5.0 提供方不支持它们。
+
+0.6.0 首局修正增加 `get_status().event_diagnostics`，包含 `callbacks`、`suppressed_statistics`、`suppression_policy` 和 `timing`。它们是适配器回调／计时通知的汇总数，不是事件数量或性能测量；目前 timing 为 not_measured。事件源健康与汇总在会话开始、结束落盘。TimeSince 计时统计不再发布为历史，当前 Context 不受影响。使用角色判断效果归属，不要把 entities 索引列表当作受影响者列表；具体新增字段见[事件契约](event-coverage-0.6.0.md)。
+
+按数字 ID 查询历史时先使用本运行保留的实体身份，不要求当前仍有可读取实例；Context 继续独立报告 out_of_scope。分组后 `total_matches` 是显示行数，快照预算仍计入全部效果事实。某动作未进入筛选结果或已被 FIFO 淘汰时，相关效果保持独立行。完整示例见 [SDK 事件示例](../sdk/examples/event_history.py)。
 
 分页中的关键字段：
 
@@ -209,6 +219,8 @@ with client.history("sim", str(sim_id), page_size=15,
 字段不可用和历史采集失败通常在正常响应中形成 partial，并非全部变成异常。不得将 `disabled/error/out_of_scope/not_observed` 当成数值 0 或“没有发生”。
 
 ## 8. 线程、频率和结果时效
+
+附近接口另外使用 `target_out_of_scope` 和 `spatial_unavailable`；旧提供方不支持邻近能力时 SDK 返回 `capability_unavailable`。具体语义见[附近查询错误表](nearby-entities.md)。
 
 Runtime 记录初始化它的线程身份；有活动 Runtime 时，公共运行接口在任何游戏对象读取或查询表操作之前验证调用线程。嵌入式游戏线程不假定等于 Python 的 `main_thread()`。`get_api_info` 无此要求；尚未建立 Runtime 时状态可报告 waiting_for_zone，但这不意味着游戏调用支持后台线程。
 

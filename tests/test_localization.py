@@ -155,7 +155,9 @@ class LocalizationChecks(unittest.TestCase):
     def test_interaction_reads_live_name_and_fallback_uses_tuned_tokens(self):
         adapter = EAAdapter.__new__(EAAdapter)
         adapter.localizer = self.localizer
-        adapter.reference = lambda obj: {"kind": "sim", "id": str(obj.id), "name": "A"}
+        adapter.reference = lambda obj: {"kind": "sim", "id": str(obj.id), "key": "sim:" + str(obj.id), "name": "A"}
+        adapter.event_reference = lambda obj: adapter.reference(obj) if obj is not None else None
+        adapter.config = {"max_entities": 4096}
         adapter.in_scope = lambda obj: True
         actor = SimpleNamespace(id=20, sim_info=SimpleNamespace(sim_id=20))
         target = SimpleNamespace(id=21)
@@ -165,8 +167,10 @@ class LocalizationChecks(unittest.TestCase):
             calls.append(kwargs)
             return {"hash": 0x98041977, "tokens": [{"type": 3, "raw_text": "小明和小红"}]}
         interaction = SimpleNamespace(sim=actor, target=target, context=context, get_name=get_name,
-            id=30, guid64=40, is_super=True, immediate=False, finishing_type=None, pipeline_progress=None)
-        modules = {"animation": SimpleNamespace(), "animation.animation_interaction": SimpleNamespace(AnimationInteraction=type("AnimationInteraction", (), {}))}
+            id=30, guid64=40, is_super=True, immediate=False, finishing_type=None, pipeline_progress=None,
+            get_participants=lambda role: (actor, target))
+        modules = {"interactions": SimpleNamespace(ParticipantType=SimpleNamespace(AllSims=1)),
+                   "animation": SimpleNamespace(), "animation.animation_interaction": SimpleNamespace(AnimationInteraction=type("AnimationInteraction", (), {}))}
         with patch.dict(sys.modules, modules):
             result = adapter.interaction(interaction)
             self.assertEqual(result["name"]["text"], "和小明和小红闲聊")

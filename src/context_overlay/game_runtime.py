@@ -20,7 +20,7 @@ from context_overlay.storage import Journal
 
 
 DEFAULTS = {"recorder_enabled": True, "collector_enabled": True, "semanticizer_enabled": True,
-            "sample_interval_sim_minutes": 5, "record_need_changes": False, "max_entities": 4096,
+            "max_entities": 4096,
             "max_interactions_per_sim": 128, "max_buffs_per_sim": 256,
             "history_capacity": DEFAULT_EVENT_CAPACITY, "history_memory_mb": 1536,
             "history_query_limit": 8, "history_query_max_refs": 100000,
@@ -108,11 +108,12 @@ class Runtime:
                                  snapshot_ttl=self.config["history_query_ttl_seconds"])
         self.collector = Collector(self.adapter, self.recorder, self.config["collector_enabled"], self.config["semanticizer_enabled"], self.provenance)
         self.hooks = Hooks(self.fail)
+        from context_overlay.event_sources import EventSources
+        self.sources = EventSources(self)
         self.events = []
         self.event_names = {}
         self.alarm = None
         self.known = {}
-        self.next_sample = 0
         self.started = time.monotonic()
         self.poll_max_ms = 0.0
         self.poll_count = 0
@@ -143,8 +144,10 @@ class Runtime:
             self.hooks.after(Interaction, "on_added_to_queue", lambda args, kwargs, result: self.capture("queued", args[0], "Interaction.on_added_to_queue"))
             self.hooks.after(Interaction, "_exited_pipeline", lambda args, kwargs, result: self.capture("exited", args[0], "Interaction._exited_pipeline"))
             self.hooks.after(StateComponent, "_trigger_on_state_changed", self.state_changed)
+            self.sources.install()
         self.recorder.note("session_start", {"scope": self.adapter.scope(), "config": self.config,
                                              "provenance": self.provenance,
+                                             "event_coverage": self.sources.status(), "event_diagnostics": self.sources.diagnostics(),
                                              "python": sys.version, "module_version": VERSION}, self.adapter.clock())
         if self.config["development_driver"]:
             from context_overlay.test_driver import Driver
@@ -170,18 +173,37 @@ class Runtime:
         if (self.closed or self.recorder.paused or not self.config["recorder_enabled"]
                 or getattr(interaction, "_context_overlay_tool", False)):
             return
-        if interaction.sim is None or not self.adapter.in_scope(interaction.sim):
+        if interaction.sim is None:
             return
+        observed_here = getattr(interaction, "_context_overlay_recording_run", None) == self.session_id
+        expected_id = "{}:interaction:{}:{}".format(self.session_id, interaction.sim.sim_info.sim_id, interaction.id)
+        if not self.adapter.in_scope(interaction.sim) and not (phase == "exited" and expected_id in self.recorder.events):
+            return
+        if observed_here and expected_id not in self.recorder.events:
+            return  # A live interaction evicted by FIFO must not reappear as new.
         facts = self.adapter.interaction(interaction)
         if facts["parent_interaction_id"]:
             facts["parent_event_id"] = "{}:interaction:{}:{}".format(self.session_id, facts["parent_actor_id"], facts["parent_interaction_id"])
-        self.recorder.interaction(phase, facts, self.adapter.clock(), source)
+        event = self.recorder.interaction(phase, facts, self.adapter.clock(), source)
+        if event:
+            interaction._context_overlay_recording_run = self.session_id
+        if (event and phase == "started" and facts["trigger"]["name"] == "REACTION"
+                and getattr(interaction, "_context_overlay_reaction_run", None) != self.session_id):
+            interaction._context_overlay_reaction_run = self.session_id
+            self.recorder.fact("reaction.started", facts["participants"], {"interaction": facts["name"],
+                "perception": "not_inferred"}, self.adapter.clock(), source, roles=facts["roles"],
+                cause={"event_id": event["event_id"], "basis": "reaction_interaction_started"})
 
     def handle_event(self, sim_info, event_type, resolver):
         if self.closed or self.recorder.paused:
             return
         try:
             name = self.event_names.get(event_type, enum_name(event_type))
+            sources = getattr(self, "sources", None)
+            if sources is not None and any(frame["from_load"] for frame in sources.frames):
+                return
+            if sources is not None and sources.native(sim_info, name, resolver):
+                return
             if name in ("InteractionStart", "InteractionExitedPipeline"):
                 interaction = resolver.get_resolved_arg("interaction")
                 if interaction is not None:
@@ -192,22 +214,26 @@ class Runtime:
                 return
             actor = self.adapter.reference(sim)
             if name in ("BuffBeganEvent", "BuffEndedEvent"):
+                if sources is not None and any(f["kind"] in ("buff_add", "buff_remove") for f in sources.frames):
+                    return  # The method adapter retains handles, reason and source.
                 value = self.adapter.resource(resolver.get_resolved_arg("buff"), resource_kind="buff", tokens=(sim,))
                 added = name == "BuffBeganEvent"
                 self.recorder.change([actor], "buffs", None if added else value, value if added else None,
-                                     self.adapter.clock(), "TestEvent." + name)
+                                     self.adapter.clock(), "TestEvent." + name,
+                                     cause=sources.cause() if sources is not None else None)
             elif name in ("AddRelationshipBit", "RemoveRelationshipBit"):
                 target_id = resolver.get_resolved_arg("target_sim_id")
                 info = self.adapter.services.sim_info_manager().get(target_id)
                 other = info.get_sim_instance() if info else None
-                if self.adapter.in_scope(other):
+                if info is not None:
                     from relationships.relationship_enums import RelationshipDirection
                     bit = resolver.get_resolved_arg("relationship_bit")
                     value = self.adapter.resource(bit, resource_kind="relbit", tokens=(sim, other))
                     added = name == "AddRelationshipBit"
-                    self.recorder.relationship_bit(actor, self.adapter.reference(other), value, added,
-                                                   self.adapter.clock(), "TestEvent." + name,
-                                                   bit.directionality == RelationshipDirection.BIDIRECTIONAL)
+                    event = self.recorder.relationship_bit(actor, self.adapter.event_reference(info), value, added,
+                                                    self.adapter.clock(), "TestEvent." + name,
+                                                    bit.directionality == RelationshipDirection.BIDIRECTIONAL,
+                                                    cause=sources.cause() if sources is not None else None)
         except Exception:
             self.fail(traceback.format_exc())
 
@@ -216,10 +242,14 @@ class Runtime:
             return
         component, state, old, new = args[:4]
         owner = component.owner
+        sources = getattr(self, "sources", None)
+        if sources is not None and any(frame["from_load"] for frame in sources.frames):
+            return
         if not getattr(owner, "is_sim", False) and self.adapter.common_state(state) and self.adapter.in_scope(owner):
             self.recorder.change([self.adapter.reference(owner)], "object_states." + str(state.guid64),
                                  self.adapter.resource(old, resource_kind="object_state"), self.adapter.resource(new, resource_kind="object_state"),
-                                 self.adapter.clock(), "StateComponent._trigger_on_state_changed")
+                                  self.adapter.clock(), "StateComponent._trigger_on_state_changed",
+                                  cause=sources.cause() if sources is not None else None)
 
     def poll(self, _):
         if self.closed:
@@ -244,25 +274,10 @@ class Runtime:
                 reference = self.adapter.reference(local[key])
                 self.recorder.enter(reference, now)
                 if getattr(local[key], "is_sim", False):
-                    current = self.adapter.read_interactions(local[key])
-                    for item in current["value"]:
-                        phase = "observed_running" if item["pipeline_progress"] == "RUNNING" else "observed"
-                        self.recorder.interaction(phase, item, now, "scope_entry_snapshot")
+                    for item in self.adapter.interaction_objects(local[key]):
+                        phase = "observed_running" if enum_name(item.pipeline_progress) == "RUNNING" else "observed"
+                        self.capture(phase, item, "scope_entry_snapshot")
             self.known = {key: self.adapter.reference(obj) for key, obj in local.items()}
-            ticks = int(now["ticks"])
-            if ticks >= self.next_sample:
-                import date_and_time
-                for obj in local.values():
-                    if getattr(obj, "is_sim", False):
-                        values = self.adapter.continuous(obj)
-                        related = {}
-                        for key in values:
-                            if key.startswith("relationship."):
-                                other = local.get("sim:" + key.split(".")[1])
-                                if other is not None:
-                                    related[key] = [self.adapter.reference(other)]
-                        self.recorder.sample(self.adapter.reference(obj), values, now, related)
-                self.next_sample = ticks + date_and_time.create_time_span(minutes=self.config["sample_interval_sim_minutes"]).in_ticks()
         except Exception:
             self.fail(traceback.format_exc())
         finally:
@@ -276,6 +291,8 @@ class Runtime:
                 "scope": self.initial_scope, "recorder": self.recorder.status(),
                 "known_entities": len(self.known), "native_subscriptions": len(self.events),
                 "data_hooks": len(self.hooks.entries), "poll_count": self.poll_count,
+                "event_coverage": self.sources.status(),
+                "event_diagnostics": self.sources.diagnostics(),
                 "poll_max_ms": self.poll_max_ms, "config": self.config,
                 "inspector": ({"state": "failed", "error": self.inspector_error} if self.inspector_error else
                               self.inspector.status() if self.inspector is not None else {"state": "disabled"})}
@@ -289,10 +306,23 @@ class Runtime:
         path = self.writer.export(packet)
         return {"request_id": packet["request_id"], "path": path, "status": "queued", "packet_status": packet["status"]}
 
+    def export_nearby(self, identifier="active", radius="8", kinds="sim", same_level=True,
+                      same_room=False, limit=32, metric="horizontal"):
+        from context_overlay import api
+        packet = api.get_nearby_entities(identifier,
+            kinds=["sim", "object"] if kinds == "all" else kinds.split(","),
+            radius=None if radius == "room" else float(radius), metric=metric,
+            same_level=same_level, same_room=True if radius == "room" else same_room,
+            limit=limit, expected_session_id=self.session_id)
+        return {"request_id": packet["request_id"], "path": self.writer.export(packet),
+                "status": "queued", "packet_status": packet["status"], "count": packet["count"],
+                "matched_count": packet["matched_count"], "truncated": packet["truncated"],
+                "coverage": packet["coverage"]}
+
     def history(self, kind="sim", identifier="active", limit=50, internal=False):
         if self.closed:
             raise RuntimeError("This recording run is closed")
-        target = self.adapter.resolve(kind, identifier)
+        target = self.resolve_history(kind, identifier)
         packet = envelope("history", self.session_id)
         packet.update({"request_id": new_id(), "target": target,
                        "provenance": self.provenance,
@@ -316,8 +346,16 @@ class Runtime:
     def history_query(self, kind="sim", identifier="active", **filters):
         if self.closed:
             raise RuntimeError("This recording run is closed")
-        target = self.adapter.resolve(kind, identifier)
+        target = self.resolve_history(kind, identifier)
         return self._export_history_page(self.recorder.query_history(target["key"], target=target, **filters))
+
+    def resolve_history(self, kind, identifier):
+        key = "{}:{}".format(kind, identifier)
+        reference = self.recorder.references.get(key)
+        if reference is not None:
+            from context_overlay.model import copy_data
+            return copy_data(reference)
+        return self.adapter.resolve(kind, identifier)
 
     def history_next(self, cursor):
         if self.closed:
@@ -334,6 +372,7 @@ class Runtime:
         self.api_ready = False
         self.closed = True
         errors = []
+        sources = getattr(self, "sources", None)
 
         def attempt(label, action):
             try:
@@ -342,7 +381,9 @@ class Runtime:
                 errors.append("{}: {}: {}".format(label, type(exc).__name__, exc))
 
         attempt("session_end", lambda: self.recorder.note(
-            "session_end", {"reason": reason, "status": self.recorder.status()}, self.adapter.clock()))
+            "session_end", {"reason": reason, "status": self.recorder.status(),
+                            "event_coverage": sources.status() if sources else {},
+                            "event_diagnostics": sources.diagnostics() if sources else {}}, self.adapter.clock()))
         if self.inspector is not None:
             attempt("close_inspector", self.inspector.close)
         attempt("close_queries", self.recorder.close_queries)
@@ -420,6 +461,19 @@ def initialize():
             output(json.dumps(_runtime.export(kind, identifier, limit, internal, selected, representation, history), ensure_ascii=False))
         except Exception as exc:
             output("ContextOverlay export failed: " + str(exc))
+
+    @sims4.commands.Command("co.nearby", command_type=sims4.commands.CommandType.Live)
+    def nearby_command(identifier: str="active", radius: str="8", kinds: str="sim",
+                       same_level: bool=True, same_room: bool=False, limit: int=32,
+                       metric: str="horizontal", _connection=None):
+        output = sims4.commands.CheatOutput(_connection)
+        try:
+            if _runtime is None:
+                raise RuntimeError("Wait for the zone to load")
+            result = _runtime.export_nearby(identifier, radius, kinds, same_level, same_room, limit, metric)
+            output(json.dumps(result, ensure_ascii=False))
+        except Exception as exc:
+            output("ContextOverlay nearby query failed: " + str(exc))
 
     @sims4.commands.Command("co.history", command_type=sims4.commands.CommandType.Live)
     def history_command(kind: str="sim", identifier: str="active", limit: int=50,

@@ -1,0 +1,763 @@
+{
+  "date": "2026-09-15",
+  "version": "0.6.0",
+  "api_version": "1.0.0",
+  "sdk_version": "1.0.0",
+  "validation": "offline regressions and installed build hash; game not launched",
+  "tests": {
+    "command": "python37 -m unittest discover -s tests -q",
+    "passed": 138,
+    "failed": 0
+  },
+  "policy_replay": {
+    "basis": "offline policy replay over prior run; not a new game test",
+    "session_id": "44d1bce892184d86bcf3f45e02f707a6",
+    "journal_sha256": "e1577d5f624ddce2428f3e70440fc2a1a88dde3bf7b8072c71d45d31d60bc81d",
+    "old_events": 8523,
+    "suppressed_events": 2676,
+    "suppressed_by_statistic": {
+      "commodity_SimInfo_TimeSinceLastSocial": 757,
+      "commodity_IslanderCulture_TimeSinceCooked": 48,
+      "commodity_SimInfo_TimeSinceLastSlept": 1871
+    },
+    "retained_events_if_filtered": 5847,
+    "internal_reclassified": 343,
+    "internal_by_tuning": {
+      "MotionGameRig_Family_Active": 106,
+      "MotionGameRig_Family_Passive": 197,
+      "Food_Eat_Active": 23,
+      "Food_Eat_Passive": 17
+    },
+    "examples": [
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:a8d16d5523d948e1a311ce874beee86a",
+        "text": "Lila Landry新增Buff：buff_FamilyDynamics_FamilyTropeAdventureCooldown（隐藏资源，未配置显示名称；用途待解释）。发起者：Nyssa Landry。"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:274802713d1247bc86c5bff86277b72a",
+        "text": "Nyssa Landry新增Buff：MoodBuff_Hidden_Stressed（显示文本为空）。[用途待解释：保留原始条目]"
+      }
+    ]
+  },
+  "hook_symbols": {
+    "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+    "game_archive": "D:\\Games\\The Sims 4\\Data\\Simulation\\Gameplay\\simulation.zip",
+    "archive_sha256": "85269a4690b264b8e6ff10c6ae0169ef39866bf751e66df8c47ee5d76a4976ad",
+    "symbols": [
+      {
+        "hook": "objects.components.buff_component.BuffComponent._update_current_mood",
+        "kind": "mood_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "crafting.crafting_process.CraftingProcess.pay_for_item",
+        "kind": "craft_payment_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "crafting.crafting_interactions.CraftingPhaseSuperInteractionMixin._go_to_next_phase",
+        "kind": "interaction_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "completing_interaction"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.payment.payment_cost._Payment.make_payment",
+        "kind": "payment_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "resolver",
+          "sim",
+          "source",
+          "cost_modifiers",
+          "override_amount",
+          "reason"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory_elements.InventoryTransfer._do_behavior",
+        "kind": "element_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "carry.carry_elements.CarryElementHelper._do_enter_carry",
+        "kind": "element_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "old_posture",
+          "new_carry_posture_state",
+          "new_carry_posture",
+          "var_map",
+          "event_data"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "carry.carry_elements.CarryElementHelper._do_exit_carry",
+        "kind": "element_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "old_carry_posture",
+          "new_posture",
+          "var_map"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "carry.carry_postures.CarrySystemInventoryTarget.carry_event_callback",
+        "kind": "inventory_carry_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "statistics.base_statistic.BaseStatistic._notify_change",
+        "kind": "numeric",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "old_value",
+          "unclamped_target_value",
+          "from_load",
+          "notify_watchers"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "statistics.skill.Skill.set_value",
+        "kind": "skill",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "value",
+          "from_load",
+          "interaction"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "statistics.skill.Skill._update_value",
+        "kind": "skill",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "careers.career_base.CareerBase._demote_within_track",
+        "kind": "demotion",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "levels_to_demote",
+          "reason"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "careers.career_tracker.CareerTracker.retire_career",
+        "kind": "retirement",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "career_uid"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "careers.career_tracker.CareerTracker.end_retirement",
+        "kind": "retirement",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.buff_component.BuffComponent.add_buff",
+        "kind": "buff_add",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "buff_type",
+          "buff_reason",
+          "update_mood",
+          "commodity_guid",
+          "replacing_buff",
+          "timeout_string",
+          "timeout_string_no_next_buff",
+          "transition_into_buff_id",
+          "change_rate",
+          "immediate",
+          "from_load",
+          "apply_buff_loot",
+          "additional_static_commodities_to_add",
+          "remove_on_zone_unload",
+          "buff_source"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.buff_component.BuffComponent.remove_buff",
+        "kind": "buff_remove",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "handle_id",
+          "update_mood",
+          "immediate",
+          "on_destroy"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.buff_component.BuffComponent.remove_buff_entry",
+        "kind": "buff_remove",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "buff_entry",
+          "on_destroy"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.pregnancy.pregnancy_tracker.PregnancyTracker.start_pregnancy",
+        "kind": "pregnancy",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "parent_a",
+          "parent_b",
+          "pregnancy_origin",
+          "single_sim_is_allowed"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.pregnancy.pregnancy_tracker.PregnancyTracker.clear_pregnancy",
+        "kind": "pregnancy",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.pregnancy.pregnancy_tracker.PregnancyTracker.complete_pregnancy",
+        "kind": "local_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "sim_infos"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.aging.aging_mixin.AgingMixin.advance_age",
+        "kind": "age",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.utils.death.DeathTracker._set_death_type",
+        "kind": "death",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "death_type",
+          "is_off_lot_death",
+          "remove_from_household",
+          "set_to_min_lod"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.utils.death.DeathTracker.clear_death_type",
+        "kind": "death",
+        "state": "verified_symbol",
+        "parameters": [
+          "self"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.sim_info.SimInfo.assign_to_household",
+        "kind": "household",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "household",
+          "assign_is_npc"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "developmental_milestones.developmental_milestone_tracker.DevelopmentalMilestoneTracker.unlock_milestone",
+        "kind": "milestone",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "milestone",
+          "telemetry_context",
+          "send_ui_update"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sentiment_track_tracker.SentimentTrackTracker.add_statistic",
+        "kind": "sentiment",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "new_track",
+          "owner"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sentiment_track_tracker.SentimentTrackTracker.remove_statistic",
+        "kind": "sentiment",
+        "inherited_from": "statistics.base_statistic_tracker.BaseStatisticTracker",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "stat_type",
+          "on_destroy"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent._insert_item",
+        "kind": "inventory_insert",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj",
+          "force_add_to_hidden_inventory",
+          "compact"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.try_remove_object_by_id",
+        "kind": "inventory_remove",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj_id",
+          "count",
+          "on_manager_remove",
+          "sold"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.try_split_object_from_stack_by_id",
+        "kind": "inventory_split",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj_id",
+          "count"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.try_move_object_to_hidden_inventory",
+        "kind": "inventory_move",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj",
+          "count",
+          "compact"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "objects.components.inventory.InventoryComponent.add_from_load",
+        "kind": "load_guard",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "obj",
+          "hidden"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.funds.FamilyFunds.add",
+        "kind": "money",
+        "inherited_from": "sims.funds._Funds",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "amount",
+          "reason",
+          "sim",
+          "tags",
+          "count_as_earnings"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.funds.FamilyFunds.try_remove_amount",
+        "kind": "money",
+        "inherited_from": "sims.funds._Funds",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "amount",
+          "reason",
+          "sim",
+          "require_full_amount"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "aspirations.aspirations.AspirationTracker.complete_objective",
+        "kind": "objective_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "objective_instance",
+          "aspiration"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "aspirations.aspirations.AspirationTracker.complete_milestone",
+        "kind": "objective_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "aspiration",
+          "sim_info"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "sims.unlock_tracker.UnlockTracker.add_unlock",
+        "kind": "unlock_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "tuning_class",
+          "name",
+          "mark_as_new"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_known_trait",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "trait",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_known_trait",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "trait",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_romantic_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_romantic_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_woohoo_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_woohoo_preference",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_relationship_expectations",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_relationship_expectations",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_relationship_status",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_career",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_career",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.set_known_net_worth",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "net_worth",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_known_stat",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "stat",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_known_rel_track",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "rel_track",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.add_knows_major",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.remove_knows_major",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.set_unconfronted_secret",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "secret",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "relationships.sim_knowledge.SimKnowledge.make_secret_known",
+        "kind": "knowledge",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "blackmailed",
+          "notify_client"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.utils.loot_basic_op.BaseLootOperation._apply_to_subject_and_target",
+        "kind": "operation",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "subject",
+          "target",
+          "resolver"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "interactions.payment.payment_cost._Payment.on_payment",
+        "kind": "payment_context",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "amount",
+          "resolver",
+          "payment_info_override",
+          "display_zero_payment",
+          "reason"
+        ],
+        "generator": false
+      },
+      {
+        "hook": "broadcasters.broadcaster_effect._BroadcasterEffect.apply_broadcaster_effect",
+        "kind": "broadcast_test_gate",
+        "state": "verified_symbol",
+        "parameters": [
+          "self",
+          "broadcaster",
+          "affected_object"
+        ],
+        "generator": false
+      }
+    ],
+    "unresolved": 0,
+    "limitation": "Static bytecode only; EA code was not imported or executed; no game validation."
+  },
+  "build": {
+    "python": "3.7.9 (tags/v3.7.9:13c94747c7, Aug 17 2020, 18:58:18) [MSC v.1900 64 bit (AMD64)]",
+    "game_bytecode_magic": "420d0d0a",
+    "files": {
+      "context_overlay/__init__.py": "1ff287558dea958c6ad7a9ac7ddd38ecf7cadacb1ddffc14e750e5b10ad1ebbf",
+      "context_overlay/api.py": "df6d520f5fcb6332ced9b0b6e7cd25dba3a2af57af1ae4eff7722f813f9feeb7",
+      "context_overlay/collector.py": "3a3349cf525a886690ffe1076bee8e2b4af5240db7040bb8ad34285b87cb8bc7",
+      "context_overlay/ea_adapter.py": "d4cdd8f6335176185729e06027678cf27d45e1523138d0d187670c76f014c379",
+      "context_overlay/event_policy.py": "769adaffa4027b3870aa88aff0cb62e2bba986b0fa45d5d3b03fe952d054cbfa",
+      "context_overlay/event_sources.py": "e0987faa3ae3584785d370a36d4750e884d6ceacb204a31a483cec9304a146d5",
+      "context_overlay/game_runtime.py": "231a6bdd1fe9c2e664e428bdcb83db639fbd287ee97c8f1b35011204dc870ced",
+      "context_overlay/history.py": "7bcf15302f85cdaeccfcfd234c1bcf425a882a2bd17cc44b1574a94674fc674e",
+      "context_overlay/hooks.py": "82b65928ea2fd86893007e2a2d63bc5defe61be1b6144e7d7b570b64fcf7b3da",
+      "context_overlay/inspector.py": "426d2620addf751c8ffa2784e505c5405a8cf1523cea972168be2ae20663d175",
+      "context_overlay/localization.py": "e84af799816ff4c3a950688c486c4cbc246a3d606e5a2f187c2deefaf3f03360",
+      "context_overlay/model.py": "de69eaaec13344b3dc3f1bb5a1a46983bcdb9d89beb884e9c29151c687ad3ddb",
+      "context_overlay/name_catalog.py": "2db681bc598e19bd8c8bb38cad58b44f68cb1702b8870626dfc6cfff27e13142",
+      "context_overlay/native_ui.py": "fdabaf8640fe642764371d331554f197359f23dfe087b3039abc304e81932389",
+      "context_overlay/profiles.py": "c74f2b947180354e33c85609cc5b863c8366b20328d2900b299eaab0650c6aa2",
+      "context_overlay/recorder.py": "6aa07b315b57b1cdaccca66b9e09930285cfbc9bdf292d016877281a0252f69b",
+      "context_overlay/semanticizer.py": "59b17a096ae2a5ea5284faaad48a6b453cd0da63c00a88a087dd0c96cad3c59b",
+      "context_overlay/storage.py": "4c5d60b40c502d318362cbb20f456e7832009394fdf7c49966ce769b217fd6cb",
+      "context_overlay/test_driver.py": "7f85e5ca41ba9dced422eb1649b6ff84bec3974782f4edd8868537814efd5536",
+      "context_overlay_bootstrap.py": "6644d714d38ecc5d2934766cfaa517255d7ba889b417ed5690c2a067edf86f90"
+    },
+    "strings_sha256": "77a525e461ce5318378509c601353ade5973f1e7f78188cc778a05637cd329d3",
+    "build_info": {
+      "module_version": "0.6.0",
+      "public_api_version": "1.0.0",
+      "build_game_version": "1.126.73.1030",
+      "game_version_source": "Game/Bin/Default.ini at build time",
+      "game_bytecode_magic": "420d0d0a",
+      "ea_reference_project": "sims4-python",
+      "ea_reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+      "source_sha256": "cf78219ea45fff1901ad420095b6e07a105274af10c70b1d138572bb3b453352",
+      "strings_sha256": "77a525e461ce5318378509c601353ade5973f1e7f78188cc778a05637cd329d3"
+    },
+    "package_sha256": "6713b39e11b6b4d1c9922e8df377cc7714ddaa21e602256d2515787dc8248034"
+  },
+  "installation": {
+    "path": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\Mods\\ContextOverlay\\ContextOverlay.ts4script",
+    "sha256": "6713b39e11b6b4d1c9922e8df377cc7714ddaa21e602256d2515787dc8248034",
+    "backup_path": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\install-backups\\20260915T0847581206893Z\\ContextOverlay.ts4script",
+    "backup_sha256": "4efb56a09d67c0186b3e1d93ee766b275667aa0d6d96a66c8c7d8984aa67a6d1"
+  },
+  "atlas_reference": {
+    "path": "C:/sources/Sims4-Context-Atlas/dist/execution/view-crafting.json.gz",
+    "source_baseline": "1003b2507e5e68dd59eb10135140187bb5ed7750",
+    "sha256": "cf36a5ed0ce8ee8303ac0feb7676979ab011ff0e65bf9c72f16558405a73c860",
+    "usage": "Locate phase and product-notification calls; rechecked current EA source and installed bytecode; dynamic links not inferred."
+  },
+  "limitations": [
+    "No new game run",
+    "No inferred parent IDs for delayed callbacks",
+    "Some inventory and custom MOD paths may lack actor or interaction",
+    "Complex client localization remains explicitly unresolved",
+    "Callback counts do not measure frame performance"
+  ]
+}

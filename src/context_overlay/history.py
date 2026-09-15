@@ -77,6 +77,12 @@ class EntityIndex:
             self.by_id[event_id] = sort_key
         self.by_id.move_to_end(event_id)
 
+    def remove(self, event_id):
+        sort_key = self.by_id.pop(event_id)
+        position = bisect.bisect_left(self.by_time, sort_key)
+        if position < len(self.by_time) and self.by_time[position] == sort_key:
+            self.by_time.pop(position)
+
 
 class HistoryIndex:
     def __init__(self, session_id, capacity=DEFAULT_EVENT_CAPACITY,
@@ -84,9 +90,14 @@ class HistoryIndex:
                  snapshot_refs=100000, snapshot_bytes=256 * MIB,
                  snapshot_ttl=120, clock=None):
         self.session_id = session_id
+        if isinstance(capacity, bool) or not isinstance(capacity, int) or capacity < 1:
+            raise ValueError("Event capacity must be a positive integer")
         self.capacity = capacity
         self.memory_limit = memory_bytes
         self.events = OrderedDict()
+        self.fifo = OrderedDict()
+        self.evicted = 0
+        self.last_evicted_time = None
         self.entities = {}
         self._keys = {}
         self._charges = {}
@@ -106,8 +117,6 @@ class HistoryIndex:
         if self.closed:
             raise HistoryError("session_closed", "Recording run is closed")
         previous = self.events.get(event["event_id"])
-        if previous is None and len(self.events) >= self.capacity:
-            raise HistoryError("history_capacity", "History capacity reached; recording paused")
         if previous and event["revision"] <= previous["revision"]:
             raise HistoryError("invalid_revision", "Event revisions must increase")
         event = copy_data(event)
@@ -126,13 +135,38 @@ class HistoryIndex:
         # accepted_sequence; repeated shared strings are charged independently.
         charge = deep_size(event) + 512 + 512 * len(event["entities"])
         projected = self.memory_bytes - self._charges.get(event["event_id"], 0) + charge
+        if previous is None and len(self.events) >= self.capacity:
+            projected -= self._charges[next(iter(self.fifo))]
         if projected > self.memory_limit:
             raise HistoryError("history_memory", "Estimated history memory budget reached; recording paused")
         return event, charge
 
+    def eviction_for(self, event_id):
+        if event_id not in self.events and len(self.events) >= self.capacity:
+            return next(iter(self.fifo))
+        return None
+
+    def remove(self, event_id):
+        event = self.events.pop(event_id)
+        self.fifo.pop(event_id)
+        self._keys.pop(event_id)
+        self.memory_bytes -= self._charges.pop(event_id)
+        for key in event["entities"]:
+            index = self.entities[key]
+            index.remove(event_id)
+            self.reference_count -= 1
+            if not index.by_id:
+                del self.entities[key]
+        self.evicted += 1
+        self.last_evicted_time = event["first_observed_time"]
+        return event
+
     def publish(self, event, sequence, charge):
         """Publish only after the journal has accepted the revision."""
         event_id = event["event_id"]
+        discarded_id = self.eviction_for(event_id)
+        discarded = self.remove(discarded_id) if discarded_id else None
+        self.fifo.setdefault(event_id, None)
         event["accepted_sequence"] = sequence
         self.memory_bytes += charge - self._charges.get(event_id, 0)
         self._charges[event_id] = charge
@@ -147,11 +181,45 @@ class HistoryIndex:
             index.add(event_id, self._keys[event_id])
         self.events[event_id] = event
         self.events.move_to_end(event_id)
+        return discarded
 
-    def recent(self, entity_key, limit, include_internal):
+    @staticmethod
+    def parent_id(event):
+        return (event.get("cause") or {}).get("event_id")
+
+    @classmethod
+    def grouped(cls, events):
+        by_id = {event["event_id"]: event for event in events}
+        children = {}
+        for event in events:
+            parent = cls.parent_id(event)
+            if parent in by_id and by_id[parent]["event_type"] == "interaction":
+                children.setdefault(parent, []).append(event)
+        attached = {event["event_id"] for values in children.values() for event in values}
+        result = []
+        for event in events:
+            if event["event_id"] in attached:
+                continue
+            if event["event_id"] in children:
+                event = dict(event, effects=children[event["event_id"]])
+            result.append(event)
+        return result
+
+    def recent(self, entity_key, limit, include_internal, group_effects=False):
         index = self.entities.get(entity_key)
         if index is None:
             return [], False
+        if group_effects:
+            # Group a bounded query instead of scanning/copying the full cache.
+            candidates = []
+            for event_id in reversed(index.by_id):
+                event = self.events[event_id]
+                if include_internal or event["tier"] == "main":
+                    candidates.append(event)
+                if len(candidates) >= 500:
+                    break
+            grouped = self.grouped(candidates)
+            return grouped[:limit], len(grouped) > limit or len(index.by_id) > len(candidates)
         selected = []
         for event_id in reversed(index.by_id):
             event = self.events[event_id]
@@ -169,7 +237,7 @@ class HistoryIndex:
 
     def _drop(self, query_id):
         snapshot = self._snapshots.pop(query_id)
-        self._snapshot_refs -= len(snapshot["events"])
+        self._snapshot_refs -= snapshot["refs"]
         self._snapshot_bytes -= snapshot["charge"]
 
     def close(self):
@@ -182,6 +250,8 @@ class HistoryIndex:
         return {"entities": len(self.entities), "event_references": self.reference_count,
                 "estimated_memory_bytes": self.memory_bytes, "memory_budget_bytes": self.memory_limit,
                 "event_capacity": self.capacity, "snapshots": len(self._snapshots),
+                "retention_policy": "fifo_first_accepted", "evicted_events": self.evicted,
+                "last_evicted_time": self.last_evicted_time,
                 "snapshot_references": self._snapshot_refs, "snapshot_charged_bytes": self._snapshot_bytes,
                 "snapshot_memory_budget_bytes": self.snapshot_byte_limit}
 
@@ -198,7 +268,7 @@ class HistoryIndex:
 
     def query(self, entity_key, metadata, page_size=50, include_internal=False,
               time_field="first_observed", from_ticks=None, to_ticks=None,
-              event_types=None, fields=None, outcomes=None, tuning_ids=None, order="desc"):
+              event_types=None, fields=None, outcomes=None, tuning_ids=None, order="desc", group_effects=False):
         if self.closed:
             raise HistoryError("session_closed", "Recording run is closed")
         validate_entity(entity_key)
@@ -206,12 +276,14 @@ class HistoryIndex:
             raise HistoryError("invalid_query", "Page size must be between 1 and 500")
         if not isinstance(include_internal, bool):
             raise HistoryError("invalid_query", "include_internal must be a boolean")
+        if not isinstance(group_effects, bool):
+            raise HistoryError("invalid_query", "group_effects must be a boolean")
         if time_field not in ("first_observed", "started", "ended") or order not in ("asc", "desc"):
             raise HistoryError("invalid_query", "Unsupported time field or order")
         lower, upper = ticks(from_ticks), ticks(to_ticks)
         if lower is not None and upper is not None and lower >= upper:
             raise HistoryError("invalid_query", "Time range is [from, to), with from < to")
-        types = self._values(event_types, "event_types", {"interaction", "state_change"})
+        types = self._values(event_types, "event_types", {"interaction", "state_change", "game_event"})
         names = self._values(fields, "fields")
         results = self._values(outcomes, "outcomes", {"completed", "cancelled", "failed", "unknown"})
         tunings = self._values(tuning_ids, "tuning_ids")
@@ -251,17 +323,23 @@ class HistoryIndex:
                 rows.append(((observed, key[1], key[2]), event))
         rows.sort(key=lambda row: row[0], reverse=order == "desc")
         versions = tuple(row[1] for row in rows)
+        original_refs = len(versions)
+        if group_effects:
+            versions = tuple(self.grouped(versions))
+            charged += 512 * len(versions)
+            if charged + self._snapshot_bytes > self.snapshot_byte_limit:
+                raise HistoryError("query_budget", "Grouped query exceeds snapshot budget")
         query_id = new_id()
-        snapshot = {"events": versions, "charge": charged, "expires": self._clock() + self.snapshot_ttl,
+        snapshot = {"events": versions, "refs": original_refs, "charge": charged, "expires": self._clock() + self.snapshot_ttl,
                     "page_size": page_size, "entity_key": entity_key, "metadata": copy_data(metadata),
                     "created_at": utc_now(), "examined": examined,
                     "filters": {"time_field": time_field, "from_ticks": str(lower) if lower is not None else None,
                                 "to_ticks": str(upper) if upper is not None else None, "order": order,
-                                "include_internal": include_internal, "event_types": sorted(types) if types else None,
+                                "include_internal": include_internal, "group_effects": group_effects, "event_types": sorted(types) if types else None,
                                 "fields": sorted(names) if names else None, "outcomes": sorted(results) if results else None,
                                 "tuning_ids": sorted(tunings) if tunings else None}}
         self._snapshots[query_id] = snapshot
-        self._snapshot_refs += len(versions)
+        self._snapshot_refs += original_refs
         self._snapshot_bytes += charged
         return self._page(query_id, 0)
 
@@ -302,6 +380,8 @@ class HistoryIndex:
         durable = result["coverage"]["persistence"]["durable_sequence"]
         for record in records:
             record["persistence"] = "written" if record["accepted_sequence"] <= durable else "accepted"
+            for effect in record.get("effects", []):
+                effect["persistence"] = "written" if effect["accepted_sequence"] <= durable else "accepted"
         result.update({"events": records, "scope": "current_session_query_snapshot",
                        "entity_key": snapshot["entity_key"], "filters": copy_data(snapshot["filters"]),
                        "query_id": query_id, "cursor": self._cursor(query_id, offset),

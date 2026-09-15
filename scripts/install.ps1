@@ -2,12 +2,15 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [Alias('Profile')][string]$UserData,
-    [string]$PackageDirectory = (Join-Path $PSScriptRoot '..\dist'),
+    [string]$PackageDirectory,
     [switch]$NonInteractive
 )
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+if ([string]::IsNullOrWhiteSpace($PackageDirectory)) {
+    $PackageDirectory = Join-Path $PSScriptRoot '..\dist'
+}
 
 function Assert-GameClosed {
     if (Get-Process -Name TS4,TS4_x64,TS4_DX9_x64 -ErrorAction SilentlyContinue) {

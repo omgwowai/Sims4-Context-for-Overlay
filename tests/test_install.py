@@ -51,7 +51,7 @@ class WindowsInstallChecks(unittest.TestCase):
         # be running while these disposable filesystem cases are exercised.
         wrapper = self.root / "invoke.ps1"
         process = "[pscustomobject]@{Name='TS4_x64'}" if options.get("game_running") else ""
-        installer = str(ROOT / "scripts/install.ps1").replace("'", "''")
+        installer = str(options.get("installer", ROOT / "scripts/install.ps1")).replace("'", "''")
         wrapper.write_text(
             "[CmdletBinding(SupportsShouldProcess=$true)]\n"
             "param([Alias('Profile')][string]$UserData,[string]$PackageDirectory,[switch]$NonInteractive)\n"
@@ -59,12 +59,13 @@ class WindowsInstallChecks(unittest.TestCase):
             "Import-Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Management\n"
             "function Get-Process { param($Name,$ErrorAction) " + process + " }\n"
             "& '" + installer + "' @PSBoundParameters\n", encoding="utf-8")
+        package_options = [] if options.get("default_package") else ["-PackageDirectory", str(self.package_dir)]
         return subprocess.run([
             "powershell.exe", "-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass",
             "-File", str(wrapper),
-            "-Profile", str(self.profile), "-PackageDirectory", str(self.package_dir),
+            "-Profile", str(self.profile),
             "-NonInteractive",
-        ] + list(extra), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+        ] + package_options + list(extra), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
 
     def assert_preserved(self):
         for path, content in self.protected.items():
@@ -114,6 +115,20 @@ class WindowsInstallChecks(unittest.TestCase):
 
     def test_whatif_writes_nothing(self):
         result = self.run_installer("-WhatIf")
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertFalse(self.destination.parent.exists())
+        self.assertFalse((self.profile / "ContextOverlay/install-receipt.json").exists())
+        self.assert_preserved()
+
+    def test_extracted_bundle_resolves_default_package_directory(self):
+        bundle = self.root / "extracted [bundle]"
+        installer = bundle / "scripts/install.ps1"
+        installer.parent.mkdir(parents=True)
+        installer.write_bytes((ROOT / "scripts/install.ps1").read_bytes())
+        (bundle / "dist").mkdir()
+        for name in ("ContextOverlay.ts4script", "build-manifest.json"):
+            (bundle / "dist" / name).write_bytes((self.package_dir / name).read_bytes())
+        result = self.run_installer("-WhatIf", installer=installer, default_package=True)
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertFalse(self.destination.parent.exists())
         self.assertFalse((self.profile / "ContextOverlay/install-receipt.json").exists())

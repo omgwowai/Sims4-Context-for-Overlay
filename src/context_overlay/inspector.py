@@ -3,6 +3,7 @@
 from context_overlay.history import HistoryError
 from context_overlay.model import copy_data
 from context_overlay.semanticizer import FIELD_NAMES, STATUS_NAMES, display, explain_event
+from context_overlay.event_sources import LABELS
 
 
 PAGE_SIZE = 15
@@ -31,6 +32,8 @@ def event_label(event):
         if event["stage"] == "ended":
             phase = {"completed": "自然结束", "cancelled": "取消", "failed": "失败", "unknown": "结果未知"}[event["outcome"]]
         return short("{} · {}".format(name, phase), 100)
+    if event["event_type"] == "game_event":
+        return short(LABELS.get(event["category"], "待解释：" + event["category"]), 100)
     return short("{}变化".format(FIELD_NAMES.get(event["field"], event["field"])), 100)
 
 
@@ -140,7 +143,7 @@ class InspectorSession:
                 self.on_error("Inspector context: " + str(exc))
         else:
             self.context_error = "Context 采集器已停用；仍可查看历史。"
-        self.recent = self.runtime.recorder.history(self.target["key"], limit=5)
+        self.recent = self.runtime.recorder.history(self.target["key"], limit=5, group_effects=True)
         self.overview()
 
     def coverage(self, history):
@@ -152,6 +155,9 @@ class InspectorSession:
         error = history.get("coverage", {}).get("error")
         if error:
             text += "\n" + short(error, 200)
+        evicted = history.get("coverage", {}).get("evicted_events", 0)
+        if evicted:
+            text += "\nFIFO 已淘汰 {} 条最早事件；当前查询只覆盖保留范围。".format(evicted)
         return text + "\n仅本次运行、当前地块的已观测记录；没有记录不代表没有发生。"
 
     def overview(self):
@@ -226,15 +232,23 @@ class InspectorSession:
         text += "\n\n首次观测：{}\n开始：{}\n结束：{}\n最近观测：{}".format(
             game_time(event.get("first_observed_time")), game_time(event.get("started_time")),
             game_time(event.get("ended_time")), game_time(event.get("last_observed_time")))
-        if event.get("interval"):
-            text += "\n采样区间：{} → {}".format(game_time(event["interval"]["from"]), game_time(event["interval"]["to"]))
         text += "\n\n事件 ID：{}\n修订：{}\n持久化：{}（查询时状态）".format(
             event["event_id"], event["revision"], "已写入" if event.get("persistence") == "written" else "已接收，尚未确认写入")
+        if event.get("source"):
+            text += "\n来源：{}\n证据：{}".format(event["source"], event.get("evidence_type", "未知"))
+        if event.get("roles"):
+            text += "\n参与角色：" + display(event["roles"])
+        if event.get("cause"):
+            text += "\n关联依据：" + display(event["cause"])
+        for effect in event.get("effects", []):
+            text += "\n\n关联效果：{}\n事件 ID：{}\n时间：{}\n来源：{}".format(
+                explain_event(effect)["text"], effect["event_id"],
+                game_time(effect.get("last_observed_time")), effect.get("source", "未知"))
         self.text_page("事件详情", text, back)
 
     def filter_text(self):
         return "{}；{}；{}".format("本次运行全部时间" if self.hours is None else "近 {} 游戏小时".format(self.hours),
-            {None: "全部事件类型", "interaction": "交互", "state_change": "状态变化"}[self.event_type],
+            {None: "全部事件类型", "interaction": "交互", "state_change": "状态变化", "game_event": "生活事件"}[self.event_type],
             "含内部步骤" if self.internal else "仅主要事件")
 
     def filters(self):
@@ -243,7 +257,7 @@ class InspectorSession:
         for hours in (1, 6, 24, None):
             label = "本次运行全部时间" if hours is None else "近 {} 游戏小时".format(hours)
             rows.append(row("时间：" + label, "选择后立即应用", lambda hours=hours: self.set_filter("hours", hours)))
-        for value, label in ((None, "全部"), ("interaction", "交互"), ("state_change", "状态变化")):
+        for value, label in ((None, "全部"), ("interaction", "交互"), ("state_change", "状态变化"), ("game_event", "生活事件")):
             rows.append(row("类型：" + label, "选择后立即应用", lambda value=value: self.set_filter("event_type", value)))
         rows.append(row("隐藏内部步骤" if self.internal else "显示内部步骤", "默认只看主要事件", lambda: self.set_filter("internal", not self.internal)))
         rows.append(row("应用当前筛选", "", self.new_history))
@@ -259,7 +273,8 @@ class InspectorSession:
         self.page = self.runtime.recorder.query_history(self.target["key"], target=self.target,
             page_size=PAGE_SIZE, include_internal=self.internal, time_field="first_observed", order="desc",
             from_ticks=now - self.hours * self.ticks_per_hour if self.hours is not None else None,
-            to_ticks=now + 1, event_types=[self.event_type] if self.event_type else None)
+            to_ticks=now + 1, event_types=[self.event_type] if self.event_type else None,
+            group_effects=not self.internal and self.event_type is None)
         self.history_page()
 
     def move_page(self, backwards=False):

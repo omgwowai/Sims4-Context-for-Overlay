@@ -16,13 +16,17 @@
 
 首轮开发验证已完成：三个模块在本地游戏中贯通，独立开关和离线语义转换均有验证证据。范围限定为当前地块内已实例化的 Sim 和物件，以做饭与吃饭为主要场景，采集行为、触发来源及需求/Buff/关系/物件常用状态，导出 JSON 和逐条中文解释。具体要求见[首轮实现与验收](docs/implementation-and-validation.md)，完成状态见[实际验证记录](docs/validation/2026-09-14-first-round.md)。旧原型不作为本次新实现的验收依据。
 
-当前源码为 **0.5.0**，新增供下游 MOD 使用的 **公共 API 1.0.0 和 Python SDK 1.0.0**：直接读取 Context、按实体／时间／类型分页查询历史、管理游标、检查版本与可用性。下游无需访问 `_runtime`，无需控制台或文件中转。已完成离线契约验证，尚未安装或实机验收。见[公共 API 文档](docs/public-api-v1.md)、[SDK 入门](sdk/README.md)和[验证记录](docs/validation/2026-09-15-public-api.md)。
+当前源码与本地安装包为 **0.6.0 试用版**：补充常见生活事件、具体社交动作、多实体角色、直接数值效果、动作与效果分组，以及 200,000 条 FIFO 保留。全部连续数值定时采样已删除，当前值仍按 Context 请求读取。本机已有首局实机样本，并完成一轮计时噪声、资源名称、角色与调用来源修正；新增行为待实机复测，本轮继续沿用 0.6.0。实际入口、限制与数据例子见[当前覆盖说明](docs/event-coverage-0.6.0.md)，最新构建见[修正验证](docs/validation/2026-09-15-event-quality-fixes.md)。
+
+提供 **公共 API 1.1.0 和 Python SDK 1.1.0**：直接读取 Context、按实体／时间／类型分页查询历史、管理游标、检查版本与可用性。新增[附近实体查询](docs/nearby-entities.md)，按半径／楼层／房间筛选 Sim 和物件，再按需读取选中实体的 Context。原有接口保持兼容，下游无需访问 `_runtime`，无需控制台或文件中转。见[公共 API 文档](docs/public-api-v1.md)、[SDK 入门](sdk/README.md)和[附近查询验证](docs/validation/2026-09-15-nearby-entities.md)。
 
 本版包含 0.4.0 的名称解析改进：游戏资源字段、中文 STBL 与动态参数联合解析，保存 LocalizedString 证据，支持旧日志重解释；名称功能仍待用户实机测试。方法见[语义化模块](docs/semanticizer.md)，旧数据核对见[语义解析记录](docs/validation/2026-09-15-semantic-resolution.md)。
 
-已安装及内部试用包仍为 **0.3.2**。用户已确认界面布局：首页按钮为“当前状态 → 历史事件 → 刷新 → 关闭”，状态和历史使用横向文字行，长详情使用正文。默认关闭连续需求变化历史，当前需求快照及 200,000 条事件上限保留。使用方式见[窗口说明](docs/inspector-manual-test.md)，实机范围见[布局验证记录](docs/validation/2026-09-14-inspector-layout.md)。此前的[容量测量](docs/validation/2026-09-14-history-optimization.md)对应 0.2.0，首轮实机结论对应 0.1.0。
+飞书内部已发布包仍为 **0.3.2**，本机安装为 **0.6.0**。窗口沿用用户已确认的布局：首页按钮为“当前状态 → 历史事件 → 刷新 → 关闭”，状态和历史使用横向文字行，长详情使用正文。使用方式见[窗口说明](docs/inspector-manual-test.md)，布局实机范围见[布局验证记录](docs/validation/2026-09-14-inspector-layout.md)。此前的[容量测量](docs/validation/2026-09-14-history-optimization.md)对应 0.2.0，首轮实机结论对应 0.1.0；新版事件质量见单独报告。
 
 设计师配置、Prompt、模型调用和 Overlay 展示属于下游消费侧。长期记忆、任意历史时刻状态重建、LLM 事件执行及 Autonomy 改造放在后续扩展范围。
+
+事件覆盖先完成[源码调研](docs/event-coverage-audit.md)与[158 项原生事件附表](docs/native-event-inventory.md)，再按[0.6.0 实施约定](docs/event-expansion-plan.md)实现。当前完成情况以[覆盖说明](docs/event-coverage-0.6.0.md)和[验证报告](docs/validation/2026-09-15-event-expansion.md)为准；活动容器和资料片专项暂不接入。20 万是数量上限，较重的事件可能先触及独立内存保护；数量满时按首次接收顺序淘汰旧事件。
 
 ## 开发依据
 
@@ -47,6 +51,8 @@
 6. [首轮实现与验收](docs/implementation-and-validation.md)：首个完整场景、开发顺序和验证要求。
 7. [运行与调试](docs/runtime-usage.md)、[接口与证据登记](docs/runtime-interfaces.md)：首版构建、命令、数据契约及源码入口。
 8. [游戏内窗口与手动试验](docs/inspector-manual-test.md)：菜单入口、浏览方式、试验步骤和错误定位。
+9. [事件覆盖调研](docs/event-coverage-audit.md)与[原生事件附表](docs/native-event-inventory.md)：当前已记录、Experience 差距及 EA 玩法候选入口。
+10. [0.6.0 实施约定](docs/event-expansion-plan.md)：本轮访谈确定的范围、事实表达、展示方式和试用验收门槛。
 
 ## 历史资料与后续扩展
 

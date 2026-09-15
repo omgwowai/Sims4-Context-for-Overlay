@@ -16,6 +16,10 @@ def main():
     files = sorted(path for path in (ROOT / "sdk").rglob("*")
                    if path.is_file() and path.suffix in (".py", ".json", ".md"))
     files.append(ROOT / "docs/public-api-v1.md")
+    files.append(ROOT / "docs/event-coverage-0.6.0.md")
+    files.append(ROOT / "docs/nearby-entities.md")
+    files.append(ROOT / "docs/validation/2026-09-15-nearby-entities.md")
+    files.append(ROOT / "docs/validation/2026-09-15-nearby-entities.json")
     folder = "ContextOverlay-SDK-" + SDK_VERSION
     output = ROOT / "dist" / (folder + ".zip")
     output.parent.mkdir(exist_ok=True)

@@ -1,8 +1,8 @@
 # 首版接口与证据登记
 
-日期：2026-09-15。当前代码 0.5.0 使用以下 EA 接口，依据 `sims4-python` 提交 `12718ed96470fc2edffbc7875d10cf537b1f0e57`。此表说明实现来源；游戏验证状态单独记录。0.5.0 公共 API 和 0.4.0 名称解析完成离线检查，尚未安装或实机验收。
+日期：2026-09-15。当前代码为 0.6.0 试用版，参考 sims4-python `12718ed96470fc2edffbc7875d10cf537b1f0e57`。基础接口沿用下表；新增入口、事件契约、FIFO 与限制集中见[当前覆盖说明](event-coverage-0.6.0.md)。本机已有首局样本，后续来源与资源适配修正完成离线核验并安装，待实机复测，见[修正验证](validation/2026-09-15-event-quality-fixes.md)。
 
-0.2.0 新增的历史索引、过滤和分页仅完成离线验证。EA 采集入口沿用 0.1.0；新增命令仍需将来在游戏内验证。本轮未建立跨 MOD 的公开 SDK。
+0.2.0 建立实体索引与固定分页，0.5.0 建立公共 API／SDK，0.6.0 增加生活事件、来源与角色、效果分组、历史身份及 FIFO。旧版本的游戏验证不等于新入口已实机验证。
 
 0.3.0 增加游戏内查看层，用户已确认可以打开；当前布局实现为 0.3.2。纯导航位于 `inspector.py`，EA 接入位于 `native_ui.py`。窗口直接调用 `Collector.collect(..., include_history=False, representation="raw")` 和 Recorder 的查询／分页接口，不经控制台或文件。UI 是三个核心模块的内部消费者，不是第四个采集模块或稳定公开 SDK。
 
@@ -27,6 +27,8 @@
 
 ## 原生查看窗口（0.3.2）
 
+API 1.1.0 新增的[附近实体查询](nearby-entities.md)位于 `Collector.nearby`／`nearby.collect`，复用 EAAdapter，按请求读取空间信息。它通过 SDK 或 `co.nearby` 导出调用，暂未接入原生查看窗口。
+
 | 能力 | EA 来源 | 本版处理 |
 | --- | --- | --- |
 | 实体点击菜单 | [ScriptObject.potential_interactions](../../sims4-python/ea-source/EA/simulation/objects/script_object.py)、[Sim.potential_interactions](../../sims4-python/ea-source/EA/simulation/sims/sim.py) | 保留原生成器，补充一个 AOP；仅玩家普通点击、当前地块内实例，去重并避免转发对象的重复入口 |
@@ -42,7 +44,7 @@
 
 0.3.2 的状态分类、字段列表、历史及筛选页统一使用 TEXT 列。当前原生客户端在此配置下不展示 `text`／`subtitle`，因此时间、筛选和页数摘要放入可见列标题，完整说明放入列标题的 tooltip。列表项合并名称与摘要，摘要已包含在名称中时不重复添加。实机观察与截图单独登记于[布局验证记录](validation/2026-09-14-inspector-layout.md)，不能将当前测试组合推广为所有分辨率或其他 MOD 的兼容结论。
 
-默认 `record_need_changes=false`：`EAAdapter.continuous()` 省略需求读取与 `needs.*` 采样值，继续返回关系数值。`read_needs()` 与 Collector 的当前需求读取独立保留；需求读取不可用也不再阻断关系采样。Runtime 的配置和 session_start 日志记录该开关，改动不回写旧日志。
+0.6.0 的当前数值由 Context 请求读取；Runtime 没有数值采样调度，Recorder 没有采样基线。事件数值只由 Loot 操作范围内的 BaseStatistic._notify_change 提供真实前后值，不调用 get_value 采样；技能仅比较实际离散等级。全部新增源见[覆盖说明](event-coverage-0.6.0.md)及 `event_sources.py` 的 HOOKS／NATIVE 登记。
 
 | 能力 | 入口与来源 | 本版处理 |
 | --- | --- | --- |
@@ -55,13 +57,13 @@
 | 触发来源 | [InteractionContext](../../sims4-python/ea-source/EA/simulation/interactions/context.py) 的 `source`、`source_interaction_id`、`continuation_id` | 保留原值，按已确认规则解释；不从时间相近推断主从或因果 |
 | 需求 | [BaseStatisticTracker](../../sims4-python/ea-source/EA/simulation/statistics/base_statistic_tracker.py) 的 `get_statistic(add=False)` | 读取已实例化的 Hunger/Energy/Fun/Social/Hygiene/Bladder，缺失不使用默认值 |
 | Buff | [BuffComponent](../../sims4-python/ea-source/EA/simulation/objects/components/buff_component.py) 的枚举与 `BuffBeganEvent`、`BuffEndedEvent` | 当前 Buff 与逐次增减分别记录 |
-| 关系 | [RelationshipTracker](../../sims4-python/ea-source/EA/simulation/relationships/relationship_tracker.py) 的 `has_relationship`、`get_relationship_track(add=False)`、`get_all_bits` | 友谊/浪漫主轨道定期采样；关系位通过 Add/RemoveRelationshipBit 记录 |
+| 关系 | [RelationshipTracker](../../sims4-python/ea-source/EA/simulation/relationships/relationship_tracker.py) 的 `has_relationship`、`get_relationship_track(add=False)`、`get_all_bits` | 友谊/浪漫主轨道在 Context 请求时读取；关系位通过 Add/RemoveRelationshipBit 记录 |
 | 物件状态 | [StateComponent](../../sims4-python/ea-source/EA/simulation/objects/components/state.py) 的 `values()`、`_trigger_on_state_changed` | 仅匹配下表中 ID 与名称均一致的 8 个状态类型；其他状态排除 |
 | 名称 | 上方 0.4.0 名称接口表；目录回退仍使用 `build_buy.get_object_catalog_name` | 游戏名称字段、hash/tokens 与中文 STBL 联合解析；缺少名称、参数、词表或读取失败分别保留依据 |
 
 `InteractionComplete` 的发送条件是交互曾进入运行阶段，不保证自然完成。本版不把该通知当作成功依据。
 
-即时交互（例如食谱选择器）只有开始通知时标为 `triggered/unknown`，不宣称持续运行或已完成。超级交互进入主要历史；原生 `AnimationInteraction`、非超级交互及姿态/携带取消衔接归入内部层。此层次是游戏结构的第一版映射，尚不聚合成“整次做饭”这一活动。
+即时交互只有开始通知时标为 triggered/unknown，不宣称已完成。0.6.0 中具体社交 mixer 默认进入主要层；原生 AnimationInteraction、姿态／社交调整／携带取消等已知技术来源进入内部层，未知用途保留可见。玩法 outcome_result 与退出类型分别保存，不据此合成整次活动。
 
 双向关系位以排序后的双方实例 ID、关系位 ID 和存在状态去重；原生对双方分别发送的通知引用同一个变化事件，重复通知另外保留为观测。单向关系位保留报告方身份。移除、重新新增及离场后的新通知不与此前变化合并。
 
@@ -86,11 +88,11 @@
 
 - 所有实体、tuning、定义与交互 ID 使用十进制字符串；类型与实例/定义身份分开。
 - 日志带 `schema_version`、`module_version`、`session_id`、`sequence` 和现实时间。
-- `event_revision` 保存稳定事件 ID、递增修订、参与实体及证据；`observation` 保存覆盖、样本与调试信息。
+- `event_revision` 保存稳定事件 ID、递增修订、参与实体及证据；`observation` 保存覆盖边界与调试信息。
 - 当前数据包带固定目标、读取前后游戏时间、所选字段、历史覆盖与可选 `rendered`。字段的 `status` 与 `value` 分开。
 - 历史返回写入状态、条数限制、模块状态与覆盖说明。`target_observation` 保存该实体的首次/最近进场、最近离场、进场次数与当前观测状态；完整边界留在日志中。已接收记录不标为已确认写入。
-- 连续状态差异带区间；不声称区间内只发生过一次变化，也不将差异自动归因为活动。
-- 任一关系参与者离场都会清除该关系的采样基线；重新进场后的首个值不与场外空档之前的值计算差异。
+- 状态变化保留回调提供的前后值；新增 game_event 使用 category/field/payload，statistic.direct 的 payload.before/after 来自明确操作内实际修改。cause 和 roles 保留证据，group_effects 是查询展示选项；没有采样区间或持续活动边界数值。
+- 任一关系参与者离场都会清除相关关系标记的通知去重状态；离场前后的新通知不会误合并。
 - 查询和历史导出带 `provenance`：构建时游戏版本、所依据的 EA 源码提交、代码/中文词表摘要、实际运行解释器和可用资料片列表。构建时版本不冒充动态读取到的游戏版本，其他 MOD 清单由场景验证另行登记。
 - 0.4.0 的名称记录附带本地化参数和来源，历史参数只反映观测时刻；不能从最新人物状态反填旧名称。旧消费者应容忍新增字段和 `no_display_name` 名称状态。
 - 运行停止时分别尝试取消定时器、移除自有 Hook 和注销每项订阅；单项失败不阻止其余清理。退出边界等待后台写入收尾，最长 5 秒；失败明确报告。
@@ -99,7 +101,7 @@
 
 `HistoryIndex` 保存一份事件最新版本表；每个实体拥有去重的事件 ID 容器和按首次观测时间排序的引用。事件新修订不复制到参与者容器中；后续发现新参与者时补充关联。实体离场后历史关联保留。主线程发布事件版本，查询输出是独立副本。
 
-旧 `Recorder.history` 使用实体索引，保持最近更新顺序。新增 `Recorder.query_history(entity_key, ...)` 支持 `page_size`、`include_internal`、`time_field`、`from_ticks`、`to_ticks`、`event_types`、`fields`、`outcomes`、`tuning_ids` 和 `order`。时间范围为 `[from, to)`；首次观测范围用二分定位，开始/结束查询筛选该实体全部候选，不用首次观测时间错误裁剪长交互。
+旧 `Recorder.history` 使用实体索引，保持最近更新顺序。新增 `Recorder.query_history(entity_key, ...)` 支持 `page_size`、`include_internal`、`time_field`、`from_ticks`、`to_ticks`、`event_types`、`fields`、`outcomes`、`tuning_ids`、`order` 和 `group_effects`。时间范围为 `[from, to)`；首次观测范围用二分定位，开始/结束查询筛选该实体全部候选，不用首次观测时间错误裁剪长交互。
 
 查询快照保留固定事件版本及查询创建时的覆盖/写入状态，返回 `as_of_sequence`、`cursor`、`next_cursor`、`has_more`、`total_matches`、`created_at`、`expires_in_seconds`。`history_page(cursor)` 延续此快照，`close_query(cursor)` 主动释放。分页的 `has_more` 表达还有匹配结果，观测缺口仍由覆盖信息表达。时间相同时按首次接收序号排序。
 
@@ -109,4 +111,4 @@
 
 ## 验证边界
 
-首轮场景证据见[验证记录](validation/2026-09-14-first-round.md)。0.4.0 动态名称的离线证据和限制见[语义解析验证](validation/2026-09-15-semantic-resolution.md)，尚不能代替实机核对。未列入目录的状态、其他 DLC/MOD 组合及长时高负载未验收。原生通知只能代表实际发送并被观测到的事件；样本缺失不等于没有变化。
+首轮场景证据见[验证记录](validation/2026-09-14-first-round.md)。0.4.0 动态名称的离线证据和限制见[语义解析验证](validation/2026-09-15-semantic-resolution.md)，尚不能代替实机核对。未列入目录的状态、其他 DLC/MOD 组合及长时高负载未验收。原生通知只能代表实际发送并被观测到的事件；没有记录不等于没有变化。

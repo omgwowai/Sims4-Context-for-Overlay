@@ -134,6 +134,8 @@ class Localizer:
         missing = []
         text = self._template(template, evidence.get("tokens", []), missing, depth, budget)
         result.update(text=text, status="unresolved_tokens" if missing else "resolved")
+        if not text.strip() and not missing:
+            result.update(text=fallback, status="empty_display_name", reason="localized_text_empty", template=template)
         if "{" in template:
             result.update(template=template, unresolved=missing)
         if fallback is not None:

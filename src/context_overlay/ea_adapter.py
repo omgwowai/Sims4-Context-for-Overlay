@@ -3,9 +3,12 @@
 Game objects are resolved and copied on the simulation thread only.
 """
 
+import math
+
 from context_overlay.model import entity, field, number
 from context_overlay.profiles import OBJECT_STATES, PROFILE_VERSION, resource_name
 from context_overlay.localization import Localizer
+from context_overlay.event_policy import internal_interaction
 
 
 NEEDS = {"hunger": "motive_Hunger", "energy": "motive_Energy", "fun": "motive_Fun",
@@ -60,6 +63,73 @@ class EAAdapter:
     def local_sims(self):
         return [obj for obj in self.live_objects() if getattr(obj, "is_sim", False) and self.in_scope(obj)]
 
+    def nearby_objects(self):
+        return self.services.object_manager().get_valid_objects_gen()
+
+    def nearby_eligible(self, obj):
+        if not self.in_scope(obj):
+            return False
+        # A child of an inventory object is not a separately placed world item.
+        current, seen = obj, set()
+        while current is not None:
+            marker = id(current)
+            if marker in seen or len(seen) >= 32:
+                raise ValueError("Unresolved object parenting")
+            seen.add(marker)
+            if current.is_in_inventory():
+                return False
+            current = getattr(current, "parent", None)
+        return True
+
+    @staticmethod
+    def nearby_spatial(obj):
+        result = {"room": field(status="not_requested")}
+        try:
+            position = obj.position
+            value = {axis: float(getattr(position, axis)) for axis in ("x", "y", "z")}
+            if not all(math.isfinite(item) for item in value.values()):
+                raise ValueError("Nonfinite position")
+            result["position"] = field(value, source="GameObject.position (world transform)")
+        except Exception:
+            result["position"] = field(status="error", reason="position_read_failed")
+        try:
+            level = obj.level
+            if not isinstance(level, int) or isinstance(level, bool):
+                raise ValueError("No game level")
+            result["level"] = field(level, source="GameObject/Sim.level")
+        except Exception:
+            result["level"] = field(status="unsupported", reason="level_unavailable")
+        try:
+            surface = obj.routing_surface
+            value = {"primary_id": str(surface.primary_id), "secondary_id": int(surface.secondary_id),
+                     "type": enum_name(surface.type)}
+            result["routing_surface"] = field(value, source="GameObject/Sim.routing_surface")
+        except Exception:
+            result["routing_surface"] = field(status="unsupported", reason="routing_surface_unavailable")
+        return result
+
+    @staticmethod
+    def nearby_room(obj, spatial):
+        source = "build_buy.get_room_id(zone_id, position, level)"
+        if any(spatial[key]["status"] != "available" for key in ("position", "level")):
+            return field(status="unsupported", source=source, reason="position_or_level_unavailable")
+        try:
+            import build_buy
+            import sims4.math
+            position = spatial["position"]["value"]
+            zone_id = obj.zone_id
+            room_id = build_buy.get_room_id(zone_id,
+                sims4.math.Vector3(position["x"], position["y"], position["z"]), spatial["level"]["value"])
+            # Python only exposes the native entry. Zero/negative/None sentinel
+            # semantics (including outdoor areas) have not been game-verified.
+            if not isinstance(room_id, int) or isinstance(room_id, bool) or room_id <= 0:
+                result = field(status="unsupported", source=source, reason="room_id_unverified")
+                result["raw_id"] = str(room_id) if isinstance(room_id, int) else None
+                return result
+            return field({"zone_id": str(zone_id), "id": str(room_id)}, source=source)
+        except Exception:
+            return field(status="error", source=source, reason="room_read_failed")
+
     def reference(self, obj):
         if getattr(obj, "is_sim", False):
             info = obj.sim_info
@@ -86,22 +156,73 @@ class EAAdapter:
             name["source"] = {"kind": "catalog_fallback", "object_name_error": str(exc)}
         return entity("object", obj.id, name, getattr(definition, "id", None))
 
-    def resource(self, resource, label_attribute=None, resource_kind=None, tokens=()):
+    def event_reference(self, value):
+        """Identity only: permits SimInfo and an event's out-of-scope participant."""
+        if value is None:
+            return None
+        if hasattr(value, "sim_id"):
+            return entity("sim", value.sim_id, " ".join(str(part) for part in
+                (getattr(value, "first_name", ""), getattr(value, "last_name", "")) if part))
+        if getattr(value, "id", None):
+            # Services, broadcasters, definitions and interactions also have ids.
+            # Only actual world objects belong in the entity index.
+            from objects.base_object import BaseObject
+            if isinstance(value, BaseObject):
+                return self.reference(value)
+        return None
+
+    def event_local(self, value):
+        if value is None:
+            return False
+        if hasattr(value, "get_sim_instance") and hasattr(value, "sim_id"):
+            value = value.get_sim_instance()
+        if self.in_scope(value):
+            return True
+        # Inventory operations can have a local owner even when the item is hidden.
+        component = getattr(value, "inventoryitem_component", None)
+        getter = getattr(component, "get_inventory", None)
+        inventory = getter() if getter else None
+        return self.in_scope(getattr(inventory, "owner", None))
+
+    def resource(self, resource, label_attribute=None, resource_kind=None, tokens=(), intensity=None):
         if resource is None:
             return None
         cls = resource if isinstance(resource, type) else type(resource)
         identifier = getattr(resource, "guid64", getattr(cls, "guid64", None))
         tuning_name = getattr(resource, "__name__", cls.__name__)
+        if label_attribute is None and resource_kind is None:
+            # These are verified EA resource fields, not English-name guesses.
+            for kind, marker in (("buff", "buff_name"), ("statistic", "stat_name"),
+                                 ("mood", "mood_names"), ("recipe", "get_recipe_name"),
+                                 ("trait", "trait_type")):
+                if hasattr(resource, marker):
+                    resource_kind = kind
+                    break
+            if resource_kind is None and hasattr(resource, "display_name"):
+                label_attribute = "display_name"
         attribute = label_attribute or {"buff": "buff_name", "relbit": "display_name",
-                                       "statistic": "stat_name", "object_state": "display_name"}.get(resource_kind)
+            "statistic": "stat_name", "object_state": "display_name", "trait": "display_name",
+            "recipe": "get_recipe_name", "interaction": "get_name", "mood": "mood_names"}.get(resource_kind)
         try:
             localized = getattr(resource, attribute, None) if attribute else None
-            if callable(localized):
+            if resource_kind == "mood" and localized is not None:
+                level = intensity if intensity is not None else 0
+                localized = localized[level] if isinstance(level, int) and 0 <= level < len(localized) else None
+                if localized is not None and hasattr(localized, "hash") and tokens:
+                    from sims4.localization import _create_localized_string
+                    localized = _create_localized_string(localized.hash, *tokens)
+            elif resource_kind == "interaction" and callable(localized):
+                localized = localized(target=getattr(resource, "target", None), context=getattr(resource, "context", None))
+            elif callable(localized):
                 localized = localized(*tokens)
             name = self.localizer.name(localized, tuning_name)
+            if attribute is None:
+                name.update(status="unmapped", reason="no_verified_name_accessor")
         except Exception as exc:
             name = {"text": tuning_name, "status": "unmapped", "reason": "label_read_failed", "error": str(exc)}
         name["source"] = {"kind": "runtime_tuning", "attribute": attribute}
+        if resource_kind == "mood":
+            name["source"].update(intensity=intensity, name_basis="observed_intensity" if intensity is not None else "base_mood_name")
         name["visible"] = getattr(resource, "visible", None)
         return {"id": str(identifier) if identifier is not None else None,
                 "resource_kind": resource_kind, "visible": getattr(resource, "visible", None),
@@ -152,18 +273,35 @@ class EAAdapter:
         resolved_name["visible"] = getattr(interaction, "visible", None)
         source = context.source
         name = enum_name(source)
-        is_main = bool(interaction.is_super) and not isinstance(interaction, AnimationInteraction) and name not in ("POSTURE_GRAPH", "SOCIAL_ADJUSTMENT", "GET_COMFORTABLE",
+        is_main = not internal_interaction(interaction.guid64, type(interaction).__name__) and not isinstance(interaction, AnimationInteraction) and name not in ("POSTURE_GRAPH", "SOCIAL_ADJUSTMENT", "GET_COMFORTABLE",
                                                             "BODY_CANCEL_AOP", "CARRY_CANCEL_AOP", "VEHCILE_CANCEL_AOP")
         continuation = getattr(context, "continuation_id", None)
         source_id = getattr(context, "source_interaction_id", None)
         parent_id = source_id or continuation
         parent_actor = getattr(context, "source_interaction_sim_id", None) or actor.sim_info.sim_id
+        participants = [self.reference(actor)]
+        roles = [{"entity_key": participants[0]["key"], "role": "actor", "basis": "interaction.sim"}]
+        if target is not None and getattr(target, "id", None):
+            reference = self.event_reference(target)
+            if reference:
+                participants.append(reference)
+                roles.append({"entity_key": reference["key"], "role": "target", "basis": "interaction.target"})
+        from interactions import ParticipantType
+        for participant in interaction.get_participants(ParticipantType.AllSims):
+            reference = self.event_reference(participant)
+            if reference and reference["key"] not in {item["key"] for item in participants}:
+                participants.append(reference)
+                roles.append({"entity_key": reference["key"], "role": "participant", "basis": "ParticipantType.AllSims"})
+        if len(participants) > self.config["max_entities"]:
+            raise RuntimeError("Interaction participants exceed entity budget")
         return {"interaction_id": str(interaction.id), "tuning_id": str(interaction.guid64),
                 "tuning_name": type(interaction).__name__,
                 "name": resource_name(interaction.guid64, type(interaction).__name__, resolved_name),
                 "visible": getattr(interaction, "visible", None),
                 "actor": self.reference(actor),
-                "target": self.reference(target) if target is not None and self.in_scope(target) else None,
+                "target": self.event_reference(target), "participants": participants, "roles": roles,
+                "outcome_result": enum_name(getattr(interaction, "global_outcome_result", None)),
+                "classification": "gameplay_or_unclassified" if is_main else "technical_interaction_source",
                 "target_scope": "in_scope" if target is not None and self.in_scope(target) else "unavailable_or_out_of_scope",
                 "tier": "main" if is_main else "internal", "is_super": bool(interaction.is_super),
                 "immediate": bool(interaction.immediate),
@@ -198,6 +336,9 @@ class EAAdapter:
     def read_interactions(self, obj):
         if not getattr(obj, "is_sim", False):
             return field(status="not_applicable", reason="Interaction queue belongs to a Sim")
+        return field([self.interaction(item) for item in self.interaction_objects(obj)], source="Sim.si_state; InteractionQueue")
+
+    def interaction_objects(self, obj):
         found = {}
         for item in obj.si_state:
             found[str(item.id)] = item
@@ -210,7 +351,7 @@ class EAAdapter:
                  if not getattr(item, "_context_overlay_tool", False)}
         if len(found) > self.config["max_interactions_per_sim"]:
             raise RuntimeError("Interaction count exceeds configured read budget")
-        return field([self.interaction(item) for item in found.values()], source="Sim.si_state; InteractionQueue")
+        return list(found.values())
 
     def read_needs(self, obj):
         if not getattr(obj, "is_sim", False):
@@ -276,24 +417,4 @@ class EAAdapter:
                   for value in component.values() if self.common_state(value.state)]
         result = field(values, source="StateComponent.values; " + PROFILE_VERSION)
         result["profile"] = {"name": PROFILE_VERSION, "state_ids": sorted(OBJECT_STATES), "other_states": "excluded"}
-        return result
-
-    def continuous(self, obj):
-        result = {}
-        # This switch applies only to history sampling. Context still reads
-        # current needs through read_needs when explicitly requested.
-        if self.config.get("record_need_changes", False):
-            needs = self.read_needs(obj)
-            if needs["status"] == "available":
-                for name, item in needs["value"].items():
-                    if item["status"] == "available":
-                        result["needs." + name] = item["value"]["value"]
-        relationships = self.read_relationships(obj)
-        for item in relationships["value"]:
-            # These two main tracks are bidirectional; sample a pair only once.
-            if int(obj.sim_info.sim_id) >= int(item["target"]["id"]):
-                continue
-            for name, track in item["tracks"].items():
-                if track["status"] == "available":
-                    result["relationship.{}.{}".format(item["target"]["id"], name)] = track["value"]
         return result

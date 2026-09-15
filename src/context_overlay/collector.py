@@ -26,6 +26,12 @@ class Collector:
         self.semantic_enabled = semantic_enabled
         self.provenance = copy_data(provenance or {"status": "not_supplied"})
 
+    def nearby(self, target, query):
+        from context_overlay.nearby import collect
+        if not self.enabled:
+            raise ValueError("Context collector is disabled")
+        return collect(self.adapter, target, self.recorder.session_id, self.provenance, query)
+
     def collect(self, kind, identifier, fields=None, history_limit=50,
                 include_history=True, include_internal=False, representation="both", history_query=None):
         if not self.enabled:

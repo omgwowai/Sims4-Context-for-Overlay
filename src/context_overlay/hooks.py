@@ -49,6 +49,40 @@ class Hooks:
         setattr(owner, name, wrapped)
         self.entries.append((owner, name, original, wrapped, state))
 
+    def around(self, owner, name, before, after):
+        """Pair observation state even on EA exceptions; never change EA flow.
+
+        after(context, args, kwargs, result, error) always runs when before
+        completed. Callers must not use this wrapper on generators.
+        """
+        original = getattr(owner, name)
+        state = {"active": True}
+
+        @functools.wraps(original)
+        def wrapped(*args, **kwargs):
+            context, entered, result, error = None, False, None, None
+            if state["active"]:
+                try:
+                    context = before(args, kwargs)
+                    entered = True
+                except Exception as exc:
+                    self._report("{} before: {}".format(name, exc))
+            try:
+                result = original(*args, **kwargs)
+                return result
+            except BaseException as exc:
+                error = exc
+                raise
+            finally:
+                if entered:
+                    try:
+                        after(context, args, kwargs, result, error)
+                    except Exception as exc:
+                        self._report("{} after: {}".format(name, exc))
+
+        setattr(owner, name, wrapped)
+        self.entries.append((owner, name, original, wrapped, state))
+
     def remove(self):
         for owner, name, original, wrapped, state in reversed(self.entries):
             state["active"] = False

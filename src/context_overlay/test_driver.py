@@ -83,9 +83,6 @@ class Driver:
         if operation == "marker":
             runtime.recorder.note("validation_marker", {"label": request["label"]}, adapter.clock())
             return {"marked": request["label"]}
-        if operation == "sample":
-            runtime.next_sample = 0
-            return {"requested": True}
         if operation == "catalog":
             import sims4.resources
             allowed = {name: name for name in

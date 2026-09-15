@@ -1,0 +1,2256 @@
+{
+  "report_kind": "first_live_run_analysis",
+  "report_date": "2026-09-15",
+  "module_version": "0.6.0",
+  "session_id": "44d1bce892184d86bcf3f45e02f707a6",
+  "base_commit": "51c47b96530cda4824a26b922998125097925e6d",
+  "worktree_branch": "zixuan/remove-continuous-history",
+  "game_version": "1.126.73.1030",
+  "ea_source_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+  "inputs": {
+    "journal": {
+      "path": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\runs\\44d1bce892184d86bcf3f45e02f707a6\\journal.jsonl",
+      "bytes": 49042860,
+      "sha256": "e1577d5f624ddce2428f3e70440fc2a1a88dde3bf7b8072c71d45d31d60bc81d"
+    },
+    "context": {
+      "path": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\runs\\44d1bce892184d86bcf3f45e02f707a6\\context-96e9f816dfae4920b414ce10035223ca.json",
+      "bytes": 214396,
+      "sha256": "e9d441aa67d6464cc337630d2624cebbe6b0cb5b0c9dcfa90ed0fa2c4234d9f8"
+    },
+    "installed_script": {
+      "path": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\Mods\\ContextOverlay\\ContextOverlay.ts4script",
+      "bytes": 7127304,
+      "sha256": "4efb56a09d67c0186b3e1d93ee766b275667aa0d6d96a66c8c7d8984aa67a6d1"
+    }
+  },
+  "method": {
+    "journal": "strict storage.replay; count latest revision per event_id",
+    "name_counts": "nested resource.name occurrences, including repeated facts/cause/metadata; not unique names or translation success rate",
+    "grouped_preview": "offline reconstruction at exported game tick; latest accepted order; main tier; max 500 candidates; HistoryIndex.grouped; not a captured UI screen",
+    "validation_limit": "JSON consistency and sender/source checks; no screen recording or full gameplay ground truth"
+  },
+  "metrics": {
+    "replay_complete": true,
+    "errors": [],
+    "first_recorded_at": "2026-09-15T08:03:21.157202+00:00",
+    "last_recorded_at": "2026-09-15T08:08:38.544666+00:00",
+    "real_seconds": 317.387464,
+    "game_start": {
+      "ticks": "20071281",
+      "display": "07:00:51.240 day:2 week:1"
+    },
+    "game_end": {
+      "ticks": "22242365",
+      "display": "07:08:14.600 day:3 week:1"
+    },
+    "records": 16417,
+    "events": 8523,
+    "journal_bytes": 49042860,
+    "types": {
+      "game_event": 3969,
+      "interaction": 2647,
+      "state_change": 1907
+    },
+    "categories": {
+      "statistic.direct": 3564,
+      "interaction": 2647,
+      "buffs": 1739,
+      "buff.refreshed": 152,
+      "relationship.bits": 142,
+      "relationship.knowledge": 77,
+      "mood.changed": 64,
+      "trait.added": 43,
+      "inventory.transfer": 22,
+      "object_states.28123": 14,
+      "broadcast.effect": 13,
+      "aspiration.goal_completed": 12,
+      "crafting.completed": 8,
+      "payment.completed": 5,
+      "reaction.started": 5,
+      "object_states.15303": 4,
+      "object_states.15188": 3,
+      "object_states.15319": 3,
+      "skill.level": 2,
+      "aspiration.stage_completed": 1,
+      "object_states.15075": 1,
+      "progress.item_unlocked": 1,
+      "object_states.15128": 1
+    },
+    "tiers": {
+      "main": 7869,
+      "internal": 654
+    },
+    "interaction_stages": {
+      "ended": 2631,
+      "running": 12,
+      "triggered": 4
+    },
+    "interaction_outcomes": {
+      "completed": 1745,
+      "cancelled": 861,
+      "failed": 21,
+      "unknown": 20
+    },
+    "triggers": {
+      "AUTONOMY": 1970,
+      "POSTURE_GRAPH": 418,
+      "SCRIPT": 151,
+      "BODY_CANCEL_AOP": 59,
+      "SOCIAL_ADJUSTMENT": 38,
+      "CARRY_CANCEL_AOP": 6,
+      "REACTION": 5
+    },
+    "linked_effects": 3573,
+    "missing_parent_effects": 0,
+    "linked_by_category": {
+      "statistic.direct": 3399,
+      "buffs": 136,
+      "relationship.bits": 12,
+      "mood.changed": 8,
+      "broadcast.effect": 8,
+      "reaction.started": 5,
+      "relationship.knowledge": 1,
+      "object_states.15303": 1,
+      "trait.added": 1,
+      "progress.item_unlocked": 1,
+      "object_states.15128": 1
+    },
+    "cause_basis": {
+      "resolver.interaction": 3568,
+      "null": 1672,
+      "loot_operation_call": 631,
+      "reaction_interaction_started": 5
+    },
+    "end_status": {
+      "state": "recording",
+      "error": null,
+      "session_id": "44d1bce892184d86bcf3f45e02f707a6",
+      "started_at": "2026-09-15T08:03:21.150687+00:00",
+      "retained_events": 8523,
+      "evicted_events": 0,
+      "persistence": {
+        "state": "ready",
+        "accepted_sequence": 16416,
+        "durable_sequence": 16416,
+        "queued": 0,
+        "inflight": false,
+        "rejected_retained": false,
+        "pending_bytes": 0,
+        "queue_budget_bytes": 33554432,
+        "accepted_output_bytes": 49255980,
+        "written_output_bytes": 49255980,
+        "run_output_budget_bytes": 2147483648,
+        "disk_reserve_bytes": 1073741824,
+        "error": null,
+        "exports": {
+          "96e9f816dfae4920b414ce10035223ca": "written"
+        }
+      },
+      "history_index": {
+        "entities": 87,
+        "event_references": 10655,
+        "estimated_memory_bytes": 130877562,
+        "memory_budget_bytes": 1610612736,
+        "event_capacity": 200000,
+        "snapshots": 0,
+        "retention_policy": "fifo_first_accepted",
+        "evicted_events": 0,
+        "last_evicted_time": null,
+        "snapshot_references": 0,
+        "snapshot_charged_bytes": 0,
+        "snapshot_memory_budget_bytes": 268435456
+      }
+    }
+  },
+  "context": {
+    "identity": {
+      "kind": "sim",
+      "id": "145548038615138746",
+      "name": "Nyssa Landry",
+      "key": "sim:145548038615138746"
+    },
+    "time": {
+      "ticks": "22239878",
+      "display": "07:06:35.120 day:3 week:1"
+    },
+    "needs": {
+      "hunger": {
+        "status": "available",
+        "value": 96.23581069999996
+      },
+      "energy": {
+        "status": "available",
+        "value": 76.82216444000002
+      },
+      "fun": {
+        "status": "available",
+        "value": 56.80918671999997
+      },
+      "social": {
+        "status": "available",
+        "value": 65.33772266666665
+      },
+      "hygiene": {
+        "status": "available",
+        "value": -4.6369777333334
+      },
+      "bladder": {
+        "status": "available",
+        "value": 69.1124790112
+      }
+    },
+    "buff_count": 59,
+    "visible_buffs": [
+      "一事无成？",
+      "称职的厨师",
+      "美味菜肴",
+      "未解决的争执",
+      "冰凉",
+      "纤尘不染"
+    ],
+    "relationship_count": 3,
+    "relationships": [
+      {
+        "target": "Eddie Landry",
+        "tracks": {
+          "friendship": {
+            "status": "available",
+            "value": -38.800000000000004,
+            "source": "LTR_Friendship_Main"
+          },
+          "romance": {
+            "status": "not_present",
+            "value": null,
+            "source": null,
+            "reason": "No instantiated relationship track"
+          }
+        },
+        "bits_count": 7
+      },
+      {
+        "target": "Ava Landry",
+        "tracks": {
+          "friendship": {
+            "status": "available",
+            "value": -27.0,
+            "source": "LTR_Friendship_Main"
+          },
+          "romance": {
+            "status": "not_present",
+            "value": null,
+            "source": null,
+            "reason": "No instantiated relationship track"
+          }
+        },
+        "bits_count": 10
+      },
+      {
+        "target": "Lila Landry",
+        "tracks": {
+          "friendship": {
+            "status": "available",
+            "value": -27.2,
+            "source": "LTR_Friendship_Main"
+          },
+          "romance": {
+            "status": "not_present",
+            "value": null,
+            "source": null,
+            "reason": "No instantiated relationship track"
+          }
+        },
+        "bits_count": 10
+      }
+    ],
+    "current_interactions": [
+      {
+        "tuning": "motionBasedGaming_play_family",
+        "name": "炫动方块"
+      },
+      {
+        "tuning": "generic_MotionBasedGaming",
+        "name": "generic_MotionBasedGaming"
+      },
+      {
+        "tuning": "MotionGameRig_Family_Passive",
+        "name": "MotionGameRig_Family_Passive"
+      }
+    ]
+  },
+  "export_history": {
+    "count": 50,
+    "categories": {
+      "buffs": 21,
+      "statistic.direct": 15,
+      "interaction": 11,
+      "buff.refreshed": 1,
+      "broadcast.effect": 1,
+      "mood.changed": 1
+    },
+    "grouped_preview_at_export": [
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:interaction:145548038615138746:9158",
+        "category": "interaction",
+        "text": "Nyssa Landry的“MotionGameRig_Family_Passive（隐藏资源，未配置显示名称；用途待解释）”交互在最近一次观测时运行中，目标为动作捕捉游戏垫；自主选择。",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:interaction:145548038615138746:9134",
+        "category": "interaction",
+        "text": "Nyssa Landry的“MotionGameRig_Family_Active（隐藏资源，未配置显示名称；用途待解释）”交互已自然结束，目标为动作捕捉游戏垫；自主选择。玩法结果分支：NONE（与交互退出类型分别记录）。",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:interaction:145548038615138746:9133",
+        "category": "interaction",
+        "text": "Nyssa Landry的“MotionGameRig_Family_Passive（隐藏资源，未配置显示名称；用途待解释）”交互已自然结束，目标为动作捕捉游戏垫；自主选择。玩法结果分支：NONE（与交互退出类型分别记录）。",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:interaction:145548038615138746:9132",
+        "category": "interaction",
+        "text": "Nyssa Landry的“MotionGameRig_Family_Active（隐藏资源，未配置显示名称；用途待解释）”交互已自然结束，目标为动作捕捉游戏垫；自主选择。玩法结果分支：NONE（与交互退出类型分别记录）。",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:9bcec7ad089b42e287aac7d9965c1224",
+        "category": "buffs",
+        "text": "Nyssa Landry新增Buff：buff_Suppress_All_Interaction_MotionBasedGaming（隐藏资源，未配置显示名称；用途待解释）。",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:interaction:145548038615138746:9014",
+        "category": "interaction",
+        "text": "Nyssa Landry的“炫动方块”交互在最近一次观测时运行中，目标为动作捕捉游戏垫；自主选择。",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:fbd74263701f410fb0bb30234a181803",
+        "category": "statistic.direct",
+        "text": "Nyssa Landry：直接数值效果。after：480，before：0.999，scope_evidence：local_at_call，statistic：commodity_ChildhoodInspiration_DiscoveryPhoneCallTimer（隐藏资源，未配置显示名称；用途待解释）",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:6a1cf39dd333483287fadbcc3e429ceb",
+        "category": "statistic.direct",
+        "text": "Nyssa Landry、Ava Landry：直接数值效果。after：0，before：18.116，scope_evidence：local_at_call，statistic：commodity_IslanderCulture_TimeSinceCooked（隐藏资源，未配置显示名称；用途待解释）",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:e118c54d99d645f68254cdb8aff46af5",
+        "category": "buffs",
+        "text": "Nyssa Landry移除Buff：buff_Food_HasEatenRecently_IncludingCancel（隐藏资源，未配置显示名称；用途待解释）。",
+        "effect_count": 0
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:c87806b02ef3473f96cd537dec5965b1",
+        "category": "buffs",
+        "text": "Nyssa Landry移除Buff：buff_Food_HasEatenRecently（隐藏资源，未配置显示名称；用途待解释）。",
+        "effect_count": 0
+      }
+    ]
+  },
+  "numeric_statistics": {
+    "commodity_SimInfo_TimeSinceLastSlept": {
+      "count": 1871,
+      "operations": {
+        "StatisticSetMaxOp": 1871
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:6ae99b5444b642e68ec21e92784fe1b3",
+        "latest_journal_line": 11547,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21342855",
+          "display": "21:08:34.200 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：1440，before：509.605，scope_evidence：local_at_call，statistic：commodity_SimInfo_TimeSinceLastSlept（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SimInfo_TimeSinceLastSocial": {
+      "count": 757,
+      "operations": {
+        "StatisticSetMaxOp": 757
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:ba46b0c31f2c4453b6b8a72f7cfbac99",
+        "latest_journal_line": 1791,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20387632",
+          "display": "10:31:45.280 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：1440，before：1226.804，scope_evidence：local_at_call，statistic：commodity_SimInfo_TimeSinceLastSocial（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Emotion_Autonomy_Playful": {
+      "count": 247,
+      "operations": {
+        "StatisticSetMaxOp": 247
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:0cf23bad04c748e0877b1855608e3583",
+        "latest_journal_line": 1055,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20262209",
+          "display": "09:08:08.360 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：100，before：-100，scope_evidence：local_at_call，statistic：commodity_Emotion_Autonomy_Playful（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "motive_Social": {
+      "count": 97,
+      "operations": {
+        "StatisticChangeOp": 97
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4bc6882579de4ca59b2c4c6f04267681",
+        "latest_journal_line": 1844,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：-10.885，before：-18.885，scope_evidence：local_at_call，statistic：社交"
+      }
+    },
+    "commodity_SimInfo_OutdoorsCheck": {
+      "count": 57,
+      "operations": {
+        "StatisticSetOp": 57
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:78cd2b49d26c43e682c15972c7981d43",
+        "latest_journal_line": 532,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20191282",
+          "display": "08:20:51.280 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：10，before：2，scope_evidence：local_at_call，statistic：commodity_SimInfo_OutdoorsCheck（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_IslanderCulture_TimeSinceCooked": {
+      "count": 48,
+      "operations": {
+        "StatisticSetMinOp": 48
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f741a6765b974b3fb4f1abcfbc1837c0",
+        "latest_journal_line": 2474,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20497351",
+          "display": "11:44:54.040 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Ava Landry：直接数值效果。after：0，before：20.141，scope_evidence：local_at_call，statistic：commodity_IslanderCulture_TimeSinceCooked（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Emotion_Autonomy_Sad": {
+      "count": 40,
+      "operations": {
+        "StatisticSetMaxOp": 40
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:476a5d0b197941fd81c63d5a4b28968b",
+        "latest_journal_line": 2611,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20515630",
+          "display": "11:57:05.200 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：100，before：-100，scope_evidence：local_at_call，statistic：commodity_Emotion_Autonomy_Sad（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_Dust_ReactionCooldown": {
+      "count": 32,
+      "operations": {
+        "BuffOp": 32
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f0c828c29aae43bdbedccc7031971602",
+        "latest_journal_line": 286,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20165285",
+          "display": "08:03:31.400 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：720，before：716.121，scope_evidence：local_at_call，statistic：buff_Dust_ReactionCooldown（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "LTR_Friendship_Main": {
+      "count": 28,
+      "operations": {
+        "StatisticAddRelationship": 28
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:7f6f6b66e164481688634c860f2c25ca",
+        "latest_journal_line": 1855,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry：直接数值效果。after：-32，before：-30，scope_evidence：local_at_call，statistic：LTR_Friendship_Main（未配置显示名称；用途待解释）"
+      }
+    },
+    "motive_Hunger": {
+      "count": 23,
+      "operations": {
+        "StatisticChangeOp": 23
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:d9f74c4355c645b3a2ff0112ebf61419",
+        "latest_journal_line": 496,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20188616",
+          "display": "08:19:04.640 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：-25.094，before：-50.094，scope_evidence：local_at_call，statistic：饥饿"
+      }
+    },
+    "commodity_PoliteHunger": {
+      "count": 23,
+      "operations": {
+        "StatisticChangeOp": 23
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4717bc4fb5f540e1b76202dddfe4baa2",
+        "latest_journal_line": 497,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20188616",
+          "display": "08:19:04.640 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：-75，before：-100，scope_evidence：local_at_call，statistic：commodity_PoliteHunger（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Fitness_Fat": {
+      "count": 23,
+      "operations": {
+        "StatisticChangeOp": 23
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:32ed7539f3da4692bc1edd2aa36d64d7",
+        "latest_journal_line": 499,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20188616",
+          "display": "08:19:04.640 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：36.033，before：36，scope_evidence：local_at_call，statistic：commodity_Fitness_Fat（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Object_Consumable": {
+      "count": 23,
+      "operations": {
+        "StatisticChangeOp": 23
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:6e7ee331245349e094bb38296c54b8aa",
+        "latest_journal_line": 500,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20188616",
+          "display": "08:19:04.640 day:2 week:1"
+        },
+        "text": "肉制冷盘、Ava Landry：直接数值效果。after：49.5，before：99.5，scope_evidence：local_at_call，statistic：commodity_Object_Consumable（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Object_Brokenness": {
+      "count": 21,
+      "operations": {
+        "StatisticChangeOp": 21
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:e389317b300c419ba82857f6de118aff",
+        "latest_journal_line": 257,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20158691",
+          "display": "07:59:07.640 day:2 week:1"
+        },
+        "text": "酥脆平价奢华冰箱、Eddie Landry：直接数值效果。after：90.469，before：92.469，scope_evidence：local_at_call，statistic：commodity_Object_Brokenness（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "Statistic_Object_BookProgress": {
+      "count": 20,
+      "operations": {
+        "ObjectRelationshipLootOp": 20
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:828adc2f2cfb493f80282c0a2c5725e6",
+        "latest_journal_line": 10322,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21177835",
+          "display": "19:18:33.400 day:2 week:1"
+        },
+        "text": "第一只独角兽、Ava Landry：直接数值效果。after：5，before：0，scope_evidence：local_at_call，statistic：Statistic_Object_BookProgress（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_FamilyRecipes_MotivatingTracker": {
+      "count": 18,
+      "operations": {
+        "StatisticChangeOp": 18
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:73763c9053d6457c9c87dffcb395a372",
+        "latest_journal_line": 271,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20161296",
+          "display": "08:00:51.840 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：0，before：1.386，scope_evidence：local_at_call，statistic：commodity_FamilyRecipes_MotivatingTracker（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Emotion_Autonomy_Angry": {
+      "count": 15,
+      "operations": {
+        "StatisticSetMaxOp": 15
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:b1f40275075847d8ad49b77870c6ab03",
+        "latest_journal_line": 5421,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20713281",
+          "display": "14:08:51.240 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：100，before：-100，scope_evidence：local_at_call，statistic：commodity_Emotion_Autonomy_Angry（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_Dust_State_Clean": {
+      "count": 14,
+      "operations": {
+        "BuffOp": 14
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:fe12ebc6ba484370a573d3c3a9a50b2f",
+        "latest_journal_line": 285,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20165285",
+          "display": "08:03:31.400 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：60，before：56.121，scope_evidence：local_at_call，statistic：buff_Dust_State_Clean（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_sim_EffectiveTemperature": {
+      "count": 12,
+      "operations": {
+        "BuffRemovalOp": 8,
+        "StatisticSetOp": 4
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:06d9ddf0394e4c51bf5a0483375cbc9e",
+        "latest_journal_line": 190,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20145775",
+          "display": "07:50:31.000 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：-60，before：-55，scope_evidence：local_at_call，statistic：statistic_sim_EffectiveTemperature（未配置显示名称；用途待解释）"
+      }
+    },
+    "traitStatistic_Lifestyles_Food": {
+      "count": 12,
+      "operations": {
+        "StatisticChangeOp": 12
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:d7254cbc320749949fa7a6334401c760",
+        "latest_journal_line": 498,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20188616",
+          "display": "08:19:04.640 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：-4.335，before：0，scope_evidence：local_at_call，statistic：traitStatistic_Lifestyles_Food（未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Object_Dishes_DishCount": {
+      "count": 12,
+      "operations": {
+        "StatisticChangeOp": 12
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f6469bcb07d54591a5b8441d92839621",
+        "latest_journal_line": 719,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20212347",
+          "display": "08:34:53.880 day:2 week:1"
+        },
+        "text": "肉制冷盘、Ava Landry：直接数值效果。after：0.5，before：1，scope_evidence：local_at_call，statistic：statistic_Object_Dishes_DishCount（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Emotion_Autonomy_Embarrassed": {
+      "count": 11,
+      "operations": {
+        "StatisticSetMaxOp": 11
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:df3632df76164ee7806924bfcb8f7bb1",
+        "latest_journal_line": 8779,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21032118",
+          "display": "17:41:24.720 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：100，before：-100，scope_evidence：local_at_call，statistic：commodity_Emotion_Autonomy_Embarrassed（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Object_Trash-Consumable": {
+      "count": 7,
+      "operations": {
+        "StatisticChangeOp": 7
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:5e15e3fb7285432585542fc88d4dbeec",
+        "latest_journal_line": 575,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20197086",
+          "display": "08:24:43.440 day:2 week:1"
+        },
+        "text": "肉制冷盘、Ava Landry：直接数值效果。after：0，before：1，scope_evidence：local_at_call，statistic：statistic_Object_Trash-Consumable（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_collect_after_eating_timer": {
+      "count": 7,
+      "operations": {
+        "StatisticSetMaxOp": 7
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f316151d4ce24db7873471332ac1375a",
+        "latest_journal_line": 590,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20200523",
+          "display": "08:27:00.920 day:2 week:1"
+        },
+        "text": "肉制冷盘、Ava Landry：直接数值效果。after：100，before：0，scope_evidence：local_at_call，statistic：commodity_collect_after_eating_timer（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Social_Media_PostFeed": {
+      "count": 7,
+      "operations": {
+        "StatisticSetMinOp": 7
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:0a107fca13ee4b43aebc3800b1a12a10",
+        "latest_journal_line": 2384,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20484209",
+          "display": "11:36:08.360 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：0，before：99，scope_evidence：local_at_call，statistic：commodity_Social_Media_PostFeed（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "URT_Attraction_Main": {
+      "count": 7,
+      "operations": {
+        "StatisticAddRelationship": 4,
+        "AddTraitListLootOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:38f9ec254fd04be59c8751d3d89c0602",
+        "latest_journal_line": 9193,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21081947",
+          "display": "18:14:37.880 day:2 week:1"
+        },
+        "text": "杰德 罗莎、伊娃 卡布里乔莎：直接数值效果。after：-100，before：0，scope_evidence：local_at_call，statistic：URT_Attraction_Main（未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_CrossAge_Interactions_DisapproveLackOfChildDiscipline": {
+      "count": 6,
+      "operations": {
+        "BuffOp": 6
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:00d2a433beef4e3bba57cb412809d2f9",
+        "latest_journal_line": 1941,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20408059",
+          "display": "10:45:22.360 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：180，before：144.085，scope_evidence：local_at_call，statistic：buff_CrossAge_Interactions_DisapproveLackOfChildDiscipline（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "SocialContext_Friendship": {
+      "count": 6,
+      "operations": {
+        "StatisticAddRelationship": 5,
+        "StatisticSetRelationship": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:7f6915423b194863b0bfe0f1ae5e764f",
+        "latest_journal_line": 6877,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20834618",
+          "display": "15:29:44.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Ava Landry：直接数值效果。after：-5，before：-15，scope_evidence：local_at_call，statistic：SocialContext_Friendship（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Active": {
+      "count": 5,
+      "operations": {
+        "StatisticChangeOp": 5
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:2c08f08767404561b5f9069fa88de009",
+        "latest_journal_line": 1060,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20263353",
+          "display": "09:08:54.120 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：-2.5，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Active（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Emotion_Autonomy_Stressed": {
+      "count": 5,
+      "operations": {
+        "StatisticSetMaxOp": 5
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:54c98162d6f84d88a2971976dbc48d13",
+        "latest_journal_line": 1626,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20351823",
+          "display": "10:07:52.920 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：100，before：-100，scope_evidence：local_at_call，statistic：commodity_Emotion_Autonomy_Stressed（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "motive_Fun": {
+      "count": 5,
+      "operations": {
+        "StatisticChangeOp": 5
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:82347317be714946be97f1ddba87f7fb",
+        "latest_journal_line": 1846,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：100，before：95.306，scope_evidence：local_at_call，statistic：娱乐"
+      }
+    },
+    "motive_Hygiene": {
+      "count": 5,
+      "operations": {
+        "StatisticChangeOp": 5
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:19d958c3757246b28fd4f1aeb2aae2df",
+        "latest_journal_line": 6423,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20773073",
+          "display": "14:48:42.920 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：37.53，before：47.53，scope_evidence：local_at_call，statistic：卫生"
+      }
+    },
+    "commodity_Buff_Social_EmbarrassingConversation": {
+      "count": 5,
+      "operations": {
+        "StatisticChangeOp": 5
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:2f170619408746bc97523304cadb3aba",
+        "latest_journal_line": 8073,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20971867",
+          "display": "17:01:14.680 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：20，before：0，scope_evidence：local_at_call，statistic：commodity_Buff_Social_EmbarrassingConversation（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_UnbalancedMeal_Counter": {
+      "count": 4,
+      "operations": {
+        "StatisticChangeOp": 3,
+        "StatisticSetOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:3f7f830ab15b49b29cc39966ec6b4909",
+        "latest_journal_line": 899,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20238540",
+          "display": "08:52:21.600 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：1，before：0，scope_evidence：local_at_call，statistic：commodity_UnbalancedMeal_Counter（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Competition": {
+      "count": 4,
+      "operations": {
+        "StatisticChangeOp": 4
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:082fb9dd7944445e991c231702eb4606",
+        "latest_journal_line": 950,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20239889",
+          "display": "08:53:15.560 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：25，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Competition（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "rankedStatistic_Reputation": {
+      "count": 4,
+      "operations": {
+        "StatisticChangeOp": 4
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:931b2ef299694eb79958c6fb15fb2b6c",
+        "latest_journal_line": 1937,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20408059",
+          "display": "10:45:22.360 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：172.625，before：173，scope_evidence：local_at_call，statistic：rankedStatistic_Reputation（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_dirtiness": {
+      "count": 4,
+      "operations": {
+        "StatisticChangeOp": 4
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:0a569760ffc7404685e68061ad1590fd",
+        "latest_journal_line": 10727,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21237041",
+          "display": "19:58:01.640 day:2 week:1"
+        },
+        "text": "布兰公司当代橱柜、Nyssa Landry：直接数值效果。after：86.368，before：97.618，scope_evidence：local_at_call，statistic：commodity_dirtiness（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_PubertyChanges_Hair": {
+      "count": 4,
+      "operations": {
+        "StatisticChangeOp": 3,
+        "StatisticSetMinOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f8d2bddaeee94d3399142b67de551b5a",
+        "latest_journal_line": 14919,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "22012332",
+          "display": "04:34:53.280 day:3 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：1，before：0，scope_evidence：local_at_call，statistic：statistic_PubertyChanges_Hair（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Metabolism": {
+      "count": 3,
+      "operations": {
+        "StatisticChangeOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:3d4e2c12853d48d7a4bb84e62d5aa20e",
+        "latest_journal_line": 898,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20238540",
+          "display": "08:52:21.600 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：-15，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Metabolism（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_Sentiment_Bitter_Tense_Primary_WhatsSoSpecial": {
+      "count": 3,
+      "operations": {
+        "ChangeStatisticByCategory": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:59b5d95036064901a0cfc7defcc252f5",
+        "latest_journal_line": 1628,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20354187",
+          "display": "10:09:27.480 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：91.484，before：107.629，scope_evidence：local_at_call，statistic：buff_Sentiment_Bitter_Tense_Primary_WhatsSoSpecial（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Critic": {
+      "count": 3,
+      "operations": {
+        "StatisticChangeOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4846e8bb5e9e495e930d5ea778d805d5",
+        "latest_journal_line": 2684,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20523950",
+          "display": "12:02:38.000 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：5，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Critic（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Skill_AdultMajor_HomestyleCooking": {
+      "count": 3,
+      "operations": {
+        "StatisticChangeOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:0b2cb17b6d8b489392c875308b943f43",
+        "latest_journal_line": 2685,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20523950",
+          "display": "12:02:38.000 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：1142.42，before：566.42，scope_evidence：local_at_call，statistic：烹饪"
+      }
+    },
+    "buff_Food_HasEatenToday_Hidden": {
+      "count": 3,
+      "operations": {
+        "BuffOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:a9a1a91072b249ada6df6efdbe318784",
+        "latest_journal_line": 3100,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20569507",
+          "display": "12:33:00.280 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：720，before：474.011，scope_evidence：local_at_call，statistic：buff_Food_HasEatenToday_Hidden（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Mood": {
+      "count": 3,
+      "operations": {
+        "StatisticChangeOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:c4bbb23793634f2b88bbf01efe8448bc",
+        "latest_journal_line": 4672,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20666920",
+          "display": "13:37:56.800 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：15，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Mood（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_Sentiment_Hurt_Angry_generic": {
+      "count": 3,
+      "operations": {
+        "ChangeStatisticByCategory": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:50f1127849434668af46da6a5e0fa87d",
+        "latest_journal_line": 5447,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20714960",
+          "display": "14:09:58.400 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：92.417，before：108.726，scope_evidence：local_at_call，statistic：buff_Sentiment_Hurt_Angry_generic（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Motive_HygieneHands": {
+      "count": 3,
+      "operations": {
+        "StatisticChangeOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:8585cce9f915421b94bbe60bb44b8e12",
+        "latest_journal_line": 6424,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20773073",
+          "display": "14:48:42.920 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：-100，before：-33.08，scope_evidence：local_at_call，statistic：commodity_Motive_HygieneHands（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_ChildhoodInspiration_DiscoveryPhoneCallTimer": {
+      "count": 3,
+      "operations": {
+        "StatisticSetMaxOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:6d42da567ab04e57932180f962c21503",
+        "latest_journal_line": 6518,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20789782",
+          "display": "14:59:51.280 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：480，before：0.999，scope_evidence：local_at_call，statistic：commodity_ChildhoodInspiration_DiscoveryPhoneCallTimer（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Romance": {
+      "count": 3,
+      "operations": {
+        "StatisticChangeOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:85f01e8c855a41068518a1a23b993505",
+        "latest_journal_line": 6881,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20834618",
+          "display": "15:29:44.720 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：30，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Romance（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Skill_AdultMajor_Mischief": {
+      "count": 3,
+      "operations": {
+        "DynamicSkillLootOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:25edf02effde407389a00220ad7ca17f",
+        "latest_journal_line": 8086,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20971867",
+          "display": "17:01:14.680 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：258.4，before：100，scope_evidence：local_at_call，statistic：恶作剧"
+      }
+    },
+    "commodity_MidlifeCrisis_PreMidlife": {
+      "count": 3,
+      "operations": {
+        "StatisticSetRangeOp": 3
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:97864a458b5d4e8c8b56004d1c92c3c0",
+        "latest_journal_line": 10909,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21259282",
+          "display": "20:12:51.280 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：94，before：1，scope_evidence：local_at_call，statistic：commodity_MidlifeCrisis_PreMidlife（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Object_Microwave_FlavorUpgraded": {
+      "count": 2,
+      "operations": {
+        "StatisticChangeOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:8132c3b781ea4cbfbbf4431fade9ac71",
+        "latest_journal_line": 385,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20172364",
+          "display": "08:08:14.560 day:2 week:1"
+        },
+        "text": "微波速食点心、Eddie Landry：直接数值效果。after：-10，before：0，scope_evidence：local_at_call，statistic：statistic_Object_Microwave_FlavorUpgraded（未配置显示名称；用途待解释）"
+      }
+    },
+    "SocialContext_Fun": {
+      "count": 2,
+      "operations": {
+        "StatisticAddRelationship": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:5c4b1415104541a085de8301fc3c4044",
+        "latest_journal_line": 1853,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry：直接数值效果。after：-10，before：0，scope_evidence：local_at_call，statistic：SocialContext_Fun（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Silly": {
+      "count": 2,
+      "operations": {
+        "StatisticChangeOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4d50154e7e0e42c3857904d2246cbe29",
+        "latest_journal_line": 1864,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20398364",
+          "display": "10:38:54.560 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：5，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Silly（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Buff_Social_PlayfulConversation": {
+      "count": 2,
+      "operations": {
+        "StatisticChangeOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:46bde91adeb24f5495843e3e0e3ffba2",
+        "latest_journal_line": 1981,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20412013",
+          "display": "10:48:00.520 day:2 week:1"
+        },
+        "text": "Lila Landry、Nyssa Landry：直接数值效果。after：10，before：0，scope_evidence：local_at_call，statistic：commodity_Buff_Social_PlayfulConversation（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Buff_Social_AngryConversation": {
+      "count": 2,
+      "operations": {
+        "StatisticChangeOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:74f4ad5146b84f17ad04e93d564a70d8",
+        "latest_journal_line": 7451,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20919976",
+          "display": "16:26:39.040 day:2 week:1"
+        },
+        "text": "Ava Landry、Nyssa Landry：直接数值效果。after：20，before：0，scope_evidence：local_at_call，statistic：commodity_Buff_Social_AngryConversation（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_Sentiment_Bitter_Tense_Primary_fight": {
+      "count": 2,
+      "operations": {
+        "ChangeStatisticByCategory": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:e90a369e322142c09543a84a81deb564",
+        "latest_journal_line": 7455,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20919976",
+          "display": "16:26:39.040 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：60.802，before：71.532，scope_evidence：local_at_call，statistic：buff_Sentiment_Bitter_Tense_Primary_fight（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Lawfulness": {
+      "count": 2,
+      "operations": {
+        "StatisticChangeOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:b59b4150e0df44f2858166b1a7a6c240",
+        "latest_journal_line": 8085,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20971867",
+          "display": "17:01:14.680 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：10，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Lawfulness（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Buff_Social_AwkwardTurtle": {
+      "count": 2,
+      "operations": {
+        "StatisticChangeOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:3cf311438e77455cbac5141621934923",
+        "latest_journal_line": 8094,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20971867",
+          "display": "17:01:14.680 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：40，before：0，scope_evidence：local_at_call，statistic：commodity_Buff_Social_AwkwardTurtle（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Skill": {
+      "count": 2,
+      "operations": {
+        "StatisticChangeOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:c7d710f271a94354870157ea28cb5b18",
+        "latest_journal_line": 8545,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21012985",
+          "display": "17:28:39.400 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：-1，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Skill（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Object_Snow_SnowMelt": {
+      "count": 2,
+      "operations": {
+        "StateChangeLootOp": 2
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4f1bd627d0354ccf865a6aea7f11eca5",
+        "latest_journal_line": 15407,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "22101603",
+          "display": "05:34:24.120 day:3 week:1"
+        },
+        "text": "雪天使：直接数值效果。after：99，before：100，scope_evidence：local_at_call，statistic：commodity_Object_Snow_SnowMelt（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Trait_Geek_GamingNeed": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:74c867b3ef1f4b59bd605bf8890030dd",
+        "latest_journal_line": 1325,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20299496",
+          "display": "09:32:59.840 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：400，before：294.161，scope_evidence：local_at_call，statistic：commodity_Trait_Geek_GamingNeed（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Buff_Social_DullHumor": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:1c576d6f5eb44ce894f8829254c01681",
+        "latest_journal_line": 1854,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Lila Landry、Nyssa Landry：直接数值效果。after：20，before：0，scope_evidence：local_at_call，statistic：commodity_Buff_Social_DullHumor（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_trait_FamilyOriented_NearFamily": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:c0e6c33e60b3405f8780ea0cabf9c397",
+        "latest_journal_line": 1974,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20412013",
+          "display": "10:48:00.520 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：50，before：40，scope_evidence：local_at_call，statistic：commodity_trait_FamilyOriented_NearFamily（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Buff_Social_OnARoll": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:877edd2d7d0f4b458df1f1c46bbf8a98",
+        "latest_journal_line": 1983,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20412013",
+          "display": "10:48:00.520 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：20，before：0，scope_evidence：local_at_call，statistic：commodity_Buff_Social_OnARoll（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_Fear_BeingJudged_Tracker": {
+      "count": 1,
+      "operations": {
+        "BuffOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:2932c7732cd548019cf041f649c08535",
+        "latest_journal_line": 2133,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20441190",
+          "display": "11:07:27.600 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry：直接数值效果。after：2160，before：2134.119，scope_evidence：local_at_call，statistic：buff_Fear_BeingJudged_Tracker（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_Sentiment_Bitter_Angry_fight": {
+      "count": 1,
+      "operations": {
+        "ChangeStatisticByCategory": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:c3661c0c98d64c4ca8c3b27ded8a376c",
+        "latest_journal_line": 5628,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20725887",
+          "display": "14:17:15.480 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：27.198，before：31.997，scope_evidence：local_at_call，statistic：buff_Sentiment_Bitter_Angry_fight（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_Sim_Fulfillment": {
+      "count": 1,
+      "operations": {
+        "StatisticSetMaxOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:5534209722ef4c90937e4f572a105617",
+        "latest_journal_line": 6120,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20755192",
+          "display": "14:36:47.680 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：100，before：86.271，scope_evidence：local_at_call，statistic：commodity_Sim_Fulfillment（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "rankedStatistic_MovingOn_SoulsJourney": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:bbe226989586446da0683d6f8067e263",
+        "latest_journal_line": 6121,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20755192",
+          "display": "14:36:47.680 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：0.1，before：0，scope_evidence：local_at_call，statistic：rankedStatistic_MovingOn_SoulsJourney（未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_FamilyRecipes_DreamChaser": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f082ec4ffa934e6f94c6b2bc59cb8892",
+        "latest_journal_line": 6123,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20755192",
+          "display": "14:36:47.680 day:2 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：1，before：0，scope_evidence：local_at_call，statistic：commodity_FamilyRecipes_DreamChaser（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Skill_AdultMajor_Charisma": {
+      "count": 1,
+      "operations": {
+        "DynamicSkillLootOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:592111d36a0d40aa97eeac7f4c16ffa0",
+        "latest_journal_line": 7090,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20868029",
+          "display": "15:52:01.160 day:2 week:1"
+        },
+        "text": "Ava Landry：直接数值效果。after：152.8，before：100，scope_evidence：local_at_call，statistic：魅力"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Virtues": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4518d41b2814405da5f896aff5c64358",
+        "latest_journal_line": 7460,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20919976",
+          "display": "16:26:39.040 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：10，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Virtues（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "commodity_SelfDiscovery_Tracker_Social": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:56f8463fe5264568abe6b72574c54022",
+        "latest_journal_line": 8489,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21010276",
+          "display": "17:26:51.040 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：-1，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Social（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_SimPreference_Recent_Likes_Cooking": {
+      "count": 1,
+      "operations": {
+        "BuffOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:9c2265d4cf3442e0b6a99e10589e5b31",
+        "latest_journal_line": 8528,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21011072",
+          "display": "17:27:22.880 day:2 week:1"
+        },
+        "text": "Lila Landry：直接数值效果。after：480，before：459.491，scope_evidence：local_at_call，statistic：buff_SimPreference_Recent_Likes_Cooking（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Object_Consumable-Quality": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:22cf64e873b241cd801892247ac7cb00",
+        "latest_journal_line": 10951,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21264733",
+          "display": "20:16:29.320 day:2 week:1"
+        },
+        "text": "酸奶冰淇淋水果冻、Nyssa Landry：直接数值效果。after：-39.5，before：-9.5，scope_evidence：local_at_call，statistic：statistic_Object_Consumable-Quality（未配置显示名称；用途待解释）"
+      }
+    },
+    "statistic_Skill_AdultMajor_GourmetCooking": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f0a6eef140714b71aa728facc3f3b1e9",
+        "latest_journal_line": 10955,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21264733",
+          "display": "20:16:29.320 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：391.626，before：262.026，scope_evidence：local_at_call，statistic：美食烹饪"
+      }
+    },
+    "commodity_Burnout_CreativeTracker": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:62b0c493066f4eb29967748262ebeaec",
+        "latest_journal_line": 11021,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "21271224",
+          "display": "20:20:48.960 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：0，before：0.578，scope_evidence：local_at_call，statistic：commodity_Burnout_CreativeTracker（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "buff_LifeMilestone_Underachieving": {
+      "count": 1,
+      "operations": {
+        "ChangeStatisticByCategory": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:97c46c86d984412da7a3b82ebc70a095",
+        "latest_journal_line": 15193,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "22061542",
+          "display": "05:07:41.680 day:3 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：278.114，before：327.193，scope_evidence：local_at_call，statistic：buff_LifeMilestone_Underachieving（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    },
+    "traitStatistic_Lifestyles_AdrenalineSeeker": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:c94423c14227443a9691570148a290b0",
+        "latest_journal_line": 15313,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "22085440",
+          "display": "05:23:37.600 day:3 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：2.167，before：0，scope_evidence：local_at_call，statistic：traitStatistic_Lifestyles_AdrenalineSeeker（未配置显示名称；用途待解释）"
+      }
+    },
+    "bodyTypeCommodity_Hair_Face": {
+      "count": 1,
+      "operations": {
+        "StatisticChangeOp": 1
+      },
+      "example": {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:cede85fbe4a044b5847f4081d4d4bf71",
+        "latest_journal_line": 16115,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "22196380",
+          "display": "06:37:35.200 day:3 week:1"
+        },
+        "text": "Eddie Landry：直接数值效果。after：50，before：25，scope_evidence：local_at_call，statistic：bodyTypeCommodity_Hair_Face（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    }
+  },
+  "main_interaction_names": {
+    "aggregate_SocialObservation_Chat": 201,
+    "autonomousSimPicker_SocialObservation_FamiliarChat": 201,
+    "SocialPickerSI": 201,
+    "MotionGameRig_Family_Passive": 197,
+    "sit_Passive": 153,
+    "sleep_Passive": 149,
+    "MotionGameRig_Family_Active": 106,
+    "stand_Passive": 64,
+    "SleepMixer_Dream": 57,
+    "Computer_Use_React": 33,
+    "Idle_Chatting_STC": 31,
+    "watch-passive": 29,
+    "Emotion_Idle": 27,
+    "idle_Buff_EnvironmentScore_Positive": 25,
+    "Computer_Use_PlayGame_Intense": 25,
+    "Food_Eat_Active": 23,
+    "sim_Chat": 23,
+    "Computer_Use_Troll_Forums": 23,
+    "mixer_TV_WatchNewsAndCooking": 21,
+    "Computer_Use_Mouse": 20,
+    "Computer_Use_PlayGame_Mild": 19,
+    "Food_Eat_Passive": 17,
+    "Book_Read_Passive": 15,
+    "generic_consume_food": 14,
+    "motionBasedGaming_play_family": 13,
+    "idle_Chatting_ListenWithPhone_STC": 13,
+    "Toilet_Use_Action": 13,
+    "welcomeWagon_Interactions_go_to_front_door": 13,
+    "fridge_CreateTray": 7,
+    "eat_to_clean_from_sit": 7,
+    "solo_Swear": 7,
+    "Computer_Use_React_Negative": 7,
+    "Stove_FryingPan_Stir_Basic": 5,
+    "Idle_Trait_Lazy": 5,
+    "toilet-use-sitting": 5,
+    "toilet-flush": 5,
+    "sink_washHands": 5,
+    "Computer_Chat_Read": 5,
+    "Computer_Chat_Keyboard": 5,
+    "Computer_Chat_Mouse": 5,
+    "counter_Ico_Transition": 5,
+    "computer_TrollForum": 4,
+    "idle_Buff_EnvironmentScore_Negative": 4,
+    "watch-passive-withphone": 4,
+    "autonomous_ObjectPicker_CollectDishes": 4,
+    "Computer_Use_React_Positive": 4,
+    "si_nonTouching_Greetings_Glare": 4,
+    "fridge_CookAutonomously": 4,
+    "stove_Ico_Transition": 4,
+    "Cooking_Shared_AddSpice_Basic": 4,
+    "Bed_Undercovers_Cry": 4,
+    "counter_Ico_Transition_placeOnCounter": 4,
+    "Idle_Trait_Goofball": 4,
+    "Book_Read_Active": 4,
+    "bed_Autonomous_DoubleBed_Sleep": 4,
+    "bed_sleep": 4,
+    "computer_Recreation_Autonomous_PseudoAggregate_PlayGame": 3,
+    "cleanup_Dishes_After_Eating_Aggregate": 3,
+    "Collect_Dish_After_Eating": 3,
+    "sink_washDish_After_Eat_Counter": 3,
+    "Collect_Dish": 3,
+    "sink_washDishes_Counter": 3,
+    "stove_MakeFood_FryingPan_Staging_Basic": 3,
+    "Cooking_Shared_Passive_Emotion": 3,
+    "Stove_FryingPan_Flip_Basic": 3,
+    "Idle_Trait_Hotheaded": 3,
+    "mixer_social_DebateExistenceOfVampires_Targeted_Friendly_AlwaysOn": 3,
+    "socialMixer_Greetings_AnnoyedSigh": 3,
+    "mirror_SelfPepTalk": 3,
+    "Push_Leave_Lot_Immediate": 3,
+    "NPCLeaveLotNow_NPC_WaveGoodBye": 3,
+    "npc_leave_lot_now": 3,
+    "counter_MakeFood_Staging_Basic": 3,
+    "Counter_CuttingBoard_Chop_Tomato": 3,
+    "microwave_MakeRecipe_Staging_Basic": 2,
+    "fridge_GrabSnackAutonomously": 2,
+    "computer_PlayGame_IncredibleSports": 2,
+    "tv_WatchNews": 2,
+    "social_Funny_PubertyChanges_Joke_Hair_Body": 2,
+    "idle_Buff_SimPreference_Likes_Activities_VideoGaming": 2,
+    "socials_Targeted_Mean_AlwaysOn_STC_SwearAt": 2,
+    "sim-stand": 2,
+    "mixer_social_LieAboutCareer_group_mischief_skills": 2,
+    "reaction_SmellGood": 2,
+    "Stove_SaucePot_Stir_Basic": 2,
+    "idle_Buff_SimPreference_Likes_Activities_Cooking": 2,
+    "[Join]GroupCooking_Mentor": 2,
+    "Bed_Undercovers_Hide": 2,
+    "sim_BeAffectionate": 2,
+    "counter_MakeFood_Staging_Gourmet": 2,
+    "Counter_MixingBowl_Mix_Basic": 2,
+    "idle_Buff_Temperature_Cold": 2,
+    "Cooking_Shared_Passive_Basic": 2,
+    "mentor_Mixer_Food": 2,
+    "Counter_MixingBowl_Toss_Basic": 2,
+    "mentor_Mixer_Food_Child": 2,
+    "fridge_CreateSnackAndConsume_Generic": 1,
+    "tv_PickChannelAutonomously": 1,
+    "idle_Hunger": 1,
+    "phone_PlayGames_AutonomousOnly": 1,
+    "tv_WatchCurrentChannelAutonomously": 1,
+    "computer_PlayGame_MariaSisters": 1,
+    "mixer_Argument_Start_Careers": 1,
+    "argument_Mixers_AngryYell": 1,
+    "mixer_socials_TellFunnyStory_group_Funny_alwaysOn": 1,
+    "mirror_Tattooing_CheckOut": 1,
+    "computer_Browse_Web": 1,
+    "computer_Chat": 1,
+    "mixer_Social_GetToKnow_Friendly_STC": 1,
+    "immediate_Dynasty_MarketFund_ReportAll": 1,
+    "door_RingDoorbell": 1,
+    "mixer_social_WeatherTemperatureSocials_ComplainAboutFreezingTemperature": 1,
+    "FruitCakeBearer_Carry_Fruitcake": 1,
+    "computer_PlayGame_SimScuffle_E-Sports": 1,
+    "stove_MakeFood_Pot_Staging_Basic": 1,
+    "mixer_social_StartPreposterousRumor_group_mischief_skills": 1,
+    "idle_Buff_SnowEffects_SnowIdle": 1,
+    "mirror_SelfPepTalk3": 1,
+    "mirror_SelfPepTalk1": 1,
+    "NPCLeaveLot_Player_WaveGoodBye": 1,
+    "BuildAndForceSatisfyShooConstraintInteraction": 1,
+    "ForceSatisfyConstraintSuperInteraction": 1,
+    "autonomous_bookshelf_read_picker": 1,
+    "book_read": 1,
+    "fridge_CookGourmetAutonomously": 1,
+    "Counter_CuttingBoard_Chop_Apple": 1,
+    "Counter_CuttingBoard_Chop_Melon": 1,
+    "cancelReplacements_ReadtoCarry": 1,
+    "sofa_Nap": 1,
+    "Fireplace_Light": 1,
+    "Counter_CuttingBoard_Chop_Lettuce": 1,
+    "Counter_CuttingBoard_Chop_Onion": 1
+  },
+  "main_interaction_visibility": {
+    "False": 1810,
+    "True": 183
+  },
+  "name_status_occurrences": {
+    "no_display_name": 17118,
+    "resolved": 5174,
+    "rule_resolved": 243,
+    "unresolved_tokens": 59
+  },
+  "unresolved_tokens_path_counts": {
+    "event.facts": 44,
+    "event.payload.broadcaster": 13,
+    "event.payload.trait": 2
+  },
+  "unresolved_tokens_name_counts": {
+    "Idle_Chatting_STC": 31,
+    "idle_Chatting_ListenWithPhone_STC": 13,
+    "object:332": 4,
+    "object:193": 1,
+    "object:194": 1,
+    "object:195": 1,
+    "object:196": 1,
+    "object:209": 1,
+    "object:210": 1,
+    "object:275": 1,
+    "trait_Attraction_RomanceStyles_Woohoo_TurnOff": 1,
+    "trait_Attraction_RomanceStyles_Woohoo_TurnOn": 1,
+    "object:298": 1,
+    "object:342": 1
+  },
+  "blank_name_occurrences": 52,
+  "blank_buff_event_count": 26,
+  "no_display_name_path_counts": {
+    "event.cause.operation": 4191,
+    "event.payload.statistic": 3426,
+    "event.cause.source_tuning": 3400,
+    "event.facts": 2338,
+    "event.payload.after._known_traits[]": 904,
+    "event.payload.before._known_traits[]": 828,
+    "event.after": 772,
+    "event.before": 676,
+    "event.payload.before.buff": 109,
+    "event.payload.after.buff": 109,
+    "event.metadata.details_before.buff": 95,
+    "event.metadata.details_after.buff": 78,
+    "event.payload.old_mood": 64,
+    "event.payload.new_mood": 64,
+    "event.payload.aspiration": 13,
+    "event.payload.objective_instance": 12,
+    "event.payload.masterwork": 8,
+    "event.payload.recipe": 8,
+    "event.metadata.details_before.mood": 5,
+    "event.payload.trait": 4,
+    "event.metadata.details_after.mood": 4,
+    "event.payload.before.mood": 4,
+    "event.payload.after.mood": 4,
+    "event.payload.after._known_stats[]": 1,
+    "event.payload.tuning_class": 1
+  },
+  "same_mood_notification_count": 1,
+  "inventory_operations": {
+    "inventory_insert": 14,
+    "inventory_remove": 8
+  },
+  "knowledge_fields": {
+    "_known_traits": 76,
+    "_known_stats": 1
+  },
+  "trait_counts": {
+    "trait_Attraction_Activities_Slacker_TurnOff": 3,
+    "trait_Attraction_OutfitColor_Red_TurnOn": 2,
+    "trait_Attraction_RomanceStyles_Flirting_TurnOff": 2,
+    "trait_Attraction_HairColor_Black_TurnOn": 2,
+    "trait_Attraction_OutfitColor_Brown_TurnOn": 2,
+    "trait_Umbrella_Preference_Adult_1": 2,
+    "trait_Umbrella_User": 2,
+    "trait_Attraction_SkillArchetypes_Interpersonal_TurnOff": 1,
+    "trait_Attraction_Characteristics_Argumentative_TurnOff": 1,
+    "trait_Attraction_Activities_Broke_TurnOff": 1,
+    "trait_Attraction_SkillArchetypes_Health&Sports_TurnOff": 1,
+    "trait_Attraction_Characteristics_Spirited_TurnOff": 1,
+    "trait_Attraction_Fashion_Country_TurnOff": 1,
+    "trait_Attraction_HairColor_Red_TurnOn": 1,
+    "trait_Attraction_OutfitColor_Purple_TurnOn": 1,
+    "trait_Attraction_Characteristics_EmotionalDecisionMakers_TurnOn": 1,
+    "trait_Attraction_Characteristics_Argumentative_TurnOn": 1,
+    "trait_Attraction_Fashion_Basics_TurnOn": 1,
+    "trait_Attraction_HairColor_Brown_TurnOn": 1,
+    "trait_Attraction_HairColor_Platinum_TurnOff": 1,
+    "trait_Attraction_OutfitColor_Purple_TurnOff": 1,
+    "trait_Attraction_SkillArchetypes_Health&Sports_TurnOn": 1,
+    "trait_Attraction_SkillArchetypes_Academic_TurnOn": 1,
+    "trait_Attraction_SkillArchetypes_Arts&Crafts_TurnOn": 1,
+    "trait_Attraction_RomanceStyles_Woohoo_TurnOff": 1,
+    "trait_Attraction_Characteristics_Ambitionless_TurnOn": 1,
+    "trait_Attraction_Characteristics_HighEnergy_TurnOn": 1,
+    "trait_Attraction_OutfitColor_Black_TurnOn": 1,
+    "trait_Attraction_HairColor_Green_TurnOn": 1,
+    "trait_Attraction_HairColor_Auburn_TurnOff": 1,
+    "trait_Attraction_SkillArchetypes_DrinkMaking_TurnOn": 1,
+    "trait_Attraction_SkillArchetypes_Cooking_TurnOn": 1,
+    "trait_Attraction_SkillArchetypes_SenseOfHumor_TurnOn": 1,
+    "trait_Attraction_RomanceStyles_Woohoo_TurnOn": 1,
+    "trait_MasteryPerk_SecretSpice": 1
+  },
+  "selected_facts": [
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:472a3cf47acd4771ad5d3c8516fbe1c5",
+      "latest_journal_line": 326,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "20165524",
+        "display": "08:03:40.960 day:2 week:1"
+      },
+      "text": "Ava Landry、肉制冷盘：制作产物。crafted_object：肉制冷盘，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质普通，recipe：recipe_Food_Snack_ColdCuts（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：未知"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:0d8ae16494d74a77b1f6a762edd2c5cb",
+      "latest_journal_line": 424,
+      "category": "aspiration.stage_completed",
+      "time": {
+        "ticks": "20180289",
+        "display": "08:13:31.560 day:2 week:1"
+      },
+      "text": "Nyssa Landry：抱负阶段完成通知。aspiration：whimSet_VisibleSkillHigh（未配置显示名称；用途待解释），scope_evidence：local_at_call"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:e8f466da218a4bd4ba396060f060803a",
+      "latest_journal_line": 471,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "20187685",
+        "display": "08:18:27.400 day:2 week:1"
+      },
+      "text": "Eddie Landry、微波速食点心：制作产物。crafted_object：微波速食点心，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质普通，recipe：recipe_Snack_MicrowavePastry（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：未知"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:85551592405e446884e9fcb5d54c72b8",
+      "latest_journal_line": 2254,
+      "category": "payment.completed",
+      "time": {
+        "ticks": "20460930",
+        "display": "11:20:37.200 day:2 week:1"
+      },
+      "text": "Ava Landry：支付结果。actual_amount：-4，after：22785，before：22789，reason：1，requested_amount：4，scope_evidence：local_at_call"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:7feffa5e377d49e4a575eac33338040b",
+      "latest_journal_line": 2692,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "20523950",
+        "display": "12:02:38.000 day:2 week:1"
+      },
+      "text": "Ava Landry、吐司加蛋：制作产物。crafted_object：吐司加蛋，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质出色，recipe：recipe_Food_Homestyle_EggsToast-Single（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：烹饪"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:3c697c23ca194dd1a88f2dffd8cb1ad2",
+      "latest_journal_line": 3236,
+      "category": "skill.level",
+      "time": {
+        "ticks": "20576268",
+        "display": "12:37:30.720 day:2 week:1"
+      },
+      "text": "Nyssa Landry：技能等级变化。after：2，before：1，scope_evidence：local_at_call，skill：电子游戏"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:bbe5eeba3b274531baa7dec1185f3357",
+      "latest_journal_line": 7194,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "20881210",
+        "display": "16:00:48.400 day:2 week:1"
+      },
+      "text": "伊娃 卡布里乔莎、美味水果蛋糕：制作产物。crafted_object：美味水果蛋糕，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质普通，recipe：recipe_Food_Gourmet_Fruitcake-Large（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：美食烹饪"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:2168bcec0a434a519143a676fed7798a",
+      "latest_journal_line": 8141,
+      "category": "payment.completed",
+      "time": {
+        "ticks": "20975374",
+        "display": "17:03:34.960 day:2 week:1"
+      },
+      "text": "Lila Landry：支付结果。actual_amount：-4，after：22781，before：22785，reason：1，requested_amount：4，scope_evidence：local_at_call"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:759cb2476fff46e7b5ca343674bef05f",
+      "latest_journal_line": 8554,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "21012985",
+        "display": "17:28:39.400 day:2 week:1"
+      },
+      "text": "Lila Landry、奶酪通心粉：制作产物。crafted_object：奶酪通心粉，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质出色，recipe：recipe_Food_Homestyle_MacNCheese-Single（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：烹饪"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:edf26ebc67e147b49abab2ed3af8bc0d",
+      "latest_journal_line": 10085,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "21144228",
+        "display": "18:56:09.120 day:2 week:1"
+      },
+      "text": "Nyssa Landry、方便面：制作产物。crafted_object：方便面，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质普通，recipe：recipe_Food_Fridge_InstantNoodle（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：未知"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:57ada7b3ec1747e987bac508e4add5ea",
+      "latest_journal_line": 10590,
+      "category": "payment.completed",
+      "time": {
+        "ticks": "21220920",
+        "display": "19:47:16.800 day:2 week:1"
+      },
+      "text": "Nyssa Landry：支付结果。actual_amount：-5，after：22776，before：22781，reason：1，requested_amount：5，scope_evidence：local_at_call"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:16ee874a898b49d4976ecbd7fcb0d367",
+      "latest_journal_line": 10962,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "21264733",
+        "display": "20:16:29.320 day:2 week:1"
+      },
+      "text": "Nyssa Landry、酸奶冰淇淋水果冻：制作产物。crafted_object：酸奶冰淇淋水果冻，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质差，recipe：recipe_Food_Gourmet_Parfait-Single（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：美食烹饪"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4cbe99036bab4d8696f1d71c9506a8d5",
+      "latest_journal_line": 13085,
+      "category": "skill.level",
+      "time": {
+        "ticks": "21648112",
+        "display": "00:32:04.480 day:3 week:1"
+      },
+      "text": "Lila Landry：技能等级变化。after：2，before：1，scope_evidence：local_at_call，skill：电子游戏"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:f0156f17c9544958a75fdb74ea765d95",
+      "latest_journal_line": 15414,
+      "category": "payment.completed",
+      "time": {
+        "ticks": "22102394",
+        "display": "05:34:55.760 day:3 week:1"
+      },
+      "text": "Nyssa Landry：支付结果。actual_amount：-4，after：22772，before：22776，reason：1，requested_amount：4，scope_evidence：local_at_call"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:388729afc45d4004b0a352ec68dda810",
+      "latest_journal_line": 15728,
+      "category": "progress.item_unlocked",
+      "time": {
+        "ticks": "22144520",
+        "display": "06:03:00.800 day:3 week:1"
+      },
+      "text": "Nyssa Landry：解锁条目。scope_evidence：local_at_call，tuning_class：buff_FamilyRecipes_ExhaustionPrevention_Hidden（隐藏资源，未配置显示名称；用途待解释）"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:d0a0b80b43944c659aa7aad13c8b87bf",
+      "latest_journal_line": 15789,
+      "category": "crafting.completed",
+      "time": {
+        "ticks": "22150977",
+        "display": "06:07:19.080 day:3 week:1"
+      },
+      "text": "Nyssa Landry、玉米薄饼卷素热狗：制作产物。crafted_object：玉米薄饼卷素热狗，masterwork：Masterwork_Normalwork（未配置显示名称；用途待解释），quality：品质出色，recipe：recipe_Food_Homestyle_TortVegdog_single（未配置显示名称；用途待解释），scope_evidence：local_at_notification，skill：烹饪"
+    },
+    {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:cf8e1ec8c85044fcbc705986f0819c69",
+      "latest_journal_line": 16048,
+      "category": "payment.completed",
+      "time": {
+        "ticks": "22188109",
+        "display": "06:32:04.360 day:3 week:1"
+      },
+      "text": "Ava Landry：支付结果。actual_amount：-3，after：22769，before：22772，reason：1，requested_amount：3，scope_evidence：local_at_call"
+    }
+  ],
+  "social_chain": {
+    "action": {
+      "event_id": "44d1bce892184d86bcf3f45e02f707a6:interaction:145548038615138746:1689",
+      "latest_journal_line": 1866,
+      "category": "interaction",
+      "time": {
+        "ticks": "20398364",
+        "display": "10:38:54.560 day:2 week:1"
+      },
+      "text": "Nyssa Landry的“开体毛的玩笑”交互已自然结束，目标为Lila Landry；自主选择。玩法结果分支：FAILURE（与交互退出类型分别记录）。"
+    },
+    "parent": {
+      "parent_interaction_id": "1685",
+      "parent_actor_id": "145548038615138746",
+      "parent_basis": "source_interaction_id",
+      "parent_event_id": "44d1bce892184d86bcf3f45e02f707a6:interaction:145548038615138746:1685"
+    },
+    "effects": [
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4bc6882579de4ca59b2c4c6f04267681",
+        "latest_journal_line": 1844,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：-10.885，before：-18.885，scope_evidence：local_at_call，statistic：社交"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:6b2f5c35c860480795bd0915bf32a4df",
+        "latest_journal_line": 1845,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Lila Landry、Nyssa Landry：直接数值效果。after：-10.885，before：-18.885，scope_evidence：local_at_call，statistic：社交"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:82347317be714946be97f1ddba87f7fb",
+        "latest_journal_line": 1846,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：100，before：95.306，scope_evidence：local_at_call，statistic：娱乐"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:572a2f5cec3e4381a27ca8adfd8b24f2",
+        "latest_journal_line": 1847,
+        "category": "relationship.bits",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry新增关系标记：随意的谈话。"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:65f50b3831b5417db8c811ddd1b4f001",
+        "latest_journal_line": 1849,
+        "category": "relationship.bits",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry移除关系标记：随意的谈话。"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:6c153e645d764892a3cdb3230638c50c",
+        "latest_journal_line": 1851,
+        "category": "relationship.bits",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry新增关系标记：随意的谈话。"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:5c4b1415104541a085de8301fc3c4044",
+        "latest_journal_line": 1853,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry：直接数值效果。after：-10，before：0，scope_evidence：local_at_call，statistic：SocialContext_Fun（未配置显示名称；用途待解释）"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:1c576d6f5eb44ce894f8829254c01681",
+        "latest_journal_line": 1854,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Lila Landry、Nyssa Landry：直接数值效果。after：20，before：0，scope_evidence：local_at_call，statistic：commodity_Buff_Social_DullHumor（隐藏资源，未配置显示名称；用途待解释）"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:7f6f6b66e164481688634c860f2c25ca",
+        "latest_journal_line": 1855,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20397643",
+          "display": "10:38:25.720 day:2 week:1"
+        },
+        "text": "Nyssa Landry、Lila Landry：直接数值效果。after：-32，before：-30，scope_evidence：local_at_call，statistic：LTR_Friendship_Main（未配置显示名称；用途待解释）"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:2688fa55992e4303b37eda6b19c761da",
+        "latest_journal_line": 1858,
+        "category": "buffs",
+        "time": {
+          "ticks": "20398364",
+          "display": "10:38:54.560 day:2 week:1"
+        },
+        "text": "Nyssa Landry新增Buff：buff_FamilyDynamics_FamilyTropeAdventureCooldown（隐藏资源，未配置显示名称；用途待解释）。"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:change:a8d16d5523d948e1a311ce874beee86a",
+        "latest_journal_line": 1859,
+        "category": "buffs",
+        "time": {
+          "ticks": "20398364",
+          "display": "10:38:54.560 day:2 week:1"
+        },
+        "text": "Lila Landry、Nyssa Landry新增Buff：buff_FamilyDynamics_FamilyTropeAdventureCooldown（隐藏资源，未配置显示名称；用途待解释）。"
+      },
+      {
+        "event_id": "44d1bce892184d86bcf3f45e02f707a6:fact:4d50154e7e0e42c3857904d2246cbe29",
+        "latest_journal_line": 1864,
+        "category": "statistic.direct",
+        "time": {
+          "ticks": "20398364",
+          "display": "10:38:54.560 day:2 week:1"
+        },
+        "text": "Nyssa Landry：直接数值效果。after：5，before：0，scope_evidence：local_at_call，statistic：commodity_SelfDiscovery_Tracker_Silly（隐藏资源，未配置显示名称；用途待解释）"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "id": "history_technical_noise",
+      "evidence": {
+        "sleep_timer_events": 1871,
+        "social_timer_events": 757,
+        "combined_events": 2628,
+        "combined_fraction_of_all_events": 0.30834213305174235,
+        "food_internal_steps_in_main": 40
+      },
+      "next": "Classify verified technical counters, hidden mechanism buffs and animation/mixer steps as internal; retain unknowns and meaningful social actions."
+    },
+    {
+      "id": "resource_serializer",
+      "evidence": {
+        "broadcasts_serialized_as_objects": 13
+      },
+      "next": "Separate service/tuning identities from actual Sim/GameObject identities; keep source entity separate."
+    },
+    {
+      "id": "mood_and_recipe_names",
+      "evidence": {
+        "mood_events_with_wrong_mood_name_accessor": 64,
+        "recipe_without_name_accessor": 8,
+        "same_mood_notification_line": 16164
+      },
+      "next": "Use resource-specific accessors, including mood_names with observed intensity; record mood kind/intensity separately; use recipe name provider; preserve unknown previous intensity."
+    },
+    {
+      "id": "semantic_subject_roles",
+      "evidence": {
+        "initiator_present_but_flattened_examples": [
+          1845,
+          1859
+        ]
+      },
+      "next": "Explicitly retain affected subject and initiator roles and render by role rather than all indexed participants."
+    },
+    {
+      "id": "source_association_gaps",
+      "evidence": {
+        "crafting_facts_without_cause": 8,
+        "payment_facts_without_cause": 5,
+        "skill_facts_without_cause": 2,
+        "inventory_facts_without_interaction_cause": 22,
+        "inventory_empty_roles": 22
+      },
+      "next": "Connect verified payment/crafting/inventory entry points to actual interaction context; do not infer causality from nearby times."
+    },
+    {
+      "id": "aspiration_domain",
+      "evidence": {
+        "stage_notification_line": 424,
+        "resource": "whimSet_VisibleSkillHigh",
+        "goal_notifications": 12
+      },
+      "next": "Record aspiration subtype and objective domain; distinguish player aspirations, whim sets and utility tests."
+    },
+    {
+      "id": "diagnostics_not_persisted",
+      "evidence": {
+        "event_source_coverage_snapshot": false,
+        "callback_timing_metrics": false
+      },
+      "next": "Persist per-source installation/availability and callback counters at run start/end."
+    }
+  ],
+  "not_verified_this_run": [
+    "FIFO eviction under capacity pressure",
+    "full gameplay coverage",
+    "career transitions and work settlement",
+    "pregnancy, birth, adoption, age or death transitions",
+    "sentiment membership changes",
+    "inventory split and hidden-inventory movement",
+    "frame-time overhead",
+    "all hook installation states",
+    "isolated MOD compatibility"
+  ],
+  "changes_in_this_analysis": "Research report and current coverage status only; runtime, raw game data, installed artifacts and saved games unchanged."
+}

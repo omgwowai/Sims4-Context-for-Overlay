@@ -1,12 +1,29 @@
 # 首版接口与证据登记
 
-日期：2026-09-14。当前代码使用以下 EA 接口，依据 `sims4-python` 提交 `12718ed96470fc2edffbc7875d10cf537b1f0e57`。此表说明实现来源；游戏验证状态单独记录。
+日期：2026-09-15。当前代码 0.5.0 使用以下 EA 接口，依据 `sims4-python` 提交 `12718ed96470fc2edffbc7875d10cf537b1f0e57`。此表说明实现来源；游戏验证状态单独记录。0.5.0 公共 API 和 0.4.0 名称解析完成离线检查，尚未安装或实机验收。
 
 0.2.0 新增的历史索引、过滤和分页仅完成离线验证。EA 采集入口沿用 0.1.0；新增命令仍需将来在游戏内验证。本轮未建立跨 MOD 的公开 SDK。
 
 0.3.0 增加游戏内查看层，用户已确认可以打开；当前布局实现为 0.3.2。纯导航位于 `inspector.py`，EA 接入位于 `native_ui.py`。窗口直接调用 `Collector.collect(..., include_history=False, representation="raw")` 和 Recorder 的查询／分页接口，不经控制台或文件。UI 是三个核心模块的内部消费者，不是第四个采集模块或稳定公开 SDK。
 
-内部试用提供[消费 MOD 示例](../examples/mod_consumer.py)和[开发接入说明](mod-integration.md)，展示现有 Collector／Recorder 的读取、分页和释放。示例固定 0.3.2，要求游戏线程和已就绪的运行；没有新增稳定 SDK 或网络服务。
+0.5.0 提供[公共 API v1](public-api-v1.md)、[SDK](../sdk/README.md)和[消费 MOD 示例](../examples/mod_consumer.py)。`api.py` 是 Collector／Recorder 之上的边界层，公开版本发现、状态、Context 和历史分页／关闭；输出为独立 JSON 数据，APIError 提供稳定 code。Runtime 记录初始化线程身份与 api_ready，启动完成前、关闭后或错误线程调用均被阻止。下游不再读取内部全局对象；网络服务和自动跨线程调度不在本版内。
+
+## 游戏本地化名称（0.4.0）
+
+名称不再只保存 hash。`localization.py` 复制 LocalizedString 的字段和 tokens，再按中文 STBL 解析姓名、物件名、自定义名称、嵌套文本和数字；少量 M/F 分支要求明确性别且无自定义代词。复杂或缺失参数保持显式占位。枚举类型使用实际 protobuf descriptor，所有证据均为普通数据，不保留游戏对象引用。
+
+| 资源／对象 | EA 入口 | 本版处理 |
+| --- | --- | --- |
+| 交互实例 | [Interaction.get_name / get_localization_tokens](../../sims4-python/ea-source/EA/simulation/interactions/base/interaction.py) | 显式传入当前 target/context，保留动态覆盖后的 hash/tokens；异常回退到队列／显示名称及 EA token provider，不假定固定 actor/target 位置 |
+| Buff | [Buff.buff_name](../../sims4-python/ea-source/EA/simulation/buffs/buff.py) | 传入所属 Sim，记录 visible 和名称来源 |
+| 关系标记 | [RelationshipBit.display_name](../../sims4-python/ea-source/EA/simulation/relationships/relationship_bit.py)、[tracker 的 UI 名称调用](../../sims4-python/ea-source/EA/simulation/relationships/relationship_tracker.py) | 传入关系双方；状态查询和增减事件用同一入口 |
+| 统计量 | [ContinuousStatistic.stat_name](../../sims4-python/ea-source/EA/simulation/statistics/continuous_statistic_tuning.py) | 读取需求资源的游戏名称 |
+| 物件状态 | [ObjectStateValueDisplayMixin](../../sims4-python/ea-source/EA/simulation/objects/components/state.py)、[display_mixin](../../sims4-python/ea-source/EA/simulation/interactions/utils/display_mixin.py) | 使用 display_name；离线索引解析 `_display_data.instance_display_name` |
+| 物件名称 | [LocalizationHelperTuning.get_object_name](../../sims4-python/ea-source/EA/core/sims4/localization/__init__.py) | 使用实例 token，允许名称组件覆盖；失败后尝试自定义／目录名称并记录原因 |
+
+`name.localization` 保存 hash/tokens，`name.source` 记录调用依据；另有可选 `template`、`unresolved`、`reason`、`visible`。资源增加 `resource_kind`。无有效显示名称标为 `no_display_name`，不与词表缺失混为一类；未知枚举、语法和超限不声称完整解析。
+
+离线 `NameCatalog` 只在缺少已记录名称证据时用类型／ID／精确 tuning 名匹配参考索引，保存文件来源并标注运行覆盖未核验。`translate(..., catalog=...)` 增加 `semantic_view` 和 `rendered.name_resolution`，原事实字段保持不变。这些为 schema v1 的附加字段，完整行为见[语义化模块](semanticizer.md)。
 
 ## 原生查看窗口（0.3.2）
 
@@ -40,7 +57,7 @@
 | Buff | [BuffComponent](../../sims4-python/ea-source/EA/simulation/objects/components/buff_component.py) 的枚举与 `BuffBeganEvent`、`BuffEndedEvent` | 当前 Buff 与逐次增减分别记录 |
 | 关系 | [RelationshipTracker](../../sims4-python/ea-source/EA/simulation/relationships/relationship_tracker.py) 的 `has_relationship`、`get_relationship_track(add=False)`、`get_all_bits` | 友谊/浪漫主轨道定期采样；关系位通过 Add/RemoveRelationshipBit 记录 |
 | 物件状态 | [StateComponent](../../sims4-python/ea-source/EA/simulation/objects/components/state.py) 的 `values()`、`_trigger_on_state_changed` | 仅匹配下表中 ID 与名称均一致的 8 个状态类型；其他状态排除 |
-| 名称 | [Definition](../../sims4-python/ea-source/EA/simulation/objects/definition.py) 引用的 `build_buy.get_object_catalog_name`，交互 `get_name()`、Buff `buff_name` | 用本地中文 STBL 导出解释 hash；复杂 token 未解析时保留原身份并标记 |
+| 名称 | 上方 0.4.0 名称接口表；目录回退仍使用 `build_buy.get_object_catalog_name` | 游戏名称字段、hash/tokens 与中文 STBL 联合解析；缺少名称、参数、词表或读取失败分别保留依据 |
 
 `InteractionComplete` 的发送条件是交互曾进入运行阶段，不保证自然完成。本版不把该通知当作成功依据。
 
@@ -75,6 +92,7 @@
 - 连续状态差异带区间；不声称区间内只发生过一次变化，也不将差异自动归因为活动。
 - 任一关系参与者离场都会清除该关系的采样基线；重新进场后的首个值不与场外空档之前的值计算差异。
 - 查询和历史导出带 `provenance`：构建时游戏版本、所依据的 EA 源码提交、代码/中文词表摘要、实际运行解释器和可用资料片列表。构建时版本不冒充动态读取到的游戏版本，其他 MOD 清单由场景验证另行登记。
+- 0.4.0 的名称记录附带本地化参数和来源，历史参数只反映观测时刻；不能从最新人物状态反填旧名称。旧消费者应容忍新增字段和 `no_display_name` 名称状态。
 - 运行停止时分别尝试取消定时器、移除自有 Hook 和注销每项订阅；单项失败不阻止其余清理。退出边界等待后台写入收尾，最长 5 秒；失败明确报告。
 
 ## 历史索引与分页（0.2.0）
@@ -91,4 +109,4 @@
 
 ## 验证边界
 
-首轮场景证据见[验证记录](validation/2026-09-14-first-round.md)。动态名称 token、未列入目录的状态、其他 DLC/MOD 组合及长时高负载不在本次结论范围内。原生通知只能代表实际发送并被观测到的事件；样本缺失不等于没有变化。
+首轮场景证据见[验证记录](validation/2026-09-14-first-round.md)。0.4.0 动态名称的离线证据和限制见[语义解析验证](validation/2026-09-15-semantic-resolution.md)，尚不能代替实机核对。未列入目录的状态、其他 DLC/MOD 组合及长时高负载未验收。原生通知只能代表实际发送并被观测到的事件；样本缺失不等于没有变化。

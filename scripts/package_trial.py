@@ -22,7 +22,13 @@ def main():
     output = ROOT / "dist" / (folder + ".zip")
     files = ["Install.cmd", "scripts/install.ps1", "dist/ContextOverlay.ts4script",
              "dist/build-manifest.json", "docs/install.md", "docs/mod-integration.md",
-             "docs/inspector-manual-test.md", "docs/runtime-usage.md", "examples/mod_consumer.py"]
+             "docs/inspector-manual-test.md", "docs/runtime-usage.md", "docs/semanticizer.md",
+             "docs/validation/2026-09-15-semantic-resolution.md",
+             "docs/validation/2026-09-15-semantic-resolution.json", "docs/public-api-v1.md",
+             "docs/validation/2026-09-15-public-api.md", "docs/validation/2026-09-15-public-api.json",
+             "examples/mod_consumer.py"]
+    files.extend(path.relative_to(ROOT).as_posix() for path in sorted((ROOT / "sdk").rglob("*"))
+                 if path.is_file() and path.suffix in (".py", ".json", ".md"))
     with zipfile.ZipFile(str(output), "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for name in files:
             archive.write(str(ROOT / name), folder + "/" + name)

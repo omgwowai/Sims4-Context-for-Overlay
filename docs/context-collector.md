@@ -2,7 +2,7 @@
 
 版本：v0.4。日期：2026-09-14。0.1.0 完成限定场景实机验证；0.2.0 新增可组合的历史筛选/分页，仅完成离线验证。接口见[运行说明](runtime-usage.md)，结果分别见[首轮记录](validation/2026-09-14-first-round.md)与[优化记录](validation/2026-09-14-history-optimization.md)。
 
-0.3.0 增加直接消费 Collector 的游戏内窗口，用户已确认可打开。当前 0.3.2 将状态分类和字段列表改为横向文字行，长详情使用正文；沿用 0.3.1 默认关闭需求变化历史采样的设置，Collector 仍独立读取当前需求。已安装，见[使用说明](inspector-manual-test.md)及[布局验证记录](validation/2026-09-14-inspector-layout.md)。采集字段范围没有扩大。
+0.3.0 增加直接消费 Collector 的游戏内窗口；已安装的 0.3.2 将状态分类和字段列表改为横向文字行，长详情使用正文，见[布局验证记录](validation/2026-09-14-inspector-layout.md)。0.5.0 新增[公共 API v1 与 SDK](public-api-v1.md)，下游通过版本化入口读取 Context，无需获取 Collector 实例；新入口只完成离线验证，尚未安装。字段范围及默认关闭连续需求变化历史的设置保持不变。
 
 ## 1. 职责
 

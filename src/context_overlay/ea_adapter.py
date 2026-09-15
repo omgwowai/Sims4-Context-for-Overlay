@@ -3,11 +3,9 @@
 Game objects are resolved and copied on the simulation thread only.
 """
 
-import json
-import pkgutil
-
 from context_overlay.model import entity, field, number
 from context_overlay.profiles import OBJECT_STATES, PROFILE_VERSION, resource_name
+from context_overlay.localization import Localizer
 
 
 NEEDS = {"hunger": "motive_Hunger", "energy": "motive_Energy", "fun": "motive_Fun",
@@ -19,28 +17,6 @@ def enum_name(value):
     if value is None:
         return None
     return str(getattr(value, "name", value)).rsplit(".", 1)[-1]
-
-
-class Localizer:
-    def __init__(self):
-        try:
-            data = pkgutil.get_data("context_overlay", "strings_zh.json")
-        except OSError:
-            data = None
-        self.strings = json.loads(data.decode("utf-8")) if data else {}
-
-    def name(self, localized, fallback=None):
-        if localized is None:
-            return {"text": fallback, "status": "unmapped", "hash": None}
-        if isinstance(localized, str):
-            return {"text": localized, "status": "raw_text", "hash": None}
-        value = int(getattr(localized, "hash", localized if isinstance(localized, int) else 0))
-        key = "0x{:08X}".format(value)
-        template = self.strings.get(key)
-        if template is not None and "{" not in template:
-            return {"text": template, "status": "resolved", "hash": key}
-        return {"text": fallback, "status": "unresolved_tokens" if template else "unmapped",
-                "hash": key, "template": template}
 
 
 class EAAdapter:
@@ -90,24 +66,46 @@ class EAAdapter:
             return entity("sim", info.sim_id, " ".join(value for value in (info.first_name, info.last_name) if value))
         definition = getattr(obj, "definition", None)
         fallback = getattr(definition, "name", None) or type(obj).__name__
-        localized = getattr(obj, "custom_name", None)
-        if not localized and definition is not None:
-            import build_buy
-            localized = build_buy.get_object_catalog_name(definition.id)
-        name = self.localizer.name(localized, str(fallback))
+        try:
+            from sims4.localization import LocalizationHelperTuning
+            # Uses the actual object's localization token, including name
+            # component overrides, instead of only its catalog definition.
+            localized = LocalizationHelperTuning.get_object_name(obj)
+            name = self.localizer.name(localized, str(fallback))
+            name["source"] = {"kind": "runtime_object", "attribute": "LocalizationHelperTuning.get_object_name"}
+        except Exception as exc:
+            try:
+                localized = getattr(obj, "custom_name", None)
+                if not localized and definition is not None:
+                    import build_buy
+                    localized = build_buy.get_object_catalog_name(definition.id)
+                name = self.localizer.name(localized, str(fallback))
+            except Exception as fallback_exc:
+                name = {"text": str(fallback), "status": "unmapped", "reason": "label_read_failed",
+                        "error": str(fallback_exc)}
+            name["source"] = {"kind": "catalog_fallback", "object_name_error": str(exc)}
         return entity("object", obj.id, name, getattr(definition, "id", None))
 
-    def resource(self, resource, label_attribute=None):
+    def resource(self, resource, label_attribute=None, resource_kind=None, tokens=()):
         if resource is None:
             return None
         cls = resource if isinstance(resource, type) else type(resource)
         identifier = getattr(resource, "guid64", getattr(cls, "guid64", None))
         tuning_name = getattr(resource, "__name__", cls.__name__)
-        localized = getattr(resource, label_attribute, None) if label_attribute else None
-        if callable(localized):
-            localized = localized()
+        attribute = label_attribute or {"buff": "buff_name", "relbit": "display_name",
+                                       "statistic": "stat_name", "object_state": "display_name"}.get(resource_kind)
+        try:
+            localized = getattr(resource, attribute, None) if attribute else None
+            if callable(localized):
+                localized = localized(*tokens)
+            name = self.localizer.name(localized, tuning_name)
+        except Exception as exc:
+            name = {"text": tuning_name, "status": "unmapped", "reason": "label_read_failed", "error": str(exc)}
+        name["source"] = {"kind": "runtime_tuning", "attribute": attribute}
+        name["visible"] = getattr(resource, "visible", None)
         return {"id": str(identifier) if identifier is not None else None,
-                "tuning_name": tuning_name, "name": resource_name(identifier, tuning_name, self.localizer.name(localized, tuning_name))}
+                "resource_kind": resource_kind, "visible": getattr(resource, "visible", None),
+                "tuning_name": tuning_name, "name": resource_name(identifier, tuning_name, name)}
 
     def object_for(self, target):
         if target["kind"] == "sim":
@@ -131,11 +129,27 @@ class EAAdapter:
         target = interaction.target
         context = interaction.context
         localized = None
+        name_error = None
         try:
-            localized = interaction.get_name()
-        except Exception:
-            # A dynamic display name may require unavailable localization tokens.
-            pass
+            localized = interaction.get_name(target=target, context=context)
+        except Exception as exc:
+            name_error = str(exc)
+        resolved_name = self.localizer.name(localized, type(interaction).__name__)
+        resolved_name["source"] = {"kind": "runtime_interaction", "attribute": "get_name"}
+        # If a queue/name wrapper fails, use the same tuned token provider as EA,
+        # not assumed actor/target positions. Keep the failed read as evidence.
+        if name_error:
+            try:
+                factory = getattr(interaction, "display_name_in_queue", None) or interaction.display_name
+                tokens = interaction.get_localization_tokens(target=target, context=context)
+                resolved_name = self.localizer.name(factory(*tokens) if factory else None, type(interaction).__name__)
+                resolved_name["source"] = {"kind": "runtime_tuning_fallback", "attribute": "display_name_in_queue/display_name"}
+            except Exception as fallback_exc:
+                resolved_name["status"] = "unmapped"
+                resolved_name["reason"] = "label_read_failed"
+                resolved_name["fallback_error"] = str(fallback_exc)
+            resolved_name["get_name_error"] = name_error
+        resolved_name["visible"] = getattr(interaction, "visible", None)
         source = context.source
         name = enum_name(source)
         is_main = bool(interaction.is_super) and not isinstance(interaction, AnimationInteraction) and name not in ("POSTURE_GRAPH", "SOCIAL_ADJUSTMENT", "GET_COMFORTABLE",
@@ -146,7 +160,8 @@ class EAAdapter:
         parent_actor = getattr(context, "source_interaction_sim_id", None) or actor.sim_info.sim_id
         return {"interaction_id": str(interaction.id), "tuning_id": str(interaction.guid64),
                 "tuning_name": type(interaction).__name__,
-                "name": resource_name(interaction.guid64, type(interaction).__name__, self.localizer.name(localized, type(interaction).__name__)),
+                "name": resource_name(interaction.guid64, type(interaction).__name__, resolved_name),
+                "visible": getattr(interaction, "visible", None),
                 "actor": self.reference(actor),
                 "target": self.reference(target) if target is not None and self.in_scope(target) else None,
                 "target_scope": "in_scope" if target is not None and self.in_scope(target) else "unavailable_or_out_of_scope",
@@ -212,7 +227,7 @@ class EAAdapter:
                 values[label] = field(status="not_present", reason="No instantiated statistic; no default substituted")
             else:
                 values[label] = field({"value": number(statistic.get_value()), "unit": "game_statistic_units",
-                                       "resource": self.resource(stat_type)}, source="BaseStatisticTracker.get_statistic(add=False)")
+                                       "resource": self.resource(stat_type, resource_kind="statistic")}, source="BaseStatisticTracker.get_statistic(add=False)")
         return field(values, source="SimInfo.commodity_tracker")
 
     def read_buffs(self, obj):
@@ -221,7 +236,7 @@ class EAAdapter:
         buffs = list(obj.sim_info.Buffs)
         if len(buffs) > self.config["max_buffs_per_sim"]:
             raise RuntimeError("Buff count exceeds configured read budget")
-        return field([self.resource(buff.buff_type, "buff_name") for buff in buffs], source="SimInfo.Buffs.__iter__")
+        return field([self.resource(buff.buff_type, resource_kind="buff", tokens=(obj,)) for buff in buffs], source="SimInfo.Buffs.__iter__")
 
     def read_relationships(self, obj):
         if not getattr(obj, "is_sim", False):
@@ -240,7 +255,7 @@ class EAAdapter:
                     status="not_present", reason="No instantiated relationship track")
             bits = tracker.get_all_bits(other_id)
             values.append({"target": self.reference(other), "tracks": tracks,
-                           "bits": [self.resource(bit) for bit in bits]})
+                           "bits": [self.resource(bit, resource_kind="relbit", tokens=(obj, other)) for bit in bits]})
         return field(values, source="RelationshipTracker; existing local relationships only")
 
     @staticmethod
@@ -256,7 +271,8 @@ class EAAdapter:
             return field(status="not_applicable", reason="Object has no state component")
         if self.state_profile_errors:
             return field(status="unsupported", reason="Object-state profile does not match loaded tuning: " + ",".join(self.state_profile_errors))
-        values = [{"state": self.resource(value.state), "value": self.resource(value)}
+        values = [{"state": self.resource(value.state, resource_kind="object_state"),
+                   "value": self.resource(value, resource_kind="object_state")}
                   for value in component.values() if self.common_state(value.state)]
         result = field(values, source="StateComponent.values; " + PROFILE_VERSION)
         result["profile"] = {"name": PROFILE_VERSION, "state_ids": sorted(OBJECT_STATES), "other_states": "excluded"}

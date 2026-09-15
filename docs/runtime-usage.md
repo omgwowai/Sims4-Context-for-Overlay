@@ -1,6 +1,6 @@
-# 运行与调试（0.3.2）
+# 运行与调试（0.5.0）
 
-日期：2026-09-14。当前代码 0.3.2 修正首页按钮顺序，将状态和历史列表改为横向文字行，保留默认关闭需求变化历史和首页逐行事件。已构建并安装，本次按授权启动游戏检查布局，具体范围见[布局验证记录](validation/2026-09-14-inspector-layout.md)。使用方式见[手动试验说明](inspector-manual-test.md)。[首轮实机记录](validation/2026-09-14-first-round.md)对应 0.1.0；历史索引和容量测量见[0.2.0 优化记录](validation/2026-09-14-history-optimization.md)。
+日期：2026-09-15。0.5.0 增加[公共 API v1 与 SDK](public-api-v1.md)，完成离线验证，尚未安装或实机验收，见[接口验证记录](validation/2026-09-15-public-api.md)。本版包含 0.4.0 名称与动态参数改进，实机测试仍待进行，见[语义解析验证](validation/2026-09-15-semantic-resolution.md)。已安装／内部试用版仍为 0.3.2；窗口操作见[手动试验说明](inspector-manual-test.md)，实机范围见[布局验证记录](validation/2026-09-14-inspector-layout.md)。
 
 ## 1. 构建
 
@@ -85,7 +85,7 @@ co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [�
 - 游标默认 120 秒现实时间后过期，暂停游戏也计时。最多同时保留 8 个查询，总引用数最多 100,000，并受 256 MiB 的保守版本保留预算限制。过宽查询明确返回 `query_budget`；可缩小时间范围、类型或关闭旧查询。
 - 同一游标可以重试，最后一页不会立即释放快照；读取完可调用 `co.history_close`。换地块/重启释放所有查询，旧游标返回 `session_changed`；过期/已关闭返回 `cursor_expired`。
 
-内部 `Collector.collect(..., history_query={...})` 可以把筛选后的第一页组合到 Context 中，过滤参数采用 `HistoryIndex.query` 的命名。后续历史页面保留第一次查询的版本，不代表重新读取了当前快照。目前这些是项目内部接口，跨 MOD 的稳定公开 API 尚未建立；绑定 0.3.2 的调用示例与游戏线程要求见[开发接入说明](mod-integration.md)。
+内部 `Collector.collect(..., history_query={...})` 可以把筛选后的第一页组合到 Context 中。下游 MOD 应使用 0.5.0 新增的 `context_overlay.api.get_context/query_history/get_history_page/close_history` 或轻量 SDK，不引用 Collector／HistoryIndex 的内部对象。后续历史页面保留第一次查询的事件版本，不代表重新读取当前快照。完整契约与游戏线程要求见[公共 API v1](public-api-v1.md)和[开发接入说明](mod-integration.md)。
 
 ## 4. 配置与限额
 
@@ -133,7 +133,17 @@ python scripts/translate.py 输入数据包.json 新的中文数据包.json
 python scripts/validate_run.py 运行目录 --output 审计结果.json
 ```
 
-两项操作不导入游戏服务。语义转换保持原始事实，名称缺失或包含未解析 token 时标注未完整解析。日志审计检查序列、修订、结束证据与中文引用，并统计实际观测范围；统计不等同于全部场景验收通过。
+两项操作不导入游戏服务。不带资源参数的 `translate.py` 仅重排现有名称与事件措辞。需要从游戏资源补充名称时，先生成本地索引，再显式传入索引和词表：
+
+```powershell
+python scripts/build_name_catalog.py C:/sources/sims4-python/data/tuning .local/name-catalog.json
+python scripts/translate.py 输入数据包.json .local/重新解释.json --strings C:/sources/sims4-python/data/strings/CHS_CN.json --catalog .local/name-catalog.json
+python scripts/audit_localization.py "游戏用户目录/ContextOverlay/runs/运行ID" --strings C:/sources/sims4-python/data/strings/CHS_CN.json --catalog .local/name-catalog.json --output .local/名称审计.json
+```
+
+审计可传入多个运行目录，统计各日志最新事件版本及 Context 导出中的名称变化；导出可能重复日志中的事实，不是事件发生次数。原记录保持不变，新解释位于 `semantic_view` 和 `rendered`。旧日志缺少的动态参数明确留空；没有显示名称、缺少词表 key、尚未支持的 token 分别说明，见[语义化模块](semanticizer.md)。不要将本地 EA 词表或全量索引提交 Git。
+
+日志审计检查序列、修订、结束证据与中文引用，并统计实际观测范围；统计不等同于全部场景验收通过。
 
 ## 6. 隔离的游戏验收
 

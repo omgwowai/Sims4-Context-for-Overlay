@@ -4,6 +4,7 @@ import json
 import os
 import pkgutil
 import sys
+import threading
 import time
 import traceback
 from pathlib import Path
@@ -83,6 +84,8 @@ class Runtime:
     def __init__(self):
         import services
         from sims4.common import get_available_packs
+        self.simulation_thread_id = threading.get_ident()
+        self.api_ready = False
         self.config = load_config()
         self.session_id = new_id()
         self.directory = data_root() / "runs" / self.session_id
@@ -189,7 +192,7 @@ class Runtime:
                 return
             actor = self.adapter.reference(sim)
             if name in ("BuffBeganEvent", "BuffEndedEvent"):
-                value = self.adapter.resource(resolver.get_resolved_arg("buff"), "buff_name")
+                value = self.adapter.resource(resolver.get_resolved_arg("buff"), resource_kind="buff", tokens=(sim,))
                 added = name == "BuffBeganEvent"
                 self.recorder.change([actor], "buffs", None if added else value, value if added else None,
                                      self.adapter.clock(), "TestEvent." + name)
@@ -200,7 +203,7 @@ class Runtime:
                 if self.adapter.in_scope(other):
                     from relationships.relationship_enums import RelationshipDirection
                     bit = resolver.get_resolved_arg("relationship_bit")
-                    value = self.adapter.resource(bit)
+                    value = self.adapter.resource(bit, resource_kind="relbit", tokens=(sim, other))
                     added = name == "AddRelationshipBit"
                     self.recorder.relationship_bit(actor, self.adapter.reference(other), value, added,
                                                    self.adapter.clock(), "TestEvent." + name,
@@ -215,7 +218,7 @@ class Runtime:
         owner = component.owner
         if not getattr(owner, "is_sim", False) and self.adapter.common_state(state) and self.adapter.in_scope(owner):
             self.recorder.change([self.adapter.reference(owner)], "object_states." + str(state.guid64),
-                                 self.adapter.resource(old), self.adapter.resource(new),
+                                 self.adapter.resource(old, resource_kind="object_state"), self.adapter.resource(new, resource_kind="object_state"),
                                  self.adapter.clock(), "StateComponent._trigger_on_state_changed")
 
     def poll(self, _):
@@ -328,6 +331,7 @@ class Runtime:
     def stop(self, reason):
         if self.closed:
             return
+        self.api_ready = False
         self.closed = True
         errors = []
 
@@ -374,6 +378,7 @@ def start(*_):
     try:
         _runtime = Runtime()
         _runtime.install()
+        _runtime.api_ready = not _runtime.closed
     except Exception:
         _startup_error = traceback.format_exc()
         log("START FAILED: " + _startup_error)

@@ -2,7 +2,7 @@
 
 版本：v0.4。日期：2026-09-14。0.2.0 实现实体索引、筛选和分页，并完成离线验证；该次未启动游戏。总体边界见[三模块设计](modular-context-provider.md)，0.1.0 的实机结果见[首轮记录](validation/2026-09-14-first-round.md)，新增能力见[优化记录](validation/2026-09-14-history-optimization.md)。
 
-当前交付为 0.3.2，提供复用这些接口的游戏内浏览窗口，已安装。历史列表改为横向文字行，详情改用正文；`record_need_changes` 沿用 false，连续需求变化不再生成历史事件，当前需求快照仍可读取，关系数值及离散变化继续采集。查看交互不会进入生活事件记录；容量和查询语义沿用 0.2.0。见[窗口说明](inspector-manual-test.md)及[布局验证记录](validation/2026-09-14-inspector-layout.md)。
+已安装版为 0.3.2，提供横向文字行与正文详情的游戏内历史窗口，见[布局验证记录](validation/2026-09-14-inspector-layout.md)。0.5.0 新增[公共 API v1 与 SDK](public-api-v1.md)，供下游查询同一历史索引并管理分页；新入口只完成离线验证，尚未安装。`record_need_changes` 沿用 false，当前需求快照、关系数值和离散变化仍可读取／记录。查看交互不进入生活历史，容量和查询语义沿用 0.2.0。
 
 ## 1. 职责与来源
 

@@ -38,6 +38,9 @@ def display(value):
         if value.get("name"):
             return display(value["name"])
         if value.get("text"):
+            if value.get("status") == "no_display_name":
+                absent = "参考资源未配置显示名称" if value.get("reason") == "no_name_in_reference_tuning" else "未配置显示名称"
+                return "{}（{}{}）".format(value["text"], "隐藏资源，" if value.get("visible") is False else "", absent)
             suffix = "（名称未完整解析）" if value.get("status") in ("unmapped", "unresolved_tokens") else ""
             return value["text"] + suffix
         if value.get("label"):
@@ -103,7 +106,13 @@ def render(packet):
     return {"language": "zh-CN", "rules_version": VERSION, "current": current, "history": history}
 
 
-def translate(packet):
+def translate(packet, catalog=None):
     result = copy_data(packet)
-    result["rendered"] = render(packet)
+    view = catalog.enrich(packet) if catalog is not None else packet
+    result["rendered"] = render(view)
+    if catalog is not None:
+        result["semantic_view"] = {key: value for key, value in view.items() if key in ("snapshot", "history", "target")}
+        result["rendered"]["name_resolution"] = {"catalog_format": catalog.data["format"],
+            "catalog_inputs": catalog.data["inputs"], "historical_facts_preserved": True,
+            **catalog.provenance}
     return result

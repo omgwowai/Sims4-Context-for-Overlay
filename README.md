@@ -16,7 +16,11 @@
 
 首轮开发验证已完成：三个模块在本地游戏中贯通，独立开关和离线语义转换均有验证证据。范围限定为当前地块内已实例化的 Sim 和物件，以做饭与吃饭为主要场景，采集行为、触发来源及需求/Buff/关系/物件常用状态，导出 JSON 和逐条中文解释。具体要求见[首轮实现与验收](docs/implementation-and-validation.md)，完成状态见[实际验证记录](docs/validation/2026-09-14-first-round.md)。旧原型不作为本次新实现的验收依据。
 
-当前代码为 **0.3.2**，已安装，用户实看后确认本轮布局调整已足够好：首页按钮依次为“当前状态 → 历史事件 → 刷新 → 关闭”，状态和历史列表改为横向文字行，去掉空图标／红色 X 区域，长详情使用文字正文。沿用默认关闭连续需求变化历史、当前需求快照及 200,000 条事件上限。助手已在游戏中确认首页顺序、状态文字列表及 Sim 菜单入口；完整历史分页流程未在本轮逐项复测。使用方式见[窗口说明](docs/inspector-manual-test.md)，证据与具体范围见[布局验证记录](docs/validation/2026-09-14-inspector-layout.md)。此前的[容量测量](docs/validation/2026-09-14-history-optimization.md)对应 0.2.0，上面的首轮实机结论对应 0.1.0。
+当前源码为 **0.5.0**，新增供下游 MOD 使用的 **公共 API 1.0.0 和 Python SDK 1.0.0**：直接读取 Context、按实体／时间／类型分页查询历史、管理游标、检查版本与可用性。下游无需访问 `_runtime`，无需控制台或文件中转。已完成离线契约验证，尚未安装或实机验收。见[公共 API 文档](docs/public-api-v1.md)、[SDK 入门](sdk/README.md)和[验证记录](docs/validation/2026-09-15-public-api.md)。
+
+本版包含 0.4.0 的名称解析改进：游戏资源字段、中文 STBL 与动态参数联合解析，保存 LocalizedString 证据，支持旧日志重解释；名称功能仍待用户实机测试。方法见[语义化模块](docs/semanticizer.md)，旧数据核对见[语义解析记录](docs/validation/2026-09-15-semantic-resolution.md)。
+
+已安装及内部试用包仍为 **0.3.2**。用户已确认界面布局：首页按钮为“当前状态 → 历史事件 → 刷新 → 关闭”，状态和历史使用横向文字行，长详情使用正文。默认关闭连续需求变化历史，当前需求快照及 200,000 条事件上限保留。使用方式见[窗口说明](docs/inspector-manual-test.md)，实机范围见[布局验证记录](docs/validation/2026-09-14-inspector-layout.md)。此前的[容量测量](docs/validation/2026-09-14-history-optimization.md)对应 0.2.0，首轮实机结论对应 0.1.0。
 
 设计师配置、Prompt、模型调用和 Overlay 展示属于下游消费侧。长期记忆、任意历史时刻状态重建、LLM 事件执行及 Autonomy 改造放在后续扩展范围。
 

@@ -3,6 +3,7 @@
 import importlib.util
 import json
 import sys
+import threading
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -35,7 +36,8 @@ class ExampleChecks(unittest.TestCase):
         recorder = Recorder(MemoryJournal(), session_id="example-run")
         adapter = Adapter()
         self.runtime = SimpleNamespace(closed=False, session_id="example-run", adapter=adapter,
-                                       recorder=recorder, collector=Collector(adapter, recorder))
+                                       recorder=recorder, collector=Collector(adapter, recorder),
+                                       provenance={}, api_ready=True, simulation_thread_id=threading.get_ident())
         self.runtime_patch = patch.object(game_runtime, "_runtime", self.runtime)
         self.runtime_patch.start()
         self.addCleanup(self.runtime_patch.stop)
@@ -62,7 +64,7 @@ class ExampleChecks(unittest.TestCase):
     def test_changed_or_unready_runtime_rejects_stale_requests(self):
         handle = consumer.open_history()
         self.runtime.session_id = "new-run"
-        with self.assertRaisesRegex(RuntimeError, "Session changed"):
+        with self.assertRaisesRegex(RuntimeError, "session_changed"):
             consumer.next_history(handle["session_id"], handle["page"]["cursor"])
         self.runtime.closed = True
         with self.assertRaisesRegex(RuntimeError, "not ready"):

@@ -1,10 +1,10 @@
-# ContextOverlay 0.3.2：Windows 安装与试用
+# ContextOverlay：Windows 安装与试用
 
-这是首个内部试用包。已在 Windows、The Sims 4 `1.126.73.1030` 上完成首轮功能与界面检查；其他游戏版本需要另行核验。下载入口及成果介绍见[内部飞书文档](https://omgwowai.feishu.cn/wiki/AAvPw03vJiR1NSkdDtmcxP04ng6)。
+内部已发布版为 0.3.2，在 Windows、The Sims 4 `1.126.73.1030` 上完成首轮功能与界面检查；下载入口见[内部飞书文档](https://omgwowai.feishu.cn/wiki/AAvPw03vJiR1NSkdDtmcxP04ng6)。当前源码及本地候选构建为 0.5.0，新增公共 API v1，包含 0.4.0 的名称解析改进；仅完成离线验证，尚未安装、实机验收或更新飞书附件。公共 API / SDK 需要提供方 0.5.0 或兼容后续版本。安装步骤适用于这些版本；其他游戏版本需要另行核验。
 
 ## 安装
 
-1. 从飞书文档附件下载 `ContextOverlay-0.3.2-Windows.zip`，**完整解压到普通文件夹**。
+1. 取得 `ContextOverlay-版本-Windows.zip`，**完整解压到普通文件夹**。飞书附件当前仍为 `ContextOverlay-0.3.2-Windows.zip`。
 2. 退出 The Sims 4，双击解压目录中的 **`Install.cmd`**。不需要安装 Python，也不需要管理员权限。
 3. 安装器查找 Windows 的“文档”目录和常见 OneDrive 文档目录。只有一个有效游戏用户目录时自动选择；有多个或找不到时，会要求粘贴实际目录。这个目录应包含 `Mods` 和 `Options.ini`，一般为“文档/Electronic Arts/The Sims 4”，**不是游戏程序安装目录**。
 4. 看到 `Installation complete` 即完成。若显示 `This exact package is already installed`，说明已安装同一份文件，无需重复操作。
@@ -60,4 +60,4 @@ GitHub 的源码 ZIP 不含已编译 MOD。开发者先按[运行与调试](runt
 python scripts/package_trial.py
 ```
 
-打包器核对源码与已构建包的一致性，生成 `dist/ContextOverlay-0.3.2-Windows.zip` 及 `.zip.sha256`，包含安装入口、已编译包、构建清单和接入说明。游戏中文词表为本地构建输入；运行包通过内部飞书分发，`dist/` 不提交 Git。
+打包器核对源码与已构建包的一致性，生成 `dist/ContextOverlay-版本-Windows.zip` 及 `.zip.sha256`，包含安装入口、已编译包、构建清单和接入说明。游戏中文词表为本地构建输入，`dist/` 不提交 Git。生成本地包不代表已更新飞书附件或完成该版本的游戏验收。

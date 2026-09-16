@@ -9,6 +9,7 @@ from context_overlay.model import entity, field, number
 from context_overlay.profiles import OBJECT_STATES, PROFILE_VERSION, resource_name
 from context_overlay.localization import Localizer
 from context_overlay.event_policy import internal_interaction
+from context_overlay.semantic_fields import RUNTIME_DETAILS
 
 
 NEEDS = {"hunger": "motive_Hunger", "energy": "motive_Energy", "fun": "motive_Fun",
@@ -202,7 +203,8 @@ class EAAdapter:
                 label_attribute = "display_name"
         attribute = label_attribute or {"buff": "buff_name", "relbit": "display_name",
             "statistic": "stat_name", "object_state": "display_name", "trait": "display_name",
-            "recipe": "get_recipe_name", "interaction": "get_name", "mood": "mood_names"}.get(resource_kind)
+            "recipe": "get_recipe_name", "interaction": "get_name", "mood": "mood_names",
+            "career_track": "career_name", "career_level": "title", "aspiration": "display_name"}.get(resource_kind)
         try:
             localized = getattr(resource, attribute, None) if attribute else None
             if resource_kind == "mood" and localized is not None:
@@ -224,9 +226,28 @@ class EAAdapter:
         if resource_kind == "mood":
             name["source"].update(intensity=intensity, name_basis="observed_intensity" if intensity is not None else "base_mood_name")
         name["visible"] = getattr(resource, "visible", None)
-        return {"id": str(identifier) if identifier is not None else None,
-                "resource_kind": resource_kind, "visible": getattr(resource, "visible", None),
-                "tuning_name": tuning_name, "name": resource_name(identifier, tuning_name, name)}
+        result = {"id": str(identifier) if identifier is not None else None,
+                  "resource_kind": resource_kind, "visible": getattr(resource, "visible", None),
+                  "tuning_name": tuning_name, "name": resource_name(identifier, tuning_name, name)}
+        for role, detail_attribute in RUNTIME_DETAILS.get(resource_kind, {}).items():
+            try:
+                if not hasattr(resource, detail_attribute):
+                    continue  # A subclass may not provide this optional interface.
+                localized = getattr(resource, detail_attribute)
+                # These direct factories accept the same observed participants.
+                # Plain LocalizedString values retain their own tokens unchanged.
+                if callable(localized):
+                    localized = localized(*tokens)
+                detail = self.localizer.name(localized)
+                if detail.get("status") == "no_display_name":
+                    detail.update(status="not_present", reason="no_localized_string_key")
+            except Exception as exc:
+                detail = {"text": None, "status": "unmapped", "reason": "detail_read_failed", "error": str(exc)}
+            detail["source"] = {"kind": "runtime_tuning", "attribute": detail_attribute, "role": role}
+            if role == "tooltip":
+                detail["source"]["condition_evaluated"] = False
+            result[role] = detail
+        return result
 
     def object_for(self, target):
         if target["kind"] == "sim":
@@ -323,7 +344,18 @@ class EAAdapter:
                          reason="{}: {}".format(type(exc).__name__, exc))
 
     def read_identity(self, obj):
-        return field(self.reference(obj), source="SimInfo.sim_id / GameObject.id / Definition.id")
+        identity = self.reference(obj)
+        if not getattr(obj, "is_sim", False):
+            try:
+                from sims4.localization import LocalizationHelperTuning
+                description = self.localizer.name(LocalizationHelperTuning.get_object_description(obj))
+                if description.get("status") == "no_display_name":
+                    description.update(status="not_present", reason="no_localized_string_key")
+            except Exception as exc:
+                description = {"text": None, "status": "unmapped", "reason": "detail_read_failed", "error": str(exc)}
+            description["source"] = {"kind": "runtime_object", "attribute": "LocalizationHelperTuning.get_object_description"}
+            identity["description"] = description
+        return field(identity, source="SimInfo.sim_id / GameObject.id / Definition.id")
 
     def read_location(self, obj):
         position = obj.position

@@ -1,6 +1,6 @@
 # 数据语义化模块
 
-版本：0.4.0。日期：2026-09-15。游戏资源名称与动态参数解析已实现，完成离线回归、旧日志核对和本地游戏 protobuf 兼容检查；本版尚未安装或实机验收。结果见[语义解析验证记录](validation/2026-09-15-semantic-resolution.md)。
+版本：0.6.0。日期：2026-09-15。在原有名称解析之上新增官方资源来源目录、独立描述／tooltip、目录覆盖与冲突处理；完整实现、构建方法和 SDK 数据字段见[资源语义目录](resource-semantics.md)，本轮证据见[验证记录](validation/2026-09-15-resource-semantics.md)。以下保留名称解析的基本机制，旧版结果见[0.4.0 语义解析记录](validation/2026-09-15-semantic-resolution.md)。
 
 0.6.0 增加生活事件类别说明、原始 payload、动作关联效果摘要及明确的待解释标记；广播回调、技能后备通知和里程碑补授不扩写成已证明的玩法结果。新增类别见[覆盖说明](event-coverage-0.6.0.md)。这仍是确定性表达，语义未知时保留原数据。
 
@@ -60,11 +60,11 @@
 | `raw_text` | 游戏直接提供的文本 |
 | `empty_display_name` | 有字符串键但解析文本为空；保留证据，以原始资源名兜底，不展开整段 token 字典 |
 | `unresolved_tokens` | 已取得模板，仍缺参数或语法支持；可读部分照常显示 |
-| `no_display_name` | 运行时未提供有效名称 key，或离线参考 tuning 未配置名称；以 `reason` 和 `source` 区分 |
+| `no_display_name` | 运行时未提供有效名称 key，不等同于游戏永远没有名称 |
 | `unmapped` | 字符串 key 未收录、名称读取失败或结构超限等，保留具体原因 |
 | `rule_resolved` | 原有少量精确别名，要求 ID 与 tuning 名共同匹配，原结果留在 `raw_name` |
 
-隐藏 Buff 和内部动作可能本来就没有玩家可见名称。`visible=false` 独立保存，不删除记录，也不因名字中含有 `Hidden` 就推断可见性。离线参考缺少名称不证明当时没有动态覆盖；界面显示“参考资源未配置显示名称”，来源带 `runtime_override_not_verified=true`。
+隐藏 Buff 和内部动作可能本来就没有玩家可见名称。`visible=false` 独立保存，不删除记录，也不因名字中含有 `Hidden` 就推断可见性。离线显式字段缺少名称现在使用 `unmapped/no_explicit_name_link`；不证明缺少默认值、继承字段或动态覆盖，来源带 `runtime_override_not_verified=true`。
 
 通用资源读取通过已核验的 buff_name、stat_name、mood_names、get_recipe_name、trait_type 等资源字段选择命名入口；尚无可靠入口时以 `unmapped/no_verified_name_accessor` 表达，不宣称游戏未配置名称。实体引用仅接受 Sim 身份和真正的 BaseObject 实例，拥有 id 的广播器／资源／交互不自动成为物件。首局修正细节见[验证记录](validation/2026-09-15-event-quality-fixes.md)。
 
@@ -74,11 +74,11 @@
 
 ## 4. 重新解释旧日志
 
-`scripts/build_name_catalog.py` 从本地 `sims4-python/data/tuning/combined_tuning_*.xml` 生成带类型的名称索引，解析共享节点引用和显示名称变体。匹配要求 **资源类型 + ID + 原 tuning 名** 一致；冲突条目排除。索引记录原文件 SHA-256 和名称字段，明确排除 2014 年的 `combined_tuning_BASEFull.xml`。
+推荐使用 `scripts/build_resource_catalog.py` 直接从安装游戏生成 v2 目录，完整资源覆盖先于文本合并，并区分名称、描述与 tooltip。旧 `scripts/build_name_catalog.py` 和 v1 输入仍兼容。匹配要求 **资源类型 + ID + 原 tuning 名** 一致；冲突条目不自动选择。新目录通过 TGI 优先级排除被覆盖的旧资源。
 
 `NameCatalog` 优先使用已记录的本地化证据，其次使用旧记录中的非零 hash，最后才查询静态索引。不会从当前人物或物件状态补写过去的参数。旧记录中的 `sim_Chat` 可恢复为 `和〈未解析：1.SimFirstName〉聊天`，无法恢复当时已丢弃的人名参数。
 
-`translate(packet, catalog=...)` 返回独立结果：原 `snapshot/history/target` 保留；资源解释放入 `semantic_view`，中文输出在 `rendered`，并登记索引依据。输入文件不改写。生成和使用方法见[运行说明](runtime-usage.md)。全量索引和 EA 中文词表仅保留在本机，不提交 Git；运行中的 MOD 直接读取已加载的资源，不加载这个离线索引。
+`translate(packet, catalog=...)` 返回独立结果：原 `snapshot/history/target` 保留；资源解释放入 `semantic_view`，中文输出在 `rendered`，并登记索引依据。v2 的静态描述在 `reference_semantics` 中单独标识，不冒充历史实测文本。输入文件不改写。全量目录和 EA 中文词表仅保留在本机，不提交 Git；运行中的 MOD 读取已加载资源和内置紧凑词表／来源索引，不加载完整 tuning 目录。
 
 ## 5. 后续核验
 

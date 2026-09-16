@@ -70,6 +70,7 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 | `capabilities` | `context.read`、`history.query`、`history.page`、`history.close`、`text.zh-CN` |
 | `context_fields`、`default_fields` | 支持的字段与 Sim／Object 的默认选择 |
 | `nearby` | 附近查询类型、指标、单位、返回数、扫描预算和半径限制；能力为 `context.nearby_entities` |
+| `resource_text` | 可选 name／description／tooltip 文本证据，能力为 `text.resource_details`；官方中文词表与 MOD 覆盖边界见[资源语义目录](resource-semantics.md) |
 | `max_history_page_size`、`max_context_history_limit` | 请求单页／近期条数上限，各为 500 |
 | `thread_policy`、`transport` | `simulation_thread`、`in_process_python` |
 | `scope`、`history_scope` | 当前地块已实例化实体、本次运行历史 |

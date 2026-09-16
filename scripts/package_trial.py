@@ -32,6 +32,8 @@ def main():
              "docs/validation/2026-09-15-event-quality-fixes.md", "docs/validation/2026-09-15-event-quality-fixes.json",
              "docs/nearby-entities.md", "docs/validation/2026-09-15-nearby-entities.md",
              "docs/validation/2026-09-15-nearby-entities.json",
+             "docs/resource-semantics.md", "docs/validation/2026-09-15-resource-semantics.md",
+             "docs/validation/2026-09-15-resource-semantics.json",
              "examples/mod_consumer.py"]
     files.extend(path.relative_to(ROOT).as_posix() for path in sorted((ROOT / "sdk").rglob("*"))
                  if path.is_file() and path.suffix in (".py", ".json", ".md"))

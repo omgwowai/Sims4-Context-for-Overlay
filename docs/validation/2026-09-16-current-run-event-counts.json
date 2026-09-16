@@ -1,0 +1,1774 @@
+{
+  "date": "2026-09-16",
+  "scope": "current_run_unique_events_all_tiers_not_context_history_limit",
+  "method": "One latest revision per event_id across the entire journal. Entity associations use unique event.entities keys, not mentions or Autonomy candidates. An event may count toward multiple entities.",
+  "source": {
+    "captured_at_utc": "2026-09-16T08:03:05.635268+00:00",
+    "session_id": "9ba4280cb22d4c65b469cad11439a0c7",
+    "live_file": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\runs\\9ba4280cb22d4c65b469cad11439a0c7\\journal.jsonl",
+    "snapshot_file": "C:\\sources\\Sims4-Context-for-Overlay\\.validation\\paused-live-20260916T073317840510Z\\journal.jsonl",
+    "sha256": "5821293735bf7b1d825c313b44004faca23508850b5eeec484f161013b61a0ac",
+    "same_as_previous_paused_snapshot": true,
+    "bytes": 93520604,
+    "lines": 17909,
+    "partial_tail_excluded": 0,
+    "stable_during_read": true
+  },
+  "module_version": "0.7.1",
+  "time": {
+    "session_start_wall": "2026-09-16T07:22:25.686519+00:00",
+    "session_start_game": {
+      "ticks": "20071281",
+      "display": "07:00:51.240 day:2 week:1"
+    },
+    "last_record_wall": "2026-09-16T07:30:48.922878+00:00",
+    "last_game_time": {
+      "ticks": "22235326",
+      "display": "07:03:33.040 day:3 week:1"
+    }
+  },
+  "integrity": {
+    "errors": [],
+    "last_sequence": 17909,
+    "evicted_event_records": 0,
+    "session_end_present": false
+  },
+  "events": 8057,
+  "record_kinds": {
+    "observation": 379,
+    "event_revision": 17530
+  },
+  "observation_categories": {
+    "session_start": 1,
+    "scope_entry": 184,
+    "relationship_bit_duplicate": 156,
+    "scope_exit": 38
+  },
+  "broad_types": {
+    "interaction": 2518,
+    "state_change": 2646,
+    "game_event": 2893
+  },
+  "categories": {
+    "state_change": 2646,
+    "interaction": 2518,
+    "statistic.direct": 1172,
+    "autonomy.decision": 1162,
+    "buff.refreshed": 266,
+    "broadcast.effect": 95,
+    "mood.changed": 66,
+    "reaction.started": 56,
+    "trait.added": 27,
+    "inventory.transfer": 20,
+    "aspiration.goal_completed": 11,
+    "crafting.completed": 7,
+    "payment.completed": 5,
+    "relationship.knowledge": 2,
+    "aspiration.stage_completed": 2,
+    "relationship.sentiment": 1,
+    "progress.item_unlocked": 1
+  },
+  "tiers": {
+    "internal": 1692,
+    "main": 6365
+  },
+  "distinct_sims_with_events": 21,
+  "distinct_objects_with_events": 73,
+  "entity_association_count": 9946,
+  "sim_association_count": 8891,
+  "object_association_count": 1055,
+  "missing_entity_names": [],
+  "sims": [
+    {
+      "key": "sim:896523281981505978",
+      "id": "896523281981505978",
+      "kind": "sim",
+      "name": "Nyssa Landry",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 2584,
+      "categories": {
+        "interaction": 1079,
+        "state_change": 613,
+        "statistic.direct": 294,
+        "broadcast.effect": 28,
+        "autonomy.decision": 452,
+        "buff.refreshed": 81,
+        "mood.changed": 16,
+        "inventory.transfer": 2,
+        "reaction.started": 6,
+        "relationship.knowledge": 1,
+        "payment.completed": 2,
+        "crafting.completed": 2,
+        "aspiration.goal_completed": 4,
+        "aspiration.stage_completed": 2,
+        "trait.added": 1,
+        "progress.item_unlocked": 1
+      },
+      "tiers": {
+        "internal": 541,
+        "main": 2043
+      }
+    },
+    {
+      "key": "sim:896523281981505980",
+      "id": "896523281981505980",
+      "kind": "sim",
+      "name": "Eddie Landry",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1834,
+      "categories": {
+        "state_change": 536,
+        "statistic.direct": 370,
+        "interaction": 571,
+        "broadcast.effect": 34,
+        "autonomy.decision": 216,
+        "reaction.started": 14,
+        "buff.refreshed": 71,
+        "mood.changed": 15,
+        "aspiration.goal_completed": 2,
+        "inventory.transfer": 1,
+        "relationship.knowledge": 1,
+        "payment.completed": 1,
+        "relationship.sentiment": 1,
+        "crafting.completed": 1
+      },
+      "tiers": {
+        "main": 1473,
+        "internal": 361
+      }
+    },
+    {
+      "key": "sim:896523281981505981",
+      "id": "896523281981505981",
+      "kind": "sim",
+      "name": "Lila Landry",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1833,
+      "categories": {
+        "interaction": 564,
+        "state_change": 598,
+        "statistic.direct": 331,
+        "aspiration.goal_completed": 4,
+        "autonomy.decision": 197,
+        "broadcast.effect": 41,
+        "mood.changed": 16,
+        "buff.refreshed": 50,
+        "reaction.started": 25,
+        "inventory.transfer": 1,
+        "relationship.knowledge": 2,
+        "payment.completed": 1,
+        "crafting.completed": 2,
+        "trait.added": 1
+      },
+      "tiers": {
+        "internal": 364,
+        "main": 1469
+      }
+    },
+    {
+      "key": "sim:896523281981505979",
+      "id": "896523281981505979",
+      "kind": "sim",
+      "name": "Ava Landry",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1702,
+      "categories": {
+        "interaction": 492,
+        "state_change": 523,
+        "statistic.direct": 346,
+        "broadcast.effect": 30,
+        "autonomy.decision": 216,
+        "reaction.started": 18,
+        "mood.changed": 20,
+        "buff.refreshed": 53,
+        "relationship.sentiment": 1,
+        "crafting.completed": 1,
+        "aspiration.goal_completed": 1,
+        "payment.completed": 1
+      },
+      "tiers": {
+        "internal": 313,
+        "main": 1389
+      }
+    },
+    {
+      "key": "sim:258137921953041975",
+      "id": "258137921953041975",
+      "kind": "sim",
+      "name": "凯拉 弗莱明",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 260,
+      "categories": {
+        "state_change": 163,
+        "statistic.direct": 22,
+        "interaction": 37,
+        "autonomy.decision": 20,
+        "buff.refreshed": 2,
+        "trait.added": 13,
+        "broadcast.effect": 3
+      },
+      "tiers": {
+        "main": 232,
+        "internal": 28
+      }
+    },
+    {
+      "key": "sim:258137921953041969",
+      "id": "258137921953041969",
+      "kind": "sim",
+      "name": "德斯汀 布洛柯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 213,
+      "categories": {
+        "interaction": 35,
+        "state_change": 136,
+        "statistic.direct": 7,
+        "autonomy.decision": 18,
+        "trait.added": 12,
+        "buff.refreshed": 2,
+        "broadcast.effect": 3
+      },
+      "tiers": {
+        "main": 188,
+        "internal": 25
+      }
+    },
+    {
+      "key": "sim:258137921952811072",
+      "id": "258137921952811072",
+      "kind": "sim",
+      "name": "伊莱莎 潘克斯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 185,
+      "categories": {
+        "state_change": 123,
+        "interaction": 32,
+        "statistic.direct": 5,
+        "autonomy.decision": 18,
+        "buff.refreshed": 2,
+        "broadcast.effect": 5
+      },
+      "tiers": {
+        "main": 163,
+        "internal": 22
+      }
+    },
+    {
+      "key": "sim:258137921952811071",
+      "id": "258137921952811071",
+      "kind": "sim",
+      "name": "鲍伯 潘克斯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 154,
+      "categories": {
+        "crafting.completed": 1,
+        "inventory.transfer": 3,
+        "state_change": 89,
+        "statistic.direct": 5,
+        "interaction": 31,
+        "autonomy.decision": 17,
+        "buff.refreshed": 5,
+        "broadcast.effect": 3
+      },
+      "tiers": {
+        "main": 133,
+        "internal": 21
+      }
+    },
+    {
+      "key": "sim:258137921952967053",
+      "id": "258137921952967053",
+      "kind": "sim",
+      "name": "莉莉丝 维托",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 109,
+      "categories": {
+        "interaction": 31,
+        "state_change": 62,
+        "statistic.direct": 7,
+        "autonomy.decision": 8,
+        "mood.changed": 1
+      },
+      "tiers": {
+        "main": 92,
+        "internal": 17
+      }
+    },
+    {
+      "key": "sim:258137921953180696",
+      "id": "258137921953180696",
+      "kind": "sim",
+      "name": "达雷尔 恰姆",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 2,
+      "categories": {
+        "inventory.transfer": 2
+      },
+      "tiers": {
+        "main": 2
+      }
+    },
+    {
+      "key": "sim:258137921953562989",
+      "id": "258137921953562989",
+      "kind": "sim",
+      "name": "斯基普 布洛柯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 2,
+      "categories": {
+        "state_change": 2
+      },
+      "tiers": {
+        "main": 2
+      }
+    },
+    {
+      "key": "sim:258137921952889472",
+      "id": "258137921952889472",
+      "kind": "sim",
+      "name": "甘瑟 大嚼客",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 2,
+      "categories": {
+        "state_change": 2
+      },
+      "tiers": {
+        "main": 2
+      }
+    },
+    {
+      "key": "sim:258137921953039588",
+      "id": "258137921953039588",
+      "kind": "sim",
+      "name": "茱迪 戈麦斯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 2,
+      "categories": {
+        "broadcast.effect": 2
+      },
+      "tiers": {
+        "main": 2
+      }
+    },
+    {
+      "key": "sim:258137921953474297",
+      "id": "258137921953474297",
+      "kind": "sim",
+      "name": "宁 邦·玛",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 2,
+      "categories": {
+        "state_change": 2
+      },
+      "tiers": {
+        "main": 2
+      }
+    },
+    {
+      "key": "sim:258137921953475694",
+      "id": "258137921953475694",
+      "kind": "sim",
+      "name": "卡洛斯 洛佩斯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "sim:258137921953635644",
+      "id": "258137921953635644",
+      "kind": "sim",
+      "name": "埃克内 阿纳努",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "sim:258137921953034936",
+      "id": "258137921953034936",
+      "kind": "sim",
+      "name": "伊薇 戴尔加托",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "sim:258137921953395423",
+      "id": "258137921953395423",
+      "kind": "sim",
+      "name": "贾内 普莱斯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1,
+      "categories": {
+        "state_change": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "sim:258137921953110003",
+      "id": "258137921953110003",
+      "kind": "sim",
+      "name": "欧莉亚娜 伊利斯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1,
+      "categories": {
+        "state_change": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "sim:258137921953253947",
+      "id": "258137921953253947",
+      "kind": "sim",
+      "name": "香织 西岳",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "sim:183828528442182668",
+      "id": "183828528442182668",
+      "kind": "sim",
+      "name": "红棠 罗布雷斯",
+      "name_priority": 3,
+      "fallback": null,
+      "definition_id": null,
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    }
+  ],
+  "objects": [
+    {
+      "key": "object:258137921952811093",
+      "id": "258137921952811093",
+      "kind": "object",
+      "name": "可靠伙伴电视",
+      "name_priority": 3,
+      "fallback": "object_tvSurfaceMED_01",
+      "definition_id": "40578",
+      "events": 125,
+      "categories": {
+        "interaction": 86,
+        "broadcast.effect": 39
+      },
+      "tiers": {
+        "main": 125
+      }
+    },
+    {
+      "key": "object:258137921952811098",
+      "id": "258137921952811098",
+      "kind": "object",
+      "name": "舒眠双人床",
+      "name_priority": 3,
+      "fallback": "Part(object_bedDoubleFC_02)",
+      "definition_id": "49869",
+      "events": 123,
+      "categories": {
+        "interaction": 123
+      },
+      "tiers": {
+        "main": 120,
+        "internal": 3
+      }
+    },
+    {
+      "key": "object:258137921952811099",
+      "id": "258137921952811099",
+      "kind": "object",
+      "name": "单人舒眠床",
+      "name_priority": 3,
+      "fallback": "Part(object_bedSingleFC_01)",
+      "definition_id": "49871",
+      "events": 74,
+      "categories": {
+        "interaction": 74
+      },
+      "tiers": {
+        "main": 68,
+        "internal": 6
+      }
+    },
+    {
+      "key": "object:258137921952811134",
+      "id": "258137921952811134",
+      "kind": "object",
+      "name": "庄园溪镶板橱柜",
+      "name_priority": 3,
+      "fallback": "Part(object_Counter_1part_deco)",
+      "definition_id": "34873",
+      "events": 67,
+      "categories": {
+        "interaction": 53,
+        "statistic.direct": 5,
+        "state_change": 5,
+        "broadcast.effect": 4
+      },
+      "tiers": {
+        "internal": 23,
+        "main": 44
+      }
+    },
+    {
+      "key": "object:896523281982816835",
+      "id": "896523281982816835",
+      "kind": "object",
+      "name": "自由漫步便携式计算设备",
+      "name_priority": 3,
+      "fallback": "object_Computer_Portable_EF15RWfreelancer",
+      "definition_id": "217192",
+      "events": 66,
+      "categories": {
+        "interaction": 65,
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 66
+      }
+    },
+    {
+      "key": "object:258137921952811188",
+      "id": "258137921952811188",
+      "kind": "object",
+      "name": "大使马桶",
+      "name_priority": 3,
+      "fallback": "object_toiletC_02",
+      "definition_id": "15829",
+      "events": 44,
+      "categories": {
+        "interaction": 38,
+        "statistic.direct": 4,
+        "state_change": 2
+      },
+      "tiers": {
+        "main": 32,
+        "internal": 12
+      }
+    },
+    {
+      "key": "object:559879136734413507",
+      "id": "559879136734413507",
+      "kind": "object",
+      "name": "卢卡斯．达克与一系列越来越不可思议的巧合",
+      "name_priority": 3,
+      "fallback": "book_Fun_Set14",
+      "definition_id": "32572",
+      "events": 43,
+      "categories": {
+        "interaction": 24,
+        "inventory.transfer": 2,
+        "statistic.direct": 17
+      },
+      "tiers": {
+        "main": 38,
+        "internal": 5
+      }
+    },
+    {
+      "key": "object:258137921952811194",
+      "id": "258137921952811194",
+      "kind": "object",
+      "name": "酥脆平价奢华冰箱",
+      "name_priority": 3,
+      "fallback": "object_fridgeLOW_01",
+      "definition_id": "17821",
+      "events": 33,
+      "categories": {
+        "interaction": 21,
+        "statistic.direct": 8,
+        "inventory.transfer": 4
+      },
+      "tiers": {
+        "main": 26,
+        "internal": 7
+      }
+    },
+    {
+      "key": "object:258137921952811207",
+      "id": "258137921952811207",
+      "kind": "object",
+      "name": "纯粹简约洗手台",
+      "name_priority": 3,
+      "fallback": "object_sinkCounterFC_01",
+      "definition_id": "9929",
+      "events": 27,
+      "categories": {
+        "interaction": 19,
+        "statistic.direct": 5,
+        "state_change": 2,
+        "broadcast.effect": 1
+      },
+      "tiers": {
+        "main": 21,
+        "internal": 6
+      }
+    },
+    {
+      "key": "object:896523281994483479",
+      "id": "896523281994483479",
+      "kind": "object",
+      "name": "奶酪饼干",
+      "name_priority": 3,
+      "fallback": "object_Food_Crackers",
+      "definition_id": "135614",
+      "events": 27,
+      "categories": {
+        "inventory.transfer": 2,
+        "interaction": 15,
+        "crafting.completed": 1,
+        "state_change": 3,
+        "statistic.direct": 6
+      },
+      "tiers": {
+        "main": 19,
+        "internal": 8
+      }
+    },
+    {
+      "key": "object:896523282013032095",
+      "id": "896523282013032095",
+      "kind": "object",
+      "name": "意大利面",
+      "name_priority": 3,
+      "fallback": "object_Food_Spaghetti",
+      "definition_id": "8409",
+      "events": 27,
+      "categories": {
+        "interaction": 15,
+        "state_change": 3,
+        "crafting.completed": 1,
+        "statistic.direct": 8
+      },
+      "tiers": {
+        "main": 18,
+        "internal": 9
+      }
+    },
+    {
+      "key": "object:896523281993828019",
+      "id": "896523281993828019",
+      "kind": "object",
+      "name": "田园沙拉",
+      "name_priority": 3,
+      "fallback": "object_Food_GardenSalad",
+      "definition_id": "36515",
+      "events": 26,
+      "categories": {
+        "interaction": 12,
+        "statistic.direct": 10,
+        "state_change": 3,
+        "crafting.completed": 1
+      },
+      "tiers": {
+        "main": 19,
+        "internal": 7
+      }
+    },
+    {
+      "key": "object:896523281992713757",
+      "id": "896523281992713757",
+      "kind": "object",
+      "name": "培根生菜番茄三明治",
+      "name_priority": 3,
+      "fallback": "object_Food_BLT_Single",
+      "definition_id": "8580",
+      "events": 24,
+      "categories": {
+        "interaction": 13,
+        "state_change": 3,
+        "crafting.completed": 1,
+        "statistic.direct": 7
+      },
+      "tiers": {
+        "main": 17,
+        "internal": 7
+      }
+    },
+    {
+      "key": "object:258137921952811135",
+      "id": "258137921952811135",
+      "kind": "object",
+      "name": "贵族洗手台",
+      "name_priority": 3,
+      "fallback": "object_sinkPedC_01",
+      "definition_id": "1544",
+      "events": 23,
+      "categories": {
+        "interaction": 19,
+        "statistic.direct": 4
+      },
+      "tiers": {
+        "main": 15,
+        "internal": 8
+      }
+    },
+    {
+      "key": "object:896523281992123816",
+      "id": "896523281992123816",
+      "kind": "object",
+      "name": "素食小汉堡",
+      "name_priority": 3,
+      "fallback": "object_Food_Teen_VeggieSlider_single",
+      "definition_id": "297925",
+      "events": 21,
+      "categories": {
+        "interaction": 10,
+        "statistic.direct": 8,
+        "crafting.completed": 1,
+        "state_change": 2
+      },
+      "tiers": {
+        "main": 14,
+        "internal": 7
+      }
+    },
+    {
+      "key": "object:896523282014015171",
+      "id": "896523282014015171",
+      "kind": "object",
+      "name": "奶酪饼干",
+      "name_priority": 3,
+      "fallback": "object_Food_Crackers",
+      "definition_id": "135614",
+      "events": 21,
+      "categories": {
+        "inventory.transfer": 2,
+        "interaction": 9,
+        "crafting.completed": 1,
+        "state_change": 3,
+        "statistic.direct": 6
+      },
+      "tiers": {
+        "main": 16,
+        "internal": 5
+      }
+    },
+    {
+      "key": "object:258137921952811147",
+      "id": "258137921952811147",
+      "kind": "object",
+      "name": "滚轮垃圾桶",
+      "name_priority": 3,
+      "fallback": "object_trashcan_outdoor",
+      "definition_id": "22051",
+      "events": 20,
+      "categories": {
+        "interaction": 14,
+        "statistic.direct": 6
+      },
+      "tiers": {
+        "main": 13,
+        "internal": 7
+      }
+    },
+    {
+      "key": "object:258137921952811193",
+      "id": "258137921952811193",
+      "kind": "object",
+      "name": "美味锅",
+      "name_priority": 3,
+      "fallback": "Part(object_stoveMinorLOW_01)",
+      "definition_id": "17861",
+      "events": 20,
+      "categories": {
+        "interaction": 18,
+        "state_change": 1,
+        "statistic.direct": 1
+      },
+      "tiers": {
+        "internal": 8,
+        "main": 12
+      }
+    },
+    {
+      "key": "object:258137921952811089",
+      "id": "258137921952811089",
+      "kind": "object",
+      "name": "方形现代沙发",
+      "name_priority": 3,
+      "fallback": "Part(object_sitSofaSC3x1_01)",
+      "definition_id": "55194",
+      "events": 18,
+      "categories": {
+        "interaction": 18
+      },
+      "tiers": {
+        "internal": 16,
+        "main": 2
+      }
+    },
+    {
+      "key": "object:258137921952811200",
+      "id": "258137921952811200",
+      "kind": "object",
+      "name": "爱抚椅",
+      "name_priority": 3,
+      "fallback": "object_sitDiningFC_01",
+      "definition_id": "7961",
+      "events": 16,
+      "categories": {
+        "interaction": 16
+      },
+      "tiers": {
+        "internal": 8,
+        "main": 8
+      }
+    },
+    {
+      "key": "object:258137921952811199",
+      "id": "258137921952811199",
+      "kind": "object",
+      "name": "爱抚椅",
+      "name_priority": 3,
+      "fallback": "object_sitDiningFC_01",
+      "definition_id": "7961",
+      "events": 14,
+      "categories": {
+        "interaction": 14
+      },
+      "tiers": {
+        "internal": 12,
+        "main": 2
+      }
+    },
+    {
+      "key": "object:559879136734413510",
+      "id": "559879136734413510",
+      "kind": "object",
+      "name": "爱在三明治时间",
+      "name_priority": 3,
+      "fallback": "book_Fun_Set9",
+      "definition_id": "32615",
+      "events": 14,
+      "categories": {
+        "interaction": 9,
+        "inventory.transfer": 2,
+        "statistic.direct": 3
+      },
+      "tiers": {
+        "main": 9,
+        "internal": 5
+      }
+    },
+    {
+      "key": "object:258137921952811191",
+      "id": "258137921952811191",
+      "kind": "object",
+      "name": "“国际象棋大师”棋桌",
+      "name_priority": 3,
+      "fallback": "Part(object_chess_table)",
+      "definition_id": "18401",
+      "events": 14,
+      "categories": {
+        "interaction": 9,
+        "statistic.direct": 5
+      },
+      "tiers": {
+        "main": 14
+      }
+    },
+    {
+      "key": "object:896523281990419598",
+      "id": "896523281990419598",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 11,
+      "categories": {
+        "interaction": 8,
+        "broadcast.effect": 3
+      },
+      "tiers": {
+        "main": 11
+      }
+    },
+    {
+      "key": "object:258137921952811204",
+      "id": "258137921952811204",
+      "kind": "object",
+      "name": "普通塑料垃圾桶",
+      "name_priority": 3,
+      "fallback": "object_trashcan_Indoor_TopCapacity",
+      "definition_id": "38454",
+      "events": 10,
+      "categories": {
+        "interaction": 6,
+        "statistic.direct": 4
+      },
+      "tiers": {
+        "main": 8,
+        "internal": 2
+      }
+    },
+    {
+      "key": "object:258137921952811209",
+      "id": "258137921952811209",
+      "kind": "object",
+      "name": "爱抚书柜",
+      "name_priority": 3,
+      "fallback": "object_bookshelf",
+      "definition_id": "51804",
+      "events": 9,
+      "categories": {
+        "interaction": 5,
+        "inventory.transfer": 4
+      },
+      "tiers": {
+        "internal": 4,
+        "main": 5
+      }
+    },
+    {
+      "key": "object:896523281982816836",
+      "id": "896523281982816836",
+      "kind": "object",
+      "name": "摇滚传奇签名吉他",
+      "name_priority": 3,
+      "fallback": "object_musicGuitarRWEntSigned_01",
+      "definition_id": "32106",
+      "events": 9,
+      "categories": {
+        "interaction": 8,
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 3,
+        "internal": 6
+      }
+    },
+    {
+      "key": "object:896523281992058264",
+      "id": "896523281992058264",
+      "kind": "object",
+      "name": "美味水果蛋糕",
+      "name_priority": 3,
+      "fallback": "object_Food_PlateFork_FruitCake_Multi",
+      "definition_id": "98931",
+      "events": 9,
+      "categories": {
+        "state_change": 1,
+        "crafting.completed": 1,
+        "inventory.transfer": 3,
+        "interaction": 4
+      },
+      "tiers": {
+        "main": 6,
+        "internal": 3
+      }
+    },
+    {
+      "key": "object:258137921952811201",
+      "id": "258137921952811201",
+      "kind": "object",
+      "name": "爱抚椅",
+      "name_priority": 3,
+      "fallback": "object_sitDiningFC_01",
+      "definition_id": "7961",
+      "events": 9,
+      "categories": {
+        "interaction": 9
+      },
+      "tiers": {
+        "internal": 2,
+        "main": 7
+      }
+    },
+    {
+      "key": "object:749030383311127178",
+      "id": "749030383311127178",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 7,
+      "categories": {
+        "interaction": 5,
+        "broadcast.effect": 2
+      },
+      "tiers": {
+        "main": 7
+      }
+    },
+    {
+      "key": "object:896523281993238117",
+      "id": "896523281993238117",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 7,
+      "categories": {
+        "interaction": 6,
+        "broadcast.effect": 1
+      },
+      "tiers": {
+        "internal": 3,
+        "main": 4
+      }
+    },
+    {
+      "key": "object:258137921952811205",
+      "id": "258137921952811205",
+      "kind": "object",
+      "name": "庄园溪镶板橱柜",
+      "name_priority": 3,
+      "fallback": "Part(object_Counter_1part_deco)",
+      "definition_id": "34873",
+      "events": 6,
+      "categories": {
+        "interaction": 6
+      },
+      "tiers": {
+        "internal": 6
+      }
+    },
+    {
+      "key": "object:258137921952811196",
+      "id": "258137921952811196",
+      "kind": "object",
+      "name": "完美曲线小圆桌",
+      "name_priority": 3,
+      "fallback": "Part(object_tableDining_1x1)",
+      "definition_id": "8735",
+      "events": 6,
+      "categories": {
+        "interaction": 6
+      },
+      "tiers": {
+        "internal": 6
+      }
+    },
+    {
+      "key": "object:258137921952811138",
+      "id": "258137921952811138",
+      "kind": "object",
+      "name": "镜中的你立镜",
+      "name_priority": 3,
+      "fallback": "object_mirror",
+      "definition_id": "8998",
+      "events": 5,
+      "categories": {
+        "interaction": 5
+      },
+      "tiers": {
+        "main": 5
+      }
+    },
+    {
+      "key": "object:896523282013753023",
+      "id": "896523282013753023",
+      "kind": "object",
+      "name": "** 调试 **",
+      "name_priority": 3,
+      "fallback": "Puddle_Small",
+      "definition_id": "26398",
+      "events": 5,
+      "categories": {
+        "statistic.direct": 2,
+        "interaction": 2,
+        "broadcast.effect": 1
+      },
+      "tiers": {
+        "main": 5
+      }
+    },
+    {
+      "key": "object:258137921952811100",
+      "id": "258137921952811100",
+      "kind": "object",
+      "name": "海底世界淋浴四脚浴缸",
+      "name_priority": 3,
+      "fallback": "Part(showerBathtubFC_01_OffTheGridCompatible)",
+      "definition_id": "38184",
+      "events": 5,
+      "categories": {
+        "interaction": 5
+      },
+      "tiers": {
+        "main": 4,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:258137921952811128",
+      "id": "258137921952811128",
+      "kind": "object",
+      "name": "巨型壁镜",
+      "name_priority": 3,
+      "fallback": "object_mirror_wall",
+      "definition_id": "21811",
+      "events": 4,
+      "categories": {
+        "interaction": 4
+      },
+      "tiers": {
+        "main": 4
+      }
+    },
+    {
+      "key": "object:258137921952811115",
+      "id": "258137921952811115",
+      "kind": "object",
+      "name": "加窗和扇形窗的菱形窗格大门",
+      "name_priority": 3,
+      "fallback": "Part(object_door)",
+      "definition_id": "33965",
+      "events": 4,
+      "categories": {
+        "interaction": 4
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 2
+      }
+    },
+    {
+      "key": "object:896523282014736134",
+      "id": "896523282014736134",
+      "kind": "object",
+      "name": "** 调试 **",
+      "name_priority": 3,
+      "fallback": "Puddle_Small",
+      "definition_id": "26398",
+      "events": 4,
+      "categories": {
+        "statistic.direct": 2,
+        "interaction": 1,
+        "broadcast.effect": 1
+      },
+      "tiers": {
+        "main": 4
+      }
+    },
+    {
+      "key": "object:896523281991730534",
+      "id": "896523281991730534",
+      "kind": "object",
+      "name": "砧板",
+      "name_priority": 3,
+      "fallback": "object_CuttingBoard",
+      "definition_id": "8182",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281991992710",
+      "id": "896523281991992710",
+      "kind": "object",
+      "name": "煎锅",
+      "name_priority": 3,
+      "fallback": "object_FryingPan_StirFry",
+      "definition_id": "23028",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281992451532",
+      "id": "896523281992451532",
+      "kind": "object",
+      "name": "砧板",
+      "name_priority": 3,
+      "fallback": "object_CuttingBoard_Tomato",
+      "definition_id": "63243",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281993172572",
+      "id": "896523281993172572",
+      "kind": "object",
+      "name": "砧板",
+      "name_priority": 3,
+      "fallback": "object_CuttingBoard_Tomato",
+      "definition_id": "63243",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281993500287",
+      "id": "896523281993500287",
+      "kind": "object",
+      "name": "搅拌碗",
+      "name_priority": 3,
+      "fallback": "object_MixingBowl_Salad",
+      "definition_id": "8512",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:258137921952811139",
+      "id": "258137921952811139",
+      "kind": "object",
+      "name": "酒庄柜洗手台",
+      "name_priority": 3,
+      "fallback": "object_sinkPedFC_01",
+      "definition_id": "29602",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523282012442234",
+      "id": "896523282012442234",
+      "kind": "object",
+      "name": "砧板",
+      "name_priority": 3,
+      "fallback": "object_CuttingBoard_Onion",
+      "definition_id": "63241",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523282012769940",
+      "id": "896523282012769940",
+      "kind": "object",
+      "name": "汤锅",
+      "name_priority": 3,
+      "fallback": "object_SaucePot",
+      "definition_id": "8093",
+      "events": 3,
+      "categories": {
+        "interaction": 3
+      },
+      "tiers": {
+        "main": 2,
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523282014605036",
+      "id": "896523282014605036",
+      "kind": "object",
+      "name": "** 调试 **",
+      "name_priority": 3,
+      "fallback": "Puddle_Small",
+      "definition_id": "26395",
+      "events": 3,
+      "categories": {
+        "interaction": 2,
+        "broadcast.effect": 1
+      },
+      "tiers": {
+        "main": 3
+      }
+    },
+    {
+      "key": "object:896523281991664991",
+      "id": "896523281991664991",
+      "kind": "object",
+      "name": "蔬菜",
+      "name_priority": 3,
+      "fallback": "object_IngredientTray_Veg",
+      "definition_id": "8493",
+      "events": 2,
+      "categories": {
+        "interaction": 2
+      },
+      "tiers": {
+        "internal": 1,
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281992320428",
+      "id": "896523281992320428",
+      "kind": "object",
+      "name": "面包",
+      "name_priority": 3,
+      "fallback": "object_IngredientTray_Carb",
+      "definition_id": "7444",
+      "events": 2,
+      "categories": {
+        "interaction": 2
+      },
+      "tiers": {
+        "internal": 1,
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281993041489",
+      "id": "896523281993041489",
+      "kind": "object",
+      "name": "蔬菜",
+      "name_priority": 3,
+      "fallback": "object_IngredientTray_Veg",
+      "definition_id": "8493",
+      "events": 2,
+      "categories": {
+        "interaction": 2
+      },
+      "tiers": {
+        "internal": 1,
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281995007834",
+      "id": "896523281995007834",
+      "kind": "object",
+      "name": "小堆灰尘",
+      "name_priority": 3,
+      "fallback": "object_DustPile",
+      "definition_id": "262732",
+      "events": 2,
+      "categories": {
+        "interaction": 2
+      },
+      "tiers": {
+        "main": 2
+      }
+    },
+    {
+      "key": "object:896523282012376689",
+      "id": "896523282012376689",
+      "kind": "object",
+      "name": "蔬菜",
+      "name_priority": 3,
+      "fallback": "object_IngredientTray_Veg",
+      "definition_id": "8493",
+      "events": 2,
+      "categories": {
+        "interaction": 2
+      },
+      "tiers": {
+        "internal": 1,
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523282014801681",
+      "id": "896523282014801681",
+      "kind": "object",
+      "name": "面包",
+      "name_priority": 3,
+      "fallback": "object_IngredientTray_Carb",
+      "definition_id": "7444",
+      "events": 2,
+      "categories": {
+        "interaction": 2
+      },
+      "tiers": {
+        "internal": 1,
+        "main": 1
+      }
+    },
+    {
+      "key": "object:258137921952811190",
+      "id": "258137921952811190",
+      "kind": "object",
+      "name": "朴素自在椅",
+      "name_priority": 3,
+      "fallback": "object_sitLivingGEN_02",
+      "definition_id": "29685",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281989108706",
+      "id": "896523281989108706",
+      "kind": "object",
+      "name": "黑色耳塞式耳机",
+      "name_priority": 3,
+      "fallback": "object_Earbuds",
+      "definition_id": "168747",
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281989239792",
+      "id": "896523281989239792",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281989698622",
+      "id": "896523281989698622",
+      "kind": "object",
+      "name": "无畏奢华号帆船",
+      "name_priority": 3,
+      "fallback": "object_RoyalCanoe",
+      "definition_id": "524841",
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281990485141",
+      "id": "896523281990485141",
+      "kind": "object",
+      "name": "微光石",
+      "name_priority": 3,
+      "fallback": "object_GlimmerStone",
+      "definition_id": "231159",
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281990485142",
+      "id": "896523281990485142",
+      "kind": "object",
+      "name": "黑色耳塞式耳机",
+      "name_priority": 3,
+      "fallback": "object_Earbuds",
+      "definition_id": "168747",
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281991402802",
+      "id": "896523281991402802",
+      "kind": "object",
+      "name": "小学家庭作业",
+      "name_priority": 3,
+      "fallback": "Book_Homework_Child",
+      "definition_id": "19136",
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:809828954336856924",
+      "id": "809828954336856924",
+      "kind": "object",
+      "name": "美味水果蛋糕",
+      "name_priority": 3,
+      "fallback": "object_Food_PlateFork_FruitCake_Multi",
+      "definition_id": "98931",
+      "events": 1,
+      "categories": {
+        "state_change": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281992451547",
+      "id": "896523281992451547",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281993041477",
+      "id": "896523281993041477",
+      "kind": "object",
+      "name": "小串",
+      "name_priority": 3,
+      "fallback": "object_Food_Pinchos",
+      "definition_id": "258032",
+      "events": 1,
+      "categories": {
+        "state_change": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:183828528318384560",
+      "id": "183828528318384560",
+      "kind": "object",
+      "name": "美味水果蛋糕",
+      "name_priority": 3,
+      "fallback": "object_Food_PlateFork_FruitCake_Multi",
+      "definition_id": "98931",
+      "events": 1,
+      "categories": {
+        "state_change": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281993893557",
+      "id": "896523281993893557",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:258137921952811197",
+      "id": "258137921952811197",
+      "kind": "object",
+      "name": "爱抚椅",
+      "name_priority": 3,
+      "fallback": "object_sitDiningFC_01",
+      "definition_id": "7961",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281995007832",
+      "id": "896523281995007832",
+      "kind": "object",
+      "name": "小堆灰尘",
+      "name_priority": 3,
+      "fallback": "object_DustPile",
+      "definition_id": "262732",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523281995859906",
+      "id": "896523281995859906",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281996056539",
+      "id": "896523281996056539",
+      "kind": "object",
+      "name": "垃圾堆",
+      "name_priority": 3,
+      "fallback": "object_trash_generic",
+      "definition_id": "22174",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "internal": 1
+      }
+    },
+    {
+      "key": "object:896523281995597732",
+      "id": "896523281995597732",
+      "kind": "object",
+      "name": "自行车……自行车！",
+      "name_priority": 3,
+      "fallback": "object_Vehicle_Bike",
+      "definition_id": "217639",
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523282014867226",
+      "id": "896523282014867226",
+      "kind": "object",
+      "name": "煎锅",
+      "name_priority": 3,
+      "fallback": "object_FryingPan_Bread",
+      "definition_id": "7415",
+      "events": 1,
+      "categories": {
+        "interaction": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    },
+    {
+      "key": "object:896523282014932772",
+      "id": "896523282014932772",
+      "kind": "object",
+      "name": "小学家庭作业",
+      "name_priority": 3,
+      "fallback": "Book_Homework_Child",
+      "definition_id": "19136",
+      "events": 1,
+      "categories": {
+        "inventory.transfer": 1
+      },
+      "tiers": {
+        "main": 1
+      }
+    }
+  ]
+}

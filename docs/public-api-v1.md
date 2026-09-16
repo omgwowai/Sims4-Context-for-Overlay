@@ -1,5 +1,7 @@
 # ContextOverlay 公共 API v1 与 SDK 方案
 
+2026-09-16：提供方 0.7.0 新增能力 `events.autonomy_decision`，API／SDK 保持 1.1.0。通过 `fields=["autonomy.decision"]` 查询，`include_internal=True` 包含子行为；`get_status().autonomy` 返回覆盖与缓冲诊断。结构与概率含义见[Autonomy 说明](autonomy-capture.md)。本构建尚未实机验收。
+
 日期：2026-09-15。提供方 MOD：**0.6.0 试用版**；公共 API：**1.1.0**；数据 schema：**1**；Python SDK：**1.1.0**。已完成离线契约测试，真实下游 MOD 接入验收仍待补。新增 `get_nearby_entities` 与 `context.nearby_entities` 能力，按半径、楼层和房间筛选 Sim／物件；完整参数、返回包和限制见[附近实体接口](nearby-entities.md)。原有方法保持兼容。0.6.0 事件支持情况及首局修正见[覆盖说明](event-coverage-0.6.0.md)。
 
 ## 1. 交付与边界

@@ -12,6 +12,7 @@ from context_overlay import SCHEMA_VERSION, VERSION
 from context_overlay.collector import FIELDS
 from context_overlay.history import HistoryError
 from context_overlay.model import copy_data, envelope, new_id
+from context_overlay.localization import FORMAT_PROFILE
 from context_overlay.nearby import MAX_RESULTS, MAX_SCANNED, NearbyError, validate as validate_nearby
 from context_overlay.semanticizer import render
 
@@ -129,9 +130,14 @@ def get_api_info():
     return {"api_version": API_VERSION, "module_version": VERSION, "schema_version": SCHEMA_VERSION,
             "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
                              "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
-                             "context.nearby_entities", "text.resource_details"],
+                             "context.nearby_entities", "text.resource_details", "events.autonomy_decision"],
+            "autonomy": {"category": "autonomy.decision", "default_top_n_per_stage": 5,
+                         "retention_gates": ["queue_success", "immediate_entered"],
+                         "probabilities": "original_complete_stage_pool", "runtime_status": "autonomy"},
             "resource_text": {"roles": ["name", "description", "tooltip"],
                               "details": "optional_per_resource", "evidence": "hash_and_observed_tokens",
+                              "rendered_details": "rendered.resource_details", "max_rendered_details": 128,
+                              "format_profile": FORMAT_PROFILE,
                               "strings": "build_time_official_CHS_CN", "third_party_overrides": "not_verified"},
             "nearby": {"kinds": ["sim", "object"], "metrics": ["horizontal", "euclidean"],
                        "max_results": MAX_RESULTS, "max_scanned": MAX_SCANNED,
@@ -162,6 +168,7 @@ def get_status():
                                         "ttl_seconds": runtime.recorder.index.snapshot_ttl}})
         result["event_coverage"] = runtime.sources.status() if hasattr(runtime, "sources") else {}
         result["event_diagnostics"] = runtime.sources.diagnostics() if hasattr(runtime, "sources") else {}
+        result["autonomy"] = runtime.autonomy.status() if hasattr(runtime, "autonomy") else {"enabled": False}
     return copy_data(result)
 
 

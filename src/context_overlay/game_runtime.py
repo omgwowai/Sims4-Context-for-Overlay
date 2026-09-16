@@ -28,6 +28,8 @@ DEFAULTS = {"recorder_enabled": True, "collector_enabled": True, "semanticizer_e
             "writer_capacity": 2048, "writer_memory_mb": 32,
             "run_output_mb": 2048, "disk_reserve_mb": 1024, "development_driver": False,
             "inspector_enabled": True}
+DEFAULTS.update(autonomy_enabled=True, autonomy_top_n=5, autonomy_pending_capacity=256,
+                autonomy_pending_memory_mb=8, autonomy_pending_ttl_seconds=600)
 _runtime = None
 _lifecycle_hooks = None
 _retired = []
@@ -110,6 +112,8 @@ class Runtime:
         self.hooks = Hooks(self.fail)
         from context_overlay.event_sources import EventSources
         self.sources = EventSources(self)
+        from context_overlay.autonomy_capture import AutonomyCapture
+        self.autonomy = AutonomyCapture(self)
         self.events = []
         self.event_names = {}
         self.alarm = None
@@ -145,9 +149,11 @@ class Runtime:
             self.hooks.after(Interaction, "_exited_pipeline", lambda args, kwargs, result: self.capture("exited", args[0], "Interaction._exited_pipeline"))
             self.hooks.after(StateComponent, "_trigger_on_state_changed", self.state_changed)
             self.sources.install()
+            self.autonomy.install()
         self.recorder.note("session_start", {"scope": self.adapter.scope(), "config": self.config,
                                              "provenance": self.provenance,
                                              "event_coverage": self.sources.status(), "event_diagnostics": self.sources.diagnostics(),
+                                             "autonomy": self.autonomy.status(),
                                              "python": sys.version, "module_version": VERSION}, self.adapter.clock())
         if self.config["development_driver"]:
             from context_overlay.test_driver import Driver
@@ -182,6 +188,12 @@ class Runtime:
         if observed_here and expected_id not in self.recorder.events:
             return  # A live interaction evicted by FIFO must not reappear as new.
         facts = self.adapter.interaction(interaction)
+        decision = getattr(interaction, "_context_overlay_autonomy_decision", None)
+        if decision and decision[0] == self.session_id:
+            facts["decision_event_id"] = decision[1]
+            facts["decision_coverage"] = "exact_selected_instance"
+        elif facts.get("trigger", {}).get("name") == "AUTONOMY":
+            facts["decision_coverage"] = "not_observed_or_not_committed"
         if facts["parent_interaction_id"]:
             facts["parent_event_id"] = "{}:interaction:{}:{}".format(self.session_id, facts["parent_actor_id"], facts["parent_interaction_id"])
         event = self.recorder.interaction(phase, facts, self.adapter.clock(), source)
@@ -264,6 +276,8 @@ class Runtime:
             if self.recorder.status()["state"] != "recording":
                 return
             now = self.adapter.clock()
+            if getattr(self, "autonomy", None) is not None:
+                self.autonomy.poll()
             objects = self.adapter.live_objects()
             if len(objects) > self.config["max_entities"]:
                 raise RuntimeError("Entity enumeration exceeds configured read budget")
@@ -293,6 +307,7 @@ class Runtime:
                 "data_hooks": len(self.hooks.entries), "poll_count": self.poll_count,
                 "event_coverage": self.sources.status(),
                 "event_diagnostics": self.sources.diagnostics(),
+                "autonomy": self.autonomy.status(),
                 "poll_max_ms": self.poll_max_ms, "config": self.config,
                 "inspector": ({"state": "failed", "error": self.inspector_error} if self.inspector_error else
                               self.inspector.status() if self.inspector is not None else {"state": "disabled"})}
@@ -373,6 +388,7 @@ class Runtime:
         self.closed = True
         errors = []
         sources = getattr(self, "sources", None)
+        autonomy = getattr(self, "autonomy", None)
 
         def attempt(label, action):
             try:
@@ -380,9 +396,12 @@ class Runtime:
             except Exception as exc:
                 errors.append("{}: {}: {}".format(label, type(exc).__name__, exc))
 
+        if autonomy is not None:
+            attempt("close_autonomy", autonomy.close)
         attempt("session_end", lambda: self.recorder.note(
             "session_end", {"reason": reason, "status": self.recorder.status(),
                             "event_coverage": sources.status() if sources else {},
+                            "autonomy": autonomy.status() if autonomy else {},
                             "event_diagnostics": sources.diagnostics() if sources else {}}, self.adapter.clock()))
         if self.inspector is not None:
             attempt("close_inspector", self.inspector.close)

@@ -19,6 +19,12 @@ class NameCatalog:
         self.data = data
         self.localizer = localizer
         self.is_v2 = data.get("format") == "typed_resource_semantics_v2"
+        self._reference_identities = {}
+        self._conflicting_reference_ids = {key.rsplit(":", 1)[-1] for key in data.get("conflicts", {})}
+        if self.is_v2:
+            for key, entry in data["entries"].items():
+                identity = (key.rsplit(":", 1)[-1], entry["tuning_name"])
+                self._reference_identities.setdefault(identity, []).append(key)
         # Offline-only fingerprints of normalized inputs, independent of JSON
         # indentation or whether callers obtained the mappings from files.
         self.provenance = {
@@ -32,7 +38,7 @@ class NameCatalog:
                 recorded.get("status") == "resolved" and not self.is_v2):
             return recorded
         raw = recorded.get("raw_name", recorded)
-        if raw.get("reason") == "label_read_failed":
+        if raw.get("reason") in ("label_read_failed", "no_verified_name_accessor"):
             return recorded
         evidence = raw.get("localization")
         if evidence:
@@ -77,12 +83,21 @@ class NameCatalog:
         if not self.is_v2:
             return None
         key = str(kind) + ":" + str(identifier)
+        kind_basis = "recorded_or_field_type"
+        if kind is None:
+            if str(identifier) in self._conflicting_reference_ids:
+                return None
+            candidates = self._reference_identities.get((str(identifier), tuning_name), [])
+            if len(candidates) != 1:
+                return None
+            key = candidates[0]
+            kind_basis = "unique_catalog_identity_not_observed"
         if key in self.data.get("conflicts", {}):
             return {"status": "resource_conflict", "resource_key": key}
         entry = self.data["entries"].get(key)
         if entry is None or entry["tuning_name"] != tuning_name:
             return None
-        result = {"resource_key": key, "source_ids": entry["source_ids"],
+        result = {"resource_key": key, "source_ids": entry["source_ids"], "kind_basis": kind_basis,
                   "basis": "static_reference_not_historical_observation", "fields": {}}
         for role in ("name", "description", "tooltip"):
             links = entry["fields"].get(role, [])

@@ -116,6 +116,19 @@ class Recorder:
             event["first_observed_time"] = previous["first_observed_time"]
         return self._save(event)
 
+    def link_decision(self, interaction_event_id, decision_event_id):
+        previous = self.events.get(interaction_event_id)
+        if previous is None or previous["event_type"] != "interaction":
+            return None
+        if previous["facts"].get("decision_event_id") == decision_event_id:
+            return previous
+        event = copy_data(previous)
+        event.pop("accepted_sequence", None)
+        event["facts"]["decision_event_id"] = decision_event_id
+        event["facts"]["decision_coverage"] = "exact_selected_instance"
+        event["revision"] += 1
+        return self._save(event)
+
     def interaction(self, phase, facts, game_time, source):
         if not self.enabled or self.paused:
             return None
@@ -136,6 +149,9 @@ class Recorder:
             event = copy_data(previous)
             event.pop("accepted_sequence", None)
         event["facts"] = copy_data(facts)
+        if previous is not None and previous["facts"].get("decision_event_id"):
+            event["facts"]["decision_event_id"] = previous["facts"]["decision_event_id"]
+            event["facts"]["decision_coverage"] = "exact_selected_instance"
         if previous is not None and previous["stage"] == "ended" and phase != "exited":
             # A delayed non-terminal observation cannot erase terminal evidence.
             event["facts"]["finishing_type"] = previous["facts"].get("finishing_type")

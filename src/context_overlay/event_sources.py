@@ -38,6 +38,7 @@ NATIVE = {
 }
 
 LABELS = {
+    "autonomy.decision": "Autonomy 决策",
     "mood.changed": "情绪变化", "skill.level": "技能等级变化", "trait.added": "特征添加",
     "trait.removed": "特征移除", "relationship.spouse": "配偶变化",
     "relationship.knowledge": "对他人的知识变化", "relationship.sentiment": "情感印象变化",

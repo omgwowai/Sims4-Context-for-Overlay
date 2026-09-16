@@ -1,0 +1,599 @@
+{
+  "module_version": "0.7.1",
+  "scope": "offline_native_function_harness_not_live_gameplay",
+  "symbols": [
+    {
+      "member": "autonomy/autonomy_service.pyc",
+      "function": "AutonomyService._select_best_result",
+      "parameters": [
+        "self",
+        "result_scores",
+        "autonomy_request",
+        "consider_all_options",
+        "randomization_override",
+        "archive_if_enabled"
+      ],
+      "generator": false
+    },
+    {
+      "member": "autonomy/autonomy_service.pyc",
+      "function": "AutonomyService.choose_best_interaction",
+      "parameters": [
+        "self",
+        "scored_interactions",
+        "autonomy_request",
+        "consider_all_options",
+        "randomization_override",
+        "interaction_prefix"
+      ],
+      "generator": false
+    },
+    {
+      "member": "autonomy/autonomy_component.pyc",
+      "function": "AutonomyComponent.get_multitasking_roll",
+      "parameters": [
+        "self"
+      ],
+      "generator": false
+    },
+    {
+      "member": "autonomy/autonomy_component.pyc",
+      "function": "AutonomyComponent._should_run_cached_interaction",
+      "parameters": [
+        "self",
+        "interaction_to_run"
+      ],
+      "generator": false
+    },
+    {
+      "member": "objects/components/__init__.pyc",
+      "function": "ComponentMetaclass.__new__.build_exported_func.exported_func",
+      "parameters": [
+        "owner"
+      ],
+      "generator": false
+    },
+    {
+      "member": "objects/components/__init__.pyc",
+      "function": "ComponentMetaclass.__new__.build_exported_func",
+      "parameters": [
+        "func"
+      ],
+      "generator": false
+    },
+    {
+      "member": "objects/components/__init__.pyc",
+      "function": "ComponentMetaclass.__new__.apply_component_methods",
+      "parameters": [
+        "owner_cls",
+        "reload"
+      ],
+      "generator": false
+    },
+    {
+      "member": "interactions/interaction_queue.pyc",
+      "function": "InteractionQueue.append",
+      "parameters": [
+        "self",
+        "interaction"
+      ],
+      "generator": false
+    },
+    {
+      "member": "elements.pyc",
+      "function": "GeneratorElementBase._run",
+      "parameters": [
+        "self",
+        "timeline"
+      ],
+      "generator": false
+    },
+    {
+      "member": "interactions/aop.pyc",
+      "function": "AffordanceObjectPair.execute_interaction",
+      "parameters": [
+        "interaction"
+      ],
+      "generator": false
+    },
+    {
+      "member": "interactions/base/interaction.pyc",
+      "function": "Interaction.invalidate",
+      "parameters": [
+        "self"
+      ],
+      "generator": false
+    },
+    {
+      "member": "autonomy/autonomy_modes.pyc",
+      "function": "_MixerAutonomy._run_gen",
+      "parameters": [
+        "self",
+        "timeline",
+        "timeslice"
+      ],
+      "generator": true
+    },
+    {
+      "member": "autonomy/autonomy_modes.pyc",
+      "function": "_MixerAutonomy._create_and_score_mixers",
+      "parameters": [
+        "self",
+        "mixer_provider",
+        "mixer_aops",
+        "gsi_mixer_scoring"
+      ],
+      "generator": false
+    },
+    {
+      "member": "autonomy/autonomy_mixer_provider_scoring.pyc",
+      "function": "_MixerProviderScoring.get_mixer_provider",
+      "parameters": [
+        "self"
+      ],
+      "generator": false
+    },
+    {
+      "member": "sims4/random.pyc",
+      "function": "weighted_random_index",
+      "parameters": [
+        "tuple_of_tuples",
+        "random"
+      ],
+      "generator": false
+    },
+    {
+      "member": "sims4/random.pyc",
+      "function": "weighted_random_item",
+      "parameters": [
+        "pairs",
+        "random",
+        "flipped"
+      ],
+      "generator": false
+    },
+    {
+      "member": "sims4/gsi/archive.pyc",
+      "function": "BaseArchiver.archive_enable_fn",
+      "parameters": [
+        "self",
+        "enableLog"
+      ],
+      "generator": false
+    }
+  ],
+  "tests": {
+    "run": 31,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.5
+  },
+  "checks": [
+    "test_expiry_capacity_gc_and_session_cleanup (test_autonomy.BufferChecks) ... ok",
+    "test_forced_winner_keeps_original_rank_and_probability (test_autonomy.BufferChecks) ... ok",
+    "test_memory_limit_scope_and_recycled_identity (test_autonomy.BufferChecks) ... ok",
+    "test_single_limit_ties_uniform_and_deterministic (test_autonomy.BufferChecks) ... ok",
+    "test_descriptors_inheritance_and_external_wrapper (test_autonomy.HookChecks) ... ok",
+    "test_generators_interleave_send_throw_close_and_return (test_autonomy.HookChecks) ... ok",
+    "test_original_exception_and_callback_failure_remain_isolated (test_autonomy.HookChecks) ... ok",
+    "test_removed_method_does_not_interrupt_other_hook_cleanup (test_autonomy.HookChecks) ... ok",
+    "test_actual_pool_top_five_and_forced_lowest (test_autonomy.NativeChecks) ... ok",
+    "test_concrete_export_without_base_method_captures_deterministic_pool (test_autonomy.NativeChecks) ... ok",
+    "test_disabled_observer_preserves_native_returns_and_rng_counts (test_autonomy.NativeChecks) ... ok",
+    "test_engine_cutoff_deterministic_and_uniform (test_autonomy.NativeChecks) ... ok",
+    "test_external_archiver_consumer_is_not_disabled_on_close (test_autonomy.NativeChecks) ... ok",
+    "test_generator_provider_group_and_action_have_separate_pools (test_autonomy.NativeChecks) ... ok",
+    "test_immediate_false_and_exception_keep_entered_decision (test_autonomy.NativeChecks) ... ok",
+    "test_inherited_observer_is_not_wrapped_twice (test_autonomy.NativeChecks) ... ok",
+    "test_missing_gsi_still_captures_weighted_pool_and_marks_score_gaps (test_autonomy.NativeChecks) ... ok",
+    "test_missing_static_export_degrades_then_late_export_recovers (test_autonomy.NativeChecks) ... ok",
+    "test_multitask_rejection_does_not_commit_and_script_bypasses_gate (test_autonomy.NativeChecks) ... ok",
+    "test_native_lazy_getter_preserves_draws_and_results_when_disabled (test_autonomy.NativeChecks) ... ok",
+    "test_native_mixer_generator_uses_cached_scores_and_new_selection_occurrences (test_autonomy.NativeChecks) ... ok",
+    "test_native_mixer_scoring_attaches_available_breakdown_without_recalculation (test_autonomy.NativeChecks) ... ok",
+    "test_optional_hook_failure_keeps_decisions_and_marks_missing_roll (test_autonomy.NativeChecks) ... ok",
+    "test_queue_rejection_after_notification_and_cancelled_before_start (test_autonomy.NativeChecks) ... ok",
+    "test_route_weight_and_raw_score_stay_separate (test_autonomy.NativeChecks) ... ok",
+    "test_same_request_multiple_choices_cache_executes_in_reverse (test_autonomy.NativeChecks) ... ok",
+    "test_score_components_exact_instance_and_rejections_are_aggregated (test_autonomy.NativeChecks) ... ok",
+    "test_selection_does_not_attach_to_unrelated_or_continuation_interaction (test_autonomy.NativeChecks) ... ok",
+    "test_start_notification_alone_is_not_immediate_execution (test_autonomy.NativeChecks) ... ok",
+    "test_two_native_stages_and_unselected_instances_invalidated (test_autonomy.NativeChecks) ... ok",
+    "test_type_created_after_install_is_observed_before_its_first_choice (test_autonomy.NativeChecks) ... ok",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 31 tests in 1.497s",
+    "",
+    "OK"
+  ],
+  "controlled_example": {
+    "synthetic_inputs": true,
+    "event": {
+      "event_id": "native-probe:autonomy:decision:1",
+      "revision": 2,
+      "event_type": "game_event",
+      "category": "autonomy.decision",
+      "field": "autonomy.decision",
+      "tier": "main",
+      "entities": [
+        "sim:1"
+      ],
+      "participants": [
+        {
+          "kind": "sim",
+          "id": "1",
+          "name": "小明",
+          "key": "sim:1"
+        }
+      ],
+      "roles": [
+        {
+          "entity_key": "sim:1",
+          "role": "actor",
+          "basis": "selected_interaction_sim"
+        }
+      ],
+      "payload": {
+        "decision_id": "native-probe:autonomy:decision:1",
+        "selection_time": {
+          "ticks": "1"
+        },
+        "mode": "FullAutonomy",
+        "context_source": "1",
+        "is_script_request": false,
+        "stages": [
+          {
+            "mode": "weighted",
+            "pool_count": 8,
+            "total_weight": 36.0,
+            "selected_index": 0,
+            "candidates": [
+              {
+                "interaction_id": "8",
+                "action": {
+                  "id": "1008",
+                  "tuning_name": "Action8",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "text": "行为8",
+                    "status": "resolved"
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "108",
+                  "name": "目标",
+                  "key": "object:108"
+                },
+                "raw_score": 8.0,
+                "route_time": 0.0,
+                "multitasking_percentage": 0.5,
+                "score_components": {
+                  "source": "ScoredInteractionData",
+                  "values": {},
+                  "missing": [
+                    "structured_score_breakdown"
+                  ]
+                },
+                "candidate_index": 7,
+                "rank": 1,
+                "weight": 8.0,
+                "tied_weight_count": 1,
+                "selected": false,
+                "probability": 0.2222222222222222
+              },
+              {
+                "interaction_id": "7",
+                "action": {
+                  "id": "1007",
+                  "tuning_name": "Action7",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "text": "行为7",
+                    "status": "resolved"
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "107",
+                  "name": "目标",
+                  "key": "object:107"
+                },
+                "raw_score": 7.0,
+                "route_time": 0.0,
+                "multitasking_percentage": 0.5,
+                "score_components": {
+                  "source": "ScoredInteractionData",
+                  "values": {},
+                  "missing": [
+                    "structured_score_breakdown"
+                  ]
+                },
+                "candidate_index": 6,
+                "rank": 2,
+                "weight": 7.0,
+                "tied_weight_count": 1,
+                "selected": false,
+                "probability": 0.19444444444444445
+              },
+              {
+                "interaction_id": "6",
+                "action": {
+                  "id": "1006",
+                  "tuning_name": "Action6",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "text": "行为6",
+                    "status": "resolved"
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "106",
+                  "name": "目标",
+                  "key": "object:106"
+                },
+                "raw_score": 6.0,
+                "route_time": 0.0,
+                "multitasking_percentage": 0.5,
+                "score_components": {
+                  "source": "ScoredInteractionData",
+                  "values": {},
+                  "missing": [
+                    "structured_score_breakdown"
+                  ]
+                },
+                "candidate_index": 5,
+                "rank": 3,
+                "weight": 6.0,
+                "tied_weight_count": 1,
+                "selected": false,
+                "probability": 0.16666666666666666
+              },
+              {
+                "interaction_id": "5",
+                "action": {
+                  "id": "1005",
+                  "tuning_name": "Action5",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "text": "行为5",
+                    "status": "resolved"
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "105",
+                  "name": "目标",
+                  "key": "object:105"
+                },
+                "raw_score": 5.0,
+                "route_time": 0.0,
+                "multitasking_percentage": 0.5,
+                "score_components": {
+                  "source": "ScoredInteractionData",
+                  "values": {},
+                  "missing": [
+                    "structured_score_breakdown"
+                  ]
+                },
+                "candidate_index": 4,
+                "rank": 4,
+                "weight": 5.0,
+                "tied_weight_count": 1,
+                "selected": false,
+                "probability": 0.1388888888888889
+              },
+              {
+                "interaction_id": "1",
+                "action": {
+                  "id": "1001",
+                  "tuning_name": "Action1",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "text": "行为1",
+                    "status": "resolved"
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "101",
+                  "name": "目标",
+                  "key": "object:101"
+                },
+                "raw_score": 1.0,
+                "route_time": 0.0,
+                "multitasking_percentage": 0.5,
+                "score_components": {
+                  "source": "ScoredInteractionData",
+                  "values": {},
+                  "missing": [
+                    "structured_score_breakdown"
+                  ]
+                },
+                "candidate_index": 0,
+                "rank": 8,
+                "weight": 1.0,
+                "tied_weight_count": 1,
+                "selected": true,
+                "probability": 0.027777777777777776
+              }
+            ],
+            "omitted_count": 3,
+            "omitted_probability": 0.25,
+            "probability_basis": "complete_stage_pool",
+            "rank_basis": "descending_weight_stable_engine_order",
+            "stage_id": "native-probe:autonomy:stage:2",
+            "kind": "interaction",
+            "parent_stage_id": null,
+            "selection_time": {
+              "ticks": "1"
+            },
+            "input_count": 8,
+            "coverage": "actual_selector_pool",
+            "multitasking": {
+              "roll": 0.2,
+              "threshold": 0.5,
+              "applicable": true,
+              "passed": true,
+              "selector_returned_interaction": true,
+              "hook": "installed",
+              "roll_source": "native_getter",
+              "basis": "native_selector_return_and_observed_roll"
+            }
+          }
+        ],
+        "filters": {
+          "coverage": "observed_GSI_only",
+          "evaluated_affordance_rows": 0,
+          "scored_affordance_rows": 0,
+          "rejections": [],
+          "unlisted_rejection_rows": 0,
+          "object_status_counts": {},
+          "unlisted_object_rows": 0,
+          "not_observed": [
+            "unenumerated_candidates",
+            "individual_failed_candidates",
+            "pre_GSI_test_details"
+          ]
+        },
+        "mixer_rejected_attempts": 0,
+        "top_n": 5,
+        "selected": {
+          "interaction_id": "1",
+          "action": {
+            "id": "1001",
+            "tuning_name": "Action1",
+            "resource_kind": "interaction",
+            "name": {
+              "text": "行为1",
+              "status": "resolved"
+            }
+          },
+          "target": {
+            "kind": "object",
+            "id": "101",
+            "name": "目标",
+            "key": "object:101"
+          }
+        },
+        "actor": {
+          "kind": "sim",
+          "id": "1",
+          "name": "小明",
+          "key": "sim:1"
+        },
+        "interaction_event_id": "native-probe:interaction:1:1",
+        "tier": "main",
+        "commit_time": {
+          "ticks": "1"
+        },
+        "retention_gate": "queue_success",
+        "cache_origin": false,
+        "cache_evidence": "no_cached_validation_observed",
+        "execution_result": {
+          "returned_success": true,
+          "exception_type": null,
+          "meaning": "submission_result"
+        }
+      },
+      "last_observed_time": {
+        "ticks": "1"
+      },
+      "source": "AutonomyCapture.queue_success",
+      "evidence_type": "observed_selection_and_submission",
+      "cause": null,
+      "first_observed_time": {
+        "ticks": "1"
+      },
+      "accepted_sequence": 4
+    },
+    "rendered": {
+      "text": "小明通过 Autonomy 选择“行为1”，已成功入队；记录了 1 层选择。目标：目标。请求来源：1。入队或进入执行不代表行为完成。",
+      "event_id": "native-probe:autonomy:decision:1",
+      "revision": 2,
+      "game_time": {
+        "ticks": "1"
+      },
+      "rules_version": "0.7.1",
+      "decision_details": "选择时间：ticks：1；提交时间：ticks：1。\n\n关联交互：native-probe:interaction:1:1\n\n第 1 层 · 行为选择：按权重抽取；实际池 8 项，展示 5 项，未展示原概率 25.00%。\n\n本层概率以完整选择池为分母；各层分别比较。\n\n第 1 名：行为8，目标 目标；原分 8，权重 8，原概率 22.22%。\n\n未提供／未能关联的评分项：structured_score_breakdown\n\n第 2 名：行为7，目标 目标；原分 7，权重 7，原概率 19.44%。\n\n未提供／未能关联的评分项：structured_score_breakdown\n\n第 3 名：行为6，目标 目标；原分 6，权重 6，原概率 16.67%。\n\n未提供／未能关联的评分项：structured_score_breakdown\n\n第 4 名：行为5，目标 目标；原分 5，权重 5，原概率 13.89%。\n\n未提供／未能关联的评分项：structured_score_breakdown\n\n[选中] 第 8 名：行为1，目标 目标；原分 1，权重 1，原概率 2.78%。\n\n未提供／未能关联的评分项：structured_score_breakdown\n\n多任务检查：实际值 0.2，阈值 0.5，通过。\n\n筛选覆盖：observed_GSI_only；观测到 0 条行为评估记录。\n\n执行返回：True；异常：未知。"
+    }
+  },
+  "diagnostics_example": {
+    "enabled": true,
+    "coverage": {
+      "state": "installed",
+      "selection": "native_calls",
+      "queue": "append_return_value",
+      "immediate": "GeneratorElementBase._run",
+      "mixer": "provider_group_and_action",
+      "scoring": "GSI_InteractionScore_and_mixer_data",
+      "rejection": "GSI_reason_templates_and_object_status_counts",
+      "multitasking_roll": "native_sim_type_method",
+      "multitasking_hooked_types": 1
+    },
+    "counts": {
+      "selection_rounds": 1,
+      "staged": 1,
+      "committed_queue_success": 1
+    },
+    "buffer": {
+      "pending": 0,
+      "estimated_bytes": 0,
+      "peak_pending": 1,
+      "peak_estimated_bytes": 17860,
+      "capacity": 256,
+      "byte_limit": 4194304,
+      "ttl_seconds": 600,
+      "drops": {}
+    },
+    "evidence_buffer": {
+      "pending": 0,
+      "estimated_bytes": 0,
+      "peak_pending": 0,
+      "peak_estimated_bytes": 0,
+      "capacity": 256,
+      "byte_limit": 4194304,
+      "ttl_seconds": 600,
+      "drops": {}
+    },
+    "last_error": null,
+    "gsi_enabled": true,
+    "callback_ms": 0.0,
+    "callback_max_ms": 0.0,
+    "timing_scope": "selection_serialization_only_excludes_GSI_generation"
+  },
+  "bounded_buffer_probe": {
+    "pending": 3,
+    "estimated_bytes": 1728,
+    "peak_pending": 3,
+    "peak_estimated_bytes": 1728,
+    "capacity": 3,
+    "byte_limit": 100000,
+    "ttl_seconds": 600,
+    "drops": {
+      "capacity": 7
+    }
+  },
+  "native_input_sha256": {
+    "autonomy/autonomy_service.pyc": "1f383f7a012fca2fe4a356807df33fdb998e54be30489100085eacb67437d293",
+    "autonomy/autonomy_component.pyc": "b502cd968545b6f7e233ec01d66e4de86a5042929b062722343b517e1347589f",
+    "objects/components/__init__.pyc": "9d92de8daa94f1fc8d9a904cc9f4a0d5f165d91543284810fc13238b6c8e0ce1",
+    "interactions/interaction_queue.pyc": "c0a3776d42b052092e5ec6de80d537c0de8b4ab848323294888aa21bc43b64bc",
+    "elements.pyc": "f9bb89372a4772a019b3cfa45293b9cd65812ec4aaecc19a44b997463fd5e2d5",
+    "interactions/aop.pyc": "458bb6240ac858bdaf7e694c0ea1b0c9f8b481d9d86eeb5defd84c120304404a",
+    "interactions/base/interaction.pyc": "2e68bf8d6f6a49dfe77f01ee3aa068f8f483877f47298205a3876ceeed6327d9",
+    "autonomy/autonomy_modes.pyc": "3f42645e32ccd0a1567953c93def1838a2aff9c0421a5fc28ee0a00f99930cc6",
+    "autonomy/autonomy_mixer_provider_scoring.pyc": "222982c8ec86a028c470efa159fa482d1386d43f5e2f2962d85433732f52fa3a",
+    "sims4/random.pyc": "f367c0553d4fbe6c810091632450b09cc7086b3d384184f3e37aaf5be79f79aa",
+    "sims4/gsi/archive.pyc": "568023cd795f2f09c1c6da28e3ac6ea13a6efcaa616acf6aea577623d0b514a1"
+  },
+  "remaining_live_checks": [
+    "installed_MOD_loading_and_hook_health",
+    "actual_cache_queue_and_immediate_behavior",
+    "GSI_scoring_generation_cost_and_total_frame_time",
+    "single_session_volume_and_buffer_drops",
+    "native_Inspector_layout"
+  ]
+}

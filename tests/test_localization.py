@@ -31,7 +31,7 @@ class LocalizationChecks(unittest.TestCase):
             "0x00000001": "汉堡蛋糕", "0x00000002": "{0.String}、{1.String}",
             "0x00000003": "{0.SimFullName}",
             "0x00000004": "{M0.他}{F0.她}收到{1.Number}份礼物",
-            "0x00000005": "{0.Money} / {2.String}",
+            "0x00000005": "{0.UnverifiedFormat} / {2.String}",
         })
 
     def test_dynamic_sim_and_object_use_exact_token_positions(self):

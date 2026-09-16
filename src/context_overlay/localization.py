@@ -21,6 +21,25 @@ TOKEN_FIELDS = ("first_name", "last_name", "full_name_key", "is_female", "gender
                 "catalog_description_key", "custom_name", "custom_description",
                 "name_prefix_key", "name_prefix_string")
 DATE_FIELDS = ("seconds", "minutes", "hours", "date", "month", "full_year", "date_and_time_format_hash")
+FORMAT_PROFILE = "context_overlay_zh_CN_v1"
+VALUE_TYPES = {
+    "String": ("RAW_TEXT", "STRING"), "Number": ("NUMBER",), "Money": ("NUMBER",),
+    "SimFirstName": ("SIM",), "SimLastName": ("SIM",), "SimName": ("SIM",),
+    "SimFullName": ("SIM",), "ObjectName": ("SIM", "OBJECT"),
+    "ObjectDescription": ("OBJECT",), "ObjectCatalogName": ("OBJECT",),
+    "ObjectCatalogDescription": ("OBJECT",), "TimeShort": ("DATE_AND_TIME",),
+    "DayOfWeekShort": ("DATE_AND_TIME",), "DayOfWeekLong": ("DATE_AND_TIME",),
+}
+
+
+def gap_category(reason):
+    if reason in ("missing_token", "incomplete_token", "token_type_mismatch", "missing_token_field", "invalid_token_value"):
+        return "parameter_evidence"
+    if reason in ("unsupported_expression", "unsupported_token_format", "unsupported_or_missing_gender"):
+        return "grammar_support"
+    if "limit" in reason:
+        return "budget"
+    return "resource_or_format"
 
 
 def hash_key(value):
@@ -159,7 +178,8 @@ class Localizer:
             return dict(result, text=fallback, status="unmapped", reason="localization_text_limit")
         missing = []
         text = self._template(template, evidence.get("tokens", []), missing, depth, budget)
-        result.update(text=text, status="unresolved_tokens" if missing else "resolved")
+        result.update(text=text, status="unresolved_tokens" if missing else "resolved",
+                      format_profile=FORMAT_PROFILE)
         if not text.strip() and not missing:
             result.update(text=fallback, status="empty_display_name", reason="localized_text_empty", template=template)
         result["template"] = template
@@ -170,8 +190,8 @@ class Localizer:
         return result
 
     @staticmethod
-    def _unresolved(expression, missing, reason):
-        missing.append({"expression": expression, "reason": reason})
+    def _unresolved(expression, missing, reason, **details):
+        missing.append(dict(expression=expression, reason=reason, category=gap_category(reason), **details))
         return "〈未解析：" + expression[:100] + "〉"
 
     def _template(self, template, tokens, missing, depth, budget):
@@ -205,7 +225,8 @@ class Localizer:
                 index = int(index) if len(index) <= 3 else MAX_TOKENS
                 token = tokens[index] if index < min(len(tokens), MAX_TOKENS) else None
                 if token is None or token.get("error"):
-                    value = self._unresolved(expression, missing, "missing_or_incomplete_token")
+                    value = self._unresolved(expression, missing,
+                        "missing_token" if token is None else "incomplete_token", token_index=index)
                 elif selector:
                     # Custom pronouns and neutral gender require the full client grammar.
                     # EA emits strings such as "|||||" when no custom forms are
@@ -219,7 +240,11 @@ class Localizer:
                 else:
                     value = self._value(token, attr, missing, depth + 1, budget)
                     if value is None:
-                        value = self._unresolved(expression, missing, "unsupported_or_missing_token_field")
+                        expected = VALUE_TYPES.get(attr)
+                        reason = ("unsupported_token_format" if expected is None else
+                                  "token_type_mismatch" if token.get("type") not in expected else "missing_token_field")
+                        value = self._unresolved(expression, missing, reason, token_index=index,
+                            actual_type=token.get("type"), expected_types=list(expected) if expected else [])
             output.append(value)
             length += len(value)
             position = end
@@ -245,9 +270,35 @@ class Localizer:
                 if result["status"] in ("resolved", "raw_text", "unresolved_tokens"):
                     missing.extend(result.get("unresolved", []))
                     return result["text"]
-        if (attr == "Number" and kind == "NUMBER" and isinstance(token.get("number"), (int, float))
-                and math.isfinite(token["number"])):
-            return "{:g}".format(token["number"])
+        if (attr in ("Number", "Money") and kind == "NUMBER" and isinstance(token.get("number"), (int, float))
+                and not isinstance(token["number"], bool) and math.isfinite(token["number"])):
+            if attr == "Number":
+                return "{:g}".format(token["number"])
+            # Deterministic Chinese output, not a claim of client-identical
+            # formatting. Do not guess rounding for fractional currency.
+            amount = token["number"]
+            if amount == int(amount):
+                return "{} 模拟币".format(int(amount))
+            return self._unresolved(attr, missing, "unsupported_token_format")
+        if kind == "DATE_AND_TIME" and attr in ("TimeShort", "DayOfWeekShort", "DayOfWeekLong"):
+            data = token.get("date_and_time") or {}
+            # Custom client format hashes and real-calendar dates require a
+            # separate adapter. EA DateAndTime emits month/year zero and a
+            # weekday in date, with Sunday represented by 7.
+            if data.get("date_and_time_format_hash") not in (None, 0):
+                return self._unresolved(attr, missing, "unsupported_token_format")
+            if attr == "TimeShort":
+                hour, minute = data.get("hours"), data.get("minutes")
+                if (type(hour) is int and type(minute) is int and 0 <= hour < 24 and 0 <= minute < 60):
+                    return "{:02d}:{:02d}".format(hour, minute)
+                if hour is not None and minute is not None:
+                    return self._unresolved(attr, missing, "invalid_token_value")
+            elif data.get("month") == 0 and data.get("full_year") == 0:
+                day = data.get("date")
+                if type(day) is int and 1 <= day <= 7:
+                    return ("周" if attr == "DayOfWeekShort" else "星期") + "一二三四五六日"[day - 1]
+            elif "month" in data and "full_year" in data:
+                return self._unresolved(attr, missing, "unsupported_token_format")
         if kind == "SIM":
             if attr == "SimFirstName":
                 return token.get("first_name") or None

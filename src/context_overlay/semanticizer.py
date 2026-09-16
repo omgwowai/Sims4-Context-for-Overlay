@@ -187,6 +187,8 @@ def translate(packet, catalog=None):
     if catalog is not None:
         result["semantic_view"] = {key: value for key, value in view.items() if key in ("snapshot", "history", "target")}
         result["rendered"]["name_resolution"] = {"catalog_format": catalog.data["format"],
-            "catalog_inputs": catalog.data["inputs"], "historical_facts_preserved": True,
+            "catalog_inputs": catalog.data.get("inputs", {}),
+            "catalog_provenance": catalog.data.get("provenance", {}),
+            "historical_facts_preserved": True,
             **catalog.provenance}
     return result

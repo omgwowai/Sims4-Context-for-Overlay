@@ -18,6 +18,9 @@ def main():
     files.append(ROOT / "docs/public-api-v1.md")
     files.append(ROOT / "docs/event-coverage-0.6.0.md")
     files.append(ROOT / "docs/nearby-entities.md")
+    files.append(ROOT / "docs/resource-semantics.md")
+    files.append(ROOT / "docs/validation/2026-09-15-resource-semantics.md")
+    files.append(ROOT / "docs/validation/2026-09-15-resource-semantics.json")
     files.append(ROOT / "docs/validation/2026-09-15-nearby-entities.md")
     files.append(ROOT / "docs/validation/2026-09-15-nearby-entities.json")
     folder = "ContextOverlay-SDK-" + SDK_VERSION

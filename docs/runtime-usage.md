@@ -9,11 +9,12 @@
 在仓库根目录运行：
 
 ```powershell
-& "$env:LOCALAPPDATA/Sims4ContextDev/python37/python.exe" scripts/build.py --strings C:/sources/sims4-python/data/strings/CHS_CN.json
+& "$env:LOCALAPPDATA/Sims4ContextDev/python37/python.exe" scripts/build_resource_catalog.py --game "D:/Games/The Sims 4" --reference C:/sources/sims4-python
+& "$env:LOCALAPPDATA/Sims4ContextDev/python37/python.exe" scripts/build.py --strings .local/resource-semantics/strings_zh.json --string-sources .local/resource-semantics/string_sources.json
 & "$env:LOCALAPPDATA/Sims4ContextDev/python37/python.exe" -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-构建脚本比较本地 `simulation.zip` 的字节码魔数，输出 `dist/ContextOverlay.ts4script` 和 `dist/build-manifest.json`。manifest 记录源文件与本地中文词表的 SHA-256，并将游戏构建版本、源码参考提交和内容摘要写入包内 `build_info.json`，随查询结果导出。词表是本地构建输入，不复制进 Git。字节码匹配是静态构建检查，不能替代游戏加载验证。
+构建脚本比较本地 `simulation.zip` 的字节码魔数，输出 `dist/ContextOverlay.ts4script` 和 `dist/build-manifest.json`。manifest 记录源文件、中文词表及紧凑资源来源目录的 SHA-256，并将游戏构建版本、源码参考提交和内容摘要写入包内 `build_info.json`，随查询结果导出。词表是本地构建输入，不复制进 Git。覆盖规则、描述字段和离线重解释见[资源语义目录](resource-semantics.md)。字节码匹配是静态构建检查，不能替代游戏加载验证。
 
 ## 2. 安装与输出
 

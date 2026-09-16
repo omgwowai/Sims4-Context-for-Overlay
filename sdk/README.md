@@ -4,6 +4,8 @@
 
 本版已完成离线契约测试和 Python 3.7 构建检查，尚未在游戏中进行跨 MOD 接入验收。本机已有 0.6.0 安装与首局事件样本；飞书附件仍为 0.3.2。附近接口须使用声明 `context.nearby_entities` 的新构建，仅核对 MOD 版本号不足以区分。
 
+声明 `text.resource_details` 的构建还可返回资源的独立 `description`／`tooltip`，保留 hash、模板、动态参数及词表来源。现有 Client 自动透传这些可选字段；字段位置、缺失状态与示例见[资源语义目录](../docs/resource-semantics.md)。
+
 ## 放到自己的 MOD 中
 
 将 `context_overlay_client.py` 复制到自己的命名空间，例如：

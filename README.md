@@ -20,7 +20,7 @@
 
 提供 **公共 API 1.1.0 和 Python SDK 1.1.0**：直接读取 Context、按实体／时间／类型分页查询历史、管理游标、检查版本与可用性。新增[附近实体查询](docs/nearby-entities.md)，按半径／楼层／房间筛选 Sim 和物件，再按需读取选中实体的 Context。原有接口保持兼容，下游无需访问 `_runtime`，无需控制台或文件中转。见[公共 API 文档](docs/public-api-v1.md)、[SDK 入门](sdk/README.md)和[附近查询验证](docs/validation/2026-09-15-nearby-entities.md)。
 
-本版包含 0.4.0 的名称解析改进：游戏资源字段、中文 STBL 与动态参数联合解析，保存 LocalizedString 证据，支持旧日志重解释；名称功能仍待用户实机测试。方法见[语义化模块](docs/semanticizer.md)，旧数据核对见[语义解析记录](docs/validation/2026-09-15-semantic-resolution.md)。
+语义化新增[官方资源目录、描述与 tooltip](docs/resource-semantics.md)：直接按本机游戏配置与 TGI 优先级提取资源，记录版本、来源和冲突；运行时返回独立文本证据，离线重解释保留原事实。修复空自定义代词槽，并扩充可核实模板。方法见[语义化模块](docs/semanticizer.md)，本轮数据核对见[验证记录](docs/validation/2026-09-15-resource-semantics.md)；新行为待用户实机测试。
 
 飞书内部已发布包仍为 **0.3.2**，本机安装为 **0.6.0**。窗口沿用用户已确认的布局：首页按钮为“当前状态 → 历史事件 → 刷新 → 关闭”，状态和历史使用横向文字行，长详情使用正文。使用方式见[窗口说明](docs/inspector-manual-test.md)，布局实机范围见[布局验证记录](docs/validation/2026-09-14-inspector-layout.md)。此前的[容量测量](docs/validation/2026-09-14-history-optimization.md)对应 0.2.0，首轮实机结论对应 0.1.0；新版事件质量见单独报告。
 

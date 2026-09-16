@@ -20,6 +20,7 @@ TOKEN_FIELDS = ("first_name", "last_name", "full_name_key", "is_female", "gender
                 "packed_pronouns", "age_flags", "sim_id", "raw_text", "number", "catalog_name_key",
                 "catalog_description_key", "custom_name", "custom_description",
                 "name_prefix_key", "name_prefix_string")
+DATE_FIELDS = ("seconds", "minutes", "hours", "date", "month", "full_year", "date_and_time_format_hash")
 
 
 def hash_key(value):
@@ -37,17 +38,17 @@ def _fields(message):
         return message
     if hasattr(message, "ListFields"):
         return {descriptor.name: value for descriptor, value in message.ListFields()}
-    return {name: getattr(message, name) for name in TOKEN_FIELDS + ("type", "text_string", "sim_list", "tokens", "hash")
+    return {name: getattr(message, name) for name in TOKEN_FIELDS + DATE_FIELDS + ("type", "text_string", "sim_list", "date_and_time", "tokens", "hash")
             if hasattr(message, name)}
 
 
-def snapshot_token(token, depth=0, budget=None):
+def snapshot_token(token, depth=0, budget=None, default_type="INVALID"):
     budget = [MAX_NODES, MAX_TEXT] if budget is None else budget
     budget[0] -= 1
     if depth >= MAX_DEPTH or budget[0] < 0:
         return {"type": "INVALID", "error": "localization_structure_limit"}
     values = _fields(token)
-    kind = values.get("type", "INVALID")
+    kind = values.get("type", default_type)
     if not isinstance(kind, str):
         # Prefer the actual game's descriptor; the generated reference may lag.
         descriptor = getattr(token, "DESCRIPTOR", None)
@@ -71,9 +72,18 @@ def snapshot_token(token, depth=0, budget=None):
     if "text_string" in values:
         result["text_string"] = snapshot_localized(values["text_string"], depth + 1, budget)
     if "sim_list" in values:
-        result["sim_list"] = [snapshot_token(item, depth + 1, budget) for item in values["sim_list"][:MAX_TOKENS]]
+        # SubTokenData has no type field. Its parent SIM_LIST supplies the type.
+        result["sim_list"] = [snapshot_token(item, depth + 1, budget, "SIM") for item in values["sim_list"][:MAX_TOKENS]]
         if len(values["sim_list"]) > MAX_TOKENS:
             result["error"] = "localization_token_limit"
+    if "date_and_time" in values:
+        budget[0] -= 1
+        if budget[0] < 0 or depth + 1 >= MAX_DEPTH:
+            result["error"] = "localization_structure_limit"
+        else:
+            fields = _fields(values["date_and_time"])
+            result["date_and_time"] = {name: fields[name] for name in DATE_FIELDS
+                                       if name in fields and isinstance(fields[name], int)}
     return result
 
 
@@ -99,14 +109,22 @@ def snapshot_localized(value, depth=0, budget=None):
 
 
 class Localizer:
-    def __init__(self, strings=None):
+    def __init__(self, strings=None, metadata=None):
         if strings is None:
             try:
                 data = pkgutil.get_data("context_overlay", "strings_zh.json")
             except OSError:
                 data = None
             strings = json.loads(data.decode("utf-8")) if data else {}
+            try:
+                data = pkgutil.get_data("context_overlay", "string_sources.json")
+            except OSError:
+                data = None
+            metadata = json.loads(data.decode("utf-8")) if data else None
         self.strings = strings
+        self.metadata = metadata or {}
+        if self.metadata and self.metadata.get("format") != "string_sources_v1":
+            raise ValueError("Unsupported string source metadata")
 
     def name(self, localized, fallback=None):
         return self.from_evidence(snapshot_localized(localized), fallback)
@@ -116,6 +134,14 @@ class Localizer:
         budget[0] -= 1
         key = hash_key(evidence.get("hash"))
         result = {"hash": key, "localization": evidence}
+        source = self.metadata.get("keys", {}).get(key)
+        if isinstance(source, int):
+            source = self.metadata["groups"][source]
+        if source:
+            result["string_source"] = dict(source, game_version=self.metadata.get("provenance", {}).get("game_version"),
+                                          sources=list(source["sources"]), language="CHS_CN", third_party_overrides="not_verified")
+            if source["status"] != "selected":
+                return dict(result, text=fallback, status="unmapped", reason="string_key_overridden" if source["status"] == "overridden_only" else "string_resource_conflict")
         if budget[0] < 0:
             return dict(result, text=fallback, status="unmapped", reason="localization_work_limit")
         if depth >= MAX_DEPTH or evidence.get("error"):
@@ -136,8 +162,9 @@ class Localizer:
         result.update(text=text, status="unresolved_tokens" if missing else "resolved")
         if not text.strip() and not missing:
             result.update(text=fallback, status="empty_display_name", reason="localized_text_empty", template=template)
+        result["template"] = template
         if "{" in template:
-            result.update(template=template, unresolved=missing)
+            result["unresolved"] = missing
         if fallback is not None:
             result["fallback"] = fallback
         return result
@@ -170,7 +197,7 @@ class Localizer:
                 output.append(self._unresolved(template[start:], missing, "malformed_template"))
                 break
             expression = template[start + 1:end - 1]
-            match = re.fullmatch(r"([MF]?)(\d+)\.(.*)", expression, re.S)
+            match = re.fullmatch(r"([MFmf]?)(\d+)\.(.*)", expression, re.S)
             if not match:
                 value = self._unresolved(expression, missing, "unsupported_expression")
             else:
@@ -181,10 +208,13 @@ class Localizer:
                     value = self._unresolved(expression, missing, "missing_or_incomplete_token")
                 elif selector:
                     # Custom pronouns and neutral gender require the full client grammar.
-                    if token.get("type") != "SIM" or token.get("packed_pronouns") or "is_female" not in token or token.get("gender_flags") == 0:
+                    # EA emits strings such as "|||||" when no custom forms are
+                    # present. Those empty slots must use the normal fallback.
+                    custom_pronouns = any(part.strip() for part in token.get("packed_pronouns", "").split("|"))
+                    if token.get("type") != "SIM" or custom_pronouns or "is_female" not in token or token.get("gender_flags") in (0, 0x3000):
                         value = self._unresolved(expression, missing, "unsupported_or_missing_gender")
                     else:
-                        chosen = bool(token["is_female"]) == (selector == "F")
+                        chosen = bool(token["is_female"]) == (selector.upper() == "F")
                         value = self._template(attr, tokens, missing, depth + 1, budget) if chosen else ""
                 else:
                     value = self._value(token, attr, missing, depth + 1, budget)
@@ -223,13 +253,15 @@ class Localizer:
                 return token.get("first_name") or None
             if attr == "SimLastName":
                 return token.get("last_name") or None
-            if attr in ("SimName", "SimFullName"):
+            if attr in ("SimName", "SimFullName", "ObjectName"):
                 if token.get("full_name_key"):
                     return self._key_text(token["full_name_key"], missing, depth, budget)
                 if token.get("name_prefix_key") or token.get("name_prefix_string"):
                     return None  # Client-specific prefix formatting is not verified.
                 return " ".join(item for item in (token.get("first_name"), token.get("last_name")) if item) or None
-        if kind == "OBJECT" and attr in ("ObjectName", "ObjectDescription"):
-            custom, key = ("custom_name", "catalog_name_key") if attr == "ObjectName" else ("custom_description", "catalog_description_key")
+        if kind == "OBJECT" and attr in ("ObjectName", "ObjectDescription", "ObjectCatalogName", "ObjectCatalogDescription"):
+            custom, key = ("custom_name", "catalog_name_key") if attr in ("ObjectName", "ObjectCatalogName") else ("custom_description", "catalog_description_key")
+            if attr.startswith("ObjectCatalog"):
+                return self._key_text(token.get(key), missing, depth, budget)
             return token.get(custom) or self._key_text(token.get(key), missing, depth, budget)
         return None

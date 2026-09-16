@@ -1,0 +1,87 @@
+{
+  "version": "0.6.0",
+  "date": "2026-09-15",
+  "validation_scope": "offline_only_not_started_or_game_validated",
+  "branch": "zixuan/resource-semantics",
+  "source_reference": {
+    "game_version": "1.126.73.1030",
+    "language": "CHS_CN",
+    "scope": "installed_official_resources",
+    "ea_reference_project": "sims4-python",
+    "ea_reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+    "builder_sha256": "c712cf076ff61596499d4ddba3efecf48872463739a7c35b1476917f1b777498",
+    "field_map_sha256": "3ec21fad906162ba350911f91ff92c4bc87fa6505cf0560069f92fc37e9c05c8",
+    "decoder_sha256": {
+      "dbpf.py": "1e8327d9ecccb6cb2ca6ec69896dcbe32ec4150292accbc5a9e1542be5f55da3",
+      "extract_tuning.py": "19991bd52aa0c6ac93853711b26a27d2e41ef0b7f13dbcfec12b36066e2b234e"
+    }
+  },
+  "catalog": {
+    "packages": 596,
+    "stbl_resources": 195,
+    "strings": 163179,
+    "overridden_only_keys": 244,
+    "tuning_entries": 84661,
+    "string_conflicts": 0,
+    "tuning_conflicts": 0,
+    "strings_sha256": "b1b38946c57b8f4c23cea7b2cff74517689e92db0a3ad53f95b5bcddcf7c5c53",
+    "string_sources_sha256": "c3ed9d9e1448f30b76306ff6afeb06bef8e51ce2be2c25a59f662d3365dcde01",
+    "resource_catalog_sha256": "ba34794008f58f96c3a0ddb54c56bd3f3c09deb72e8a58392290e53e2b6d3774"
+  },
+  "audit": {
+    "runs": ["44d1bce892184d86bcf3f45e02f707a6"],
+    "occurrences_before": {
+      "resolved": 5289,
+      "no_display_name": 17245,
+      "rule_resolved": 259,
+      "unresolved_tokens": 63
+    },
+    "occurrences_after": {
+      "resolved": 5235,
+      "no_display_name": 16937,
+      "rule_resolved": 567,
+      "unresolved_tokens": 60,
+      "empty_display_name": 57
+    },
+    "total_occurrences": 22856,
+    "gap_reasons_after": {
+      "no_localized_string_key": 16937,
+      "localized_text_empty": 57,
+      "unresolved_tokens": 60
+    },
+    "static_reference_fields": {
+      "name": {"resolved": 186, "empty_display_name": 3, "unresolved_tokens": 9},
+      "description": {"resolved": 98, "unresolved_tokens": 21},
+      "tooltip": {}
+    },
+    "errors": []
+  },
+  "memory": {
+    "load_seconds": 0.2332919,
+    "strings_retained_mib": 34.24654484,
+    "total_retained_mib": 49.37379265,
+    "total_peak_mib": 57.01572514,
+    "source_groups": 110
+  },
+  "tests": {
+    "interpreter": "CPython 3.7.9",
+    "passed": 172,
+    "failed": 0,
+    "real_game_localization_pb2_snapshot": "passed",
+    "git_diff_check": "passed"
+  },
+  "build": {
+    "package": "dist/ContextOverlay.ts4script",
+    "game_bytecode_magic": "420d0d0a",
+    "package_sha256": "ebd18ad899ad69c43f70b6c046a3d266c15c5fd67baa9f0ce57bfdeb713257e9",
+    "source_files": 22,
+    "source_sha256": "24ccb81809c711b3c2b0cb884f795bd44c906c68db9b910b3a9d55f2049e349b",
+    "string_sources_embedded": true
+  },
+  "limitations": [
+    "No game launch or in-game validation in this round.",
+    "No third-party MOD scan; runtime override and pack entitlement are not verified.",
+    "Static absence is not proof that defaults, inheritance, or client-only text do not exist.",
+    "Static alternatives do not identify the runtime-selected variant or historical dynamic tokens."
+  ]
+}

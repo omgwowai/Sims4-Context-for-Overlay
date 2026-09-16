@@ -1,8 +1,8 @@
 # ContextOverlay：Windows 安装与试用
 
-最新本地构建新增 API／SDK 1.1.0 的[附近实体查询](nearby-entities.md)，可用 `co.nearby active 8 all` 导出验证；构建和本机更新状态见[本轮验证](validation/2026-09-15-nearby-entities.md)。
+本机已安装 **0.7.1**，包含 Autonomy 初始化修复；[新一局暂停快照](validation/2026-09-16-autonomy-paused-live.md)已取得决策记录，确认初始化修复生效。构建、备份与安装校验证据见[修复验证](validation/2026-09-16-autonomy-initialization-fix.md)。API／SDK 为 1.1.0，包含[附近实体查询](nearby-entities.md)。
 
-飞书内部已发布版仍为 0.3.2；本机已安装并试跑 0.6.0。本地 ContextOverlay-0.6.0-Windows.zip 已包含首局后的计时噪声、名称、角色和来源修正，新增行为待实机复测；没有替换飞书附件。验证基线为 Windows、The Sims 4 1.126.73.1030，其他游戏版本需另行核验。实际范围见[覆盖说明](event-coverage-0.6.0.md)，构建及安装摘要见[修正验证](validation/2026-09-15-event-quality-fixes.md)。
+飞书内部已发布版仍为 0.3.2，没有替换飞书附件。已有 ZIP 分发包与当前本机版本可能不同；小修复默认直接构建并安装 `.ts4script`，不自动生成新 ZIP。验证基线为 Windows、The Sims 4 1.126.73.1030，其他游戏版本需另行核验。0.6.0 起的基础事件范围见[覆盖说明](event-coverage-0.6.0.md)。
 
 **升级到 0.6.0：** 若游戏用户目录 `ContextOverlay/config.json` 中显式写有 `record_need_changes` 或 `sample_interval_sim_minutes`，安装前删除这两项，保留其他设置；新版本会拒绝未知配置。没有写过这两项则无需调整。安装脚本只替换 MOD 文件，不修改该配置。当前需求和关系值仍通过 Context 读取，采样功能没有恢复开关。
 

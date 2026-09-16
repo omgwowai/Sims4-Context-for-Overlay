@@ -1,8 +1,12 @@
-# 运行与调试（0.6.0 试用版）
+# 运行与调试（0.7.0 试用版）
+
+2026-09-16：源码新增 Autonomy 决策采集，默认开启；配置、诊断、历史筛选及实时性能待验收项目见[Autonomy 说明](autonomy-capture.md)。0.7.0 已离线验证并在本机安装，等待新一局实机测试；下文的 0.6.0 验证结论只针对旧构建。
 
 日期：2026-09-15。本机已安装 0.6.0 并取得首局事件样本，飞书附件仍为 0.3.2。新增 API／SDK 1.1.0 附近实体查询，尚未实机复测。游戏中可使用 `co.nearby active 8 all` 导出附近 Sim／物件，`co.nearby active room sim` 查询同房间 Sim；输出为当前运行目录中的 context-<request_id>.json。完整参数与限制见[附近接口](nearby-entities.md)。事件采集范围见[当前覆盖](event-coverage-0.6.0.md)，界面基础见[手动说明](inspector-manual-test.md)。
 
 ## 1. 构建
+
+日常修改后只执行必要检查与构建，不默认生成 ZIP 安装包或 SDK 分发包。用户要求本地安装时，可直接使用已核验的 `dist/ContextOverlay.ts4script` 与 manifest 部署；仅在明确需要分发包时运行 `package_trial.py`／`package_sdk.py`。这是用户于 2026-09-16 确认的项目工作方式。
 
 使用 CPython 3.7。开发机的独立解释器位于 `%LOCALAPPDATA%/Sims4ContextDev/python37/python.exe`，来源为 Python 官方 3.7.9 Windows embedded distribution；不替换系统默认 Python。
 
@@ -128,6 +132,8 @@ co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [�
 实体进出范围由每秒回调观察，时间表示发现边界的时刻，不宣称精确到跨边界的那一帧。历史结果显示该实体最近的进出范围时间；任一关系参与者离场会清除相关关系标记的通知去重状态，再次进场的新通知不会与离场前合并。
 
 ## 5. 离线语义化与日志审计
+
+整轮 `journal.jsonl` 需要先整理成事件数据包，再执行翻译。可直接复制的 PowerShell 命令、资源重解释选项及输出说明见[离线翻译操作说明](offline-translation.md)。
 
 ```powershell
 python scripts/translate.py 输入数据包.json 新的中文数据包.json

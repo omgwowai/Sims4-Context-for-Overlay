@@ -1,0 +1,3590 @@
+{
+  "date": "2026-09-16",
+  "scope": "read_only_snapshot_of_ongoing_user_paused_run_not_session_end",
+  "snapshot": {
+    "captured_at_utc": "20260916T073317840510Z",
+    "source_directory": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\runs\\9ba4280cb22d4c65b469cad11439a0c7",
+    "snapshot_directory": "C:\\sources\\Sims4-Context-for-Overlay\\.validation\\paused-live-20260916T073317840510Z",
+    "source_bytes_before": 93520604,
+    "source_bytes_after": 93520604,
+    "bytes_read": 93520604,
+    "complete_bytes": 93520604,
+    "partial_tail_bytes_excluded": 0,
+    "stable_while_reading": true,
+    "sha256": "5821293735bf7b1d825c313b44004faca23508850b5eeec484f161013b61a0ac",
+    "complete_lines": 17909,
+    "exports": [
+      {
+        "file": "context-6c73a45969a341068e94452721cdc19d.json",
+        "bytes": 725986,
+        "sha256": "621fa8ad6822639c12413d7e318415a40f5b9031c7407f129b16de5038e7c30b",
+        "keys": [
+          "schema_version",
+          "module_version",
+          "kind",
+          "session_id",
+          "recorded_at",
+          "request_id",
+          "target",
+          "provenance",
+          "requested_fields",
+          "snapshot",
+          "scope",
+          "read_started",
+          "read_finished",
+          "history",
+          "status",
+          "representation",
+          "rendered"
+        ],
+        "status": "complete",
+        "target": {
+          "kind": "sim",
+          "id": "896523281981505978",
+          "name": "Nyssa Landry",
+          "key": "sim:896523281981505978"
+        }
+      }
+    ]
+  },
+  "session_id": "9ba4280cb22d4c65b469cad11439a0c7",
+  "module_version": "0.7.1",
+  "provenance": {
+    "build_game_version": "1.126.73.1030",
+    "ea_reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+    "ea_reference_project": "sims4-python",
+    "game_bytecode_magic": "420d0d0a",
+    "game_version_source": "Game/Bin/Default.ini at build time",
+    "module_version": "0.7.1",
+    "public_api_version": "1.1.0",
+    "source_sha256": "2e08fb8fd94b45609654d774e7f160ac66f15c0a4a8196e4e1307605d9eae84e",
+    "string_sources_sha256": "c3ed9d9e1448f30b76306ff6afeb06bef8e51ce2be2c25a59f662d3365dcde01",
+    "strings_sha256": "b1b38946c57b8f4c23cea7b2cff74517689e92db0a3ad53f95b5bcddcf7c5c53",
+    "runtime_python": "3.7.0 (default, Apr 10 2025, 19:41:47) [MSC v.1916 64 bit (AMD64)]",
+    "available_packs": [
+      "BASE_GAME",
+      "SP01",
+      "GP01",
+      "EP01",
+      "FP01",
+      "SP02",
+      "GP02",
+      "SP03",
+      "SP04",
+      "EP02",
+      "GP03",
+      "SP05",
+      "SP06",
+      "SP07",
+      "SP08",
+      "SP09",
+      "SP10",
+      "GP04",
+      "GP05",
+      "GP06",
+      "GP07",
+      "GP08",
+      "GP09",
+      "GP10",
+      "EP03",
+      "EP04",
+      "EP05",
+      "EP06",
+      "EP07",
+      "EP08",
+      "EP09",
+      "EP10",
+      "SP11",
+      "SP12",
+      "SP13",
+      "SP14",
+      "SP15",
+      "SP16",
+      "SP17",
+      "SP18",
+      "SP20",
+      "SP21",
+      "SP22",
+      "SP23",
+      "SP24",
+      "SP25",
+      "SP26",
+      "SP28",
+      "SP29",
+      "SP30",
+      "EP11",
+      "EP12",
+      "EP13",
+      "EP14",
+      "EP15",
+      "EP16",
+      "EP17",
+      "EP18",
+      "EP19",
+      "EP20",
+      "EP21",
+      "GP11",
+      "GP12",
+      "SP31",
+      "SP32",
+      "SP33",
+      "SP34",
+      "SP35",
+      "SP36",
+      "SP37",
+      "SP38",
+      "SP39",
+      "SP40",
+      "SP41",
+      "SP42",
+      "SP43",
+      "SP44",
+      "SP45",
+      "SP46",
+      "SP47",
+      "SP48",
+      "SP49",
+      "SP50",
+      "SP51",
+      "SP52",
+      "SP53",
+      "SP54",
+      "SP55",
+      "SP56",
+      "SP57",
+      "SP58",
+      "SP59",
+      "SP60",
+      "SP61",
+      "SP62",
+      "SP63",
+      "SP64",
+      "SP65",
+      "SP66",
+      "SP67",
+      "SP68",
+      "SP69",
+      "SP70",
+      "SP71",
+      "SP72",
+      "SP73",
+      "SP74",
+      "SP75",
+      "SP76",
+      "SP77",
+      "SP78",
+      "SP79",
+      "SP80",
+      "SP81",
+      "SP82"
+    ],
+    "other_mods": "not_enumerated"
+  },
+  "game_process_observed": {
+    "name": "TS4_x64",
+    "pid": 32392
+  },
+  "integrity": {
+    "errors": [],
+    "last_sequence": 17909,
+    "last_recorded_at": "2026-09-16T07:30:48.922878+00:00",
+    "events": 8057,
+    "observations": 379,
+    "session_end_present": false
+  },
+  "categories": {
+    "interaction": 2518,
+    "state_change": 2646,
+    "statistic.direct": 1172,
+    "aspiration.goal_completed": 11,
+    "autonomy.decision": 1162,
+    "broadcast.effect": 95,
+    "inventory.transfer": 20,
+    "reaction.started": 56,
+    "mood.changed": 66,
+    "buff.refreshed": 266,
+    "relationship.knowledge": 2,
+    "payment.completed": 5,
+    "crafting.completed": 7,
+    "trait.added": 27,
+    "relationship.sentiment": 1,
+    "aspiration.stage_completed": 2,
+    "progress.item_unlocked": 1
+  },
+  "autonomy": {
+    "at_session_start": {
+      "enabled": true,
+      "coverage": {
+        "state": "installed",
+        "selection": "native_calls",
+        "queue": "append_return_value",
+        "immediate": "GeneratorElementBase._run",
+        "mixer": "provider_group_and_action",
+        "scoring": "GSI_InteractionScore_and_mixer_data",
+        "rejection": "GSI_reason_templates_and_object_status_counts",
+        "multitasking_roll": "pending_sim_type",
+        "multitasking_hooked_types": 0
+      },
+      "counts": {},
+      "buffer": {
+        "pending": 0,
+        "estimated_bytes": 0,
+        "peak_pending": 0,
+        "peak_estimated_bytes": 0,
+        "capacity": 256,
+        "byte_limit": 4194304,
+        "ttl_seconds": 600,
+        "drops": {}
+      },
+      "evidence_buffer": {
+        "pending": 0,
+        "estimated_bytes": 0,
+        "peak_pending": 0,
+        "peak_estimated_bytes": 0,
+        "capacity": 256,
+        "byte_limit": 4194304,
+        "ttl_seconds": 600,
+        "drops": {}
+      },
+      "last_error": null,
+      "gsi_enabled": true,
+      "callback_ms": 0.0,
+      "callback_max_ms": 0.0,
+      "timing_scope": "selection_serialization_only_excludes_GSI_generation"
+    },
+    "decisions": 1162,
+    "linked_interactions": 1162,
+    "interaction_source_autonomy": 1613,
+    "retention_gates": {
+      "queue_success": 1162
+    },
+    "tiers_as_recorded": {
+      "internal": 862,
+      "main": 300
+    },
+    "script_requests": {
+      "false": 1128,
+      "true": 34
+    },
+    "stages": 2886,
+    "stage_kinds": {
+      "mixer_provider": 862,
+      "mixer_group": 862,
+      "interaction": 1162
+    },
+    "stage_modes": {
+      "weighted": 2349,
+      "uniform": 524,
+      "deterministic": 13
+    },
+    "stage_coverage": {
+      "actual_provider_pool": 862,
+      "actual_group_pool": 862,
+      "actual_selector_pool": 1162
+    },
+    "interaction_stage_roll_sources": {
+      "native_getter": 1162
+    },
+    "max_retained_candidates": 5,
+    "largest_observed_pool": 41,
+    "winner_outside_top_five": 15,
+    "cache_origin_count": 429,
+    "linked_outcomes_at_snapshot": {
+      "completed": 830,
+      "failed": 7,
+      "cancelled": 320,
+      "unknown": 5
+    },
+    "cancelled_before_start": 15,
+    "structural_check_issues": [],
+    "limits": [
+      "No session_end diagnostics yet; live process memory/queues were not queried.",
+      "No immediate-execution or separate target stage observed in retained decisions.",
+      "Autonomy-source interactions are not a valid denominator for decision coverage.",
+      "Recorded main tier still contains technical actions; tier quality was not accepted.",
+      "No controlled gameplay-performance or game-behavior comparison."
+    ]
+  },
+  "export": {
+    "recorded_at": "2026-09-16T07:30:40.192189+00:00",
+    "game_time": {
+      "ticks": "22235326",
+      "display": "07:03:33.040 day:3 week:1"
+    },
+    "status": "complete",
+    "target": {
+      "kind": "sim",
+      "id": "896523281981505978",
+      "name": "Nyssa Landry",
+      "key": "sim:896523281981505978"
+    },
+    "history_events": 50,
+    "history_truncated": true,
+    "recorder_coverage_at_export": {
+      "state": "recording",
+      "error": null,
+      "session_id": "9ba4280cb22d4c65b469cad11439a0c7",
+      "started_at": "2026-09-16T07:22:25.678506+00:00",
+      "retained_events": 8052,
+      "evicted_events": 0,
+      "persistence": {
+        "state": "ready",
+        "accepted_sequence": 17904,
+        "durable_sequence": 17759,
+        "queued": 144,
+        "inflight": true,
+        "rejected_retained": false,
+        "pending_bytes": 1543150,
+        "queue_budget_bytes": 33554432,
+        "accepted_output_bytes": 93507363,
+        "written_output_bytes": 92674458,
+        "run_output_budget_bytes": 2147483648,
+        "disk_reserve_bytes": 1073741824,
+        "error": null,
+        "exports": {}
+      },
+      "history_index": {
+        "entities": 94,
+        "event_references": 9941,
+        "estimated_memory_bytes": 215845894,
+        "memory_budget_bytes": 1610612736,
+        "event_capacity": 200000,
+        "snapshots": 0,
+        "retention_policy": "fifo_first_accepted",
+        "evicted_events": 0,
+        "last_evicted_time": null,
+        "snapshot_references": 0,
+        "snapshot_charged_bytes": 0,
+        "snapshot_memory_budget_bytes": 268435456
+      }
+    },
+    "fields": {
+      "identity": "available",
+      "location": "available",
+      "time": "available",
+      "interactions": "available",
+      "needs": "available",
+      "buffs": "available",
+      "relationships": "available",
+      "object_states": "not_applicable"
+    }
+  },
+  "example": {
+    "decision": {
+      "event_id": "9ba4280cb22d4c65b469cad11439a0c7:autonomy:decision:829",
+      "revision": 2,
+      "event_type": "game_event",
+      "category": "autonomy.decision",
+      "field": "autonomy.decision",
+      "tier": "main",
+      "entities": [
+        "sim:896523281981505978"
+      ],
+      "participants": [
+        {
+          "kind": "sim",
+          "id": "896523281981505978",
+          "name": "Nyssa Landry",
+          "key": "sim:896523281981505978"
+        }
+      ],
+      "roles": [
+        {
+          "entity_key": "sim:896523281981505978",
+          "role": "actor",
+          "basis": "selected_interaction_sim"
+        }
+      ],
+      "payload": {
+        "decision_id": "9ba4280cb22d4c65b469cad11439a0c7:autonomy:decision:829",
+        "selection_time": {
+          "ticks": "20358639",
+          "display": "10:12:25.560 day:2 week:1"
+        },
+        "mode": "FullAutonomy",
+        "context_source": "AUTONOMY",
+        "is_script_request": false,
+        "stages": [
+          {
+            "mode": "weighted",
+            "pool_count": 5,
+            "total_weight": 3.4172630709460465,
+            "selected_index": 0,
+            "candidates": [
+              {
+                "interaction_id": "896",
+                "action": {
+                  "id": "13155",
+                  "tuning_name": "Chess_Social",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "hash": "0xFCC8ABD5",
+                    "localization": {
+                      "hash": "0xFCC8ABD5",
+                      "tokens": [
+                        {
+                          "type": "SIM",
+                          "first_name": "Nyssa",
+                          "last_name": "Landry",
+                          "full_name_key": 0,
+                          "is_female": true,
+                          "packed_pronouns": "|||||",
+                          "age_flags": 64,
+                          "name_prefix_key": 0,
+                          "name_prefix_string": ""
+                        },
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 3686782706,
+                          "catalog_description_key": 2499262243
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "游玩",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "游玩",
+                    "fallback": "Chess_Social",
+                    "source": {
+                      "kind": "autonomy_candidate_at_selection",
+                      "attribute": "get_name"
+                    },
+                    "visible": true
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "258137921952811191",
+                  "name": {
+                    "hash": "0x04F918F8",
+                    "localization": {
+                      "hash": "0x04F918F8",
+                      "tokens": [
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 3686782706,
+                          "catalog_description_key": 2499262243
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "“国际象棋大师”棋桌",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "{0.ObjectName}",
+                    "unresolved": [],
+                    "fallback": "object_chess_table",
+                    "source": {
+                      "kind": "runtime_object",
+                      "attribute": "LocalizationHelperTuning.get_object_name"
+                    }
+                  },
+                  "key": "object:258137921952811191",
+                  "definition_id": "18401"
+                },
+                "raw_score": 0.857857588224,
+                "route_time": -0.0,
+                "multitasking_percentage": 1.0099817422287396,
+                "score_components": {
+                  "source": "InteractionScore",
+                  "values": {
+                    "efficiency": 1.0,
+                    "duration": 30.0,
+                    "autonomy_scoring_preference": 1.0,
+                    "rel_utility_score": 1.0,
+                    "relationship_object_value": 0.0,
+                    "party_score": 1.0,
+                    "must_change_posture": true,
+                    "change_posture_cost": 1.0,
+                    "base_multitasking_percentage": 1.0,
+                    "bonus_multitasking_percentage": 0.009981742228739548,
+                    "penalty_multitasking_percentage": 0.0,
+                    "outside_multiplier": 1.0,
+                    "waiting_in_line_multiplier": 1.0,
+                    "club_rule_multiplier": 1.0,
+                    "business_rule_multiplier": 1.0,
+                    "buff_utility_score": 1.0,
+                    "tested_relationship_utility_score": 1.0,
+                    "situation_type_utility_score": 1.0,
+                    "sit_posture_transition_penalty": 1.0,
+                    "route_time": -0.0,
+                    "estimated_distance": 0.0,
+                    "remaining_sis_score": 0.0,
+                    "interaction_score_modifier_multiplier": 1.0,
+                    "off_lot_object_score_multiplier": 1.0,
+                    "ensemble_multiplier": 1.0,
+                    "exclusive_situations_multiplier": 1.0,
+                    "custom_schedule_multiplier": 1.0,
+                    "dynasty_rule_multiplier": 1.0,
+                    "commodity_scores": [
+                      {
+                        "score": 0.857857588224,
+                        "advertise": true,
+                        "commodity_value": 0.78,
+                        "interval": 1.0,
+                        "fulfillment_rate": 0.78,
+                        "object_stat_use_multiplier": 1.0,
+                        "already_solving_motive_multiplier": 1.0,
+                        "modified_desire": 1.0998174208,
+                        "commodity": {
+                          "id": "16655",
+                          "resource_kind": "statistic",
+                          "visible": true,
+                          "tuning_name": "motive_Fun",
+                          "name": {
+                            "hash": "0x1D665F46",
+                            "localization": {
+                              "hash": "0x1D665F46",
+                              "tokens": []
+                            },
+                            "string_source": {
+                              "sources": [
+                                "r0000"
+                              ],
+                              "status": "selected",
+                              "game_version": "1.126.73.1030",
+                              "language": "CHS_CN",
+                              "third_party_overrides": "not_verified"
+                            },
+                            "text": "娱乐",
+                            "status": "resolved",
+                            "format_profile": "context_overlay_zh_CN_v1",
+                            "template": "娱乐",
+                            "fallback": "motive_Fun",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": true
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": false,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "29109",
+                          "resource_kind": "statistic",
+                          "visible": false,
+                          "tuning_name": "commodity_Trait_Autonomy_Genius",
+                          "name": {
+                            "hash": "0x00000000",
+                            "localization": {
+                              "hash": "0x00000000",
+                              "tokens": []
+                            },
+                            "text": "commodity_Trait_Autonomy_Genius",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": false
+                          }
+                        },
+                        "autonomy_weight": 0.2
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "27473",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_Chess",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_Chess",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": null,
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "Club_Encouragement_183828528272835469",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "Club_Encouragement_183828528272835469",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "141221",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_ApartmentNeighborSituations_Hangout_GeekOut",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_ApartmentNeighborSituations_Hangout_GeekOut",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "377252",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_BuildSkill_MasteryPerk_SkillfulSleepClone",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_BuildSkill_MasteryPerk_SkillfulSleepClone",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "137860",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_RoleAutonomy_Career_SocialMedia_PersuadedToPlayGames",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_RoleAutonomy_Career_SocialMedia_PersuadedToPlayGames",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "488995",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Scholarly",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Scholarly",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "488937",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_Dynasty_Autonomy_Aligned_Skill_Logic",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_Dynasty_Autonomy_Aligned_Skill_Logic",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "141222",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_ApartmentNeighborSituations_Hangout_Brainstorm",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_ApartmentNeighborSituations_Hangout_Brainstorm",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      }
+                    ],
+                    "opportunity_costs": [],
+                    "attention_cost_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": "896",
+                          "action": {
+                            "id": "13155",
+                            "tuning_name": "Chess_Social",
+                            "resource_kind": "interaction",
+                            "name": {
+                              "hash": "0xFCC8ABD5",
+                              "localization": {
+                                "hash": "0xFCC8ABD5",
+                                "tokens": [
+                                  {
+                                    "type": "SIM",
+                                    "first_name": "Nyssa",
+                                    "last_name": "Landry",
+                                    "full_name_key": 0,
+                                    "is_female": true,
+                                    "packed_pronouns": "|||||",
+                                    "age_flags": 64,
+                                    "name_prefix_key": 0,
+                                    "name_prefix_string": ""
+                                  },
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 3686782706,
+                                    "catalog_description_key": 2499262243
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "游玩",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "游玩",
+                              "fallback": "Chess_Social",
+                              "source": {
+                                "kind": "autonomy_candidate_at_selection",
+                                "attribute": "get_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": {
+                            "kind": "object",
+                            "id": "258137921952811191",
+                            "name": {
+                              "hash": "0x04F918F8",
+                              "localization": {
+                                "hash": "0x04F918F8",
+                                "tokens": [
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 3686782706,
+                                    "catalog_description_key": 2499262243
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "“国际象棋大师”棋桌",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "{0.ObjectName}",
+                              "unresolved": [],
+                              "fallback": "object_chess_table",
+                              "source": {
+                                "kind": "runtime_object",
+                                "attribute": "LocalizationHelperTuning.get_object_name"
+                              }
+                            },
+                            "key": "object:258137921952811191",
+                            "definition_id": "18401"
+                          }
+                        },
+                        "value": [
+                          0.0,
+                          true
+                        ]
+                      }
+                    ],
+                    "attention_cost_bonus_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": null,
+                          "action": {
+                            "id": "16655",
+                            "resource_kind": "statistic",
+                            "visible": true,
+                            "tuning_name": "motive_Fun",
+                            "name": {
+                              "hash": "0x1D665F46",
+                              "localization": {
+                                "hash": "0x1D665F46",
+                                "tokens": []
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "娱乐",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "娱乐",
+                              "fallback": "motive_Fun",
+                              "source": {
+                                "kind": "runtime_tuning",
+                                "attribute": "stat_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": null
+                        },
+                        "value": [
+                          1.0998174208,
+                          0.009981742228739548
+                        ]
+                      }
+                    ],
+                    "attention_cost_penalty_scores": []
+                  },
+                  "missing": [],
+                  "engine_gsi_consistency_warning": false
+                },
+                "candidate_index": 4,
+                "rank": 1,
+                "weight": 0.857857588224,
+                "tied_weight_count": 1,
+                "selected": false,
+                "probability": 0.2510364494667096
+              },
+              {
+                "interaction_id": "898",
+                "action": {
+                  "id": "77412",
+                  "tuning_name": "autonomous_Bookshelf_Browse_Picker",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "hash": "0x155EC192",
+                    "localization": {
+                      "hash": "0x155EC192",
+                      "tokens": [
+                        {
+                          "type": "SIM",
+                          "first_name": "Nyssa",
+                          "last_name": "Landry",
+                          "full_name_key": 0,
+                          "is_female": true,
+                          "packed_pronouns": "|||||",
+                          "age_flags": 64,
+                          "name_prefix_key": 0,
+                          "name_prefix_string": ""
+                        },
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 819888395,
+                          "catalog_description_key": 66061124
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "浏览书籍",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "浏览书籍",
+                    "fallback": "autonomous_Bookshelf_Browse_Picker",
+                    "source": {
+                      "kind": "autonomy_candidate_at_selection",
+                      "attribute": "get_name"
+                    },
+                    "visible": true
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "258137921952811209",
+                  "name": {
+                    "hash": "0x04F918F8",
+                    "localization": {
+                      "hash": "0x04F918F8",
+                      "tokens": [
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 819888395,
+                          "catalog_description_key": 66061124
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "爱抚书柜",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "{0.ObjectName}",
+                    "unresolved": [],
+                    "fallback": "object_bookshelf",
+                    "source": {
+                      "kind": "runtime_object",
+                      "attribute": "LocalizationHelperTuning.get_object_name"
+                    }
+                  },
+                  "key": "object:258137921952811209",
+                  "definition_id": "51804"
+                },
+                "raw_score": 0.846324575386258,
+                "route_time": 0.40881524085998533,
+                "multitasking_percentage": 1.0099817422287396,
+                "score_components": {
+                  "source": "InteractionScore",
+                  "values": {
+                    "efficiency": 0.9865560286508411,
+                    "duration": 30.0,
+                    "autonomy_scoring_preference": 1.0,
+                    "rel_utility_score": 1.0,
+                    "relationship_object_value": 0.0,
+                    "party_score": 1.0,
+                    "must_change_posture": true,
+                    "change_posture_cost": 1.0,
+                    "base_multitasking_percentage": 1.0,
+                    "bonus_multitasking_percentage": 0.009981742228739548,
+                    "penalty_multitasking_percentage": 0.0,
+                    "outside_multiplier": 1.0,
+                    "waiting_in_line_multiplier": 1.0,
+                    "club_rule_multiplier": 1.0,
+                    "business_rule_multiplier": 1.0,
+                    "buff_utility_score": 1.0,
+                    "tested_relationship_utility_score": 1.0,
+                    "situation_type_utility_score": 1.0,
+                    "sit_posture_transition_penalty": 1.0,
+                    "route_time": 0.40881524085998533,
+                    "estimated_distance": 16.352609634399414,
+                    "remaining_sis_score": 0.0,
+                    "interaction_score_modifier_multiplier": 1.0,
+                    "off_lot_object_score_multiplier": 1.0,
+                    "ensemble_multiplier": 1.0,
+                    "exclusive_situations_multiplier": 1.0,
+                    "custom_schedule_multiplier": 1.0,
+                    "dynasty_rule_multiplier": 1.0,
+                    "commodity_scores": [
+                      {
+                        "score": 0.846324575386258,
+                        "advertise": true,
+                        "commodity_value": 0.78,
+                        "interval": 1.0,
+                        "fulfillment_rate": 0.78,
+                        "object_stat_use_multiplier": 1.0,
+                        "already_solving_motive_multiplier": 1.0,
+                        "modified_desire": 1.0998174208,
+                        "commodity": {
+                          "id": "16655",
+                          "resource_kind": "statistic",
+                          "visible": true,
+                          "tuning_name": "motive_Fun",
+                          "name": {
+                            "hash": "0x1D665F46",
+                            "localization": {
+                              "hash": "0x1D665F46",
+                              "tokens": []
+                            },
+                            "string_source": {
+                              "sources": [
+                                "r0000"
+                              ],
+                              "status": "selected",
+                              "game_version": "1.126.73.1030",
+                              "language": "CHS_CN",
+                              "third_party_overrides": "not_verified"
+                            },
+                            "text": "娱乐",
+                            "status": "resolved",
+                            "format_profile": "context_overlay_zh_CN_v1",
+                            "template": "娱乐",
+                            "fallback": "motive_Fun",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": true
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": false,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "28597",
+                          "resource_kind": "statistic",
+                          "visible": false,
+                          "tuning_name": "commodity_Trait_Autonomy_Bookworm",
+                          "name": {
+                            "hash": "0x00000000",
+                            "localization": {
+                              "hash": "0x00000000",
+                              "tokens": []
+                            },
+                            "text": "commodity_Trait_Autonomy_Bookworm",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": false
+                          }
+                        },
+                        "autonomy_weight": 0.2
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": false,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "29109",
+                          "resource_kind": "statistic",
+                          "visible": false,
+                          "tuning_name": "commodity_Trait_Autonomy_Genius",
+                          "name": {
+                            "hash": "0x00000000",
+                            "localization": {
+                              "hash": "0x00000000",
+                              "tokens": []
+                            },
+                            "text": "commodity_Trait_Autonomy_Genius",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": false
+                          }
+                        },
+                        "autonomy_weight": 0.2
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "76995",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_BrowseBooks",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_BrowseBooks",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "488995",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Scholarly",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Scholarly",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "27576",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_ReadBooks",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_ReadBooks",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": null,
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "SmallBusinessEncouragement",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "SmallBusinessEncouragement",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": null,
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "Club_Encouragement_183828528272835462",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "Club_Encouragement_183828528272835462",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      }
+                    ],
+                    "opportunity_costs": [],
+                    "attention_cost_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": "898",
+                          "action": {
+                            "id": "77412",
+                            "tuning_name": "autonomous_Bookshelf_Browse_Picker",
+                            "resource_kind": "interaction",
+                            "name": {
+                              "hash": "0x155EC192",
+                              "localization": {
+                                "hash": "0x155EC192",
+                                "tokens": [
+                                  {
+                                    "type": "SIM",
+                                    "first_name": "Nyssa",
+                                    "last_name": "Landry",
+                                    "full_name_key": 0,
+                                    "is_female": true,
+                                    "packed_pronouns": "|||||",
+                                    "age_flags": 64,
+                                    "name_prefix_key": 0,
+                                    "name_prefix_string": ""
+                                  },
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 819888395,
+                                    "catalog_description_key": 66061124
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "浏览书籍",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "浏览书籍",
+                              "fallback": "autonomous_Bookshelf_Browse_Picker",
+                              "source": {
+                                "kind": "autonomy_candidate_at_selection",
+                                "attribute": "get_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": {
+                            "kind": "object",
+                            "id": "258137921952811209",
+                            "name": {
+                              "hash": "0x04F918F8",
+                              "localization": {
+                                "hash": "0x04F918F8",
+                                "tokens": [
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 819888395,
+                                    "catalog_description_key": 66061124
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "爱抚书柜",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "{0.ObjectName}",
+                              "unresolved": [],
+                              "fallback": "object_bookshelf",
+                              "source": {
+                                "kind": "runtime_object",
+                                "attribute": "LocalizationHelperTuning.get_object_name"
+                              }
+                            },
+                            "key": "object:258137921952811209",
+                            "definition_id": "51804"
+                          }
+                        },
+                        "value": [
+                          0.0,
+                          true
+                        ]
+                      }
+                    ],
+                    "attention_cost_bonus_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": null,
+                          "action": {
+                            "id": "16655",
+                            "resource_kind": "statistic",
+                            "visible": true,
+                            "tuning_name": "motive_Fun",
+                            "name": {
+                              "hash": "0x1D665F46",
+                              "localization": {
+                                "hash": "0x1D665F46",
+                                "tokens": []
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "娱乐",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "娱乐",
+                              "fallback": "motive_Fun",
+                              "source": {
+                                "kind": "runtime_tuning",
+                                "attribute": "stat_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": null
+                        },
+                        "value": [
+                          1.0998174208,
+                          0.009981742228739548
+                        ]
+                      }
+                    ],
+                    "attention_cost_penalty_scores": []
+                  },
+                  "missing": [],
+                  "engine_gsi_consistency_warning": false
+                },
+                "candidate_index": 2,
+                "rank": 2,
+                "weight": 0.846324575386258,
+                "tied_weight_count": 2,
+                "selected": false,
+                "probability": 0.2476615226324846
+              },
+              {
+                "interaction_id": "899",
+                "action": {
+                  "id": "77329",
+                  "tuning_name": "autonomous_bookshelf_read_picker",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "hash": "0x59EB9C25",
+                    "localization": {
+                      "hash": "0x59EB9C25",
+                      "tokens": [
+                        {
+                          "type": "SIM",
+                          "first_name": "Nyssa",
+                          "last_name": "Landry",
+                          "full_name_key": 0,
+                          "is_female": true,
+                          "packed_pronouns": "|||||",
+                          "age_flags": 64,
+                          "name_prefix_key": 0,
+                          "name_prefix_string": ""
+                        },
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 819888395,
+                          "catalog_description_key": 66061124
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "读点东西",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "读点东西",
+                    "fallback": "autonomous_bookshelf_read_picker",
+                    "source": {
+                      "kind": "autonomy_candidate_at_selection",
+                      "attribute": "get_name"
+                    },
+                    "visible": true
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "258137921952811209",
+                  "name": {
+                    "hash": "0x04F918F8",
+                    "localization": {
+                      "hash": "0x04F918F8",
+                      "tokens": [
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 819888395,
+                          "catalog_description_key": 66061124
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "爱抚书柜",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "{0.ObjectName}",
+                    "unresolved": [],
+                    "fallback": "object_bookshelf",
+                    "source": {
+                      "kind": "runtime_object",
+                      "attribute": "LocalizationHelperTuning.get_object_name"
+                    }
+                  },
+                  "key": "object:258137921952811209",
+                  "definition_id": "51804"
+                },
+                "raw_score": 0.846324575386258,
+                "route_time": 0.40881524085998533,
+                "multitasking_percentage": 1.0099817422287396,
+                "score_components": {
+                  "source": "InteractionScore",
+                  "values": {
+                    "efficiency": 0.9865560286508411,
+                    "duration": 30.0,
+                    "autonomy_scoring_preference": 1.0,
+                    "rel_utility_score": 1.0,
+                    "relationship_object_value": 0.0,
+                    "party_score": 1.0,
+                    "must_change_posture": true,
+                    "change_posture_cost": 1.0,
+                    "base_multitasking_percentage": 1.0,
+                    "bonus_multitasking_percentage": 0.009981742228739548,
+                    "penalty_multitasking_percentage": 0.0,
+                    "outside_multiplier": 1.0,
+                    "waiting_in_line_multiplier": 1.0,
+                    "club_rule_multiplier": 1.0,
+                    "business_rule_multiplier": 1.0,
+                    "buff_utility_score": 1.0,
+                    "tested_relationship_utility_score": 1.0,
+                    "situation_type_utility_score": 1.0,
+                    "sit_posture_transition_penalty": 1.0,
+                    "route_time": 0.40881524085998533,
+                    "estimated_distance": 16.352609634399414,
+                    "remaining_sis_score": 0.0,
+                    "interaction_score_modifier_multiplier": 1.0,
+                    "off_lot_object_score_multiplier": 1.0,
+                    "ensemble_multiplier": 1.0,
+                    "exclusive_situations_multiplier": 1.0,
+                    "custom_schedule_multiplier": 1.0,
+                    "dynasty_rule_multiplier": 1.0,
+                    "commodity_scores": [
+                      {
+                        "score": 0.846324575386258,
+                        "advertise": true,
+                        "commodity_value": 0.78,
+                        "interval": 1.0,
+                        "fulfillment_rate": 0.78,
+                        "object_stat_use_multiplier": 1.0,
+                        "already_solving_motive_multiplier": 1.0,
+                        "modified_desire": 1.0998174208,
+                        "commodity": {
+                          "id": "16655",
+                          "resource_kind": "statistic",
+                          "visible": true,
+                          "tuning_name": "motive_Fun",
+                          "name": {
+                            "hash": "0x1D665F46",
+                            "localization": {
+                              "hash": "0x1D665F46",
+                              "tokens": []
+                            },
+                            "string_source": {
+                              "sources": [
+                                "r0000"
+                              ],
+                              "status": "selected",
+                              "game_version": "1.126.73.1030",
+                              "language": "CHS_CN",
+                              "third_party_overrides": "not_verified"
+                            },
+                            "text": "娱乐",
+                            "status": "resolved",
+                            "format_profile": "context_overlay_zh_CN_v1",
+                            "template": "娱乐",
+                            "fallback": "motive_Fun",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": true
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": false,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "28597",
+                          "resource_kind": "statistic",
+                          "visible": false,
+                          "tuning_name": "commodity_Trait_Autonomy_Bookworm",
+                          "name": {
+                            "hash": "0x00000000",
+                            "localization": {
+                              "hash": "0x00000000",
+                              "tokens": []
+                            },
+                            "text": "commodity_Trait_Autonomy_Bookworm",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": false
+                          }
+                        },
+                        "autonomy_weight": 0.2
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "488995",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Scholarly",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Scholarly",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "27576",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_ReadBooks",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_ReadBooks",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "141221",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_ApartmentNeighborSituations_Hangout_GeekOut",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_ApartmentNeighborSituations_Hangout_GeekOut",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": null,
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "SmallBusinessEncouragement",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "SmallBusinessEncouragement",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": null,
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "Club_Encouragement_183828528272835462",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "Club_Encouragement_183828528272835462",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      }
+                    ],
+                    "opportunity_costs": [],
+                    "attention_cost_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": "899",
+                          "action": {
+                            "id": "77329",
+                            "tuning_name": "autonomous_bookshelf_read_picker",
+                            "resource_kind": "interaction",
+                            "name": {
+                              "hash": "0x59EB9C25",
+                              "localization": {
+                                "hash": "0x59EB9C25",
+                                "tokens": [
+                                  {
+                                    "type": "SIM",
+                                    "first_name": "Nyssa",
+                                    "last_name": "Landry",
+                                    "full_name_key": 0,
+                                    "is_female": true,
+                                    "packed_pronouns": "|||||",
+                                    "age_flags": 64,
+                                    "name_prefix_key": 0,
+                                    "name_prefix_string": ""
+                                  },
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 819888395,
+                                    "catalog_description_key": 66061124
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "读点东西",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "读点东西",
+                              "fallback": "autonomous_bookshelf_read_picker",
+                              "source": {
+                                "kind": "autonomy_candidate_at_selection",
+                                "attribute": "get_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": {
+                            "kind": "object",
+                            "id": "258137921952811209",
+                            "name": {
+                              "hash": "0x04F918F8",
+                              "localization": {
+                                "hash": "0x04F918F8",
+                                "tokens": [
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 819888395,
+                                    "catalog_description_key": 66061124
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "爱抚书柜",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "{0.ObjectName}",
+                              "unresolved": [],
+                              "fallback": "object_bookshelf",
+                              "source": {
+                                "kind": "runtime_object",
+                                "attribute": "LocalizationHelperTuning.get_object_name"
+                              }
+                            },
+                            "key": "object:258137921952811209",
+                            "definition_id": "51804"
+                          }
+                        },
+                        "value": [
+                          0.0,
+                          true
+                        ]
+                      }
+                    ],
+                    "attention_cost_bonus_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": null,
+                          "action": {
+                            "id": "16655",
+                            "resource_kind": "statistic",
+                            "visible": true,
+                            "tuning_name": "motive_Fun",
+                            "name": {
+                              "hash": "0x1D665F46",
+                              "localization": {
+                                "hash": "0x1D665F46",
+                                "tokens": []
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "娱乐",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "娱乐",
+                              "fallback": "motive_Fun",
+                              "source": {
+                                "kind": "runtime_tuning",
+                                "attribute": "stat_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": null
+                        },
+                        "value": [
+                          1.0998174208,
+                          0.009981742228739548
+                        ]
+                      }
+                    ],
+                    "attention_cost_penalty_scores": []
+                  },
+                  "missing": [],
+                  "engine_gsi_consistency_warning": false
+                },
+                "candidate_index": 3,
+                "rank": 3,
+                "weight": 0.846324575386258,
+                "tied_weight_count": 2,
+                "selected": false,
+                "probability": 0.2476615226324846
+              },
+              {
+                "interaction_id": "895",
+                "action": {
+                  "id": "13176",
+                  "tuning_name": "collect_Trash_Aggregate",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "hash": "0x59556AA8",
+                    "localization": {
+                      "hash": "0x59556AA8",
+                      "tokens": [
+                        {
+                          "type": "SIM",
+                          "first_name": "Nyssa",
+                          "last_name": "Landry",
+                          "full_name_key": 0,
+                          "is_female": true,
+                          "packed_pronouns": "|||||",
+                          "age_flags": 64,
+                          "name_prefix_key": 0,
+                          "name_prefix_string": ""
+                        },
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 166639020,
+                          "catalog_description_key": 3269998936
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "丢掉",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "丢掉",
+                    "fallback": "collect_Trash_Aggregate",
+                    "source": {
+                      "kind": "autonomy_candidate_at_selection",
+                      "attribute": "get_name"
+                    },
+                    "visible": true
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "749030383311127178",
+                  "name": {
+                    "hash": "0x04F918F8",
+                    "localization": {
+                      "hash": "0x04F918F8",
+                      "tokens": [
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 166639020,
+                          "catalog_description_key": 3269998936
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "垃圾堆",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "{0.ObjectName}",
+                    "unresolved": [],
+                    "fallback": "object_trash_generic",
+                    "source": {
+                      "kind": "runtime_object",
+                      "attribute": "LocalizationHelperTuning.get_object_name"
+                    }
+                  },
+                  "key": "object:749030383311127178",
+                  "definition_id": "22174"
+                },
+                "raw_score": 0.47701665011819644,
+                "route_time": 1.4454432487487794,
+                "multitasking_percentage": 1.1000000014901161,
+                "score_components": {
+                  "source": "InteractionScore",
+                  "values": {
+                    "efficiency": 0.9540333002363929,
+                    "duration": 30.0,
+                    "autonomy_scoring_preference": 1.0,
+                    "rel_utility_score": 1.0,
+                    "relationship_object_value": 0.0,
+                    "party_score": 1.0,
+                    "must_change_posture": true,
+                    "change_posture_cost": 1.0,
+                    "base_multitasking_percentage": 1.0,
+                    "bonus_multitasking_percentage": 0.10000000149011612,
+                    "penalty_multitasking_percentage": 0.0,
+                    "outside_multiplier": 0.25,
+                    "waiting_in_line_multiplier": 1.0,
+                    "club_rule_multiplier": 1.0,
+                    "business_rule_multiplier": 1.0,
+                    "buff_utility_score": 1.0,
+                    "tested_relationship_utility_score": 1.0,
+                    "situation_type_utility_score": 1.0,
+                    "sit_posture_transition_penalty": 1.0,
+                    "route_time": 1.4454432487487794,
+                    "estimated_distance": 57.81772994995117,
+                    "remaining_sis_score": 0.0,
+                    "interaction_score_modifier_multiplier": 1.0,
+                    "off_lot_object_score_multiplier": 1.0,
+                    "ensemble_multiplier": 1.0,
+                    "exclusive_situations_multiplier": 1.0,
+                    "custom_schedule_multiplier": 1.0,
+                    "dynasty_rule_multiplier": 1.0,
+                    "commodity_scores": [
+                      {
+                        "score": 0.0,
+                        "advertise": false,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "163754",
+                          "resource_kind": "statistic",
+                          "visible": false,
+                          "tuning_name": "commodity_LifeSkills_Autonomy_Responsibility_Positive",
+                          "name": {
+                            "hash": "0x00000000",
+                            "localization": {
+                              "hash": "0x00000000",
+                              "tokens": []
+                            },
+                            "text": "commodity_LifeSkills_Autonomy_Responsibility_Positive",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": false
+                          }
+                        },
+                        "autonomy_weight": 0.15
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "234689",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_DumpsterScrounger",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_DumpsterScrounger",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "488997",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Nature",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_Dynasty_Autonomy_Aligned_Ideal_Nature",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "16423",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_Collect_Trash",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_Collect_Trash",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 1.9080666004727858,
+                        "advertise": true,
+                        "commodity_value": 1.0,
+                        "interval": 1.0,
+                        "fulfillment_rate": 1.0,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": 2.0,
+                        "commodity": {
+                          "id": "16440",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_Tidy",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_Tidy",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "148223",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "staticCommodity_Butler_Autonomy_CommonActions",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "staticCommodity_Butler_Autonomy_CommonActions",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      }
+                    ],
+                    "opportunity_costs": [],
+                    "attention_cost_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": "895",
+                          "action": {
+                            "id": "13176",
+                            "tuning_name": "collect_Trash_Aggregate",
+                            "resource_kind": "interaction",
+                            "name": {
+                              "hash": "0x59556AA8",
+                              "localization": {
+                                "hash": "0x59556AA8",
+                                "tokens": [
+                                  {
+                                    "type": "SIM",
+                                    "first_name": "Nyssa",
+                                    "last_name": "Landry",
+                                    "full_name_key": 0,
+                                    "is_female": true,
+                                    "packed_pronouns": "|||||",
+                                    "age_flags": 64,
+                                    "name_prefix_key": 0,
+                                    "name_prefix_string": ""
+                                  },
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 166639020,
+                                    "catalog_description_key": 3269998936
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "丢掉",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "丢掉",
+                              "fallback": "collect_Trash_Aggregate",
+                              "source": {
+                                "kind": "autonomy_candidate_at_selection",
+                                "attribute": "get_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": {
+                            "kind": "object",
+                            "id": "749030383311127178",
+                            "name": {
+                              "hash": "0x04F918F8",
+                              "localization": {
+                                "hash": "0x04F918F8",
+                                "tokens": [
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 166639020,
+                                    "catalog_description_key": 3269998936
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "垃圾堆",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "{0.ObjectName}",
+                              "unresolved": [],
+                              "fallback": "object_trash_generic",
+                              "source": {
+                                "kind": "runtime_object",
+                                "attribute": "LocalizationHelperTuning.get_object_name"
+                              }
+                            },
+                            "key": "object:749030383311127178",
+                            "definition_id": "22174"
+                          }
+                        },
+                        "value": [
+                          0.0,
+                          true
+                        ]
+                      }
+                    ],
+                    "attention_cost_bonus_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": null,
+                          "action": {
+                            "id": "16440",
+                            "resource_kind": "statistic",
+                            "visible": null,
+                            "tuning_name": "StaticCommodity_Tidy",
+                            "name": {
+                              "hash": null,
+                              "localization": {
+                                "hash": null,
+                                "tokens": []
+                              },
+                              "text": "StaticCommodity_Tidy",
+                              "status": "no_display_name",
+                              "reason": "no_localized_string_key",
+                              "source": {
+                                "kind": "runtime_tuning",
+                                "attribute": "stat_name"
+                              },
+                              "visible": null
+                            }
+                          },
+                          "target": null
+                        },
+                        "value": [
+                          2.0,
+                          0.10000000149011612
+                        ]
+                      }
+                    ],
+                    "attention_cost_penalty_scores": []
+                  },
+                  "missing": [],
+                  "engine_gsi_consistency_warning": false
+                },
+                "candidate_index": 1,
+                "rank": 4,
+                "weight": 0.47701665011819644,
+                "tied_weight_count": 1,
+                "selected": false,
+                "probability": 0.13959026279651848
+              },
+              {
+                "interaction_id": "894",
+                "action": {
+                  "id": "13820",
+                  "tuning_name": "Pickup_Outdoor",
+                  "resource_kind": "interaction",
+                  "name": {
+                    "hash": "0x70A5A220",
+                    "localization": {
+                      "hash": "0x70A5A220",
+                      "tokens": [
+                        {
+                          "type": "SIM",
+                          "first_name": "Nyssa",
+                          "last_name": "Landry",
+                          "full_name_key": 0,
+                          "is_female": true,
+                          "packed_pronouns": "|||||",
+                          "age_flags": 64,
+                          "name_prefix_key": 0,
+                          "name_prefix_string": ""
+                        },
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 1043221895,
+                          "catalog_description_key": 1822289512
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "扶起来",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "扶起来",
+                    "fallback": "Pickup_Outdoor",
+                    "source": {
+                      "kind": "autonomy_candidate_at_selection",
+                      "attribute": "get_name"
+                    },
+                    "visible": true
+                  }
+                },
+                "target": {
+                  "kind": "object",
+                  "id": "258137921952811147",
+                  "name": {
+                    "hash": "0x04F918F8",
+                    "localization": {
+                      "hash": "0x04F918F8",
+                      "tokens": [
+                        {
+                          "type": "OBJECT",
+                          "catalog_name_key": 1043221895,
+                          "catalog_description_key": 1822289512
+                        }
+                      ]
+                    },
+                    "string_source": {
+                      "sources": [
+                        "r0000"
+                      ],
+                      "status": "selected",
+                      "game_version": "1.126.73.1030",
+                      "language": "CHS_CN",
+                      "third_party_overrides": "not_verified"
+                    },
+                    "text": "滚轮垃圾桶",
+                    "status": "resolved",
+                    "format_profile": "context_overlay_zh_CN_v1",
+                    "template": "{0.ObjectName}",
+                    "unresolved": [],
+                    "fallback": "object_trashcan_outdoor",
+                    "source": {
+                      "kind": "runtime_object",
+                      "attribute": "LocalizationHelperTuning.get_object_name"
+                    }
+                  },
+                  "key": "object:258137921952811147",
+                  "definition_id": "22051"
+                },
+                "raw_score": 0.38973968183133406,
+                "route_time": 1.4145380020141602,
+                "multitasking_percentage": 1.1000000014901161,
+                "score_components": {
+                  "source": "InteractionScore",
+                  "values": {
+                    "efficiency": 0.7794793636626681,
+                    "duration": 5.0,
+                    "autonomy_scoring_preference": 1.0,
+                    "rel_utility_score": 1.0,
+                    "relationship_object_value": 0.0,
+                    "party_score": 1.0,
+                    "must_change_posture": true,
+                    "change_posture_cost": 1.0,
+                    "base_multitasking_percentage": 1.0,
+                    "bonus_multitasking_percentage": 0.10000000149011612,
+                    "penalty_multitasking_percentage": 0.0,
+                    "outside_multiplier": 0.25,
+                    "waiting_in_line_multiplier": 1.0,
+                    "club_rule_multiplier": 1.0,
+                    "business_rule_multiplier": 1.0,
+                    "buff_utility_score": 1.0,
+                    "tested_relationship_utility_score": 1.0,
+                    "situation_type_utility_score": 1.0,
+                    "sit_posture_transition_penalty": 1.0,
+                    "route_time": 1.4145380020141602,
+                    "estimated_distance": 56.581520080566406,
+                    "remaining_sis_score": 0.0,
+                    "interaction_score_modifier_multiplier": 1.0,
+                    "off_lot_object_score_multiplier": 1.0,
+                    "ensemble_multiplier": 1.0,
+                    "exclusive_situations_multiplier": 1.0,
+                    "custom_schedule_multiplier": 1.0,
+                    "dynasty_rule_multiplier": 1.0,
+                    "commodity_scores": [
+                      {
+                        "score": 1.5589587273253362,
+                        "advertise": true,
+                        "commodity_value": 1.0,
+                        "interval": 1.0,
+                        "fulfillment_rate": 1.0,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": 2.0,
+                        "commodity": {
+                          "id": "16440",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_Tidy",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_Tidy",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      },
+                      {
+                        "score": 0.0,
+                        "advertise": true,
+                        "commodity_value": null,
+                        "interval": null,
+                        "fulfillment_rate": null,
+                        "object_stat_use_multiplier": null,
+                        "already_solving_motive_multiplier": null,
+                        "modified_desire": null,
+                        "commodity": {
+                          "id": "99433",
+                          "resource_kind": "statistic",
+                          "visible": null,
+                          "tuning_name": "StaticCommodity_Pickup_Outdoor",
+                          "name": {
+                            "hash": null,
+                            "localization": {
+                              "hash": null,
+                              "tokens": []
+                            },
+                            "text": "StaticCommodity_Pickup_Outdoor",
+                            "status": "no_display_name",
+                            "reason": "no_localized_string_key",
+                            "source": {
+                              "kind": "runtime_tuning",
+                              "attribute": "stat_name"
+                            },
+                            "visible": null
+                          }
+                        },
+                        "autonomy_weight": 1.0
+                      }
+                    ],
+                    "opportunity_costs": [],
+                    "attention_cost_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": "894",
+                          "action": {
+                            "id": "13820",
+                            "tuning_name": "Pickup_Outdoor",
+                            "resource_kind": "interaction",
+                            "name": {
+                              "hash": "0x70A5A220",
+                              "localization": {
+                                "hash": "0x70A5A220",
+                                "tokens": [
+                                  {
+                                    "type": "SIM",
+                                    "first_name": "Nyssa",
+                                    "last_name": "Landry",
+                                    "full_name_key": 0,
+                                    "is_female": true,
+                                    "packed_pronouns": "|||||",
+                                    "age_flags": 64,
+                                    "name_prefix_key": 0,
+                                    "name_prefix_string": ""
+                                  },
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 1043221895,
+                                    "catalog_description_key": 1822289512
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "扶起来",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "扶起来",
+                              "fallback": "Pickup_Outdoor",
+                              "source": {
+                                "kind": "autonomy_candidate_at_selection",
+                                "attribute": "get_name"
+                              },
+                              "visible": true
+                            }
+                          },
+                          "target": {
+                            "kind": "object",
+                            "id": "258137921952811147",
+                            "name": {
+                              "hash": "0x04F918F8",
+                              "localization": {
+                                "hash": "0x04F918F8",
+                                "tokens": [
+                                  {
+                                    "type": "OBJECT",
+                                    "catalog_name_key": 1043221895,
+                                    "catalog_description_key": 1822289512
+                                  }
+                                ]
+                              },
+                              "string_source": {
+                                "sources": [
+                                  "r0000"
+                                ],
+                                "status": "selected",
+                                "game_version": "1.126.73.1030",
+                                "language": "CHS_CN",
+                                "third_party_overrides": "not_verified"
+                              },
+                              "text": "滚轮垃圾桶",
+                              "status": "resolved",
+                              "format_profile": "context_overlay_zh_CN_v1",
+                              "template": "{0.ObjectName}",
+                              "unresolved": [],
+                              "fallback": "object_trashcan_outdoor",
+                              "source": {
+                                "kind": "runtime_object",
+                                "attribute": "LocalizationHelperTuning.get_object_name"
+                              }
+                            },
+                            "key": "object:258137921952811147",
+                            "definition_id": "22051"
+                          }
+                        },
+                        "value": [
+                          0.0,
+                          true
+                        ]
+                      }
+                    ],
+                    "attention_cost_bonus_scores": [
+                      {
+                        "subject": {
+                          "interaction_id": null,
+                          "action": {
+                            "id": "16440",
+                            "resource_kind": "statistic",
+                            "visible": null,
+                            "tuning_name": "StaticCommodity_Tidy",
+                            "name": {
+                              "hash": null,
+                              "localization": {
+                                "hash": null,
+                                "tokens": []
+                              },
+                              "text": "StaticCommodity_Tidy",
+                              "status": "no_display_name",
+                              "reason": "no_localized_string_key",
+                              "source": {
+                                "kind": "runtime_tuning",
+                                "attribute": "stat_name"
+                              },
+                              "visible": null
+                            }
+                          },
+                          "target": null
+                        },
+                        "value": [
+                          2.0,
+                          0.10000000149011612
+                        ]
+                      }
+                    ],
+                    "attention_cost_penalty_scores": []
+                  },
+                  "missing": [],
+                  "engine_gsi_consistency_warning": false
+                },
+                "candidate_index": 0,
+                "rank": 5,
+                "weight": 0.38973968183133406,
+                "tied_weight_count": 1,
+                "selected": true,
+                "probability": 0.1140502424718028
+              }
+            ],
+            "omitted_count": 0,
+            "omitted_probability": 0,
+            "probability_basis": "complete_stage_pool",
+            "rank_basis": "descending_weight_stable_engine_order",
+            "stage_id": "9ba4280cb22d4c65b469cad11439a0c7:autonomy:stage:830",
+            "kind": "interaction",
+            "parent_stage_id": null,
+            "selection_time": {
+              "ticks": "20358639",
+              "display": "10:12:25.560 day:2 week:1"
+            },
+            "input_count": 5,
+            "coverage": "actual_selector_pool",
+            "multitasking": {
+              "roll": 0.4151801616376749,
+              "threshold": 1.1000000014901161,
+              "applicable": true,
+              "passed": true,
+              "selector_returned_interaction": true,
+              "hook": "installed",
+              "roll_source": "native_getter",
+              "basis": "native_selector_return_and_observed_roll"
+            }
+          }
+        ],
+        "filters": {
+          "coverage": "observed_GSI_only",
+          "evaluated_affordance_rows": 4948,
+          "scored_affordance_rows": 5,
+          "rejections": [
+            {
+              "stage": "1 - Before Tests",
+              "reason_template": "Failed to satisfy relevant desires: {}",
+              "count": 4586
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " does not meet the npc requirement.",
+              "count": 52
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Actor's age is Age.ELDER, must be one of the following: Age.INFANT",
+              "count": 42
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "This picker SI has no valid choices nor fallback.",
+              "count": 40
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "SituationRunningTest: No situation matching test criteria found.",
+              "count": 24
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Interaction is not valid from object inventory.",
+              "count": 22
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "No available songs to play.",
+              "count": 20
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " doesn't have any buff in whitelist",
+              "count": 19
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "There are 0 matches when 1 matches are needed for the object criteria tuning",
+              "count": 18
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Actor's age is Age.ELDER, must be one of the following: Age.TODDLER",
+              "count": 16
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Cannot run a social as a self interaction.",
+              "count": 11
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Actor's age is Age.ELDER, must be one of the following: Age.CHILD",
+              "count": 9
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " is not in any of the required postures.",
+              "count": 7
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Actor doesn't have any or enough traits in white list",
+              "count": 7
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "SituationJobTest: Sim does not have required situation job.",
+              "count": 6
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Zone failed to meet whitelist/blacklist for zone modifiers. ZoneId: 258137921952811081, Mods: {<class 'sims4.tuning.instances.zoneModifier_muEventAPM_Test_HasExplosiveObject_CommonArea'>, <class 'sims4.tuning.instances.zoneModifiers_Hidden_Dust'>, <class 'sims4.tuning.instances.ZoneModifiers_Hidden_BBGameplayEffects'>}",
+              "count": 6
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " does not currently have any careers and a career is needed for this test: <class 'sims4.tuning.instances.career_Adult_StyleInfluencer'>/frozenset():TunedInterval(lower_bound=5, upper_bound=11).",
+              "count": 6
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "This picker SI has no valid choices.",
+              "count": 5
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "skill level not in desired range.",
+              "count": 4
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "'s tattoos didn't meet the specified criteria",
+              "count": 3
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " is not of a valid species",
+              "count": 2
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "TargetSim's age is Age.ADULT, must be one of the following: Age.TEEN",
+              "count": 2
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "TargetSim's age is Age.ADULT, must be one of the following: Age.INFANT",
+              "count": 2
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "TargetSim's age is Age.ADULT, must be one of the following: Age.TODDLER",
+              "count": 2
+            },
+            {
+              "stage": "5 - After Scoring",
+              "reason_template": "Scored below zero ({})",
+              "count": 2
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " failed mood check for disallowed Mood_Sad. Current mood: Mood_Sad",
+              "count": 2
+            },
+            {
+              "stage": "3 - Before Posture Search",
+              "reason_template": "Optimistic score of {:02f} less than current target of {:02f}\nScore Details\n{}",
+              "count": 2
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Inventory SimInventoryComponent() does not have required number of objects in it",
+              "count": 2
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Inventory ObjectInventoryComponent(object_fridgeLOW_01:0x03951712850e08ba) does not have required number of objects in it",
+              "count": 2
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Nothing compared against, target_sims list is empty.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "No sub-affordances passed their tests.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "TargetSim's age is Age.YOUNGADULT, must be one of the following: Age.TEEN",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "TargetSim's age is Age.YOUNGADULT, must be one of the following: Age.INFANT",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "TargetSim's age is Age.YOUNGADULT, must be one of the following: Age.TODDLER",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " does not currently have any careers and a career is needed for this test: <class 'sims4.tuning.instances.career_Adult_Culinary'>/frozenset():TunedInterval(lower_bound=3, upper_bound=11).",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed state check: object_tvSurfaceMED_01.TVChannel != Channel_Off (current value: Channel_Off)",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed state check: object_tvSurfaceMED_01.MovieChannel != TV_Movies_Off (current value: TV_Movies_Off)",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Not currently on a restaurant lot.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed on active lot test",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed state check: object_bedSingleFC_01.upgrade_Bed_Massage_Controls_Energy_Gain == upgrade_Bed_Massage_Controls_Energy_Gain_Partial (current value: upgrade_Bed_Massage_Controls_Energy_Gain_NotStarted)",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed state check: object_bedSingleFC_01.upgrade_Bed_Mattres_Firmness == upgrade_Bed_Mattress_Firmness_Partial (current value: upgrade_Bed_Mattress_Firmness_NotStarted)",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed stat check: object_trashcan_Indoor_TopCapacity.<class 'sims4.tuning.instances.statistic_Object_Trash-Capacity'> >= 1.0 (current value: 0)",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " does not currently have any careers and a career is needed for this test: <class 'sims4.tuning.instances.career_Adult_Active_Doctor'>/frozenset():None.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "GameTest: Number of players required to be withing 2 and 2, but the actual number of players is 0.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed venue type test.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " does not currently have any careers and a career is needed for this test: <class 'sims4.tuning.instances.careers_Adult_Military'>/frozenset():TunedInterval(lower_bound=2, upper_bound=11).",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object not on required terrain tag.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Day and Time Test: Test wants it to be night but it currently is not.",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": " has buff in blacklist frozenset({buff_GlobalTemperature_Freezing})",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed state check: object_bedDoubleFC_02.upgrade_Bed_Massage_Controls_Energy_Gain == upgrade_Bed_Massage_Controls_Energy_Gain_Partial (current value: upgrade_Bed_Massage_Controls_Energy_Gain_NotStarted)",
+              "count": 1
+            },
+            {
+              "stage": "2 - After Tests",
+              "reason_template": "Object failed state check: object_bedDoubleFC_02.upgrade_Bed_Mattres_Firmness == upgrade_Bed_Mattress_Firmness_Partial (current value: upgrade_Bed_Mattress_Firmness_NotStarted)",
+              "count": 1
+            }
+          ],
+          "unlisted_rejection_rows": 0,
+          "object_status_counts": {
+            "Scored": 97
+          },
+          "unlisted_object_rows": 0,
+          "not_observed": [
+            "unenumerated_candidates",
+            "individual_failed_candidates",
+            "pre_GSI_test_details"
+          ]
+        },
+        "mixer_rejected_attempts": 0,
+        "top_n": 5,
+        "selected": {
+          "interaction_id": "894",
+          "action": {
+            "id": "13820",
+            "tuning_name": "Pickup_Outdoor",
+            "resource_kind": "interaction",
+            "name": {
+              "hash": "0x70A5A220",
+              "localization": {
+                "hash": "0x70A5A220",
+                "tokens": [
+                  {
+                    "type": "SIM",
+                    "first_name": "Nyssa",
+                    "last_name": "Landry",
+                    "full_name_key": 0,
+                    "is_female": true,
+                    "packed_pronouns": "|||||",
+                    "age_flags": 64,
+                    "name_prefix_key": 0,
+                    "name_prefix_string": ""
+                  },
+                  {
+                    "type": "OBJECT",
+                    "catalog_name_key": 1043221895,
+                    "catalog_description_key": 1822289512
+                  }
+                ]
+              },
+              "string_source": {
+                "sources": [
+                  "r0000"
+                ],
+                "status": "selected",
+                "game_version": "1.126.73.1030",
+                "language": "CHS_CN",
+                "third_party_overrides": "not_verified"
+              },
+              "text": "扶起来",
+              "status": "resolved",
+              "format_profile": "context_overlay_zh_CN_v1",
+              "template": "扶起来",
+              "fallback": "Pickup_Outdoor",
+              "source": {
+                "kind": "autonomy_candidate_at_selection",
+                "attribute": "get_name"
+              },
+              "visible": true
+            }
+          },
+          "target": {
+            "kind": "object",
+            "id": "258137921952811147",
+            "name": {
+              "hash": "0x04F918F8",
+              "localization": {
+                "hash": "0x04F918F8",
+                "tokens": [
+                  {
+                    "type": "OBJECT",
+                    "catalog_name_key": 1043221895,
+                    "catalog_description_key": 1822289512
+                  }
+                ]
+              },
+              "string_source": {
+                "sources": [
+                  "r0000"
+                ],
+                "status": "selected",
+                "game_version": "1.126.73.1030",
+                "language": "CHS_CN",
+                "third_party_overrides": "not_verified"
+              },
+              "text": "滚轮垃圾桶",
+              "status": "resolved",
+              "format_profile": "context_overlay_zh_CN_v1",
+              "template": "{0.ObjectName}",
+              "unresolved": [],
+              "fallback": "object_trashcan_outdoor",
+              "source": {
+                "kind": "runtime_object",
+                "attribute": "LocalizationHelperTuning.get_object_name"
+              }
+            },
+            "key": "object:258137921952811147",
+            "definition_id": "22051"
+          }
+        },
+        "actor": {
+          "kind": "sim",
+          "id": "896523281981505978",
+          "name": "Nyssa Landry",
+          "key": "sim:896523281981505978"
+        },
+        "interaction_event_id": "9ba4280cb22d4c65b469cad11439a0c7:interaction:896523281981505978:894",
+        "tier": "main",
+        "commit_time": {
+          "ticks": "20358639",
+          "display": "10:12:25.560 day:2 week:1"
+        },
+        "retention_gate": "queue_success",
+        "cache_origin": false,
+        "cache_evidence": "no_cached_validation_observed",
+        "execution_result": {
+          "returned_success": true,
+          "exception_type": null,
+          "meaning": "submission_result"
+        }
+      },
+      "last_observed_time": {
+        "ticks": "20358639",
+        "display": "10:12:25.560 day:2 week:1"
+      },
+      "source": "AutonomyCapture.queue_success",
+      "evidence_type": "observed_selection_and_submission",
+      "cause": null,
+      "first_observed_time": {
+        "ticks": "20358639",
+        "display": "10:12:25.560 day:2 week:1"
+      }
+    },
+    "linked_interaction": {
+      "event_id": "9ba4280cb22d4c65b469cad11439a0c7:interaction:896523281981505978:894",
+      "revision": 5,
+      "event_type": "interaction",
+      "first_observed_time": {
+        "ticks": "20358639",
+        "display": "10:12:25.560 day:2 week:1"
+      },
+      "started_time": {
+        "ticks": "20377179",
+        "display": "10:24:47.160 day:2 week:1"
+      },
+      "ended_time": {
+        "ticks": "20380499",
+        "display": "10:26:59.960 day:2 week:1"
+      },
+      "stage": "ended",
+      "outcome": "completed",
+      "observations": [
+        {
+          "id": "8119cc7d34b345f38ba4c9f5bc6cdaad",
+          "phase": "queued",
+          "source": "Interaction.on_added_to_queue",
+          "game_time": {
+            "ticks": "20358639",
+            "display": "10:12:25.560 day:2 week:1"
+          },
+          "recorded_at": "2026-09-16T07:23:10.028434+00:00"
+        },
+        {
+          "id": "6e2723f1ddf94ed4bc392652eb6c211f",
+          "phase": "started",
+          "source": "TestEvent.InteractionStart",
+          "game_time": {
+            "ticks": "20377179",
+            "display": "10:24:47.160 day:2 week:1"
+          },
+          "recorded_at": "2026-09-16T07:23:12.532200+00:00"
+        },
+        {
+          "id": "4eaae01a43d34f049583ab37fa4d9be4",
+          "phase": "exited",
+          "source": "TestEvent.InteractionExitedPipeline",
+          "game_time": {
+            "ticks": "20380499",
+            "display": "10:26:59.960 day:2 week:1"
+          },
+          "recorded_at": "2026-09-16T07:23:13.028165+00:00"
+        },
+        {
+          "id": "122c5dec5c05444a802fd3dadc69f763",
+          "phase": "exited",
+          "source": "Interaction._exited_pipeline",
+          "game_time": {
+            "ticks": "20380499",
+            "display": "10:26:59.960 day:2 week:1"
+          },
+          "recorded_at": "2026-09-16T07:23:13.028165+00:00"
+        }
+      ],
+      "entities": [
+        "sim:896523281981505978",
+        "object:258137921952811147"
+      ],
+      "facts": {
+        "interaction_id": "894",
+        "tuning_id": "13820",
+        "tuning_name": "Pickup_Outdoor",
+        "name": {
+          "hash": "0x70A5A220",
+          "localization": {
+            "hash": "0x70A5A220",
+            "tokens": [
+              {
+                "type": "SIM",
+                "first_name": "Nyssa",
+                "last_name": "Landry",
+                "full_name_key": 0,
+                "is_female": true,
+                "packed_pronouns": "|||||",
+                "age_flags": 64,
+                "name_prefix_key": 0,
+                "name_prefix_string": ""
+              },
+              {
+                "type": "OBJECT",
+                "catalog_name_key": 1043221895,
+                "catalog_description_key": 1822289512
+              }
+            ]
+          },
+          "string_source": {
+            "sources": [
+              "r0000"
+            ],
+            "status": "selected",
+            "game_version": "1.126.73.1030",
+            "language": "CHS_CN",
+            "third_party_overrides": "not_verified"
+          },
+          "text": "扶起来",
+          "status": "resolved",
+          "format_profile": "context_overlay_zh_CN_v1",
+          "template": "扶起来",
+          "fallback": "Pickup_Outdoor",
+          "source": {
+            "kind": "runtime_interaction",
+            "attribute": "get_name"
+          },
+          "visible": true
+        },
+        "visible": true,
+        "actor": {
+          "kind": "sim",
+          "id": "896523281981505978",
+          "name": "Nyssa Landry",
+          "key": "sim:896523281981505978"
+        },
+        "target": {
+          "kind": "object",
+          "id": "258137921952811147",
+          "name": {
+            "hash": "0x04F918F8",
+            "localization": {
+              "hash": "0x04F918F8",
+              "tokens": [
+                {
+                  "type": "OBJECT",
+                  "catalog_name_key": 1043221895,
+                  "catalog_description_key": 1822289512
+                }
+              ]
+            },
+            "string_source": {
+              "sources": [
+                "r0000"
+              ],
+              "status": "selected",
+              "game_version": "1.126.73.1030",
+              "language": "CHS_CN",
+              "third_party_overrides": "not_verified"
+            },
+            "text": "滚轮垃圾桶",
+            "status": "resolved",
+            "format_profile": "context_overlay_zh_CN_v1",
+            "template": "{0.ObjectName}",
+            "unresolved": [],
+            "fallback": "object_trashcan_outdoor",
+            "source": {
+              "kind": "runtime_object",
+              "attribute": "LocalizationHelperTuning.get_object_name"
+            }
+          },
+          "key": "object:258137921952811147",
+          "definition_id": "22051"
+        },
+        "participants": [
+          {
+            "kind": "sim",
+            "id": "896523281981505978",
+            "name": "Nyssa Landry",
+            "key": "sim:896523281981505978"
+          },
+          {
+            "kind": "object",
+            "id": "258137921952811147",
+            "name": {
+              "hash": "0x04F918F8",
+              "localization": {
+                "hash": "0x04F918F8",
+                "tokens": [
+                  {
+                    "type": "OBJECT",
+                    "catalog_name_key": 1043221895,
+                    "catalog_description_key": 1822289512
+                  }
+                ]
+              },
+              "string_source": {
+                "sources": [
+                  "r0000"
+                ],
+                "status": "selected",
+                "game_version": "1.126.73.1030",
+                "language": "CHS_CN",
+                "third_party_overrides": "not_verified"
+              },
+              "text": "滚轮垃圾桶",
+              "status": "resolved",
+              "format_profile": "context_overlay_zh_CN_v1",
+              "template": "{0.ObjectName}",
+              "unresolved": [],
+              "fallback": "object_trashcan_outdoor",
+              "source": {
+                "kind": "runtime_object",
+                "attribute": "LocalizationHelperTuning.get_object_name"
+              }
+            },
+            "key": "object:258137921952811147",
+            "definition_id": "22051"
+          }
+        ],
+        "roles": [
+          {
+            "entity_key": "sim:896523281981505978",
+            "role": "actor",
+            "basis": "interaction.sim"
+          },
+          {
+            "entity_key": "object:258137921952811147",
+            "role": "target",
+            "basis": "interaction.target"
+          }
+        ],
+        "outcome_result": "SUCCESS",
+        "classification": "gameplay_or_unclassified",
+        "target_scope": "in_scope",
+        "tier": "main",
+        "is_super": true,
+        "immediate": false,
+        "trigger": {
+          "name": "AUTONOMY",
+          "value": 1
+        },
+        "finishing_type": "NATURAL",
+        "pipeline_progress": "EXITED",
+        "parent_interaction_id": null,
+        "parent_actor_id": null,
+        "parent_basis": null,
+        "decision_event_id": "9ba4280cb22d4c65b469cad11439a0c7:autonomy:decision:829",
+        "decision_coverage": "exact_selected_instance"
+      },
+      "participants": [
+        {
+          "kind": "sim",
+          "id": "896523281981505978",
+          "name": "Nyssa Landry",
+          "key": "sim:896523281981505978"
+        },
+        {
+          "kind": "object",
+          "id": "258137921952811147",
+          "name": {
+            "hash": "0x04F918F8",
+            "localization": {
+              "hash": "0x04F918F8",
+              "tokens": [
+                {
+                  "type": "OBJECT",
+                  "catalog_name_key": 1043221895,
+                  "catalog_description_key": 1822289512
+                }
+              ]
+            },
+            "string_source": {
+              "sources": [
+                "r0000"
+              ],
+              "status": "selected",
+              "game_version": "1.126.73.1030",
+              "language": "CHS_CN",
+              "third_party_overrides": "not_verified"
+            },
+            "text": "滚轮垃圾桶",
+            "status": "resolved",
+            "format_profile": "context_overlay_zh_CN_v1",
+            "template": "{0.ObjectName}",
+            "unresolved": [],
+            "fallback": "object_trashcan_outdoor",
+            "source": {
+              "kind": "runtime_object",
+              "attribute": "LocalizationHelperTuning.get_object_name"
+            }
+          },
+          "key": "object:258137921952811147",
+          "definition_id": "22051"
+        }
+      ],
+      "roles": [
+        {
+          "entity_key": "sim:896523281981505978",
+          "role": "actor",
+          "basis": "interaction.sim"
+        },
+        {
+          "entity_key": "object:258137921952811147",
+          "role": "target",
+          "basis": "interaction.target"
+        }
+      ],
+      "tier": "main",
+      "last_observed_time": {
+        "ticks": "20380499",
+        "display": "10:26:59.960 day:2 week:1"
+      }
+    }
+  }
+}

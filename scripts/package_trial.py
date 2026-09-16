@@ -21,6 +21,10 @@ def main():
     folder = "ContextOverlay-" + version + "-Windows"
     output = ROOT / "dist" / (folder + ".zip")
     files = ["Install.cmd", "scripts/install.ps1", "dist/ContextOverlay.ts4script",
+             "docs/autonomy-capture.md", "docs/autonomy-capture-plan.md",
+             "docs/validation/2026-09-16-autonomy-implementation.md",
+             "docs/validation/2026-09-16-autonomy-implementation.json",
+             "docs/validation/2026-09-16-autonomy-selection-probes.json",
              "dist/build-manifest.json", "docs/install.md", "docs/mod-integration.md",
              "docs/inspector-manual-test.md", "docs/runtime-usage.md", "docs/semanticizer.md",
              "docs/validation/2026-09-15-semantic-resolution.md",
@@ -34,6 +38,12 @@ def main():
              "docs/validation/2026-09-15-nearby-entities.json",
              "docs/resource-semantics.md", "docs/validation/2026-09-15-resource-semantics.md",
              "docs/validation/2026-09-15-resource-semantics.json",
+             "docs/validation/2026-09-16-semantic-supplements.md",
+             "docs/validation/2026-09-16-semantic-supplements.json",
+             "docs/validation/2026-09-16-semantic-supplements-first-live.md",
+             "docs/validation/2026-09-16-semantic-supplements-first-live.json",
+             "docs/validation/2026-09-16-semantic-parameter-fixes.md",
+             "docs/validation/2026-09-16-semantic-parameter-fixes.json",
              "examples/mod_consumer.py"]
     files.extend(path.relative_to(ROOT).as_posix() for path in sorted((ROOT / "sdk").rglob("*"))
                  if path.is_file() and path.suffix in (".py", ".json", ".md"))

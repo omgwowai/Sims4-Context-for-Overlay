@@ -2,7 +2,7 @@
 
 from context_overlay.history import HistoryError
 from context_overlay.model import copy_data
-from context_overlay.semanticizer import FIELD_NAMES, STATUS_NAMES, display, explain_event
+from context_overlay.semanticizer import FIELD_NAMES, STATUS_NAMES, display, explain_event, detail_text
 from context_overlay.event_sources import LABELS
 
 
@@ -211,8 +211,10 @@ class InspectorSession:
             rows.append(row("下一页", "", lambda: self.field_page(name, offset + PAGE_SIZE)))
         for label, item in entries[offset:offset + PAGE_SIZE]:
             text = display(item)
+            description_text = detail_text(item)
+            full_text = text + ("\n\n" + description_text if description_text else "")
             rows.append(row(short(label + " · " + text, 110), short(text, 180),
-                            lambda label=label, text=text: self.text_page(title + " · " + label, text, lambda: self.field_page(name, offset))))
+                            lambda label=label, text=full_text: self.text_page(title + " · " + label, text, lambda: self.field_page(name, offset))))
         description = "快照时间：{}\n共 {} 项；第 {} 页。数值沿用游戏内部单位，未转换为百分比。".format(
             game_time(self.packet["read_finished"]), len(entries), offset // PAGE_SIZE + 1)
         if not entries:
@@ -228,7 +230,15 @@ class InspectorSession:
         self.show(title, text[offset:offset + TEXT_PAGE_SIZE] or "无", rows, text_only=True)
 
     def event_details(self, event, back):
-        text = explain_event(event)["text"]
+        explanation = explain_event(event)
+        text = explanation["text"]
+        if explanation.get("decision_details"):
+            text += "\n\n" + explanation["decision_details"]
+        if event.get("facts", {}).get("decision_event_id"):
+            text += "\n\n决策事件 ID：" + event["facts"]["decision_event_id"]
+        descriptions = detail_text(event)
+        if descriptions:
+            text += "\n\n" + descriptions
         text += "\n\n首次观测：{}\n开始：{}\n结束：{}\n最近观测：{}".format(
             game_time(event.get("first_observed_time")), game_time(event.get("started_time")),
             game_time(event.get("ended_time")), game_time(event.get("last_observed_time")))

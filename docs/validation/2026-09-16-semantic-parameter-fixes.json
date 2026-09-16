@@ -1,0 +1,188 @@
+{
+  "date": "2026-09-16",
+  "module_version": "0.6.0",
+  "api_version": "1.1.0",
+  "sdk_version": "1.1.0",
+  "schema_version": "1",
+  "validation_scope": "offline_tests_and_recorded_input_replay_not_installed_or_game_validated",
+  "changes": [
+    "Observed Buff owner binding for unbound token-zero Sim fields; keep original proto snapshot.",
+    "Exact interaction UI record fallback when generic name fails; preserve original failed name.",
+    "Preserve no_verified_name_accessor during offline reinterpretation."
+  ],
+  "tests": {
+    "interpreter": "CPython 3.7.9",
+    "passed": 191,
+    "failed": 0,
+    "new_parameter_fix_tests": 10,
+    "seconds": 3.559,
+    "command": "python -X utf8 -m unittest discover -s tests -q",
+    "git_diff_check": "passed"
+  },
+  "input_replay": {
+    "method": "Counterfactual input replay: Buff owner ID from event subject/context target; Sim token from the same recorded buff_name factory. Calls new EAAdapter.resource in two modes: JSON-safe token construction (statuses), and installed-game bytecode helpers with actual game protobuf (game_protobuf_statuses). Not a new live observation or a modification to historical records.",
+    "source_run": "ee40ccd808274335a1abb012e5affeac",
+    "inputs": [
+      {
+        "file": "context-81f99e7032fc4181958f0def1dd72c3f.json",
+        "sha256": "929cdbbea1515424a190821cffa3f3e9b6a842d8a2e745ff43503548d6cfc3c5"
+      },
+      {
+        "file": "journal.jsonl",
+        "sha256": "49ead66299651ba615bcc4a2125580e91ed3ee62b5ea012b5c07d4d6a6aa67fe"
+      }
+    ],
+    "game_localization_bytecode_sha256": "cae3f5dbf1d053d475df51b5e0ba74ec39ddb928236f0cf689fe8a6ee215af7b",
+    "input_hashes_unchanged": true,
+    "buff_cases": 92,
+    "statuses": {
+      "resolved": 92
+    },
+    "game_protobuf_statuses": {
+      "resolved": 91,
+      "unresolved_tokens": 1
+    },
+    "game_protobuf_limitations": "One recorded Chinese name cannot be assigned through the game pure-Python protobuf setter outside the game. The unchanged JSON-safe token replay and Unicode regression test cover that name; native game capture still needs a new run.",
+    "unique_buff_ids": 16,
+    "skipped": [],
+    "context_cases": 2
+  },
+  "context_examples": [
+    {
+      "path": "context-81f99e7032fc4181958f0def1dd72c3f.json.snapshot.buffs.value[11].description",
+      "resource_id": "451595",
+      "owner_id": "330195627890573754",
+      "owner_evidence_ref": "context-81f99e7032fc4181958f0def1dd72c3f.json.snapshot.buffs.value[11].name.localization.tokens[0]",
+      "before": "〈未解析：0.SimFirstName〉如鱼得水！因为〈未解析：M0.他〉〈未解析：F0.她〉在做自己喜欢的事情，因此〈未解析：M0.他〉〈未解析：F0.她〉能从中获得更多乐趣！",
+      "after": "Nyssa如鱼得水！因为她在做自己喜欢的事情，因此她能从中获得更多乐趣！",
+      "status": "resolved",
+      "source": {
+        "token_binding": {
+          "basis": "buff_owner_at_read",
+          "owner_id": "330195627890573754",
+          "token_index": 0,
+          "unbound_localization": {
+            "hash": "0x306B6CBA",
+            "tokens": []
+          }
+        },
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "game_protobuf_status": "resolved",
+      "game_protobuf_error": null
+    },
+    {
+      "path": "context-81f99e7032fc4181958f0def1dd72c3f.json.snapshot.buffs.value[49].description",
+      "resource_id": "254477",
+      "owner_id": "330195627890573754",
+      "owner_evidence_ref": "context-81f99e7032fc4181958f0def1dd72c3f.json.snapshot.buffs.value[49].name.localization.tokens[0]",
+      "before": "一点点灰尘给〈未解析：0.SimFirstName〉的家增添了一抹舒适的烟火气。不会太干净也不会太脏乱，刚刚好。这种自然温馨的环境有助于模拟市民们彼此熟悉、发展感情、一起玩耍和享受社交。",
+      "after": "一点点灰尘给Nyssa的家增添了一抹舒适的烟火气。不会太干净也不会太脏乱，刚刚好。这种自然温馨的环境有助于模拟市民们彼此熟悉、发展感情、一起玩耍和享受社交。",
+      "status": "resolved",
+      "source": {
+        "token_binding": {
+          "basis": "buff_owner_at_read",
+          "owner_id": "330195627890573754",
+          "token_index": 0,
+          "unbound_localization": {
+            "hash": "0x98032501",
+            "tokens": []
+          }
+        },
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "game_protobuf_status": "resolved",
+      "game_protobuf_error": null
+    }
+  ],
+  "game_protobuf_limit_cases": [
+    {
+      "path": "journal.jsonl.history.events[5338].after.description",
+      "resource_id": "254477",
+      "owner_id": "258137921953180264",
+      "owner_evidence_ref": "journal.jsonl.history.events[5338].after.name.localization.tokens[0]",
+      "before": "一点点灰尘给〈未解析：0.SimFirstName〉的家增添了一抹舒适的烟火气。不会太干净也不会太脏乱，刚刚好。这种自然温馨的环境有助于模拟市民们彼此熟悉、发展感情、一起玩耍和享受社交。",
+      "after": "一点点灰尘给塞雷娜的家增添了一抹舒适的烟火气。不会太干净也不会太脏乱，刚刚好。这种自然温馨的环境有助于模拟市民们彼此熟悉、发展感情、一起玩耍和享受社交。",
+      "status": "resolved",
+      "source": {
+        "token_binding": {
+          "basis": "buff_owner_at_read",
+          "owner_id": "258137921953180264",
+          "token_index": 0,
+          "unbound_localization": {
+            "hash": "0x98032501",
+            "tokens": []
+          }
+        },
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "game_protobuf_status": "unresolved_tokens",
+      "game_protobuf_error": "'latin-1' codec can't encode characters in position 0-2: ordinal not in range(256)"
+    }
+  ],
+  "replay_artifacts": {
+    "script": ".validation/verify_parameter_repairs.py",
+    "results": ".validation/semantic-parameter-replay.json",
+    "results_sha256": "9c6a76359bea5e37c383992d1ab344c54ed1b2b948d4045ae840b3efb94dbd04"
+  },
+  "historical_reinterpretation": {
+    "occurrences_before": {
+      "resolved": 6449,
+      "no_display_name": 5812,
+      "rule_resolved": 192,
+      "not_present": 3391,
+      "unmapped": 158,
+      "empty_display_name": 107,
+      "unresolved_tokens": 313
+    },
+    "occurrences_after": {
+      "resolved": 6449,
+      "no_display_name": 5812,
+      "rule_resolved": 192,
+      "not_present": 3391,
+      "unmapped": 158,
+      "empty_display_name": 107,
+      "unresolved_tokens": 313
+    },
+    "errors": [],
+    "no_verified_name_accessor_records_preserved": 130,
+    "old_missing_description_tokens_rebound": false
+  },
+  "build": {
+    "package": "dist/ContextOverlay.ts4script",
+    "package_sha256": "c927fd8fe63e47374da550358f6ff0ca6f22e3c2a03157f37b00da4e2992b5d3",
+    "source_files": 22,
+    "info": {
+      "module_version": "0.6.0",
+      "public_api_version": "1.1.0",
+      "build_game_version": "1.126.73.1030",
+      "game_version_source": "Game/Bin/Default.ini at build time",
+      "game_bytecode_magic": "420d0d0a",
+      "ea_reference_project": "sims4-python",
+      "ea_reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+      "source_sha256": "55aa46fe28e8c50738131482fa48db2ef691f4eb4ae7c278e6ca4666b0b12e7b",
+      "strings_sha256": "b1b38946c57b8f4c23cea7b2cff74517689e92db0a3ad53f95b5bcddcf7c5c53",
+      "string_sources_sha256": "c3ed9d9e1448f30b76306ff6afeb06bef8e51ce2be2c25a59f662d3365dcde01"
+    },
+    "trial_archive": "dist/ContextOverlay-0.6.0-Windows.zip",
+    "sdk_archive": "dist/ContextOverlay-SDK-1.1.0.zip"
+  },
+  "installation": {
+    "new_build_installed": false,
+    "installed_package_sha256": "54836702f2068abf80e230ec655dc6586c97a0668b378db254ad404ab9aac058",
+    "installed_package_unchanged": true
+  },
+  "limitations": [
+    "Chat UI names were not captured in the old run; real improvement count requires another game run.",
+    "Buff-linked mood types do not carry active intensity; 28 old cases are not filled from current mood.",
+    "Six object names lack catalog/custom fields and remain unresolved.",
+    "Game protobuf Unicode setter behavior outside the game differs from live capture; one Chinese-name case needs live verification.",
+    "No game launch, installation, UI mutation, frame-rate measurement or visual validation in this round."
+  ]
+}

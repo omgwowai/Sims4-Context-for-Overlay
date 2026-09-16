@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from context_overlay import VERSION
-from context_overlay.localization import Localizer
+from context_overlay.localization import Localizer, gap_category
 from context_overlay.name_catalog import NameCatalog
 from context_overlay.storage import replay
 
@@ -48,7 +48,7 @@ def label_pairs(before, after, path=""):
 def audit(directories, catalog):
     counts_before, counts_after = Counter(), Counter()
     unique, changes, sources, errors = {}, {}, [], []
-    gaps, expressions, references = Counter(), Counter(), {}
+    gaps, expressions, references, categories = Counter(), Counter(), {}, Counter()
     for directory in directories:
         journal = directory / "journal.jsonl"
         loaded = replay(journal, include_observations=False)
@@ -67,6 +67,7 @@ def audit(directories, catalog):
                     gaps[after.get("reason", after["status"])] += 1
                 for gap in after.get("unresolved", []):
                     expressions[(gap["expression"], gap["reason"])] += 1
+                    categories[gap.get("category", gap_category(gap["reason"]))] += 1
                 # Report distinct transformations, so identical text belonging
                 # to different resources is not silently counted as one result.
                 key = (before.get("text"), before.get("hash"), before["status"],
@@ -84,6 +85,7 @@ def audit(directories, catalog):
             "gap_reasons_after": dict(gaps),
             "unresolved_expressions_after": [{"expression": key[0], "reason": key[1], "count": count}
                                               for key, count in expressions.most_common()],
+            "unresolved_expression_categories": dict(categories),
             "static_reference_fields": {role: dict(Counter(value["status"] for key, value in references.items() if key[1] == role))
                                         for role in ("name", "description", "tooltip")},
             "static_reference_method": "Distinct resource kind/id + role + attribute + index + hash seen in these logs. Templates have no invented historical tokens. These are supplementary references, not newly observed historical descriptions.",

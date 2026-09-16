@@ -1,10 +1,14 @@
 # ContextOverlay Python SDK 1.1.0
 
+提供方 0.7.0 新增 `events.autonomy_decision`：使用已有 `query_history`，设置 `fields=["autonomy.decision"]` 和 `include_internal=True`，即可查询含子行为的已提交决策。保留概率以原始完整选择池为分母；关联交互用 `payload.interaction_event_id`。详见[Autonomy 说明](../docs/autonomy-capture.md)。SDK 保持兼容，功能尚未实机验收。
+
 供下游 The Sims 4 脚本 MOD 调用 ContextOverlay **公共 API 1.x / 数据 schema 1**。最低提供方版本是 **ContextOverlay 0.5.0**。0.3.2 和 0.4.0 没有公共 API，不能直接配合这个 SDK 使用。
 
 本版已完成离线契约测试和 Python 3.7 构建检查，尚未在游戏中进行跨 MOD 接入验收。本机已有 0.6.0 安装与首局事件样本；飞书附件仍为 0.3.2。附近接口须使用声明 `context.nearby_entities` 的新构建，仅核对 MOD 版本号不足以区分。
 
 声明 `text.resource_details` 的构建还可返回资源的独立 `description`／`tooltip`，保留 hash、模板、动态参数及词表来源。现有 Client 自动透传这些可选字段；字段位置、缺失状态与示例见[资源语义目录](../docs/resource-semantics.md)。
+
+2026-09-16 构建增加 `rendered.resource_details.items`，提供去重后的可读说明及证据路径；检查每项 `basis/status` 和集合的 `truncated`，静态参考不代表历史实测。金额／时间格式使用 `context_overlay_zh_CN_v1`，未解析原因区分参数证据和语法支持。SDK 版本保持 1.1.0。
 
 ## 放到自己的 MOD 中
 

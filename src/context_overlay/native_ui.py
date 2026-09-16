@@ -203,8 +203,7 @@ class NativeInspector:
                 except Exception as exc:
                     self.error("Menu: {}: {}".format(type(exc).__name__, exc))
 
-        owner.potential_interactions = wrapped
-        self.hooks.entries.append((owner, "potential_interactions", original, wrapped, state))
+        self.hooks._install(owner, "potential_interactions", wrapped, state)
 
     def install(self):
         try:

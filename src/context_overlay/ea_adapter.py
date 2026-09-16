@@ -4,6 +4,7 @@ Game objects are resolved and copied on the simulation thread only.
 """
 
 import math
+import re
 
 from context_overlay.model import entity, field, number
 from context_overlay.profiles import OBJECT_STATES, PROFILE_VERSION, resource_name
@@ -185,6 +186,79 @@ class EAAdapter:
         inventory = getter() if getter else None
         return self.in_scope(getattr(inventory, "owner", None))
 
+    def _bind_buff_owner(self, detail, tokens):
+        """Bind only token-zero Sim fields in an otherwise unbound Buff text.
+
+        This is observed owner context, not a claim that the tuned proto already
+        contained tokens. Keep that proto's snapshot alongside the binding.
+        """
+        evidence = detail.get("localization", {})
+        gaps = detail.get("unresolved", [])
+        if (len(tokens) != 1 or detail.get("status") != "unresolved_tokens" or not gaps
+                or evidence.get("tokens") or evidence.get("error")
+                or any(gap.get("reason") != "missing_token" or not re.fullmatch(
+                    r"0\.Sim(?:FirstName|LastName|Name|FullName)|[MFmf]0\.[^{}]+", gap.get("expression", ""))
+                       for gap in gaps)):
+            return detail
+        try:
+            owner = tokens[0]
+            owner_info = getattr(owner, "sim_info", owner)
+            owner_id = getattr(owner_info, "sim_id", None)
+            if (not isinstance(owner_id, int) or isinstance(owner_id, bool) or owner_id <= 0
+                    or not callable(getattr(owner, "populate_localization_token", None))):
+                return detail
+            from sims4.localization import _create_localized_string
+            bound = self.localizer.name(_create_localized_string(int(detail["hash"], 16), owner))
+            captured = bound.get("localization", {}).get("tokens", [])
+            if len(captured) != 1 or captured[0].get("type") != "SIM" or captured[0].get("error"):
+                return detail
+            bound["source"] = {"token_binding": {"basis": "buff_owner_at_read", "owner_id": str(owner_id),
+                "token_index": 0, "unbound_localization": evidence}}
+            return bound
+        except Exception as exc:
+            detail.setdefault("source", {})["token_binding_error"] = str(exc)
+            return detail
+
+    def interaction_name(self, interaction, source_kind="runtime_interaction"):
+        """Read an action name, then its exact UI record if generic text fails."""
+        target, context = getattr(interaction, "target", None), getattr(interaction, "context", None)
+        fallback = getattr(interaction, "__name__", type(interaction).__name__)
+        name_error = None
+        try:
+            localized = interaction.get_name(target=target, context=context)
+        except Exception as exc:
+            localized, name_error = None, str(exc)
+        name = self.localizer.name(localized, fallback)
+        name["source"] = {"kind": source_kind, "attribute": "get_name"}
+        if name_error:
+            try:
+                factory = getattr(interaction, "display_name_in_queue", None) or interaction.display_name
+                tokens = interaction.get_localization_tokens(target=target, context=context)
+                name = self.localizer.name(factory(*tokens) if factory else None, fallback)
+                name["source"] = {"kind": "runtime_tuning_fallback", "attribute": "display_name_in_queue/display_name"}
+            except Exception as exc:
+                name.update(status="unmapped", reason="label_read_failed", fallback_error=str(exc))
+            name["get_name_error"] = name_error
+        if name.get("status") not in ("resolved", "raw_text"):
+            try:
+                manager = getattr(getattr(interaction, "sim", None), "ui_manager", None)
+                finder = getattr(manager, "_find_interaction", None)
+                identifier = getattr(interaction, "id", None)
+                info = finder(identifier)[0] if callable(finder) and identifier is not None else None
+                if info is not None and info.interaction_id == identifier:
+                    ref = getattr(info, "interaction_weakref", None)
+                    if ref is None or callable(ref) and ref() is interaction:
+                        candidate = self.localizer.name(info.display_name, fallback)
+                        if candidate["status"] in ("resolved", "raw_text"):
+                            candidate["source"] = {"kind": "runtime_ui_queue",
+                                "attribute": "UIManager._find_interaction.display_name", "interaction_id": str(identifier),
+                                "fallback_from": name}
+                            name = candidate
+            except Exception as exc:
+                name["source"]["ui_name_read_error"] = str(exc)
+        name["visible"] = getattr(interaction, "visible", None)
+        return name
+
     def resource(self, resource, label_attribute=None, resource_kind=None, tokens=(), intensity=None):
         if resource is None:
             return None
@@ -205,6 +279,7 @@ class EAAdapter:
             "statistic": "stat_name", "object_state": "display_name", "trait": "display_name",
             "recipe": "get_recipe_name", "interaction": "get_name", "mood": "mood_names",
             "career_track": "career_name", "career_level": "title", "aspiration": "display_name"}.get(resource_kind)
+        interaction_label = resource_kind == "interaction" and attribute == "get_name"
         try:
             localized = getattr(resource, attribute, None) if attribute else None
             if resource_kind == "mood" and localized is not None:
@@ -213,16 +288,17 @@ class EAAdapter:
                 if localized is not None and hasattr(localized, "hash") and tokens:
                     from sims4.localization import _create_localized_string
                     localized = _create_localized_string(localized.hash, *tokens)
-            elif resource_kind == "interaction" and callable(localized):
-                localized = localized(target=getattr(resource, "target", None), context=getattr(resource, "context", None))
+            elif interaction_label:
+                pass  # Shared path below also reads the actual UI queue name.
             elif callable(localized):
                 localized = localized(*tokens)
-            name = self.localizer.name(localized, tuning_name)
+            name = self.interaction_name(resource, "runtime_tuning") if interaction_label else self.localizer.name(localized, tuning_name)
             if attribute is None:
                 name.update(status="unmapped", reason="no_verified_name_accessor")
         except Exception as exc:
             name = {"text": tuning_name, "status": "unmapped", "reason": "label_read_failed", "error": str(exc)}
-        name["source"] = {"kind": "runtime_tuning", "attribute": attribute}
+        if not interaction_label or "source" not in name:
+            name["source"] = {"kind": "runtime_tuning", "attribute": attribute}
         if resource_kind == "mood":
             name["source"].update(intensity=intensity, name_basis="observed_intensity" if intensity is not None else "base_mood_name")
         name["visible"] = getattr(resource, "visible", None)
@@ -234,16 +310,31 @@ class EAAdapter:
                 if not hasattr(resource, detail_attribute):
                     continue  # A subclass may not provide this optional interface.
                 localized = getattr(resource, detail_attribute)
-                # These direct factories accept the same observed participants.
-                # Plain LocalizedString values retain their own tokens unchanged.
-                if callable(localized):
+                if resource_kind == "mood":
+                    # Mood descriptions may be client-only. Read only an
+                    # exposed base variant with a known observed intensity;
+                    # never guess the client's age/trait override selection.
+                    if type(intensity) is not int or not 0 <= intensity < len(localized):
+                        result[role] = {"text": None, "status": "unmapped", "reason": "description_variant_not_selected",
+                            "source": {"kind": "runtime_tuning", "attribute": detail_attribute, "role": role}}
+                        continue
+                    localized = localized[intensity]
+                # Explicit tokens remain authoritative. Only the known unbound
+                # Buff owner forms receive separately identified owner context.
+                detail_factory = callable(localized)
+                if detail_factory:
                     localized = localized(*tokens)
                 detail = self.localizer.name(localized)
+                if resource_kind == "buff" and role == "description" and not detail_factory:
+                    detail = self._bind_buff_owner(detail, tokens)
                 if detail.get("status") == "no_display_name":
                     detail.update(status="not_present", reason="no_localized_string_key")
             except Exception as exc:
                 detail = {"text": None, "status": "unmapped", "reason": "detail_read_failed", "error": str(exc)}
-            detail["source"] = {"kind": "runtime_tuning", "attribute": detail_attribute, "role": role}
+            detail.setdefault("source", {}).update(kind="runtime_tuning", attribute=detail_attribute, role=role)
+            if resource_kind == "mood":
+                detail["source"].update(intensity=intensity, variant_basis="base_description_at_observed_intensity",
+                                        client_overrides_evaluated=False)
             if role == "tooltip":
                 detail["source"]["condition_evaluated"] = False
             result[role] = detail
@@ -270,28 +361,7 @@ class EAAdapter:
         actor = interaction.sim
         target = interaction.target
         context = interaction.context
-        localized = None
-        name_error = None
-        try:
-            localized = interaction.get_name(target=target, context=context)
-        except Exception as exc:
-            name_error = str(exc)
-        resolved_name = self.localizer.name(localized, type(interaction).__name__)
-        resolved_name["source"] = {"kind": "runtime_interaction", "attribute": "get_name"}
-        # If a queue/name wrapper fails, use the same tuned token provider as EA,
-        # not assumed actor/target positions. Keep the failed read as evidence.
-        if name_error:
-            try:
-                factory = getattr(interaction, "display_name_in_queue", None) or interaction.display_name
-                tokens = interaction.get_localization_tokens(target=target, context=context)
-                resolved_name = self.localizer.name(factory(*tokens) if factory else None, type(interaction).__name__)
-                resolved_name["source"] = {"kind": "runtime_tuning_fallback", "attribute": "display_name_in_queue/display_name"}
-            except Exception as fallback_exc:
-                resolved_name["status"] = "unmapped"
-                resolved_name["reason"] = "label_read_failed"
-                resolved_name["fallback_error"] = str(fallback_exc)
-            resolved_name["get_name_error"] = name_error
-        resolved_name["visible"] = getattr(interaction, "visible", None)
+        resolved_name = self.interaction_name(interaction)
         source = context.source
         name = enum_name(source)
         is_main = not internal_interaction(interaction.guid64, type(interaction).__name__) and not isinstance(interaction, AnimationInteraction) and name not in ("POSTURE_GRAPH", "SOCIAL_ADJUSTMENT", "GET_COMFORTABLE",

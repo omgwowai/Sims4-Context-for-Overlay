@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "sdk")]
-from context_overlay import api, game_runtime, nearby
+from context_overlay import VERSION, api, game_runtime, nearby
 from context_overlay.collector import Collector
 from context_overlay.ea_adapter import EAAdapter
 from context_overlay.model import entity
@@ -274,7 +274,7 @@ class NearbyChecks(unittest.TestCase):
         before = self.runtime.recorder.status()
         packet = Client().get_nearby_entities(radius=8)
         self.assertEqual(packet["api_version"], "1.1.0")
-        self.assertEqual(packet["module_version"], "0.6.0")
+        self.assertEqual(packet["module_version"], VERSION)
         self.assertEqual(packet["status"], "complete")
         packet["results"][0]["spatial"]["position"]["value"]["x"] = 900
         self.assertEqual(other.position.x, 2)

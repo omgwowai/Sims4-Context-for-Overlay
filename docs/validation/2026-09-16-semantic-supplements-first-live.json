@@ -1,0 +1,3620 @@
+{
+  "date": "2026-09-16",
+  "scope": "user_run_live_data_analysis_without_runtime_changes_or_game_control",
+  "module_version": "0.6.0",
+  "session_id": "ee40ccd808274335a1abb012e5affeac",
+  "run_directory": "C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\runs\\ee40ccd808274335a1abb012e5affeac",
+  "package_sha256": "54836702f2068abf80e230ec655dc6586c97a0668b378db254ad404ab9aac058",
+  "installed_package_matches": true,
+  "source_files_match_build": true,
+  "provenance": {
+    "build_game_version": "1.126.73.1030",
+    "ea_reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+    "ea_reference_project": "sims4-python",
+    "game_bytecode_magic": "420d0d0a",
+    "game_version_source": "Game/Bin/Default.ini at build time",
+    "module_version": "0.6.0",
+    "public_api_version": "1.1.0",
+    "source_sha256": "58b5658523465b5e1844bfe25fd4ff7d63f995f5766f4427bd8f9a17c603e4f0",
+    "string_sources_sha256": "c3ed9d9e1448f30b76306ff6afeb06bef8e51ce2be2c25a59f662d3365dcde01",
+    "strings_sha256": "b1b38946c57b8f4c23cea7b2cff74517689e92db0a3ad53f95b5bcddcf7c5c53",
+    "runtime_python": "3.7.0 (default, Apr 10 2025, 19:41:47) [MSC v.1916 64 bit (AMD64)]",
+    "other_mods": "not_enumerated"
+  },
+  "input_files": [
+    {
+      "file": "context-81f99e7032fc4181958f0def1dd72c3f.json",
+      "sha256": "929cdbbea1515424a190821cffa3f3e9b6a842d8a2e745ff43503548d6cfc3c5",
+      "bytes": 302801
+    },
+    {
+      "file": "journal.jsonl",
+      "sha256": "49ead66299651ba615bcc4a2125580e91ed3ee62b5ea012b5c07d4d6a6aa67fe",
+      "bytes": 41892696
+    }
+  ],
+  "original_inputs_unchanged": true,
+  "time": {
+    "started_at": "2026-09-16T03:21:33.039027+00:00",
+    "ended_at": "2026-09-16T03:29:07.618132+00:00",
+    "start_game_time": {
+      "ticks": "20072281",
+      "display": "07:01:31.240 day:2 week:1"
+    },
+    "end_game_time": {
+      "ticks": "22231272",
+      "display": "07:00:50.880 day:3 week:1"
+    }
+  },
+  "integrity": {
+    "session_id": "ee40ccd808274335a1abb012e5affeac",
+    "integrity_passed": true,
+    "errors": [],
+    "event_count": 6713,
+    "observation_count": 400,
+    "interaction_tiers": {
+      "internal": 888,
+      "main": 1296
+    },
+    "interaction_outcomes": {
+      "cancelled": 1005,
+      "completed": 1130,
+      "failed": 22,
+      "unknown": 27
+    },
+    "trigger_sources": {
+      "POSTURE_GRAPH": 498,
+      "AUTONOMY": 1182,
+      "SCRIPT": 243,
+      "CARRY_CANCEL_AOP": 40,
+      "BODY_CANCEL_AOP": 62,
+      "REACTION": 91,
+      "SOCIAL_ADJUSTMENT": 68
+    },
+    "changed_fields": {
+      "object_states.15188": 6,
+      "buffs": 2346,
+      "object_states.28123": 16,
+      "relationship.bits": 218,
+      "object_states.15303": 3,
+      "object_states.15319": 2,
+      "object_states.15075": 3,
+      "object_states.15079": 1
+    },
+    "exports": [
+      {
+        "file": "context-81f99e7032fc4181958f0def1dd72c3f.json",
+        "status": "complete",
+        "target": {
+          "kind": "sim",
+          "id": "330195627890573754",
+          "name": "Nyssa Landry",
+          "key": "sim:330195627890573754"
+        },
+        "history_events": 50,
+        "fields": [
+          "identity",
+          "location",
+          "time",
+          "interactions",
+          "needs",
+          "buffs",
+          "relationships",
+          "object_states"
+        ]
+      }
+    ],
+    "validation_markers": [],
+    "note": "Integrity and observed coverage only; game scenarios and independent state checks still require recorded acceptance evidence."
+  },
+  "replay_complete": true,
+  "journal_records": 13234,
+  "event_revision_records": 12834,
+  "config": {
+    "recorder_enabled": true,
+    "collector_enabled": true,
+    "semanticizer_enabled": true,
+    "max_entities": 4096,
+    "max_interactions_per_sim": 128,
+    "max_buffs_per_sim": 256,
+    "history_capacity": 200000,
+    "history_memory_mb": 1536,
+    "history_query_limit": 8,
+    "history_query_max_refs": 100000,
+    "history_query_memory_mb": 256,
+    "history_query_ttl_seconds": 120,
+    "writer_capacity": 2048,
+    "writer_memory_mb": 32,
+    "run_output_mb": 2048,
+    "disk_reserve_mb": 1024,
+    "development_driver": false,
+    "inspector_enabled": true
+  },
+  "event_types": {
+    "game_event": 1934,
+    "state_change": 2595,
+    "interaction": 2184
+  },
+  "game_event_categories": {
+    "inventory.transfer": 42,
+    "statistic.direct": 1263,
+    "crafting.completed": 9,
+    "buff.refreshed": 284,
+    "aspiration.goal_completed": 7,
+    "aspiration.stage_completed": 1,
+    "mood.changed": 81,
+    "broadcast.effect": 115,
+    "reaction.started": 79,
+    "relationship.knowledge": 3,
+    "payment.completed": 5,
+    "trait.added": 44,
+    "relationship.sentiment": 1
+  },
+  "observation_categories": {
+    "session_start": 1,
+    "scope_entry": 192,
+    "scope_exit": 46,
+    "relationship_bit_duplicate": 160,
+    "session_end": 1
+  },
+  "end_status": {
+    "state": "recording",
+    "error": null,
+    "session_id": "ee40ccd808274335a1abb012e5affeac",
+    "started_at": "2026-09-16T03:21:33.033028+00:00",
+    "retained_events": 6713,
+    "evicted_events": 0,
+    "persistence": {
+      "state": "ready",
+      "accepted_sequence": 13233,
+      "durable_sequence": 13233,
+      "queued": 0,
+      "inflight": false,
+      "rejected_retained": false,
+      "pending_bytes": 0,
+      "queue_budget_bytes": 33554432,
+      "accepted_output_bytes": 42177583,
+      "written_output_bytes": 42177583,
+      "run_output_budget_bytes": 2147483648,
+      "disk_reserve_bytes": 1073741824,
+      "error": null,
+      "exports": {
+        "81f99e7032fc4181958f0def1dd72c3f": "written"
+      }
+    },
+    "history_index": {
+      "entities": 111,
+      "event_references": 8675,
+      "estimated_memory_bytes": 115182746,
+      "memory_budget_bytes": 1610612736,
+      "event_capacity": 200000,
+      "snapshots": 0,
+      "retention_policy": "fifo_first_accepted",
+      "evicted_events": 0,
+      "last_evicted_time": null,
+      "snapshot_references": 0,
+      "snapshot_charged_bytes": 0,
+      "snapshot_memory_budget_bytes": 268435456
+    }
+  },
+  "coverage_states": {
+    "installed": 76
+  },
+  "suppressed_statistics": {
+    "commodity_IslanderCulture_TimeSinceBroken": 39,
+    "commodity_SimInfo_TimeSinceLastSocial": 1341,
+    "commodity_IslanderCulture_TimeSinceCooked": 48,
+    "commodity_SimInfo_TimeSinceLastSlept": 1730
+  },
+  "runtime_log_lines": [
+    "2026-09-16T03:19:55.486523+00:00 BOOTSTRAP",
+    "2026-09-16T03:19:55.490522+00:00 LOADED version=0.6.0 python=3.7.0 (default, Apr 10 2025, 19:41:47) [MSC v.1916 64 bit (AMD64)]",
+    "2026-09-16T03:21:33.063629+00:00 INSPECTOR READY: entity menu and native picker windows installed",
+    "2026-09-16T03:21:33.063629+00:00 RUN STARTED ee40ccd808274335a1abb012e5affeac in C:\\Users\\ZixuanMin\\Documents\\Electronic Arts\\The Sims 4\\ContextOverlay\\runs\\ee40ccd808274335a1abb012e5affeac",
+    "2026-09-16T03:29:07.625141+00:00 RUN STOPPED ee40ccd808274335a1abb012e5affeac: zone_teardown"
+  ],
+  "new_standard_game_exception_or_crash_files": [],
+  "text_count_method": "Journal latest event revisions plus context export; skip rendered, semantic_view, raw_name and localization evidence. Occurrences may repeat resources and facts. Unique description identity: resource kind/id/tuning name + hash + actual text + status.",
+  "runtime_text_statuses": {
+    "name": {
+      "resolved": 5717,
+      "no_display_name": 5806,
+      "rule_resolved": 192,
+      "unmapped": 130,
+      "empty_display_name": 107,
+      "unresolved_tokens": 221
+    },
+    "description": {
+      "not_present": 3391,
+      "resolved": 631,
+      "unresolved_tokens": 92,
+      "unmapped": 28
+    },
+    "other": {
+      "resolved": 101,
+      "no_display_name": 6
+    }
+  },
+  "unique_runtime_text_statuses": {
+    "name": {
+      "resolved": 452,
+      "unmapped": 25,
+      "no_display_name": 359,
+      "unresolved_tokens": 6,
+      "rule_resolved": 10,
+      "empty_display_name": 3
+    },
+    "description": {
+      "resolved": 109,
+      "not_present": 209,
+      "unresolved_tokens": 16,
+      "unmapped": 3
+    },
+    "other": {
+      "resolved": 7,
+      "no_display_name": 1
+    }
+  },
+  "exports": [
+    {
+      "file": "context-81f99e7032fc4181958f0def1dd72c3f.json",
+      "status": "complete",
+      "details": 20,
+      "detail_statuses": {
+        "unresolved_tokens": 2,
+        "resolved": 18
+      },
+      "truncated": false,
+      "evidence_paths_valid": true,
+      "fields": {
+        "identity": "available",
+        "location": "available",
+        "time": "available",
+        "interactions": "available",
+        "needs": "available",
+        "buffs": "available",
+        "relationships": "available",
+        "object_states": "not_applicable"
+      }
+    }
+  ],
+  "context_summary": {
+    "buffs": 57,
+    "visible_buffs": 4,
+    "relationship_targets": 3,
+    "history_events": 50
+  },
+  "unresolved_texts": {
+    "total": 313,
+    "chat_names_wrong_token_type": 215,
+    "buff_descriptions_missing_sim_tokens": 92,
+    "object_names_missing_catalog_or_custom_name": 6
+  },
+  "unresolved_expression_categories": {
+    "parameter_evidence": 498
+  },
+  "unresolved_expressions": [
+    {
+      "expression": "0.String",
+      "reason": "token_type_mismatch",
+      "count": 215
+    },
+    {
+      "expression": "0.SimFirstName",
+      "reason": "missing_token",
+      "count": 107
+    },
+    {
+      "expression": "M0.他",
+      "reason": "missing_token",
+      "count": 85
+    },
+    {
+      "expression": "F0.她",
+      "reason": "missing_token",
+      "count": 85
+    },
+    {
+      "expression": "0.ObjectName",
+      "reason": "missing_token_field",
+      "count": 6
+    }
+  ],
+  "unselected_mood_description_intensity_inputs": {
+    "None": 28
+  },
+  "gap_examples": [
+    {
+      "role": "name",
+      "resource_kind": "interaction",
+      "resource_id": "27173",
+      "tuning_name": "Idle_Chatting_STC",
+      "hash": "0x98041977",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "和〈未解析：0.String〉闲聊",
+      "template": "和{0.String}闲聊",
+      "tokens": [
+        {
+          "type": "SIM",
+          "first_name": "Eddie",
+          "last_name": "Landry",
+          "full_name_key": 0,
+          "is_female": false,
+          "packed_pronouns": "|||||",
+          "age_flags": 32,
+          "name_prefix_key": 0,
+          "name_prefix_string": ""
+        },
+        {
+          "type": "INVALID"
+        }
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "get_name"
+      },
+      "unresolved": [
+        {
+          "expression": "0.String",
+          "reason": "token_type_mismatch",
+          "category": "parameter_evidence",
+          "token_index": 0,
+          "actual_type": "SIM",
+          "expected_types": [
+            "RAW_TEXT",
+            "STRING"
+          ]
+        }
+      ],
+      "error": null,
+      "count": 101,
+      "evidence": "journal.jsonl.history.events[476].cause.source_tuning.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "interaction",
+      "resource_id": "303686",
+      "tuning_name": "idle_Chatting_ListenWithPhone_STC",
+      "hash": "0x98041977",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "和〈未解析：0.String〉闲聊",
+      "template": "和{0.String}闲聊",
+      "tokens": [
+        {
+          "type": "SIM",
+          "first_name": "Eddie",
+          "last_name": "Landry",
+          "full_name_key": 0,
+          "is_female": false,
+          "packed_pronouns": "|||||",
+          "age_flags": 32,
+          "name_prefix_key": 0,
+          "name_prefix_string": ""
+        },
+        {
+          "type": "INVALID"
+        }
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "get_name"
+      },
+      "unresolved": [
+        {
+          "expression": "0.String",
+          "reason": "token_type_mismatch",
+          "category": "parameter_evidence",
+          "token_index": 0,
+          "actual_type": "SIM",
+          "expected_types": [
+            "RAW_TEXT",
+            "STRING"
+          ]
+        }
+      ],
+      "error": null,
+      "count": 53,
+      "evidence": "journal.jsonl.history.events[576].cause.source_tuning.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "27173",
+      "tuning_name": "Idle_Chatting_STC",
+      "hash": "0x98041977",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "和〈未解析：0.String〉闲聊",
+      "template": "和{0.String}闲聊",
+      "tokens": [
+        {
+          "type": "SIM",
+          "first_name": "Lila",
+          "last_name": "Landry",
+          "full_name_key": 0,
+          "is_female": true,
+          "packed_pronouns": "|||||",
+          "age_flags": 16,
+          "name_prefix_key": 0,
+          "name_prefix_string": ""
+        },
+        {
+          "type": "INVALID"
+        }
+      ],
+      "source": {
+        "kind": "runtime_interaction",
+        "attribute": "get_name"
+      },
+      "unresolved": [
+        {
+          "expression": "0.String",
+          "reason": "token_type_mismatch",
+          "category": "parameter_evidence",
+          "token_index": 0,
+          "actual_type": "SIM",
+          "expected_types": [
+            "RAW_TEXT",
+            "STRING"
+          ]
+        }
+      ],
+      "error": null,
+      "count": 46,
+      "evidence": "journal.jsonl.history.events[321].facts.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "mood",
+      "resource_id": "14646",
+      "tuning_name": "Mood_Uncomfortable",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "description_variant_not_selected",
+      "text": null,
+      "template": null,
+      "tokens": null,
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description"
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 25,
+      "evidence": "journal.jsonl.history.events[596].metadata.details_after.mood.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "254477",
+      "tuning_name": "buff_Dust_State_Dusty",
+      "hash": "0x98032501",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "一点点灰尘给〈未解析：0.SimFirstName〉的家增添了一抹舒适的烟火气。不会太干净也不会太脏乱，刚刚好。这种自然温馨的环境有助于模拟市民们彼此熟悉、发展感情、一起玩耍和享受社交。",
+      "template": "一点点灰尘给{0.SimFirstName}的家增添了一抹舒适的烟火气。不会太干净也不会太脏乱，刚刚好。这种自然温馨的环境有助于模拟市民们彼此熟悉、发展感情、一起玩耍和享受社交。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 19,
+      "evidence": "journal.jsonl.history.events[4501].after.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "303686",
+      "tuning_name": "idle_Chatting_ListenWithPhone_STC",
+      "hash": "0x98041977",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "和〈未解析：0.String〉闲聊",
+      "template": "和{0.String}闲聊",
+      "tokens": [
+        {
+          "type": "SIM",
+          "first_name": "Eddie",
+          "last_name": "Landry",
+          "full_name_key": 0,
+          "is_female": false,
+          "packed_pronouns": "|||||",
+          "age_flags": 32,
+          "name_prefix_key": 0,
+          "name_prefix_string": ""
+        },
+        {
+          "type": "INVALID"
+        }
+      ],
+      "source": {
+        "kind": "runtime_interaction",
+        "attribute": "get_name"
+      },
+      "unresolved": [
+        {
+          "expression": "0.String",
+          "reason": "token_type_mismatch",
+          "category": "parameter_evidence",
+          "token_index": 0,
+          "actual_type": "SIM",
+          "expected_types": [
+            "RAW_TEXT",
+            "STRING"
+          ]
+        }
+      ],
+      "error": null,
+      "count": 15,
+      "evidence": "journal.jsonl.history.events[562].facts.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "254476",
+      "tuning_name": "buff_Dust_State_Clean",
+      "hash": "0xC4120D2F",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉觉得一尘不染的环境让〈未解析：M0.他〉〈未解析：F0.她〉充满了活力和灵感！身在井井有条的环境中会让〈未解析：0.SimFirstName〉在许多方面都变得更高效且有创造力。只要〈未解析：M0.他〉〈未解析：F0.她〉保持环境清洁，〈未解析：M0.他〉〈未解析：F0.她〉在家工作就会更加成功，还能学会新技能。",
+      "template": "{0.SimFirstName}觉得一尘不染的环境让{M0.他}{F0.她}充满了活力和灵感！身在井井有条的环境中会让{0.SimFirstName}在许多方面都变得更高效且有创造力。只要{M0.他}{F0.她}保持环境清洁，{M0.他}{F0.她}在家工作就会更加成功，还能学会新技能。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 15,
+      "evidence": "journal.jsonl.history.events[733].after.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "247583",
+      "tuning_name": "buff_Sentiment_Hurt_Sad_Primary_generic",
+      "hash": "0x4B0CE2EC",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "虽然时间可以治愈〈未解析：0.SimFirstName〉的伤痛，但现在还是很痛。",
+      "template": "虽然时间可以治愈{0.SimFirstName}的伤痛，但现在还是很痛。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 14,
+      "evidence": "journal.jsonl.history.events[555].after.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "128853",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 14,
+      "evidence": "journal.jsonl.history.events[1648].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "128857",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 12,
+      "evidence": "journal.jsonl.history.events[329].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "258394",
+      "tuning_name": "buff_SimPreference_Likes_Activities_Cooking",
+      "hash": "0x306B6CBA",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉如鱼得水！因为〈未解析：M0.他〉〈未解析：F0.她〉在做自己喜欢的事情，因此〈未解析：M0.他〉〈未解析：F0.她〉能从中获得更多乐趣！",
+      "template": "{0.SimFirstName}如鱼得水！因为{M0.他}{F0.她}在做自己喜欢的事情，因此{M0.他}{F0.她}能从中获得更多乐趣！",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 10,
+      "evidence": "journal.jsonl.history.events[1254].after.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "74254",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 10,
+      "evidence": "journal.jsonl.history.events[1421].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "128856",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 9,
+      "evidence": "journal.jsonl.history.events[296].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "129095",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 9,
+      "evidence": "journal.jsonl.history.events[427].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "128852",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 8,
+      "evidence": "journal.jsonl.history.events[1202].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "112419",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 8,
+      "evidence": "journal.jsonl.history.events[4169].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "128854",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 7,
+      "evidence": "journal.jsonl.history.events[455].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "74293",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 7,
+      "evidence": "journal.jsonl.history.events[1391].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "128858",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 7,
+      "evidence": "journal.jsonl.history.events[1830].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "128851",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 7,
+      "evidence": "journal.jsonl.history.events[2112].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "12820",
+      "tuning_name": "Buff_Motives_Hunger_Hungry",
+      "hash": "0xBA2D6E0F",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉饿了！在饥饿感加深前吃点食物吧。",
+      "template": "{0.SimFirstName}饿了！在饥饿感加深前吃点食物吧。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 6,
+      "evidence": "journal.jsonl.history.events[100].after.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "241005",
+      "tuning_name": "buff_Sentiment_Furious_Angry_Primary_generic",
+      "hash": "0xFCD612C7",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "只要看到某个人就会让模拟市民气不打一处来！只要〈未解析：0.SimFirstName〉待在辜负过自己的模拟市民身边，〈未解析：M0.他〉〈未解析：F0.她〉的愤怒就会再次被勾起。",
+      "template": "只要看到某个人就会让模拟市民气不打一处来！只要{0.SimFirstName}待在辜负过自己的模拟市民身边，{M0.他}{F0.她}的愤怒就会再次被勾起。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 6,
+      "evidence": "journal.jsonl.history.events[955].after.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "312053",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 6,
+      "evidence": "journal.jsonl.history.events[1193].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "314549",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 6,
+      "evidence": "journal.jsonl.history.events[1194].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "241020",
+      "tuning_name": "buff_Sentiment_Bitter_Tense_Primary_generic",
+      "hash": "0xEDEAC2DA",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉真的无法忍受待在自己怨恨的人身边。",
+      "template": "{0.SimFirstName}真的无法忍受待在自己怨恨的人身边。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 4,
+      "evidence": "journal.jsonl.history.events[1557].after.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "27109",
+      "tuning_name": "Buff_Motives_Bladder_HasToPee",
+      "hash": "0xF4DB48DC",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉需要上厕所！快！",
+      "template": "{0.SimFirstName}需要上厕所！快！",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 4,
+      "evidence": "journal.jsonl.history.events[2671].after.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "74334",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 4,
+      "evidence": "journal.jsonl.history.events[5907].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "28173",
+      "tuning_name": "objective_CookedSomething",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "objective_CookedSomething",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 3,
+      "evidence": "journal.jsonl.history.events[1392].payload.objective_instance.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "31708",
+      "tuning_name": "whimSet_Cooking",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "whimSet_Cooking",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 3,
+      "evidence": "journal.jsonl.history.events[1392].payload.aspiration.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "330195627899683910",
+      "tuning_name": null,
+      "hash": "0x04F918F8",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.ObjectName〉",
+      "template": "{0.ObjectName}",
+      "tokens": [
+        {
+          "type": "OBJECT",
+          "catalog_name_key": 0,
+          "catalog_description_key": 0
+        }
+      ],
+      "source": {
+        "kind": "runtime_object",
+        "attribute": "LocalizationHelperTuning.get_object_name"
+      },
+      "unresolved": [
+        {
+          "expression": "0.ObjectName",
+          "reason": "missing_token_field",
+          "category": "parameter_evidence",
+          "token_index": 0,
+          "actual_type": "OBJECT",
+          "expected_types": [
+            "SIM",
+            "OBJECT"
+          ]
+        }
+      ],
+      "error": null,
+      "count": 3,
+      "evidence": "journal.jsonl.history.events[2758].facts.target.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "452766",
+      "tuning_name": "buff_LuckSys_CraftingQuality_Bad",
+      "hash": "0x8E7A03BD",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉感觉制作过程比预想的要艰难。是〈未解析：M0.他〉〈未解析：F0.她〉出了错？还是另有原因……？",
+      "template": "{0.SimFirstName}感觉制作过程比预想的要艰难。是{M0.他}{F0.她}出了错？还是另有原因……？",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 3,
+      "evidence": "journal.jsonl.history.events[3689].after.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "330195627906893875",
+      "tuning_name": null,
+      "hash": "0x04F918F8",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.ObjectName〉",
+      "template": "{0.ObjectName}",
+      "tokens": [
+        {
+          "type": "OBJECT",
+          "catalog_name_key": 0,
+          "catalog_description_key": 0
+        }
+      ],
+      "source": {
+        "kind": "runtime_object",
+        "attribute": "LocalizationHelperTuning.get_object_name"
+      },
+      "unresolved": [
+        {
+          "expression": "0.ObjectName",
+          "reason": "missing_token_field",
+          "category": "parameter_evidence",
+          "token_index": 0,
+          "actual_type": "OBJECT",
+          "expected_types": [
+            "SIM",
+            "OBJECT"
+          ]
+        }
+      ],
+      "error": null,
+      "count": 3,
+      "evidence": "journal.jsonl.history.events[5606].facts.target.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "387880",
+      "tuning_name": "whimSet_VisibleSkillHigh",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "whimSet_VisibleSkillHigh",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 2,
+      "evidence": "journal.jsonl.history.events[80].payload.aspiration.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "mood",
+      "resource_id": "14633",
+      "tuning_name": "Mood_Bored",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "description_variant_not_selected",
+      "text": null,
+      "template": null,
+      "tokens": null,
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description"
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 2,
+      "evidence": "journal.jsonl.history.events[132].metadata.details_before.mood.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "380949",
+      "tuning_name": "buff_Tattooing_CheckOut_Confident",
+      "hash": "0x68B144A9",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉身上的纹身让〈未解析：M0.他〉〈未解析：F0.她〉充满自豪感。这些纹身就是〈未解析：M0.他〉〈未解析：F0.她〉的完美代言，而且还很好看。",
+      "template": "{0.SimFirstName}身上的纹身让{M0.他}{F0.她}充满自豪感。这些纹身就是{M0.他}{F0.她}的完美代言，而且还很好看。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 2,
+      "evidence": "journal.jsonl.history.events[2195].after.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "264204",
+      "tuning_name": "buff_SimPreference_Likes_Activities_Comedy",
+      "hash": "0x306B6CBA",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉如鱼得水！因为〈未解析：M0.他〉〈未解析：F0.她〉在做自己喜欢的事情，因此〈未解析：M0.他〉〈未解析：F0.她〉能从中获得更多乐趣！",
+      "template": "{0.SimFirstName}如鱼得水！因为{M0.他}{F0.她}在做自己喜欢的事情，因此{M0.他}{F0.她}能从中获得更多乐趣！",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 2,
+      "evidence": "journal.jsonl.history.events[2641].after.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "241007",
+      "tuning_name": "buff_Sentiment_Furious_Tense_generic",
+      "hash": "0x42373BA2",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "仅仅只是和让〈未解析：0.SimFirstName〉感到生气的人待在一起就可能令人倍感压力。想要保持礼貌没有那么容易！",
+      "template": "仅仅只是和让{0.SimFirstName}感到生气的人待在一起就可能令人倍感压力。想要保持礼貌没有那么容易！",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 2,
+      "evidence": "journal.jsonl.history.events[3684].after.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "274221",
+      "tuning_name": "buff_Sentiment_Bitter_Contagion_Happy_SiblingJealousy",
+      "hash": "0x947212D9",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉陶醉于自己的手足发出的甜蜜哭泣中，这是不是很坏？可能吧！但是妒火烧心，眼泪才可将其浇灭。",
+      "template": "{0.SimFirstName}陶醉于自己的手足发出的甜蜜哭泣中，这是不是很坏？可能吧！但是妒火烧心，眼泪才可将其浇灭。",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 2,
+      "evidence": "journal.jsonl.history.events[5002].after.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "387879",
+      "tuning_name": "objective_VisibleSkillHigh",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "objective_VisibleSkillHigh",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[80].payload.objective_instance.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "258934",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[927].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "258198",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[972].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "34442",
+      "tuning_name": "objective_PrankedSomeone",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "objective_PrankedSomeone",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[993].payload.objective_instance.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "34448",
+      "tuning_name": "whimSet_Mischief",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "whimSet_Mischief",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[993].payload.aspiration.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": "broadcaster",
+      "resource_id": "201429",
+      "tuning_name": "Broadcaster",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Broadcaster",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[2845].payload.broadcaster.resource.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "mood",
+      "resource_id": "14637",
+      "tuning_name": "Mood_Fine",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "description_variant_not_selected",
+      "text": null,
+      "template": null,
+      "tokens": null,
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description"
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[4504].metadata.details_before.mood.description"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "33172",
+      "tuning_name": "Watch_Sports",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Watch_Sports",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[4631].payload.objective_instance.name"
+    },
+    {
+      "role": "name",
+      "resource_kind": null,
+      "resource_id": "33179",
+      "tuning_name": "Watch_News",
+      "hash": null,
+      "status": "unmapped",
+      "reason": "no_verified_name_accessor",
+      "text": "Watch_News",
+      "template": null,
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": null
+      },
+      "unresolved": null,
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[6122].payload.objective_instance.name"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "182184",
+      "tuning_name": "buff_HolidayTraditions_Visible_FamilyTimeTomorrow",
+      "hash": "0xEFD34147",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "又到了一年的这个时节，〈未解析：0.SimFirstName〉兴高采烈地期待着看到家人打开他们的礼物时，容光焕发的笑脸！",
+      "template": "又到了一年的这个时节，{0.SimFirstName}兴高采烈地期待着看到家人打开他们的礼物时，容光焕发的笑脸！",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[6313].before.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "240623",
+      "tuning_name": "buff_Sentiment_Close_Sad_Contagion_generic",
+      "hash": "0x93CC5533",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "看到〈未解析：0.SimFirstName〉所珍视的人遭受痛苦，〈未解析：M0.他〉〈未解析：F0.她〉也会感到难过……",
+      "template": "看到{0.SimFirstName}所珍视的人遭受痛苦，{M0.他}{F0.她}也会感到难过……",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 1,
+      "evidence": "journal.jsonl.history.events[6700].after.description"
+    },
+    {
+      "role": "description",
+      "resource_kind": "buff",
+      "resource_id": "451595",
+      "tuning_name": "buff_SimPreference_Likes_Music",
+      "hash": "0x306B6CBA",
+      "status": "unresolved_tokens",
+      "reason": null,
+      "text": "〈未解析：0.SimFirstName〉如鱼得水！因为〈未解析：M0.他〉〈未解析：F0.她〉在做自己喜欢的事情，因此〈未解析：M0.他〉〈未解析：F0.她〉能从中获得更多乐趣！",
+      "template": "{0.SimFirstName}如鱼得水！因为{M0.他}{F0.她}在做自己喜欢的事情，因此{M0.他}{F0.她}能从中获得更多乐趣！",
+      "tokens": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "unresolved": [
+        {
+          "expression": "0.SimFirstName",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "M0.他",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        },
+        {
+          "expression": "F0.她",
+          "reason": "missing_token",
+          "category": "parameter_evidence",
+          "token_index": 0
+        }
+      ],
+      "error": null,
+      "count": 1,
+      "evidence": "context-81f99e7032fc4181958f0def1dd72c3f.json.snapshot.buffs.value[11].description"
+    }
+  ],
+  "resolved_description_examples": [
+    {
+      "resource": [
+        "recipe",
+        "231515",
+        "recipe_Food_Snack_Batuu_OutpostPopcorn"
+      ],
+      "text": "素食主义者可食用，不含乳糖",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[4].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "238490",
+        "buff_Environment_BBGameplayEffects_SnobSmall"
+      ],
+      "text": "这所房子的美学设计仅仅是乏味与单调而已。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[82].after.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14640",
+        "Mood_Happy"
+      ],
+      "text": "一位快乐的模拟市民会觉得人生棒极了。\\n\\n快乐将会让所有正面情绪更强烈！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[97].payload.old_mood.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14646",
+        "Mood_Uncomfortable"
+      ],
+      "text": "没有哪个模拟市民会喜欢不舒服和筋疲力尽的感觉的。\\n\\n请确认他们的需求要都得到了满足！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[97].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "268126",
+        "buff_Environment_Hidden_Negative_Snob"
+      ],
+      "text": "一个优美的环境能使你的模拟市民心情变好。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[130].before.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "240234",
+        "buff_Environment_Hidden_Positive"
+      ],
+      "text": "一个优美的环境能使你的模拟市民心情变好。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[131].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "240248",
+        "buff_Environment_BBGameplayEffects_GoodEnvironmentSmall"
+      ],
+      "text": "装饰能让周遭环境气氛变得愉快。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[144].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "10593",
+        "buff_Food_Cooking_2"
+      ],
+      "text": "那是一道味道不错的菜肴。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[169].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "26440",
+        "Buff_hidden_MoodReplacement"
+      ],
+      "text": "当主宰心情指数的特征应被阻挡时，替换心情指数",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[275].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "24032",
+        "relbit_SocialContext_Casual"
+      ],
+      "text": "只是一般的礼貌性的对话。\\n\\n试试聊天，看看会发生什么事。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[400].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "247594",
+        "buff_Sentiment_Hurt_Angry_saddened"
+      ],
+      "text": "失望有时候会积累成为愤怒。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[439].before.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "247316",
+        "buff_Sentiment_Bitter_Angry_fight"
+      ],
+      "text": "架虽然吵完了，但不等于原谅了忘记了。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[520].after.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14645",
+        "Mood_Stressed"
+      ],
+      "text": "感觉不快的模拟市民什么事都不想做。\\n\\n试试泡个舒服澡或看电视放松！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[522].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "247317",
+        "buff_Sentiment_Bitter_Tense_Primary_fight"
+      ],
+      "text": "争吵之后留下的不愉快并不会凭空消失。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[525].after.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14643",
+        "Mood_Sad"
+      ],
+      "text": "对一位悲伤的模拟市民来说，要跟其他人一起玩是很困难的。\\n\\n试着对着镜子自我鼓励或躲起来痛哭一场吧！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[552].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "180207",
+        "buff_Temperature_Chilled"
+      ],
+      "text": "天气变冷了！模拟市民可以开始穿上寒冷天气服装或者待在室内让自己暖和起来。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[596].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "129019",
+        "buff_Object_Movie_InterestingFlick"
+      ],
+      "text": "那部片蛮……有趣的。值得一看，至少就这一次。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[729].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "241018",
+        "buff_Sentiment_Bitter_Contagion_Happy_generic"
+      ],
+      "text": "有时候看到别人受苦甚至还有一点高兴……这要取决于那个受苦的人是谁。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[833].after.description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16698",
+        "statistic_Skill_AdultMajor_Comedy"
+      ],
+      "text": "一旦理解到身边任何事都能成为梗，当个喜剧演员就是再自然不过的事了。\\n\\n喜剧技能可在与其他模拟市民交谈，以及讲脱口秀时用到。提升此技能将会解锁“开玩笑”、“喜剧桥段”，以及使用麦克风时的“临场发挥”社交选项。\\n\\n喜剧技能达到等级5时，可通过麦克风指导他人。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[848].payload.statistic.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "115903",
+        "relbit_SocialContext_Fun_Casual"
+      ],
+      "text": "只是一般的礼貌性的对话。\\n\\n试试聊天，看看会发生什么事。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[849].after.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14632",
+        "Mood_Angry"
+      ],
+      "text": "生气的模拟市民很难进行社交和提升技能。\\n\\n试着冲个冷水澡或是面对镜子冷静下来！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[952].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16700",
+        "statistic_Skill_AdultMajor_Gardening"
+      ],
+      "text": "你的花园长得怎么样？它可以长满花朵与水果，不过这需要时间与努力，再加上足够的园艺技能。\\n\\n使用植物、种子与花盆即可累积园艺技能。提升此技能就能提高模拟市民的园艺效率，还能解锁新的园艺互动与社交选项。\\n\\n园艺技能达到等级5时，可通过园艺植物指导他人。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[966].payload.after._known_stats[0].description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16699",
+        "statistic_Skill_AdultMajor_Charisma"
+      ],
+      "text": "在谈话时，魅力技能可能是你最好的朋友。无论是交友，谈情说爱或安抚陌生人，具有魅力的模拟市民知道该怎么做。\\n\\n“魅力”可以在镜子前或与其他模拟市民谈话时提升。增加这种技能会解锁新社交选项，以及在电脑上的新社交媒体互动。\\n\\n魅力技能达到等级5时，可通过讲台或镜子指导他人（<i>《都会生活》</i>）。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[968].payload.statistic.description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16707",
+        "statistic_Skill_AdultMajor_Mischief"
+      ],
+      "text": "具有恶作剧倾向的模拟市民往往是乐于欺骗、恶作剧和嘲笑其同胞模拟市民的狡猾恶魔。生活就是场派对，喜爱恶作剧的模拟市民会出门破坏。\\n\\n恶作剧主要是与社交互动和巫毒娃娃相关。提升这种技能就会解锁新的“对模拟市民进行恶作剧”社交选项，以及增加通过巫毒娃娃，电脑、平板电脑和电话进行“恶作剧”的互动选项。\\n\\n恶作剧技能达到等级5时，可通过电脑或平板电脑指导他人。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[986].payload.statistic.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "181133",
+        "buff_SnowEffects_Snowing_Positive"
+      ],
+      "text": "今年的第一场雪！多令人兴奋！ ",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1082].before.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "115902",
+        "relbit_SocialContext_Awkwardness_Casual"
+      ],
+      "text": "只是一般的礼貌性的对话。\\n\\n试试聊天，看看会发生什么事。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1216].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "115904",
+        "relbit_SocialContext_Romance_Casual"
+      ],
+      "text": "只是一般的礼貌性的对话。\\n\\n试试聊天，看看会发生什么事。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1218].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "310888",
+        "familyTrope_difficult"
+      ],
+      "text": "当模拟市民身处困难的家庭动力中时，他们就不会像其他大多数家庭成员一样，能与人融洽相处。在社交时，他们通常倾向于抱怨，甚至是进行刻薄的互动。他们也更有可能对彼此产生暴怒的情绪。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1232].after.description"
+    },
+    {
+      "resource": [
+        "recipe",
+        "15765",
+        "recipe_Food_Homestyle_GrilledCheese-Single"
+      ],
+      "text": "素食主义者可食用",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1239].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16705",
+        "statistic_Skill_AdultMajor_HomestyleCooking"
+      ],
+      "text": "任何人都能下厨，不过拥有美食大全的模拟市民能通过在厨房上多花一点时间和精力去获得一些好处。\\n\\n使用冰箱，炉具和台面烹调美食，即可培养烹饪技能。增加技能可以开启新的烹饪技巧，心情指数和食谱。\\n\\n家常菜烹饪技能达到等级5时，可通过冰箱、炉灶、烤箱指导他人。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1389].payload.statistic.description"
+    },
+    {
+      "resource": [
+        "recipe",
+        "15778",
+        "recipe_Food_Snack_Chips"
+      ],
+      "text": "素食主义者可食用，不含乳糖",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1445].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "10655",
+        "Buff_CoreSocial_Happy"
+      ],
+      "text": "一段很棒的对话能令人精神一振！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[1506].after.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14637",
+        "Mood_Fine"
+      ],
+      "text": "状态良好的模拟市民不会有特别的感受。\\n\\n去试试新事物，看看会有什么发现吧！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[1687].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14634",
+        "Mood_Confident"
+      ],
+      "text": "信心满满的模拟市民觉得社交是件非常简单的事情。\\n\\n试着和其他模拟市民进行社交活动，并提升魅力技能！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[2192].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "129016",
+        "buff_Object_Movie_BoringMovie"
+      ],
+      "text": "你可以称那部电影是年度最强催眠片。特别强调“催眠”两字。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2220].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "37334",
+        "Buff_Happy_MeanMischief"
+      ],
+      "text": "生性刻薄的模拟市民因欺负别人而感到快乐。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2311].after.description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16701",
+        "statistic_Skill_AdultMajor_GourmetCooking"
+      ],
+      "text": "准备让厨艺创作更上一层楼了吗？美食烹饪技能可为你和客人送上色香味俱全的食物。\\n\\n使用冰箱，炉具和台面烹调美食，即可培养美食烹饪技能。提升这项技能即可解锁新美食烹饪伎俩，心情指数与食谱。\\n\\n美食烹饪技能达到等级5时，可通过冰箱、炉灶、烤箱指导他人。",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2660].payload.skill.description"
+    },
+    {
+      "resource": [
+        "recipe",
+        "119184",
+        "recipe_Food_Gourmet_Fruitcake-Large"
+      ],
+      "text": "素食主义者可食用",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2660].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16706",
+        "statistic_Skill_AdultMajor_Logic"
+      ],
+      "text": "拥有思维活跃的头脑是很棒的一件事，那些专注于逻辑的模拟市民想要磨炼他们的头脑，直到其锐利程度堪比独角羊驼的角。\\n\\n逻辑可透过国际象棋桌、望远镜、显微镜和科学实验桌（仅限儿童）累积。增加这项技能可解锁与显微镜的互动、天文台与多样收藏品。\\n\\n逻辑技能达到等级5时，可通过国际象棋桌、小望远镜、显微镜或科学实验桌指导他人。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2699].payload.statistic.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14633",
+        "Mood_Bored"
+      ],
+      "text": "一个无聊的模拟市民不愿意做任何无聊的事。\\n\\n试试看一些有趣的新活动吧！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[2766].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "31347",
+        "Buff_Trait_LovesOutdoors_FreshAir"
+      ],
+      "text": "喜欢室外的模拟市民就会喜欢待在外面！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2899].before.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "358557",
+        "relBit_Attraction_3_Actor_NeutralTo_Target"
+      ],
+      "text": "既没有被吸引，也没有失去兴趣。试试更好地了解对方吧！",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2952].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "308879",
+        "relationshipbit_Compatibility_Bad"
+      ],
+      "text": "从这两位模拟市民喜欢和不喜欢的事物可以看出，他们之间<b>社交契合度不佳</b>。他们一开始就不会走得特别近，但说不定还会更糟。虽然建立友谊对他们来说是个挑战，但总是值得一试的！",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2979].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "308890",
+        "relationshipbit_Compatibility_Good"
+      ],
+      "text": "嘿，还不错嘛！从这两位模拟市民喜欢和不喜欢的事物可以看出，他们之间<b>社交契合度良好</b>。就算他们没有立刻成为好朋友，他们俩相处起来也不会太困难。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2986].after.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363946",
+        "trait_Attraction_Characteristics_Messy_TurnOff"
+      ],
+      "text": "邋遢",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2994].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363940",
+        "trait_Attraction_Characteristics_HighEnergy_TurnOff"
+      ],
+      "text": "精力充沛",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2995].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365002",
+        "trait_Attraction_HairColor_Green_TurnOn"
+      ],
+      "text": "绿色头发",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[2999].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "364960",
+        "trait_Attraction_Fashion_Preppy_TurnOff"
+      ],
+      "text": "学院",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3000].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "364952",
+        "trait_Attraction_Fashion_Country_TurnOff"
+      ],
+      "text": "乡村",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3001].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365029",
+        "trait_Attraction_OutfitColor_Blue_TurnOff"
+      ],
+      "text": "蓝色服装",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3002].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "364957",
+        "trait_Attraction_Fashion_Outdoorsy_TurnOff"
+      ],
+      "text": "户外",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3003].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365013",
+        "trait_Attraction_HairColor_Red_TurnOff"
+      ],
+      "text": "红色头发",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3004].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "377517",
+        "trait_Attraction_SkillArchetypes_Interpersonal_TurnOn"
+      ],
+      "text": "交际",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3005].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "377508",
+        "trait_Attraction_SkillArchetypes_Academic_TurnOff"
+      ],
+      "text": "学术",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3006].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "377524",
+        "trait_Attraction_SkillArchetypes_Performer_TurnOff"
+      ],
+      "text": "表演者",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3007].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365735",
+        "trait_Attraction_Activities_HighlySkilled_TurnOff"
+      ],
+      "text": "技艺高超",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3008].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "364661",
+        "trait_Attraction_RomanceStyles_GiftGiving_TurnOn"
+      ],
+      "text": "赠送礼物",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3009].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363456",
+        "trait_Attraction_RomanceStyles_Affection_TurnOn"
+      ],
+      "text": "柔情",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3010].payload.trait.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "12430",
+        "Buff_Environment_Negative_WretchedSurroundings"
+      ],
+      "text": "多数模拟市民讨厌置身于肮脏和污秽的环境中。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3137].before.description"
+    },
+    {
+      "resource": [
+        "recipe",
+        "268455",
+        "recipe_Food_Homestyle_ButterChicken-Single_Vegetarian"
+      ],
+      "text": "素食主义者可食用",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3203].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "30712",
+        "Buff_Trait_Loner_NearStrangers"
+      ],
+      "text": "性格孤僻的模拟市民无法忍受周围有陌生人。谁知道他们会做些什么？",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3271].after.description"
+    },
+    {
+      "resource": [
+        "recipe",
+        "170125",
+        "recipe_Food_Snack_Toddler_AppleSauce"
+      ],
+      "text": "素食主义者可食用，不含乳糖",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3628].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "15792",
+        "friendship-acquaintances"
+      ],
+      "text": "非敌亦非友，只是普通关系。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3870].after.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363931",
+        "trait_Attraction_Characteristics_Egotistical_TurnOn"
+      ],
+      "text": "自大",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3885].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363925",
+        "trait_Attraction_Characteristics_Argumentative_TurnOn"
+      ],
+      "text": "爱争辩",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3887].payload.trait.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "308877",
+        "relationshipbit_Compatibility_Amazing"
+      ],
+      "text": "这两位模拟市民就像拼图块一样有绝佳的契合度！从他们喜欢和不喜欢的事物可以看出，他们之间有<b>最高级别的社交契合度</b>。他们俩只需付出低于常人的努力就能建立稳固的友谊。",
+      "token_types": [
+        "SIM",
+        "INVALID"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3888].after.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365043",
+        "trait_Attraction_OutfitColor_Red_TurnOn"
+      ],
+      "text": "红色服装",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3892].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365014",
+        "trait_Attraction_HairColor_Turquoise_TurnOn"
+      ],
+      "text": "绿松石色头发",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3893].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365016",
+        "trait_Attraction_HairColor_White_TurnOn"
+      ],
+      "text": "白色头发",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3894].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365040",
+        "trait_Attraction_OutfitColor_Purple_TurnOn"
+      ],
+      "text": "紫色服装",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3895].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365032",
+        "trait_Attraction_OutfitColor_Gray_TurnOn"
+      ],
+      "text": "灰色服装",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3896].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "364997",
+        "trait_Attraction_HairColor_DarkBlue_TurnOff"
+      ],
+      "text": "深蓝色头发",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3898].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365742",
+        "trait_Attraction_Activities_Slacker_TurnOn"
+      ],
+      "text": "懒鬼",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3899].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365746",
+        "trait_Attraction_Activities_Wealthy_TurnOn"
+      ],
+      "text": "富有",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3900].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "377494",
+        "trait_Attraction_SkillArchetypes_Arts&Crafts_TurnOn"
+      ],
+      "text": "艺术品与工艺",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3901].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "377514",
+        "trait_Attraction_SkillArchetypes_Engineering_TurnOff"
+      ],
+      "text": "工程",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3902].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "364660",
+        "trait_Attraction_RomanceStyles_GiftGiving_TurnOff"
+      ],
+      "text": "赠送礼物",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3903].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "364663",
+        "trait_Attraction_RomanceStyles_PhysicalIntimacy_TurnOn"
+      ],
+      "text": "亲密肢体接触",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[3904].payload.trait.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14645",
+        "Mood_Stressed"
+      ],
+      "text": "感觉不快的模拟市民什么事都不想做。\\n\\n试试泡个舒服澡或看电视放松！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 1,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[4256].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "24082",
+        "relbit_SocialContext_Fun_Tedious"
+      ],
+      "text": "模拟市民不喜欢不断听同样的话。\\n\\n尝试聊一点不同的事情。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[4273].after.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "14635",
+        "Mood_Embarrassed"
+      ],
+      "text": "让一名经常尴尬的模拟市民和其他人交谈是一件难事。\\n\\n尝试对着镜子自我鼓励，或是在被子里躲一会吧！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[4287].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "10651",
+        "Buff_CoreSocial_Embarrassing"
+      ],
+      "text": "呃……我可以挖个洞躲起来吗？那段对话好尴尬。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[4290].after.description"
+    },
+    {
+      "resource": [
+        "statistic",
+        "16712",
+        "statistic_Skill_AdultMajor_VideoGaming"
+      ],
+      "text": "以前电子游戏打的好只能用来当做兄弟姐妹之间炫耀的手段，但在这个勇敢新世界里，电子游戏的高超技术能让人名利双收！我们生活在一个神奇的年代。\\n\\n电子游戏技能可以透过电脑，体感游戏系统，与平板来提升。增进此技能将会解锁新的电子游戏社交活动以及电脑上新的互动选项。\\n\\n电子游戏技能达到等级5时，可通过电脑、游戏垫、街机机台（<i>《同欢共乐》</i>）或电子游戏主机（<i>《都会生活》</i>）指导他人。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "skill_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[4297].payload.after._known_stats[0].description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "24081",
+        "relbit_SocialContext_Fun_Boring"
+      ],
+      "text": "模拟市民不喜欢反复听同样的话。\\n\\n尝试聊一点不同的事情。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[4672].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "12429",
+        "Buff_Environment_Negative_UnpleasantSurroundings"
+      ],
+      "text": "多数模拟市民讨厌置身于肮脏和污秽的环境中。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5164].after.description"
+    },
+    {
+      "resource": [
+        "mood",
+        "27149",
+        "Mood_Asleep"
+      ],
+      "text": "睡着的模拟市民会逐渐进入梦乡，忘记白天做过的一切。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "descriptions",
+        "role": "description",
+        "intensity": 0,
+        "variant_basis": "base_description_at_observed_intensity",
+        "client_overrides_evaluated": false
+      },
+      "evidence": "journal.jsonl.history.events[5174].payload.new_mood.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "10094",
+        "buff_Sim_IsSleeping"
+      ],
+      "text": "ZZZzzzzzzzzzzz……",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5178].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "10591",
+        "buff_Food_Cooking_0"
+      ],
+      "text": "那个食物不是很美味。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5187].after.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365743",
+        "trait_Attraction_Activities_Slacker_TurnOff"
+      ],
+      "text": "懒鬼",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5279].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365740",
+        "trait_Attraction_Activities_SelfEmployed_TurnOn"
+      ],
+      "text": "自雇人士",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5281].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363397",
+        "trait_Attraction_Characteristics_Ambitionless_TurnOn"
+      ],
+      "text": "胸无大志",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5282].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363937",
+        "trait_Attraction_Characteristics_Funny_TurnOn"
+      ],
+      "text": "有趣",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5283].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363948",
+        "trait_Attraction_Characteristics_NatureEnthusiast_TurnOff"
+      ],
+      "text": "自然爱好者",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5284].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "377522",
+        "trait_Attraction_SkillArchetypes_Nature_TurnOff"
+      ],
+      "text": "自然",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5285].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365005",
+        "trait_Attraction_HairColor_HotPink_TurnOn"
+      ],
+      "text": "亮粉色头发",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5286].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "363481",
+        "trait_Attraction_OutfitColor_Black_TurnOn"
+      ],
+      "text": "黑色服装",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5288].payload.trait.description"
+    },
+    {
+      "resource": [
+        "trait",
+        "365001",
+        "trait_Attraction_HairColor_Gray_TurnOn"
+      ],
+      "text": "灰色头发",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "trait_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5289].payload.trait.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "9341",
+        "Buff_Trait_FeelingPlayful"
+      ],
+      "text": "傻瓜感觉总有些顽皮！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5504].after.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "27207",
+        "Buff_Trait_FeelingAngry"
+      ],
+      "text": "性急的模拟市民容易为小事生气。",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[5737].after.description"
+    },
+    {
+      "resource": [
+        "recipe",
+        "284871",
+        "recipe_Food_Homestyle_HamburgSlider_Single"
+      ],
+      "text": "不含乳糖",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[6205].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "recipe",
+        "133207",
+        "recipe_Food_Homestyle_ChiliVegetable-Single"
+      ],
+      "text": "素食主义者可食用，不含乳糖",
+      "token_types": [
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "recipe_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[6522].payload.recipe.description"
+    },
+    {
+      "resource": [
+        "buff",
+        "274204",
+        "buff_Sentiment_Bitter_Tense_Primary_WhatsSoSpecial"
+      ],
+      "text": "傻宝宝有什么特别的？我也很感兴趣！",
+      "token_types": [],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "buff_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[6575].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "15802",
+        "friendship-disliked"
+      ],
+      "text": "双方关系紧张，有可能会变得扭曲！",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[6588].before.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "246597",
+        "sentimentBit_Actor_BitterAt_Target_ST_fight"
+      ],
+      "text": "Nyssa和Eddie还有没解决的纠葛。至少对Nyssa来说，他们之间的冲突还没有结束，关系非常紧张。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[6662].before.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "239982",
+        "sentimentBit_Actor_BitterAt_Target_LT_grudge"
+      ],
+      "text": "Nyssa对Eddie有很深的积怨。要忘记或原谅过去是很难的，所以Nyssa待在Eddie身边会觉得非常不舒服。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[6663].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "262317",
+        "sentimentBit_Actor_CloseTo_Target_ST_GroupCooking_CookingTogether"
+      ],
+      "text": "模拟市民们一起烹饪，一起生活。没有食物，也就没有我们。是食物创造了我们。将我们联系在了一起。让我们密不可分。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "journal.jsonl.history.events[6666].after.description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "15803",
+        "has_met"
+      ],
+      "text": "已碰面（不应被看见）",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "context-81f99e7032fc4181958f0def1dd72c3f.json.snapshot.relationships.value[0].bits[0].description"
+    },
+    {
+      "resource": [
+        "relbit",
+        "246644",
+        "sentimentBit_Actor_HurtBy_Target_ST_generic"
+      ],
+      "text": "Nyssa觉得Lila对不起自己，待在Lila身边会让Nyssa回想起伤痛。",
+      "token_types": [
+        "SIM",
+        "SIM"
+      ],
+      "source": {
+        "kind": "runtime_tuning",
+        "attribute": "bit_description",
+        "role": "description"
+      },
+      "evidence": "context-81f99e7032fc4181958f0def1dd72c3f.json.snapshot.relationships.value[1].bits[7].description"
+    }
+  ],
+  "offline_reinterpretation": {
+    "occurrences_before": {
+      "resolved": 6449,
+      "no_display_name": 5812,
+      "rule_resolved": 192,
+      "not_present": 3391,
+      "unmapped": 158,
+      "empty_display_name": 107,
+      "unresolved_tokens": 313
+    },
+    "occurrences_after": {
+      "resolved": 6449,
+      "no_display_name": 5942,
+      "rule_resolved": 192,
+      "not_present": 3391,
+      "empty_display_name": 107,
+      "unresolved_tokens": 313,
+      "unmapped": 28
+    },
+    "static_reference_fields": {
+      "name": {
+        "resolved": 246,
+        "unresolved_tokens": 7,
+        "empty_display_name": 3
+      },
+      "description": {
+        "resolved": 113,
+        "unresolved_tokens": 19
+      },
+      "tooltip": {}
+    },
+    "errors": [],
+    "interpretation": "130 no_verified_name_accessor records reclassified as no key; no new successful runtime text resolutions."
+  },
+  "new_format_templates_observed": {},
+  "limitations": [
+    "No Inspector open record or visual layout evidence in this run.",
+    "No Money/TimeShort/DayOfWeek or T/DAE template coverage in this run.",
+    "No frame-rate or hook-timing measurement.",
+    "Installed hook state is not complete gameplay coverage.",
+    "Runtime-derived text does not establish client age/trait override selection."
+  ]
+}

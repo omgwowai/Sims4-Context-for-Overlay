@@ -29,6 +29,7 @@ FIELDS = {
 # Only these direct fields have a safe runtime read. Composite/dynamic fields
 # stay in the static reference catalog until their actual runtime accessor is known.
 RUNTIME_DETAILS = {
+    "mood": {"description": "descriptions"},
     "buff": {"description": "buff_description"},
     "relbit": {"description": "bit_description"},
     "statistic": {"description": "skill_description"},

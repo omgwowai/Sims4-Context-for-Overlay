@@ -15,6 +15,11 @@ class StorageError(RuntimeError):
     pass
 
 
+class StorageBusy(StorageError):
+    """Recoverable producer rejection; the shared journal remains healthy."""
+    pass
+
+
 class Journal:
     def __init__(self, directory, capacity=2048, opener=None, max_bytes=2048 * 1024 * 1024,
                  reserve_bytes=1024 * 1024 * 1024, queue_bytes=32 * 1024 * 1024):
@@ -45,7 +50,7 @@ class Journal:
             if self._error is None:
                 self._error = str(message)
 
-    def _put(self, job):
+    def _put(self, job, recoverable=False):
         disk_bytes = len(job[2].encode("utf-8")) + 1
         memory_bytes = sys.getsizeof(job[2]) + 128
         job = job + (disk_bytes, memory_bytes)
@@ -53,32 +58,40 @@ class Journal:
             if self._error or self._closing.is_set():
                 raise StorageError(self._error or "Journal is closing")
             if self._accepted_bytes + disk_bytes > self._max_bytes:
+                if recoverable:
+                    raise StorageBusy("Run output byte budget reached")
                 self._rejected = job
                 self._error = "Run output byte budget reached; recording paused"
                 raise StorageError(self._error)
             if self._pending_bytes + memory_bytes > self._queue_limit_bytes:
+                if recoverable:
+                    raise StorageBusy("Persistence queue byte budget reached")
                 self._rejected = job
                 self._error = "Persistence queue byte budget reached; recording paused"
                 raise StorageError(self._error)
             try:
                 self._queue.put_nowait(job)
             except queue.Full:
+                if recoverable:
+                    raise StorageBusy("Persistence queue full")
                 self._rejected = job
                 self._error = "Persistence queue full; recording paused"
                 raise StorageError(self._error)
             self._accepted_bytes += disk_bytes
             self._pending_bytes += memory_bytes
 
-    def append(self, record):
+    def append(self, record, recoverable=False):
         with self._lock:
             sequence = self._next_seq + 1
             item = dict(record, sequence=sequence)
             try:
                 text = encode(item)
             except Exception as exc:
+                if recoverable:
+                    raise StorageBusy("Serialization failed: " + str(exc))
                 self._fail("Serialization failed: " + str(exc))
                 raise StorageError(self._error)
-            self._put(("record", sequence, text))
+            self._put(("record", sequence, text), recoverable=recoverable)
             self._next_seq = sequence
             return sequence
 

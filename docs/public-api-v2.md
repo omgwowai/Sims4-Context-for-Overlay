@@ -1,14 +1,23 @@
-# 公共 API 与 SDK v1（历史契约）
+# API 参考：读状态、查历史、写事件
 
-此页适用于旧提供方。0.8.0 起使用[API v2](public-api-v2.md)，默认混合历史，需升级 SDK。
+第一次接入先看[快速接入](quickstart.md)，需要查准确参数时再回到这页。当前 API / SDK 是 **2.1.0**，schema 是 **2**；本次试用搭配 **ContextOverlay 0.9.0**。
 
-公共 API／SDK 版本为 1.1.0，数据 schema 为 1。`context_overlay.api` 是稳定消费入口；`sdk/context_overlay_client.py` 提供可选依赖检测、错误转换和分页句柄。当前提供方与实测状态统一见项目 README 及验证摘要，不依赖内部 `_runtime`。
+直接调用用 `context_overlay.api`；希望统一处理“没安装、版本不匹配、分页关闭”等情况，可以用 `sdk/context_overlay_client.py`。两者提供同一套读写能力。
 
-Context、历史与附近实体查询同步返回普通 JSON 数据；游戏对象读取在模拟线程进行。SDK 不调用模型、不创建窗口、不发网络请求，也不自动跨线程调度或重试。API v1 与已删除的旧 v1 名称目录是不同契约。
+Context、历史、增量与附近实体查询同步返回普通 JSON 数据；游戏对象读取在模拟线程进行。SDK 不调用模型、不创建窗口、不发网络请求，也不自动跨线程调度或重试。默认历史同时包含游戏事件和外部事件。
+
+
+## 从 v1 迁移
+
+更新 SDK 到 2.1.0；保留旧读取语义的调用显式传 `origins=["game"]`。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段，因此 API／schema 均升级主版本。旧 API 契约见 [v1 文档](public-api-v1.md)，离线工具继续支持 schema 1 的游戏日志。无需模型服务即可验证全部读写能力。
+
+`get_context`、`query_history` 的 `origins=None` 表示全部来源，`["game"]`／`["external"]` 表示只查一类；`producers=["example.overlay"]` 仅匹配对应外部生产者，与其余条件取交集。数组不能为空，最多 64 项且不重复。类型／结果等游戏专用筛选自然排除不具备对应字段的外部记录。
+
+`query_history()` 仍默认查询当前 Sim；显式 `query_history(None, None, ...)` 查询本次运行的全部实体及无实体记录，可组合来源／生产者筛选。`get_context` 继续要求实体。新写入不会出现在先前冻结的历史页里，请新建查询或读取增量。
 
 ## 安装和最小接入
 
-玩家安装 **ContextOverlay 0.5.0 或后续支持 API 1.x 的版本**。0.3.2／0.4.0 不提供这个公共入口。SDK 是源代码工具包，不是额外安装的脚本 MOD；开发者将 `sdk/context_overlay_client.py` 复制进自己的包，例如 `my_overlay_mod/vendor/`，并按 Python 3.7 打包。各级目录需要自己的 `__init__.py`。
+试用时安装包里的 **ContextOverlay 0.9.0**。SDK 接受 API 2.x；0.8.0 也提供基础读写，但没有 0.9.0 的跨地块历史能力。旧 SDK 1.x 需要更新。把 `sdk/context_overlay_client.py` 复制进自己的包，例如 `my_overlay_mod/vendor/`，并按 Python 3.7 打包；各级目录需要自己的 `__init__.py`。
 
 ```python
 from my_overlay_mod.vendor.context_overlay_client import Client, ContextOverlayError
@@ -34,7 +43,7 @@ from context_overlay import api
 packet = api.get_context("sim", "active", fields=["identity", "needs"], history_limit=5)
 ```
 
-直接入口会抛出 `api.APIError`；SDK 转换为自己的 `ContextOverlayError`。不要再引用 `game_runtime._runtime`、`runtime.collector` 或 `runtime.recorder`，也不要把核心包复制到下游。SDK 接入示例见 [consumer.py](../sdk/examples/consumer.py)。
+直接入口抛出 `api.APIError`；SDK 转成 `ContextOverlayError`。接入时使用这两个公开入口，内部 `_runtime` 等对象会随实现调整。读写示例见 [quickstart.py](../sdk/examples/quickstart.py)，窗口回调示例见 [consumer.py](../sdk/examples/consumer.py)。
 
 ## 版本与能力发现
 
@@ -47,9 +56,9 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 | 字段 | 含义 |
 | --- | --- |
-| `api_version` | 当前公共契约版本 `1.1.0` |
+| `api_version` | 当前公共契约版本 `2.1.0` |
 | `module_version` | 提供方 MOD 版本，以本次返回值为准 |
-| `schema_version` | 数据协议版本 `1` |
+| `schema_version` | 数据协议版本 `2` |
 | `capabilities` | `context.read`、`history.query`、`history.page`、`history.close`、`text.zh-CN` |
 | `context_fields`、`default_fields` | 支持的字段与 Sim／Object 的默认选择 |
 | `nearby` | 附近查询类型、指标、单位、返回数、扫描预算和半径限制；能力为 `context.nearby_entities` |
@@ -62,7 +71,19 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 `ready=true` 表示运行初始化完成，不意味着记录器一定健康。`modules` 包含 `collector_enabled`、`recorder_enabled`、`semanticizer_enabled`；记录器的 `state/error/persistence` 单独报告。字段、资源名称和单条事件也有各自可用性，不应压成一个全局成功布尔值。
 
-SDK 检查 API 主版本为 1、schema 为 1，接受兼容的 1.x 小版本；不固定准确 MOD 版本。API 1.x 保持已公开的方法和现有字段含义，允许增加可选参数、字段和能力；消费者忽略未知附加字段，对状态／枚举保留未知分支。删除接口或改变既有语义需升级 API 主版本，数据不兼容变化需升级 schema。内部 Python 模块不属于这个承诺。
+SDK 检查 API 主版本为 2、schema 为 2，接受兼容的 2.x 小版本；不固定准确 MOD 版本。API 2.x 保持已公开的方法和现有字段含义，允许增加可选参数、字段和能力；消费者忽略未知附加字段，对状态／枚举保留未知分支。删除接口或改变既有语义需升级 API 主版本，数据不兼容变化需升级 schema。内部 Python 模块不属于这个承诺。
+
+## 旅行与会话范围（API 2.1）
+
+0.9.0 提供方新增 `history.travel` 能力和 `session_lifecycle` 元数据。正常旅行到其他地块或返回原地块保留同一个 `session_id`；游戏和外部事件、无实体记录、生产者筛选、去重键、FIFO 与增量 checkpoint 持续有效。读档、回主菜单、重启游戏或 `co.restart` 开启新会话，不自动读取磁盘中的旧会话。API 2.0 客户端可继续调用；需要跨地块保证时先检查 `history.travel`。
+
+卸载到加载完成期间 `ready=false`，读写调用可能得到 `session_closed/not_ready`。等待 ready，再比较 session：相同则续读，不同则丢弃旧会话引用。`close_history` 仍可在模拟线程释放旅行中保留的查询。冻结查询仍受 120 秒现实时间 TTL 限制，过期后释放旧 batch，从最后已提交的 checkpoint 重读；已经处理的事件可能重复，消费者须按 `(event_id, revision)` 去重。FIFO 缺口仍返回 `history_gap`，不会因旅行跳过检查。
+
+`get_status().recorder` 增加 `zone_visit`（本会话第几次地块加载）和 `observation_scope`（当前采集范围）。新事件附带同名字段，保留它在被记录时的 zone/lot；外部事件表示**接收位置**，不代表 payload 内容实际发生在此处。交互 ID 在不同 visit 之间独立，消费者须将 `event_id` 当作不透明标识。旅行前没有观测到结束的交互不补写推测结果。
+
+当前 Context 和附近查询仍只读取当前地块实例；历史可按已知实体 ID 查询此前地块的保留事件。所有记录、查询、去重和输出容量贯穿整个会话，不因旅行重置。配置更新用 `co.restart` 生效。
+
+`expected_session_id` 防止写入错误存档进度；旅行保持该值，不能代替模型结果的地点／时效检查。若结果只适用于请求时的地点，下游提交前应自行核对原 Context 的 `scope.zone_id` 与时间，并决定是否仍需写入。
 
 ## 当前 Context
 
@@ -71,7 +92,7 @@ SDK 检查 API 主版本为 1、schema 为 1，接受兼容的 1.x 小版本；�
 ```python
 get_context(kind="sim", identifier="active", *, fields=None,
             include_history=True, history_limit=15, include_internal=False,
-            representation="both", expected_session_id=None)
+            representation="both", expected_session_id=None, origins=None, producers=None)
 ```
 
 | 参数 | 约定 |
@@ -114,7 +135,7 @@ query_history(kind="sim", identifier="active", *, page_size=15,
               include_internal=False, time_field="first_observed",
               from_ticks=None, to_ticks=None, event_types=None, fields=None,
               outcomes=None, tuning_ids=None, order="desc", group_effects=False,
-              representation="both", expected_session_id=None)
+              representation="both", expected_session_id=None, origins=None, producers=None)
 
 get_history_page(cursor, *, expected_session_id, representation="both")
 close_history(cursor, *, expected_session_id)
@@ -127,18 +148,18 @@ close_history(cursor, *, expected_session_id)
 | `page_size` | 每页 1–500 条；默认 15 |
 | `time_field` | `first_observed`、`started` 或 `ended`，默认首次观测 |
 | `from_ticks/to_ticks` | 游戏整数 ticks 或整数字符串，范围 `[from, to)`，None 不设边界。不是现实秒／Unix 时间 |
-| `event_types` | 非空 list／tuple，可含 `interaction`、`state_change`、`game_event` |
+| `event_types` | 非空 list／tuple，可含 `interaction`、`state_change`、`game_event`、`external_event` |
 | `fields` | 变化字段或新增 category，例如 `["buffs", "relationship.bits"]`、`["skill.level", "statistic.direct"]`；不是 Context 字段选择 |
 | `outcomes` | 交互结果：`completed/cancelled/failed/unknown` |
 | `tuning_ids` | 交互定义 ID 的字符串列表，不是交互实例 ID |
 | `order` | `asc` 或 `desc`，默认倒序 |
 | `group_effects` | 默认 false；true 将与同一结果集内动作明确关联的事实放入其 `effects`，未匹配的效果仍单独显示 |
 
-列表筛选最多 64 个非空字符串；None 表示不筛选。不同条件取交集。没有开始／结束时间的事件不匹配对应时间筛选，状态变化按通知观测时间筛选。
+列表筛选最多 64 个不重复的非空字符串；None 表示不筛选。不同条件取交集。没有开始／结束时间的事件不匹配对应时间筛选，状态变化按通知观测时间筛选。
 
 当前不生成需求／关系定时差值，也不返回采样区间。`state_change` 保留 Buff、关系标记、物件状态前后值；新增 `game_event` 使用 `category/field/payload`。`statistic.direct` 的 `payload.before/after` 只来自明确 Loot 操作内真实通知，`cause` 保留可核验操作／交互依据。当前数值仍使用 `get_context(fields=["needs", "relationships"])`。没有记录不证明数值未变化。
 
-新增能力标识为 `history.effects`、`history.retained_identity`、`history.fifo`、`events.gameplay`；`get_api_info()` 返回 `event_types/event_categories/retention_policy`，`get_status()` 返回具体源的 `event_coverage`。SDK 透传这些筛选参数。按能力发现后再使用新参数，0.5.0 提供方不支持它们。
+新增能力标识为 `history.effects`、`history.retained_identity`、`history.fifo`、`events.gameplay`；`get_api_info()` 返回 `event_types/event_categories/retention_policy`，`get_status()` 返回具体源的 `event_coverage`。SDK 透传这些筛选参数。同时提供 `events.append`、`history.sources`、`history.global`、`history.changes`。
 
 运行状态提供 `get_status().event_diagnostics`，包含 `callbacks`、`suppressed_statistics`、`suppression_policy` 和 `timing`。它们是适配器回调／计时通知的汇总数，不是事件数量或性能测量；目前 timing 为 not_measured。事件源健康与汇总在会话开始、结束落盘。TimeSince 计时统计不再发布为历史，当前 Context 不受影响。使用角色判断效果归属，不要把 entities 索引列表当作受影响者列表；事件语义见[架构与采集语义](architecture.md)。
 
@@ -158,11 +179,88 @@ close_history(cursor, *, expected_session_id)
 
 查询冻结首次创建时的事件成员及修订，后续新事件／新修订不改变已有页。再次使用同一个 next_cursor 可以重取该页；外层 request_id／recorded_at 是新请求，剩余有效时间会减少。游标是不可解析、不可拼装的句柄，消费方应原样传回。
 
-分页必须携带首次响应中的 session_id 作为 expected_session_id。读档、旅行、重启或 `co.restart` 后旧查询失效。默认 TTL 为 **120 秒现实时间**，暂停游戏也计时；翻页不续期。最后一页不会自动释放，关闭窗口或刷新时主动关闭。
+分页必须携带首次响应中的 session_id 作为 expected_session_id。读档、重启或 `co.restart` 后旧查询失效。API 2.1 起普通旅行保留查询，加载期间暂不可用。默认 TTL 为 **120 秒现实时间**，暂停游戏也计时；翻页不续期。最后一页不会自动释放，关闭窗口或刷新时主动关闭。
 
 `close_history` 幂等：首次成功为 `{released:true, reason:"closed"}`；已过期、已关闭或运行结束为 `{released:false, reason:原因}`。错误线程和非法游标仍会报错，不会默默执行。关闭旧运行的句柄不会关闭新运行的查询。
 
 默认最多同时 8 个查询、合计 100,000 个事件引用和 256 MiB 估算预算；**这是所有下游及本 MOD 窗口共享的预算**，不是每个 SDK 客户端单独拥有。查询资源不是权限隔离机制。`query_limit/query_budget` 只拒绝新查询，不暂停采集；应缩小范围并及时释放，不应反复重试宽查询。
+
+## 写入外部事件
+
+```python
+append_event(producer, payload, *, entities=None, idempotency_key=None,
+             expected_session_id)
+```
+
+只追加，不提供覆盖或删除。下游用自己的 payload 协议表达更新或撤回；上游不规定对白、展示、角色知识或叙事状态字段。`producer` 是 1–128 个无空格的可打印 ASCII 字符；推荐稳定命名空间如 `example.overlay`，它是自报标识，不是权限认证。
+
+`payload` 为合法 JSON：对象、数组、字符串、有限数字、bool 或 null。只接受普通 Python JSON 类型，字典键必须为字符串；不接受元组、循环引用或游戏对象。编码后上限 64 KiB，深度 16，最多 32,768 个值／键节点。外部 payload 不参与游戏资源重解释和状态判定。
+
+`entities` 为至多 32 个 `sim:<uint64>`／`object:<uint64>` 字符串，默认空列表，按规范化 ID 去重。多实体共享同一个事件；合法但未观测的实体可建立关联，标为未核验，不扩大 Collector 范围、不伪造观测状态、不覆盖游戏身份。没有实体的事件通过全局查询读取。
+
+系统生成 `event_id`、`revision=1`、`event_type="external_event"`、`origin="external"`、`producer`、接收时游戏时间、现实时间及序号。游戏采集事件为 `origin="game"`、`producer=null`；原来的 Hook／通知 `source` 保留。下游需要较早的生成时间时自行写入 payload，不能修改系统时间或伪造游戏因果。
+
+```python
+packet = client.get_context("sim", "active", origins=["game"])
+receipt = client.append_event(
+    "example.overlay", {"text": "今天发生了不少事情。", "private_state": [1, 2]},
+    entities=[packet["target"]["key"]], idempotency_key="result-001",
+    expected_session_id=packet["session_id"])
+```
+
+回执包含 `event_id/session_id/revision/accepted_sequence/duplicate/retained/persistence/persistence_error` 和版本信息。`persistence="accepted"` 表示日志队列已接收且新查询可读；`written` 表示已确认 fsync，后续可结合 `get_status().recorder.persistence.durable_sequence` 核对。游戏线程不等待写盘；稍后的物理写入失败仍可能发生，不能把 accepted 当作持久化承诺。
+
+可选 `idempotency_key` 同样最多 128 个可打印 ASCII 字符。作用域为本次运行加生产者；同键、相同规范化实体集合和 JSON 内容返回原回执，不新增事件、修订或序号；同键不同内容报 `idempotency_conflict`。去重记录在本次运行内持续保留，即使事件被 FIFO 淘汰，重试也不重新插入。去重索引最多 10,000 项且最多 8 MiB；满时拒绝新的键，已有键可重试。无键的每次成功写入都是新事件。
+
+全部外部写入共享每现实秒 20 条、突发 40 条的默认限流，`external_rate_per_second/external_burst` 可配置，实际值见 `get_status().recorder.external`。成功的去重重试不消耗新写入额度。外部事件共享原历史 FIFO 和日志预算，正常写入会占容量、推动旧事件淘汰。
+
+非法请求、外部内存预检查失败、队列繁忙、限流或去重容量不足不暂停游戏采集。`write_busy/rate_limited` 提示稍后重试；输出总预算或单条内存无法满足时仅等待可能无效，应检查状态和配置。物理磁盘错误等共享故障仍会令记录器失败。
+
+## 增量读取
+
+```python
+read_event_changes(checkpoint=None, *, start=None, kind=None, identifier=None,
+                   origins=None, producers=None, include_internal=None,
+                   page_size=50, representation="both", expected_session_id)
+```
+
+第一次调用不传 checkpoint：`start=None` 等价 `"now"`，只建立当前位置，不回放历史；`start="retained"` 返回当前保留事件的最新视图。默认不限制实体、混合来源、隐藏内部层；实体查询须同时给 kind 和 identifier。筛选含义与历史查询一致。
+
+后续传 checkpoint，必须省略 `start/kind/identifier/origins/producers/include_internal`，因为检查点已绑定这些条件。页大小和表示形式仍可调整。检查点只在当前运行有效，无分页 TTL，也不会为每次轮询积累永久服务器对象；它仍受 FIFO 保留范围约束。不要解析或修改它。
+
+每轮固定接收序号上界 H，选择上次位置 L 到 H 之间新增或更新且仍保留的事件，按最新接收序号升序返回。一个事件本轮只出现一次，内容固定为 H 时的最新修订；不交付每次中间修订。同一事件以后再次修订，会在下一轮返回。分页期间游戏继续产生的更新不会改变已有页面。
+
+返回标准 HistoryPacket，额外字段位于 `history`：
+
+| 字段 | 含义 |
+| --- | --- |
+| `scope` | `current_session_change_snapshot` |
+| `change_range` | after_sequence、through_sequence、latest_per_event 策略及初始化方式 |
+| `checkpoint` | 仅最后一页提供；之前为 null。全部页面处理成功后由下游保存为下一轮位置 |
+| `cursor/next_cursor/has_more` | 本轮固定快照的分页位置，继续使用 get_history_page／close_history |
+| `coverage` | 当前保留／淘汰和采集／写盘状态，不声称会话历史完整 |
+
+没有匹配事件时仍返回可推进的 checkpoint。中途失败不提交新位置，同一有效页面可重试；消费逻辑用 `(event_id, revision)` 容忍重复。`cursor_expired` 后可从上次已提交的 checkpoint 重建本轮。查询页仍共享最多 8 个、100,000 引用、256 MiB 及 120 秒现实时间 TTL；必须及时释放。
+
+FIFO 若已淘汰检查点之后新增或更新的事件，返回 `history_gap`，不静默跳过。缺口判断保守地覆盖全部来源，可能因被筛掉的其他生产者事件而触发；不承诺仅此来源丢失。由下游明确选择重新 `start="retained"` 或 `start="now"`。磁盘旧日志不能通过增量接口补送。记录器停用或失败时拒绝推进增量。
+
+推荐用 `start="retained"` 完成历史初始化再接续其 checkpoint，避免先查历史、再获取当前位置的时间空窗。下例展示一轮消费；持续运行时可使用 [overlay_events.py](../sdk/examples/overlay_events.py) 中每次回调只处理一页的 `IncrementalReader`，不必一口气读完大批历史。
+
+```python
+checkpoint = None
+with client.changes(start="retained", producers=["example.overlay"],
+                    expected_session_id=session_id) as batch:
+    while True:
+        consume_idempotently(batch.page["history"]["events"])
+        if not batch.has_more:
+            checkpoint = batch.checkpoint
+            break
+        batch.next_page()
+# 在以后的模拟线程回调中：
+with client.changes(checkpoint, expected_session_id=session_id) as batch:
+    # 同样处理所有页后再提交 batch.checkpoint。
+    pass
+```
 
 ## SDK 管理句柄
 
@@ -189,7 +287,7 @@ with client.history("sim", str(sim_id), page_size=15,
 | `provider_error`（SDK） | 提供方导入、元数据或契约之外失败，保留诊断 |
 | `not_ready` | 尚未进入地块、初始化中或启动失败；状态原因在 details；等待下一个合适的游戏回调 |
 | `wrong_thread` | 把调用移回游戏模拟线程，不从网络回调重试 |
-| `session_changed/session_closed` | 丢弃旧数据和游标，按新运行重新请求 |
+| `session_changed/session_closed` | session_changed 丢弃旧运行引用；session_closed 等待 ready 后比较 session，旅行恢复时可继续 |
 | `collector_disabled` | 当前状态采集关闭；可单独查询历史或显示不可用 |
 | `target_unavailable` | 例如没有当前操控 Sim；选择明确实体或等待其可用 |
 | `invalid_request` | 修正参数名称、类型、ID、字段、条数等 |
@@ -199,6 +297,13 @@ with client.history("sim", str(sim_id), page_size=15,
 | `query_limit/query_budget` | 关闭旧查询、缩小时间范围／筛选 |
 | `query_closed`（SDK） | SDK 句柄已关闭，创建新的句柄 |
 | `internal_error` | 本 MOD 未预期失败，保留 details 和运行信息用于排查 |
+| `payload_limit` | 缩小 payload 的编码大小、深度或节点数 |
+| `idempotency_conflict` | 同一提交保持内容不变；新提交使用新键 |
+| `dedup_capacity` | 本次运行的新去重键容量已满；不自动丢弃旧键 |
+| `rate_limited/write_busy` | 根据 details 中可用的 retry_after_seconds 和运行状态稍后重试 |
+| `recorder_disabled/recorder_failed` | 写入与增量无法继续；恢复记录能力，不把失败当空历史 |
+| `invalid_checkpoint` | 原样传回检查点，不修改或自行拼接 |
+| `history_gap` | 已有事件被淘汰；明确选择重新读 retained 或从 now 开始 |
 
 字段不可用和历史采集失败通常在正常响应中形成 partial，并非全部变成异常。不得将 `disabled/error/out_of_scope/not_observed` 当成数值 0 或“没有发生”。
 
@@ -235,7 +340,7 @@ get_nearby_entities(identifier="active", *, kinds=("sim",), radius=None,
 | same_room | 默认 False；True 时增加同房间约束。与半径共同指定时取交集 |
 | include_self | 默认 False；True 时中心 Sim 也须满足 kinds 和空间筛选条件 |
 | limit | 整数 1–64，默认 32；不是候选扫描上限，不创建分页游标 |
-| expected_session_id | 可选会话约束；读档／旅行／重启后拒绝旧 session |
+| expected_session_id | 可选会话约束；读档／重启后拒绝旧 session；API 2.1 普通旅行保留 session |
 
 同房间、不限定半径：
 
@@ -330,4 +435,12 @@ EA Python 中存在 `build_buy.get_room_id` 原生别名，并在房间物件筛
 
 `text.resource_details` 表示可选 `rendered.resource_details`：包含 `items`、`truncated`、`limit`。每项有资源身份、`label/role/text/status/basis/evidence_ref`；资源说明与名称独立，静态参考不代表当时使用。每包最多 128 项、遍历最多 20,000 个节点，单个游戏详情最多 32 项。
 
-当前字段、事实关联及概率解释见[架构与采集语义](architecture.md)。SDK 包附带[Context 合成样例](../sdk/examples/context-packet.json)、[附近实体合成样例](../sdk/examples/nearby-packet.json)和可运行消费示例；样例不作为实机证据。
+当前字段、事实关联及概率解释见[架构与采集语义](architecture.md)。SDK 包附带[Context 合成样例](../sdk/examples/context-packet.json)、[附近实体合成样例](../sdk/examples/nearby-packet.json)和消费代码示例；样例不作为实机证据。
+
+## 这轮怎么试
+
+先给团队接到自己的 MOD 里用：读一份 Context，写一条自己的 JSON，再查回来。接着试来源筛选、无实体记录、增量、重复提交和旅行。安装包带 SDK 和例子，模型与 UI 由自己的 Overlay 负责。[快速接入](quickstart.md)可以从头跟着做。
+
+游戏内现有实体历史窗口默认显示混合事件并支持来源筛选；外部行显示生产者、时间和关联实体，详情以纯文本 JSON 分段展示，不约定展示文本字段。无实体记录用全局 API 或离线报告查看。
+
+有问题就把操作步骤、版本、错误码和相关日志片段发回来，payload 只分享排查需要的部分。我们先收一轮接入反馈，再决定下一步。当前测过什么看[验证摘要](validation.md)。

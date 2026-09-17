@@ -192,6 +192,9 @@ class ResourceAndRuntimeChecks(unittest.TestCase):
         sims4.commands = commands
         services = ModuleType("services")
         services.current_zone = lambda: None
+        game_services = ModuleType("game_services")
+        game_services.service_manager = None
+        game_services.stop_services = lambda: None
         zone = ModuleType("zone")
         class Zone:
             def on_loading_screen_animation_finished(self):
@@ -205,10 +208,12 @@ class ResourceAndRuntimeChecks(unittest.TestCase):
         runtime = SimpleNamespace(history_query=query, history_next=lambda cursor: {"cursor": cursor},
                                   history_close=lambda cursor: {"closed": True}, inspector_error=None,
                                   inspector=SimpleNamespace(open=lambda kind, identifier: calls.append((kind, identifier))))
-        with patch.dict(sys.modules, {"services": services, "sims4": sims4, "sims4.commands": commands, "zone": zone}), \
+        with patch.dict(sys.modules, {"services": services, "game_services": game_services,
+                                     "sims4": sims4, "sims4.commands": commands, "zone": zone}), \
                 patch.object(game_runtime, "log"), patch.object(game_runtime, "_runtime", runtime), \
                 patch.object(game_runtime, "_lifecycle_hooks", None):
             game_runtime.initialize()
+            self.assertIn("co.api_inspect", registered)
             registered["co.history_query"]("sim", "42", 25, False, "ended", "100", "200", "interaction", "all", "completed", "13433", "asc")
             self.assertEqual(calls[0][2]["event_types"], ["interaction"])
             self.assertEqual(calls[0][2]["from_ticks"], "100")

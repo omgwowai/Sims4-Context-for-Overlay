@@ -28,6 +28,7 @@ DEFAULTS = {"recorder_enabled": True, "collector_enabled": True, "semanticizer_e
             "writer_capacity": 2048, "writer_memory_mb": 32,
             "run_output_mb": 2048, "disk_reserve_mb": 1024, "development_driver": False,
             "inspector_enabled": True}
+DEFAULTS.update(external_rate_per_second=20, external_burst=40)
 DEFAULTS.update(autonomy_enabled=True, autonomy_top_n=5, autonomy_pending_capacity=256,
                 autonomy_pending_memory_mb=8, autonomy_pending_ttl_seconds=600)
 _runtime = None
@@ -83,14 +84,18 @@ def load_config():
 
 
 class Runtime:
-    def __init__(self):
+    def __init__(self, previous=None):
         import services
+        import game_services
         from sims4.common import get_available_packs
         self.simulation_thread_id = threading.get_ident()
         self.api_ready = False
-        self.config = load_config()
-        self.session_id = new_id()
-        self.directory = data_root() / "runs" / self.session_id
+        self.config = previous.config if previous else load_config()
+        self.session_id = previous.session_id if previous else new_id()
+        self.directory = previous.directory if previous else data_root() / "runs" / self.session_id
+        self.game_service_manager = game_services.service_manager
+        self.history_suspended = False
+        self.resumed = previous is not None
         self.adapter = EAAdapter(self.config)
         self.initial_scope = self.adapter.scope()
         self.manager = services.get_event_manager()
@@ -98,16 +103,19 @@ class Runtime:
         self.provenance.update({"runtime_python": sys.version,
                                 "available_packs": [enum_name(pack) for pack in get_available_packs()],
                                 "other_mods": "not_enumerated"})
-        self.writer = Journal(self.directory, self.config["writer_capacity"],
+        self.writer = previous.writer if previous else Journal(self.directory, self.config["writer_capacity"],
                               max_bytes=self.config["run_output_mb"] * MIB,
                               reserve_bytes=self.config["disk_reserve_mb"] * MIB,
                               queue_bytes=self.config["writer_memory_mb"] * MIB)
-        self.recorder = Recorder(self.writer, self.session_id, self.config["history_capacity"],
+        self.recorder = previous.recorder if previous else Recorder(self.writer, self.session_id, self.config["history_capacity"],
                                  self.config["recorder_enabled"], memory_bytes=self.config["history_memory_mb"] * MIB,
                                  snapshot_limit=self.config["history_query_limit"],
                                  snapshot_refs=self.config["history_query_max_refs"],
                                  snapshot_bytes=self.config["history_query_memory_mb"] * MIB,
-                                 snapshot_ttl=self.config["history_query_ttl_seconds"])
+                                 snapshot_ttl=self.config["history_query_ttl_seconds"],
+                                 external_rate=self.config["external_rate_per_second"],
+                                 external_burst=self.config["external_burst"])
+        self.recorder.begin_zone(self.initial_scope)
         self.collector = Collector(self.adapter, self.recorder, self.config["collector_enabled"], self.config["semanticizer_enabled"], self.provenance)
         self.hooks = Hooks(self.fail)
         from context_overlay.event_sources import EventSources
@@ -150,7 +158,9 @@ class Runtime:
             self.hooks.after(StateComponent, "_trigger_on_state_changed", self.state_changed)
             self.sources.install()
             self.autonomy.install()
-        self.recorder.note("session_start", {"scope": self.adapter.scope(), "config": self.config,
+        self.recorder.note("zone_entry" if self.resumed else "session_start", {
+                                             "scope": self.initial_scope, "zone_visit": self.recorder.zone_visit,
+                                             "config": self.config,
                                              "provenance": self.provenance,
                                              "event_coverage": self.sources.status(), "event_diagnostics": self.sources.diagnostics(),
                                              "autonomy": self.autonomy.status(),
@@ -181,27 +191,27 @@ class Runtime:
             return
         if interaction.sim is None:
             return
-        observed_here = getattr(interaction, "_context_overlay_recording_run", None) == self.session_id
-        expected_id = "{}:interaction:{}:{}".format(self.session_id, interaction.sim.sim_info.sim_id, interaction.id)
+        observed_here = getattr(interaction, "_context_overlay_recording_run", None) == self.recorder.interaction_namespace
+        expected_id = self.recorder.interaction_event_id(interaction.sim.sim_info.sim_id, interaction.id)
         if not self.adapter.in_scope(interaction.sim) and not (phase == "exited" and expected_id in self.recorder.events):
             return
         if observed_here and expected_id not in self.recorder.events:
             return  # A live interaction evicted by FIFO must not reappear as new.
         facts = self.adapter.interaction(interaction)
         decision = getattr(interaction, "_context_overlay_autonomy_decision", None)
-        if decision and decision[0] == self.session_id:
+        if decision and decision[0] == self.recorder.interaction_namespace:
             facts["decision_event_id"] = decision[1]
             facts["decision_coverage"] = "exact_selected_instance"
         elif facts.get("trigger", {}).get("name") == "AUTONOMY":
             facts["decision_coverage"] = "not_observed_or_not_committed"
         if facts["parent_interaction_id"]:
-            facts["parent_event_id"] = "{}:interaction:{}:{}".format(self.session_id, facts["parent_actor_id"], facts["parent_interaction_id"])
+            facts["parent_event_id"] = self.recorder.interaction_event_id(facts["parent_actor_id"], facts["parent_interaction_id"])
         event = self.recorder.interaction(phase, facts, self.adapter.clock(), source)
         if event:
-            interaction._context_overlay_recording_run = self.session_id
+            interaction._context_overlay_recording_run = self.recorder.interaction_namespace
         if (event and phase == "started" and facts["trigger"]["name"] == "REACTION"
-                and getattr(interaction, "_context_overlay_reaction_run", None) != self.session_id):
-            interaction._context_overlay_reaction_run = self.session_id
+                and getattr(interaction, "_context_overlay_reaction_run", None) != self.recorder.interaction_namespace):
+            interaction._context_overlay_reaction_run = self.recorder.interaction_namespace
             self.recorder.fact("reaction.started", facts["participants"], {"interaction": facts["name"],
                 "perception": "not_inferred"}, self.adapter.clock(), source, roles=facts["roles"],
                 cause={"event_id": event["event_id"], "basis": "reaction_interaction_started"})
@@ -363,8 +373,25 @@ class Runtime:
         self.recorder.close_query(cursor)
         return {"closed": True}
 
-    def stop(self, reason):
+    def finish_history(self):
+        self.history_suspended = False
+        try:
+            self.recorder.close_queries()
+        finally:
+            try:
+                self.writer.close(wait=True)
+            finally:
+                # Failed writers retain their pending data for diagnostics.
+                _retired.append(self.writer)
+
+    def stop(self, reason, preserve_history=False):
         if self.closed:
+            if self.history_suspended and not preserve_history:
+                try:
+                    self.recorder.note("session_end", {"reason": reason}, self.boundary_time)
+                finally:
+                    self.finish_history()
+                log("RUN STOPPED {}: {}".format(self.session_id, reason))
             return
         self.api_ready = False
         self.closed = True
@@ -377,13 +404,18 @@ class Runtime:
                 errors.append("{}: {}: {}".format(label, type(exc).__name__, exc))
 
         attempt("close_autonomy", self.autonomy.close)
-        attempt("session_end", lambda: self.recorder.note(
-            "session_end", {"reason": reason, "status": self.recorder.status(),
+        self.boundary_time = None
+        def leave_zone():
+            self.boundary_time = self.adapter.clock()
+            self.recorder.end_zone(self.boundary_time)
+        attempt("leave_zone", leave_zone)
+        attempt("session_boundary", lambda: self.recorder.note(
+            "zone_exit" if preserve_history else "session_end", {
+                            "reason": reason, "status": self.recorder.status(),
                             "event_coverage": self.sources.status(), "autonomy": self.autonomy.status(),
-                            "event_diagnostics": self.sources.diagnostics()}, self.adapter.clock()))
+                            "event_diagnostics": self.sources.diagnostics()}, self.boundary_time))
         if self.inspector is not None:
             attempt("close_inspector", self.inspector.close)
-        attempt("close_queries", self.recorder.close_queries)
         if self.alarm is not None:
             def cancel_alarm():
                 import alarms
@@ -394,27 +426,41 @@ class Runtime:
         for event in self.events:
             attempt("unregister_" + str(event), lambda event=event: self.manager.unregister(self, (event,)))
         self.events[:] = []
-        # Teardown is an explicit boundary, never a per-frame callback. Drain
-        # within the writer's bounded timeout before the process can exit.
-        attempt("close_writer", lambda: self.writer.close(wait=True))
+        # Travel keeps the same writer, sequence, FIFO, dedup table and query
+        # index. Drain at this explicit boundary, never in a per-frame callback.
+        if preserve_history:
+            attempt("flush_writer", self.writer.flush)
         writer_error = self.writer.status().get("error")
         if writer_error:
             errors.append(writer_error)
-        # Retain failed writers' pending data; never throw it away during teardown.
-        _retired.append(self.writer)
+        self.history_suspended = preserve_history and not errors
+        if not self.history_suspended:
+            attempt("close_history", self.finish_history)
+            writer_error = self.writer.status().get("error")
+            if writer_error and writer_error not in errors:
+                errors.append(writer_error)
         if errors:
             self.fail("Run cleanup failed: " + "; ".join(errors))
-        log("RUN STOPPED {}: {}".format(self.session_id, reason))
+        log("RUN {} {}: {}".format("SUSPENDED" if self.history_suspended else "STOPPED", self.session_id, reason))
 
 
-def start(*_):
+def start(*_, resume_travel=False):
     global _runtime, _startup_error
-    if _runtime is not None and not _runtime.closed:
-        _runtime.stop("new_load")
+    previous = _runtime
+    continuation = None
+    if previous is not None:
+        if resume_travel and previous.closed and previous.history_suspended:
+            import game_services
+            if previous.game_service_manager is game_services.service_manager and game_services.service_manager is not None:
+                continuation = previous
+        if continuation is None:
+            previous.stop("new_load")
     _runtime = None
     _startup_error = None
     try:
-        _runtime = Runtime()
+        _runtime = Runtime(continuation) if continuation else Runtime()
+        if continuation:
+            continuation.history_suspended = False  # Writer ownership moved.
         _runtime.install()
         _runtime.api_ready = not _runtime.closed
     except Exception:
@@ -423,12 +469,24 @@ def start(*_):
         if _runtime is not None:
             _runtime.fail(_startup_error)
             _runtime.stop("startup_failure")
+        elif continuation:
+            continuation.stop("startup_failure")
     return _runtime is not None and not _runtime.closed and _startup_error is None
 
 
 def stop(*_):
     if _runtime is not None:
-        _runtime.stop("zone_teardown")
+        import game_services
+        manager = game_services.service_manager
+        traveling = manager is not None and manager.is_traveling
+        _runtime.stop("travel" if traveling else "zone_teardown", preserve_history=traveling)
+
+
+def stop_game_services():
+    import game_services
+    manager = game_services.service_manager
+    if _runtime is not None and (manager is None or not manager.is_traveling):
+        _runtime.stop("game_services_shutdown")
 
 
 def initialize():
@@ -436,11 +494,13 @@ def initialize():
     if _lifecycle_hooks is not None:
         return
     import services
+    import game_services
     import sims4.commands
     from zone import Zone
     _lifecycle_hooks = Hooks(log)
-    _lifecycle_hooks.after(Zone, "on_loading_screen_animation_finished", lambda args, kwargs, result: start())
+    _lifecycle_hooks.after(Zone, "on_loading_screen_animation_finished", lambda args, kwargs, result: start(resume_travel=True))
     _lifecycle_hooks.before(Zone, "on_teardown", lambda args, kwargs: stop())
+    _lifecycle_hooks.before(game_services, "stop_services", lambda args, kwargs: stop_game_services())
 
     def respond(connection, operation, *args, **kwargs):
         output = sims4.commands.CheatOutput(connection)
@@ -463,6 +523,37 @@ def initialize():
                        representation: str="both", history: bool=True, fields: str="all", _connection=None):
         selected = None if fields == "all" else fields.split(",")
         respond(_connection, "export", kind, identifier, limit, internal, selected, representation, history)
+
+    @sims4.commands.Command("co.api_test", command_type=sims4.commands.CommandType.Live)
+    def api_test_command(_connection=None):
+        from context_overlay.api_probe import run
+        output = sims4.commands.CheatOutput(_connection)
+        try:
+            output(json.dumps(run(data_root() / "api-self-test.json"), ensure_ascii=False))
+        except Exception as exc:
+            output("ContextOverlay API check failed: " + str(exc))
+
+    @sims4.commands.Command("co.api_verify", command_type=sims4.commands.CommandType.Live)
+    def api_verify_command(_connection=None):
+        from context_overlay.api_probe import verify
+        output = sims4.commands.CheatOutput(_connection)
+        try:
+            output(json.dumps(verify(data_root() / "api-self-test.json"), ensure_ascii=False))
+        except Exception as exc:
+            output("ContextOverlay API verification failed: " + str(exc))
+
+    @sims4.commands.Command("co.api_inspect", command_type=sims4.commands.CommandType.Live)
+    def api_inspect_command(_connection=None):
+        from context_overlay.api_probe import inspect_target
+        output = sims4.commands.CheatOutput(_connection)
+        try:
+            target = inspect_target(data_root() / "api-self-test.json")
+            if _runtime.inspector is None or _runtime.inspector_error:
+                raise RuntimeError("Inspector unavailable; inspect co.status")
+            _runtime.inspector.open_target(target, external_history=True)
+            output("ContextOverlay self-test history: {} ({})".format(target.get("name"), target["id"]))
+        except Exception as exc:
+            output("ContextOverlay API inspector failed: " + str(exc))
 
     @sims4.commands.Command("co.nearby", command_type=sims4.commands.CommandType.Live)
     def nearby_command(identifier: str="active", radius: str="8", kinds: str="sim",

@@ -1,5 +1,6 @@
 """Deterministic Chinese explanations; facts are never modified."""
 
+import json
 from context_overlay import VERSION
 from context_overlay.profiles import OBJECT_STATES
 
@@ -132,6 +133,8 @@ def resource_details(value, root="", limit=128, node_limit=20000):
         current, path = pending.pop()
         nodes += 1
         if isinstance(current, dict):
+            if current.get("event_type") == "external_event":
+                continue
             for role in ("description", "tooltip"):
                 text = current.get(role)
                 source = text.get("source", {}) if isinstance(text, dict) else {}
@@ -183,7 +186,9 @@ def subjects(event):
 
 
 def explain_event(event):
-    if event["event_type"] == "interaction":
+    if event["event_type"] == "external_event":
+        text = "外部事件 · {}；关联：{}。".format(event["producer"], "、".join(event["entities"]) or "无实体")
+    elif event["event_type"] == "interaction":
         facts = event["facts"]
         actor = display(facts["actor"])
         action = display(facts.get("name") or facts.get("tuning_name") or facts.get("tuning_id"))
@@ -288,6 +293,8 @@ def explain_event(event):
               "game_time": event.get("last_observed_time"), "rules_version": VERSION}
     if event.get("category") == "autonomy.decision":
         result["decision_details"] = autonomy_details(event["payload"])
+    if event["event_type"] == "external_event":
+        result["payload_json"] = json.dumps(event["payload"], ensure_ascii=False, indent=2, allow_nan=False)
     return result
 
 

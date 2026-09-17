@@ -238,7 +238,7 @@ class NearbyChecks(unittest.TestCase):
         self.runtime.collector.semantic_enabled = False
         before = self.runtime.recorder.status()
         packet = Client().get_nearby_entities(radius=8)
-        self.assertEqual(packet["api_version"], "1.1.0")
+        self.assertEqual(packet["api_version"], "2.1.0")
         self.assertEqual(packet["module_version"], VERSION)
         self.assertEqual(packet["status"], "complete")
         packet["results"][0]["spatial"]["position"]["value"]["x"] = 900
@@ -247,8 +247,8 @@ class NearbyChecks(unittest.TestCase):
         self.assertEqual(self.runtime.recorder.status(), before)
         self.assertNotIn("history", packet)
 
-    def test_sdk_old_provider_keeps_existing_calls_and_rejects_missing_capability(self):
-        provider = SimpleNamespace(get_api_info=lambda: {"api_version": "1.0.0", "schema_version": "1",
+    def test_sdk_compatible_provider_keeps_existing_calls_and_rejects_missing_capability(self):
+        provider = SimpleNamespace(get_api_info=lambda: {"api_version": "2.1.0", "schema_version": "2",
                                                           "capabilities": ["context.read"]},
                                    get_context=lambda *args, **kwargs: {"old": True})
         client = Client(provider)

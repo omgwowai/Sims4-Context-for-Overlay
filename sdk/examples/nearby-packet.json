@@ -1,5 +1,5 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "module_version": "0.6.0",
   "kind": "nearby_entities",
   "session_id": "nearby-run",
@@ -241,5 +241,5 @@
     "display": "Synthetic game time (not a live reading)"
   },
   "status": "complete",
-  "api_version": "1.1.0"
+  "api_version": "2.1.0"
 }

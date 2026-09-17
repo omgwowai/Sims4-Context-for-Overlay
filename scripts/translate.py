@@ -51,6 +51,9 @@ def markdown_report(packet, source, include_internal=False, catalog=None):
         if row.get("decision_details"):
             lines += ["<details>", "<summary>Autonomy 候选与评分</summary>", "",
                       markdown_text(row["decision_details"]), "", "</details>", ""]
+        if "payload_json" in row:
+            lines += ["<details>", "<summary>外部 JSON 内容</summary>", "",
+                      "<pre>" + html.escape(row["payload_json"]) + "</pre>", "", "</details>", ""]
         if event.get("effects"):
             lines += ["<details>", "<summary>关联效果</summary>", ""]
             lines += ["- " + markdown_text(explain_event(effect)["text"]) for effect in event["effects"]]

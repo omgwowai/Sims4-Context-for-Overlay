@@ -5,6 +5,11 @@ are private; callers receive detached copies, including for cursor pages.
 """
 
 import bisect
+import base64
+import hashlib
+import hmac
+import json
+import os
 import sys
 import time
 from collections import OrderedDict
@@ -107,6 +112,10 @@ class HistoryIndex:
         self.evicted = 0
         self.last_evicted_time = None
         self.entities = {}
+        self.global_index = EntityIndex()
+        self.producers = {}
+        self.last_evicted_sequence = 0
+        self._checkpoint_secret = os.urandom(32)
         self._keys = {}
         self._charges = {}
         self.memory_bytes = 0
@@ -128,6 +137,8 @@ class HistoryIndex:
         if previous and event["revision"] <= previous["revision"]:
             raise HistoryError("invalid_revision", "Event revisions must increase")
         event = copy_data(event)
+        event.setdefault("origin", "external" if event["event_type"] == "external_event" else "game")
+        event.setdefault("producer", None)
         event.pop("accepted_sequence", None)
         if previous:
             event["first_observed_time"] = previous["first_observed_time"]
@@ -141,7 +152,7 @@ class HistoryIndex:
             validate_entity(key)
         # Includes a conservative allowance for map entries, sort tuples and
         # accepted_sequence; repeated shared strings are charged independently.
-        charge = deep_size(event) + 512 + 512 * len(event["entities"])
+        charge = deep_size(event) + 1280 + 512 * len(event["entities"])
         projected = self.memory_bytes - self._charges.get(event["event_id"], 0) + charge
         if previous is None and len(self.events) >= self.capacity:
             projected -= self._charges[next(iter(self.fifo))]
@@ -156,6 +167,12 @@ class HistoryIndex:
 
     def remove(self, event_id):
         event = self.events.pop(event_id)
+        self.global_index.remove(event_id)
+        if event.get("producer") in self.producers:
+            producer_index = self.producers[event["producer"]]
+            producer_index.remove(event_id)
+            if not producer_index.by_id:
+                del self.producers[event["producer"]]
         self.fifo.pop(event_id)
         self._keys.pop(event_id)
         self.memory_bytes -= self._charges.pop(event_id)
@@ -167,6 +184,7 @@ class HistoryIndex:
                 del self.entities[key]
         self.evicted += 1
         self.last_evicted_time = event["first_observed_time"]
+        self.last_evicted_sequence = max(self.last_evicted_sequence, event["accepted_sequence"])
         return event
 
     def publish(self, event, sequence, charge):
@@ -180,6 +198,9 @@ class HistoryIndex:
         self._charges[event_id] = charge
         if event_id not in self._keys:
             self._keys[event_id] = (ticks(event["first_observed_time"]), sequence, event_id)
+        self.global_index.add(event_id, self._keys[event_id])
+        if event.get("producer"):
+            self.producers.setdefault(event["producer"], EntityIndex()).add(event_id, self._keys[event_id])
         for key in event["entities"]:
             index = self.entities.get(key)
             if index is None:
@@ -213,7 +234,8 @@ class HistoryIndex:
             result.append(event)
         return result
 
-    def recent(self, entity_key, limit, include_internal, group_effects=False):
+    def recent(self, entity_key, limit, include_internal, group_effects=False, origins=None, producers=None):
+        origins, producers = self.source_filters(origins, producers)
         index = self.entities.get(entity_key)
         if index is None:
             return [], False
@@ -222,7 +244,7 @@ class HistoryIndex:
         selected = []
         for event_id in reversed(index.by_id):
             event = self.events[event_id]
-            if include_internal or event["tier"] == "main":
+            if (include_internal or event["tier"] == "main") and self.source_matches(event, origins, producers):
                 selected.append(event)
                 if len(selected) == candidate_limit:
                     break
@@ -254,6 +276,7 @@ class HistoryIndex:
                 "event_capacity": self.capacity, "snapshots": len(self._snapshots),
                 "retention_policy": "fifo_first_accepted", "evicted_events": self.evicted,
                 "last_evicted_time": self.last_evicted_time,
+                "last_evicted_sequence": self.last_evicted_sequence,
                 "snapshot_references": self._snapshot_refs, "snapshot_charged_bytes": self._snapshot_bytes,
                 "snapshot_memory_budget_bytes": self.snapshot_byte_limit}
 
@@ -264,20 +287,72 @@ class HistoryIndex:
         if not isinstance(value, (list, tuple)) or not value or len(value) > 64 or any(not isinstance(v, str) or not v for v in value):
             raise HistoryError("invalid_query", name + " must be a nonempty list of at most 64 strings")
         values = set(value)
+        if len(values) != len(value):
+            raise HistoryError("invalid_query", name + " must contain distinct values")
         if allowed is not None and not values <= allowed:
             raise HistoryError("invalid_query", "Unsupported " + name)
         return values
 
-    def query(self, entity_key, metadata, page_size=50, include_internal=False,
-              time_field="first_observed", from_ticks=None, to_ticks=None,
-              event_types=None, fields=None, outcomes=None, tuning_ids=None, order="desc", group_effects=False):
+    @classmethod
+    def source_filters(cls, origins, producers):
+        origins = cls._values(origins, "origins", {"game", "external"})
+        producers = cls._values(producers, "producers")
+        if producers and any(len(v) > 128 or any(ord(c) < 33 or ord(c) > 126 for c in v) for v in producers):
+            raise HistoryError("invalid_query", "producer names must be 1-128 printable ASCII characters without spaces")
+        return origins, producers
+
+    @staticmethod
+    def source_matches(event, origins, producers):
+        return ((origins is None or event.get("origin", "game") in origins)
+                and (producers is None or event.get("producer") in producers))
+
+    def _indexes(self, entity_key, producers):
+        if entity_key is not None:
+            index = self.entities.get(entity_key)
+            return [index] if index is not None else []
+        if producers is not None:
+            return [self.producers[p] for p in sorted(producers) if p in self.producers]
+        return [self.global_index]
+
+    def _validate_page(self, entity_key, page_size, include_internal):
         if self.closed:
             raise HistoryError("session_closed", "Recording run is closed")
-        validate_entity(entity_key)
+        if entity_key is not None:
+            validate_entity(entity_key)
         if isinstance(page_size, bool) or not isinstance(page_size, int) or not 1 <= page_size <= 500:
             raise HistoryError("invalid_query", "Page size must be between 1 and 500")
         if not isinstance(include_internal, bool):
             raise HistoryError("invalid_query", "include_internal must be a boolean")
+        self.prune()
+        if len(self._snapshots) >= self.snapshot_limit:
+            raise HistoryError("query_limit", "Close a query or wait for expiry")
+
+    def _check_budget(self, count, charged):
+        if count + self._snapshot_refs > self.snapshot_ref_limit or charged + self._snapshot_bytes > self.snapshot_byte_limit:
+            raise HistoryError("query_budget", "Narrow the filters or close other queries")
+
+    def _freeze(self, rows, metadata, entity_key, filters, page_size, examined, charged,
+                group_effects=False, checkpoint=None):
+        refs = len(rows)
+        versions = tuple(self.grouped(rows) if group_effects else rows)
+        charged += deep_size(filters) + (512 * len(versions) if group_effects else 0)
+        if checkpoint:
+            charged += sys.getsizeof(checkpoint) + 256
+        self._check_budget(refs, charged)
+        query_id = new_id()
+        self._snapshots[query_id] = {"events": versions, "refs": refs, "charge": charged,
+            "expires": self._clock() + self.snapshot_ttl, "page_size": page_size, "entity_key": entity_key,
+            "metadata": copy_data(metadata), "created_at": utc_now(), "examined": examined,
+            "filters": filters, "checkpoint": checkpoint}
+        self._snapshot_refs += refs
+        self._snapshot_bytes += charged
+        return self._page(query_id, 0)
+
+    def query(self, entity_key, metadata, page_size=50, include_internal=False,
+              time_field="first_observed", from_ticks=None, to_ticks=None,
+              event_types=None, fields=None, outcomes=None, tuning_ids=None, order="desc", group_effects=False,
+              origins=None, producers=None):
+        self._validate_page(entity_key, page_size, include_internal)
         if not isinstance(group_effects, bool):
             raise HistoryError("invalid_query", "group_effects must be a boolean")
         if time_field not in ("first_observed", "started", "ended") or order not in ("asc", "desc"):
@@ -285,18 +360,18 @@ class HistoryIndex:
         lower, upper = ticks(from_ticks), ticks(to_ticks)
         if lower is not None and upper is not None and lower >= upper:
             raise HistoryError("invalid_query", "Time range is [from, to), with from < to")
-        types = self._values(event_types, "event_types", {"interaction", "state_change", "game_event"})
+        types = self._values(event_types, "event_types", {"interaction", "state_change", "game_event", "external_event"})
+        origins, producers = self.source_filters(origins, producers)
         names = self._values(fields, "fields")
         results = self._values(outcomes, "outcomes", {"completed", "cancelled", "failed", "unknown"})
         tunings = self._values(tuning_ids, "tuning_ids")
         self.prune()
         if len(self._snapshots) >= self.snapshot_limit:
             raise HistoryError("query_limit", "Close a query or wait for expiry")
-        index = self.entities.get(entity_key)
         rows, charged, examined = [], deep_size(metadata) + 1024, 0
         if charged + self._snapshot_bytes > self.snapshot_byte_limit:
             raise HistoryError("query_budget", "Query metadata exceeds snapshot budget")
-        if index:
+        for index in self._indexes(entity_key, producers):
             if time_field == "first_observed":
                 left = 0 if lower is None else bisect.bisect_left(index.by_time, (lower,))
                 right = len(index.by_time) if upper is None else bisect.bisect_left(index.by_time, (upper,))
@@ -311,6 +386,8 @@ class HistoryIndex:
                     continue
                 if not include_internal and event["tier"] != "main":
                     continue
+                if not self.source_matches(event, origins, producers):
+                    continue
                 if types and event["event_type"] not in types:
                     continue
                 if names and event.get("field") not in names:
@@ -323,30 +400,81 @@ class HistoryIndex:
                 if len(rows) + 1 + self._snapshot_refs > self.snapshot_ref_limit or charged + self._snapshot_bytes > self.snapshot_byte_limit:
                     raise HistoryError("query_budget", "Narrow the time/type filters or close other queries")
                 rows.append(event)
-        if time_field != "first_observed":
-            rows.sort(key=lambda event: (ticks(event[time_field + "_time"]),
-                                        self._keys[event["event_id"]][1], event["event_id"]))
+        rows.sort(key=lambda event: self._keys[event["event_id"]] if time_field == "first_observed" else (
+            ticks(event[time_field + "_time"]), self._keys[event["event_id"]][1], event["event_id"]))
         if order == "desc":
             rows.reverse()
-        original_refs = len(rows)
-        versions = tuple(self.grouped(rows) if group_effects else rows)
-        if group_effects:
-            charged += 512 * len(versions)
-            if charged + self._snapshot_bytes > self.snapshot_byte_limit:
-                raise HistoryError("query_budget", "Grouped query exceeds snapshot budget")
-        query_id = new_id()
-        snapshot = {"events": versions, "refs": original_refs, "charge": charged, "expires": self._clock() + self.snapshot_ttl,
-                    "page_size": page_size, "entity_key": entity_key, "metadata": copy_data(metadata),
-                    "created_at": utc_now(), "examined": examined,
-                    "filters": {"time_field": time_field, "from_ticks": str(lower) if lower is not None else None,
+        filters = {"time_field": time_field, "from_ticks": str(lower) if lower is not None else None,
                                 "to_ticks": str(upper) if upper is not None else None, "order": order,
                                 "include_internal": include_internal, "group_effects": group_effects, "event_types": sorted(types) if types else None,
                                 "fields": sorted(names) if names else None, "outcomes": sorted(results) if results else None,
-                                "tuning_ids": sorted(tunings) if tunings else None}}
-        self._snapshots[query_id] = snapshot
-        self._snapshot_refs += original_refs
-        self._snapshot_bytes += charged
-        return self._page(query_id, 0)
+                                "tuning_ids": sorted(tunings) if tunings else None,
+                                "origins": sorted(origins) if origins else None,
+                                "producers": sorted(producers) if producers else None}
+        return self._freeze(rows, metadata, entity_key, filters, page_size, examined, charged, group_effects)
+
+    def _checkpoint(self, sequence, filters):
+        data = json.dumps([self.session_id, sequence, filters], separators=(",", ":")).encode("utf-8")
+        return base64.urlsafe_b64encode(data).decode("ascii") + "." + hmac.new(
+            self._checkpoint_secret, data, hashlib.sha256).hexdigest()
+
+    def checkpoint_data(self, checkpoint):
+        try:
+            if not isinstance(checkpoint, str) or len(checkpoint) > 24576:
+                raise ValueError()
+            encoded, signature = checkpoint.split(".")
+            data = base64.b64decode(encoded.encode("ascii"), altchars=b"-_", validate=True)
+            session, sequence, filters = json.loads(data.decode("utf-8"))
+            if session != self.session_id:
+                raise HistoryError("session_changed", "Checkpoint belongs to another run")
+            if not hmac.compare_digest(signature, hmac.new(self._checkpoint_secret, data, hashlib.sha256).hexdigest()):
+                raise ValueError()
+            return sequence, filters
+        except HistoryError:
+            raise
+        except (ValueError, TypeError, UnicodeError, RecursionError):
+            raise HistoryError("invalid_checkpoint", "Use an unchanged checkpoint returned by the provider") from None
+
+    def changes(self, metadata, checkpoint=None, start=None, entity_key=None, origins=None,
+                producers=None, include_internal=None, page_size=50):
+        upper = metadata["coverage"]["persistence"]["accepted_sequence"]
+        if checkpoint is not None:
+            if any(v is not None for v in (start, entity_key, origins, producers, include_internal)):
+                raise HistoryError("invalid_query", "Checkpoint already binds initialization and filters")
+            lower, filters = self.checkpoint_data(checkpoint)
+            entity_key, origins, producers, include_internal = (filters[k] for k in (
+                "entity_key", "origins", "producers", "include_internal"))
+            if self.last_evicted_sequence > lower:
+                raise HistoryError("history_gap", "Events after checkpoint were evicted; reinitialize with retained or now (conservative across all sources)")
+        else:
+            start = "now" if start is None else start
+            if start not in ("now", "retained"):
+                raise HistoryError("invalid_query", "start must be now or retained")
+            lower = upper if start == "now" else 0
+            include_internal = False if include_internal is None else include_internal
+            origins, producers = self.source_filters(origins, producers)
+            filters = {"entity_key": entity_key, "origins": sorted(origins) if origins else None,
+                       "producers": sorted(producers) if producers else None, "include_internal": include_internal}
+        self._validate_page(entity_key, page_size, include_internal)
+        rows, charged, examined = [], deep_size(metadata) + 1024, 0
+        for index in self._indexes(entity_key, producers):
+            for event_id in reversed(index.by_id):
+                event = self.events[event_id]
+                examined += 1
+                if event["accepted_sequence"] <= lower:
+                    break
+                if (not include_internal and event["tier"] != "main") or not self.source_matches(event, origins, producers):
+                    continue
+                charged += self._charges[event_id] + 64
+                self._check_budget(len(rows) + 1, charged)
+                rows.append(event)
+        rows.sort(key=lambda event: event["accepted_sequence"])
+        metadata = dict(metadata, change_range={"after_sequence": lower, "through_sequence": upper,
+            "revision_policy": "latest_per_event", "initialization": start if checkpoint is None else None,
+            "gap_detection": "conservative_all_sources"})
+        metadata["target"] = {"key": entity_key} if entity_key else None
+        return self._freeze(rows, metadata, entity_key, filters, page_size, examined, charged + 512,
+                            checkpoint=self._checkpoint(upper, filters))
 
     def _cursor(self, query_id, offset):
         return "{}:{}:{}".format(self.session_id, query_id, offset)
@@ -392,4 +520,7 @@ class HistoryIndex:
                        "as_of_sequence": result["coverage"]["persistence"].get("accepted_sequence", 0),
                        "candidates_examined": snapshot["examined"],
                        "persistence_as_of": "query_creation"})
+        if snapshot.get("checkpoint"):
+            result["scope"] = "current_session_change_snapshot"
+            result["checkpoint"] = snapshot["checkpoint"] if not result["has_more"] else None
         return result

@@ -4,7 +4,7 @@ Replace the client import with your vendored SDK namespace when packaging.
 No imports of private provider modules, EA objects, files or network requests.
 """
 
-from context_overlay_client import Client
+from my_overlay_mod.vendor.context_overlay_client import Client
 
 
 def read_event_pages(sim_id):

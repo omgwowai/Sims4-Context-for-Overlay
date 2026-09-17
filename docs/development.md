@@ -1,5 +1,7 @@
 # 开发与调试
 
+这一页给修改 ContextOverlay 本身的人看，命令在源码仓库根目录运行。试用 ZIP 只带安装器、SDK 和文档；接自己的 Overlay 不需要准备下面这些开发工具，先看[快速接入](quickstart.md)。
+
 ## 环境与来源
 
 游戏基线为 `1.126.73.1030`，嵌入式 Python 3.7，字节码魔数 `420d0d0a`。本机游戏在 `D:/Games/The Sims 4`，参考仓库在 `C:/sources/sims4-python`，主要源码为 `ea-source/EA/`；参考提交由 `src/context_overlay/__init__.py` 的 `EA_REFERENCE_COMMIT` 指定。
@@ -16,7 +18,7 @@ python -B -X utf8 -m unittest discover -s tests -v
 
 安装器测试使用临时用户目录和假游戏进程，不操作真实存档。公共数据、API 测试环境与子 Python 命令集中在 `tests/support.py`；子进程同样带 `-B`，不会重新生成字节码缓存。运行时源码需要兼容 Python 3.7；不要用开发机默认的新 Python 编译游戏脚本包。
 
-本机独立解释器为 `%LOCALAPPDATA%/Sims4ContextDev/python37/python.exe`。在仓库根目录执行：
+下面的解释器、游戏安装目录和参考仓库路径是开发机示例，换成自己的路径。在仓库根目录执行：
 
 ```powershell
 $py = "$env:LOCALAPPDATA/Sims4ContextDev/python37/python.exe"
@@ -68,6 +70,8 @@ python -B -X utf8 scripts/translate.py "输入.json" "报告.md" --strings .loca
 
 常用命令见[安装与使用](install.md)。`co.export` 选择字段时用逗号分隔；`co.status` 核对当前 session、队列、记录器错误、窗口、事件源和 Autonomy 状态。`co.restart` 重读配置并开始新运行，旧查询失效。
 
+Overlay 手动自检使用 `co.api_test` → `co.api_verify` → `co.api_inspect`。普通旅行后只执行 `co.api_verify` 与 `co.api_inspect`，核对历史续接；不要先重跑自检覆盖基准。`tests/test_travel_history.py` 使用真实 Runtime／Journal 和 EA 服务替身覆盖旅行、往返、读档隔离、清理失败及查询连续性，实机复测按[验收步骤](install.md#overlay-接口手动验收)。
+
 ### 分页历史查询
 
 `co.history` 按最近更新顺序返回；筛选和分页使用：
@@ -85,7 +89,7 @@ co.history_close 此查询返回的任意cursor
 co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [时间字段] [from_ticks/none] [to_ticks/none] [事件类型/all] [变化字段/all] [交互结果/all] [tuning_ID/all] [asc/desc]
 ```
 
-列表参数以逗号分隔，`all` 表示不筛选，时间边界 `none` 表示不设限。读取完使用 `co.history_close` 释放查询。字段含义、时间范围、冻结分页与错误契约统一见[公共 API 与 SDK](public-api-v1.md)。
+列表参数以逗号分隔，`all` 表示不筛选，时间边界 `none` 表示不设限。读取完使用 `co.history_close` 释放查询。字段含义、时间范围、冻结分页与错误契约统一见[公共 API 与 SDK](public-api-v2.md)。
 
 ## 配置与预算
 
@@ -100,6 +104,7 @@ co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [�
 | `history_query_ttl_seconds` | 120 秒现实时间，暂停也计时 |
 | `writer_capacity / writer_memory_mb` | 2048 / 32 MiB |
 | `run_output_mb / disk_reserve_mb` | 每运行 2048 MiB / 预留 1024 MiB |
+| `external_rate_per_second / external_burst` | 全部外部生产者共用：每现实秒 20 条 / 突发 40 条 |
 | `autonomy_top_n / autonomy_pending_capacity` | 每层 5 项 / 每组 256 条 |
 | `autonomy_pending_memory_mb / autonomy_pending_ttl_seconds` | 两组共 8 MiB / 600 秒现实时间 |
 | `development_driver` | false |
@@ -144,6 +149,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/game_test.ps1 re
 
 ## 按需分发
 
+普通玩家可用 `co.api_test` 和 `co.api_verify` 手动验收读写，见[操作步骤](install.md#overlay-接口手动验收)。开发驱动增加限定入口 `api_info/api_context/api_history/api_append/api_changes/api_page/api_close`，对应参数放入请求的 `params` 对象；仍须开启 development_driver 并在加载地块后使用，不提供任意函数调用。
+
 只有明确需要分发时运行：
 
 ```powershell
@@ -151,6 +158,6 @@ python -B scripts/package.py windows
 python -B scripts/package.py sdk
 ```
 
-Windows 包包含脚本、manifest、无需 Python 的安装器、SDK、接入与使用文档；SDK 包包含客户端源码、合成示例和当前契约。两者都不包含历史报告或研究材料。SDK 中没有游戏资源字典；Windows 脚本包含构建时已选的本地游戏文本。
+Windows 包包含脚本、manifest、无需 Python 的安装器、SDK、读写示例和文档；SDK 包包含客户端源码、示例及相同文档，不含游戏脚本。解压后先看根目录 README。源码开发命令仍需在仓库里运行；包内不带本机日志、存档或资源提取缓存。SDK 中没有游戏资源字典；Windows 脚本包含构建时已选的游戏文本。
 
 日常验证不生成 ZIP，也不恢复旧中间产物。历史日志、审计结果和分发包按需保留，代码与当前文档进入 Git。

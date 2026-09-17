@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from context_overlay import EA_REFERENCE_COMMIT, VERSION
+from context_overlay import EA_REFERENCE_COMMIT, VERSION, SCHEMA_VERSION
 from context_overlay.api import API_VERSION
 
 
@@ -65,7 +65,7 @@ def main():
             data = args.string_sources.read_bytes()
             archive.writestr("context_overlay/string_sources.json", data)
             manifest["string_sources_sha256"] = hashlib.sha256(data).hexdigest()
-        build_info = {"module_version": VERSION, "public_api_version": API_VERSION, "build_game_version": game_version,
+        build_info = {"module_version": VERSION, "public_api_version": API_VERSION, "schema_version": SCHEMA_VERSION, "build_game_version": game_version,
                       "game_version_source": "Game/Bin/Default.ini at build time",
                       "game_bytecode_magic": game_magic.hex(),
                       "ea_reference_project": "sims4-python", "ea_reference_commit": EA_REFERENCE_COMMIT,

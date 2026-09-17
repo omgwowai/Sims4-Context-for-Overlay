@@ -6,7 +6,7 @@ import unittest
 from functools import partial
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -143,6 +143,25 @@ class InspectorChecks(unittest.TestCase):
         self.assertEqual(self.session.page["total_matches"], 0)
         self.session.set_filter("internal", True)
         self.assertEqual(self.session.page["total_matches"], 1)
+
+    def test_external_filter_keeps_entity_boundary_and_shows_json(self):
+        self.recorder.external.append("context_overlay.selftest.example", {"text": "自检记录"},
+                                      [self.target["key"]], "test", self.adapter.clock())
+        self.recorder.external.append("context_overlay.selftest.example", {"text": "无实体记录"},
+                                      None, None, self.adapter.clock())
+        self.session.refresh()
+        self.view.choose("历史事件")
+        self.view.choose("筛选历史")
+        self.view.choose("来源：外部")
+        self.assertEqual(self.session.page["total_matches"], 1)
+        self.view.choose("外部 · context_overlay.selftest.example")
+        self.assertIn('"text": "自检记录"', self.view.windows[-1][1])
+        other = InspectorSession(self.runtime, self.view, entity("sim", 230, "Eddie"), 100, self.errors.append)
+        other.origin = "external"
+        other.new_history()
+        self.assertEqual(other.page["total_matches"], 0)
+        self.assertIn("co.api_inspect", self.view.windows[-1][1])
+        self.assertEqual(self.errors, [])
 
     def test_expiry_is_reported_and_refresh_recovers(self):
         self.add_events(40)
@@ -385,6 +404,22 @@ class NativeBridgeChecks(unittest.TestCase):
                 next(interaction._run_interaction_gen(None))
             self.assertFalse(stopped.exception.value)
             self.assertEqual(calls, ["local"])
+
+    def test_external_shortcut_opens_recorded_target_even_when_not_instantiated(self):
+        target = entity("sim", 226, "Nyssa")
+        rec = Recorder(MemoryJournal(), "native-test")
+        rec.external.append("context_overlay.selftest.test", {"text": "检查"}, [target["key"]], None, {"ticks": "1"})
+        adapter = SimpleNamespace(clock=lambda: {"ticks": "10"}, resolve=Mock(side_effect=ValueError("not local")))
+        runtime = SimpleNamespace(closed=False, adapter=adapter, recorder=rec, collector=Collector(adapter, rec))
+        inspector = self.native.NativeInspector(runtime, lambda message: None)
+        inspector.open_target(target, external_history=True)
+        self.assertEqual(inspector.session.target, target)
+        self.assertEqual(inspector.session.page["total_matches"], 1)
+        dialog = inspector.view.current
+        self.assertIn("Nyssa", dialog.title())
+        self.assertTrue(any("context_overlay.selftest.test" in row.name for row in dialog.rows))
+        adapter.resolve.assert_not_called()
+        inspector.close()
 
 
 if __name__ == "__main__":

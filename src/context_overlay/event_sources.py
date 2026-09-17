@@ -118,7 +118,7 @@ class EventSources:
             interaction = getattr(resolver, "interaction", None)
         if interaction is not None and getattr(interaction, "sim", None) is not None:
             actor = self.adapter.event_reference(interaction.sim)
-            return {"event_id": "{}:interaction:{}:{}".format(self.recorder.session_id, actor["id"], interaction.id),
+            return {"event_id": self.recorder.interaction_event_id(actor["id"], interaction.id),
                     "actor": actor, "basis": basis, "source_tuning": self.adapter.resource(interaction, resource_kind="interaction")}
         for frame in reversed(self.frames):
             if frame.get("cause"):

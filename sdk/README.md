@@ -1,12 +1,18 @@
 # ContextOverlay Python SDK
 
-将 [context_overlay_client.py](context_overlay_client.py) 放入自己的 MOD 包，并按游戏 Python 3.7 构建。安装方法、参数、分页生命周期、线程与错误契约统一见[公共 API 与 SDK](../docs/public-api-v1.md)；采集边界见[架构](../docs/architecture.md)。
+SDK 版本 **2.1.0**，适配 API 2.x / schema 2。这份试用包搭配 ContextOverlay **0.9.0**，支持普通旅行后继续读取历史。
+
+把 [context_overlay_client.py](context_overlay_client.py) 放进自己 MOD 的包里，再把示例中的 `my_overlay_mod` 换成你的包名。SDK 不单独放进 Mods 文件夹，也不会帮你调模型或创建界面。[快速接入](../docs/quickstart.md)有完整的读写过程。
 
 | 示例 | 用途 |
 | --- | --- |
+| [quickstart.py](examples/quickstart.py) | 先读当前 Sim、写一条事件、再查回来 |
+| [overlay_events.py](examples/overlay_events.py) | 自由 JSON 写入、来源筛选、无实体查询、增量分页与重试 |
 | [consumer.py](examples/consumer.py) | 接入、错误处理与跨窗口回调的历史句柄 |
 | [event_history.py](examples/event_history.py) | 事件筛选与动作效果分组 |
 | [nearby_entities.py](examples/nearby_entities.py) | 附近实体选择后读取 Context |
 | [offline_preview.py](examples/offline_preview.py) | 普通 Python 读取合成 Context |
 
-[context-packet.json](examples/context-packet.json) 和 [nearby-packet.json](examples/nearby-packet.json) 是展示用合成数据。
+除 `offline_preview.py` 外，示例都由你的 MOD 在游戏线程调用，不会自动运行。`offline_preview.py` 可直接用 `python -X utf8 sdk/examples/offline_preview.py` 运行；[context-packet.json](examples/context-packet.json) 和 [nearby-packet.json](examples/nearby-packet.json) 是合成数据。
+
+需要准确参数时查 [API 参考](../docs/public-api-v2.md)。游戏本体的安装、升级和自检看[安装说明](../docs/install.md)。

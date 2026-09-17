@@ -165,6 +165,8 @@ class NameCatalog:
                 for child in value:
                     walk(child, kind)
             elif isinstance(value, dict):
+                if value.get("event_type") == "external_event":
+                    return
                 event_kind = value.get("field")
                 inferred = "buff" if event_kind == "buffs" else "relbit" if event_kind == "relationship.bits" else "object_state" if str(event_kind).startswith("object_states.") else kind
                 if "tuning_id" in value and "tuning_name" in value:

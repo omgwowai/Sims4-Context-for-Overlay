@@ -17,6 +17,14 @@ DEFAULT_EVENT_CAPACITY = 200000
 DEFAULT_MEMORY_BYTES = 1536 * MIB
 
 
+def copy_events(events, durable_sequence):
+    records = copy_data(events)
+    for record in records:
+        for item in [record] + record.get("effects", []):
+            item["persistence"] = "written" if item["accepted_sequence"] <= durable_sequence else "accepted"
+    return records
+
+
 class HistoryError(ValueError):
     def __init__(self, code, message):
         self.code = code
@@ -209,25 +217,19 @@ class HistoryIndex:
         index = self.entities.get(entity_key)
         if index is None:
             return [], False
-        if group_effects:
-            # Group a bounded query instead of scanning/copying the full cache.
-            candidates = []
-            for event_id in reversed(index.by_id):
-                event = self.events[event_id]
-                if include_internal or event["tier"] == "main":
-                    candidates.append(event)
-                if len(candidates) >= 500:
-                    break
-            grouped = self.grouped(candidates)
-            return grouped[:limit], len(grouped) > limit or len(index.by_id) > len(candidates)
+        # Group at most 500 candidates; flat queries need one extra to detect truncation.
+        candidate_limit = 500 if group_effects else limit + 1
         selected = []
         for event_id in reversed(index.by_id):
             event = self.events[event_id]
             if include_internal or event["tier"] == "main":
-                if len(selected) == limit:
-                    return selected, True
                 selected.append(event)
-        return selected, False
+                if len(selected) == candidate_limit:
+                    break
+        if group_effects:
+            grouped = self.grouped(selected)
+            return grouped[:limit], len(grouped) > limit or len(index.by_id) > len(selected)
+        return selected[:limit], len(selected) > limit
 
     def prune(self):
         now = self._clock()
@@ -304,7 +306,7 @@ class HistoryIndex:
             for key in candidates:
                 examined += 1
                 event = self.events[key[2]]
-                observed = ticks(event.get(time_field + "_time"))
+                observed = key[0] if time_field == "first_observed" else ticks(event.get(time_field + "_time"))
                 if observed is None or (lower is not None and observed < lower) or (upper is not None and observed >= upper):
                     continue
                 if not include_internal and event["tier"] != "main":
@@ -320,12 +322,15 @@ class HistoryIndex:
                 charged += self._charges[event["event_id"]] + 64
                 if len(rows) + 1 + self._snapshot_refs > self.snapshot_ref_limit or charged + self._snapshot_bytes > self.snapshot_byte_limit:
                     raise HistoryError("query_budget", "Narrow the time/type filters or close other queries")
-                rows.append(((observed, key[1], key[2]), event))
-        rows.sort(key=lambda row: row[0], reverse=order == "desc")
-        versions = tuple(row[1] for row in rows)
-        original_refs = len(versions)
+                rows.append(event)
+        if time_field != "first_observed":
+            rows.sort(key=lambda event: (ticks(event[time_field + "_time"]),
+                                        self._keys[event["event_id"]][1], event["event_id"]))
+        if order == "desc":
+            rows.reverse()
+        original_refs = len(rows)
+        versions = tuple(self.grouped(rows) if group_effects else rows)
         if group_effects:
-            versions = tuple(self.grouped(versions))
             charged += 512 * len(versions)
             if charged + self._snapshot_bytes > self.snapshot_byte_limit:
                 raise HistoryError("query_budget", "Grouped query exceeds snapshot budget")
@@ -376,12 +381,7 @@ class HistoryIndex:
             raise HistoryError("invalid_cursor", "Cursor offset is outside this query")
         end = min(offset + size, len(versions))
         result = copy_data(snapshot["metadata"])
-        records = copy_data(versions[offset:end])
-        durable = result["coverage"]["persistence"]["durable_sequence"]
-        for record in records:
-            record["persistence"] = "written" if record["accepted_sequence"] <= durable else "accepted"
-            for effect in record.get("effects", []):
-                effect["persistence"] = "written" if effect["accepted_sequence"] <= durable else "accepted"
+        records = copy_events(versions[offset:end], result["coverage"]["persistence"]["durable_sequence"])
         result.update({"events": records, "scope": "current_session_query_snapshot",
                        "entity_key": snapshot["entity_key"], "filters": copy_data(snapshot["filters"]),
                        "query_id": query_id, "cursor": self._cursor(query_id, offset),

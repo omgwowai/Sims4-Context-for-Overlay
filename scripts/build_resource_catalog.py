@@ -28,7 +28,9 @@ def digest(data):
 
 
 def write_json(path, value):
-    path.write_text(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+    data = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    path.write_bytes(data)
+    return digest(data)
 
 
 def parse_config(path):
@@ -129,31 +131,27 @@ def select_resources(records):
     return result
 
 
-def merge_strings(records, selection, tables):
-    active, blocked, all_candidates = defaultdict(list), defaultdict(list), defaultdict(list)
+def merge_strings(records, selection, tables, audit=False):
+    strings, keys = {}, {}
     for record in records:
         if record["type"] != STBL:
             continue
         decision = selection[record["tgi"]]
+        selected = record["source_id"] in decision["selected"]
         for key, text in tables[record["source_id"]].items():
-            candidate = {"source_id": record["source_id"], "text": text}
-            all_candidates[key].append(dict(candidate, active=record["source_id"] in decision["selected"],
-                                            resource_status=decision["status"]))
+            item = keys.setdefault(key, {"status": "overridden_only", "sources": []})
+            if audit:
+                item.setdefault("candidates", []).append({"source_id": record["source_id"], "text": text,
+                                                          "active": selected, "resource_status": decision["status"]})
             if decision["status"] != "selected":
-                blocked[key].append(candidate)
-            elif record["source_id"] in decision["selected"]:
-                active[key].append(candidate)
-    strings, keys = {}, {}
-    for key in sorted(all_candidates):
-        candidates = active[key]
-        conflict = bool(blocked[key]) or len({item["text"] for item in candidates}) != 1
-        status = ("resource_conflict" if blocked[key] else "overridden_only" if not candidates
-                  else "cross_resource_conflict" if conflict else "selected")
-        keys[key] = {"status": status, "sources": [item["source_id"] for item in candidates],
-                     "candidates": all_candidates[key]}
-        if not conflict:
-            strings[key] = candidates[0]["text"]
-    return strings, keys
+                item["status"] = "resource_conflict"
+            elif selected:
+                item["sources"].append(record["source_id"])
+                if item["status"] in ("overridden_only", "selected"):
+                    item["status"] = "cross_resource_conflict" if key in strings and strings[key] != text else "selected"
+                strings[key] = text
+    keys = {key: keys[key] for key in sorted(keys)}
+    return {key: strings[key] for key, item in keys.items() if item["status"] == "selected"}, keys
 
 
 def compact_sources(keys):
@@ -236,7 +234,7 @@ def extract_tuning(root, source_id):
     return entries
 
 
-def build(game, reference, output):
+def build(game, reference, output, audit=False):
     sys.path.insert(0, str(reference / "tools"))
     from dbpf import read_index, read_resource
     from extract_tuning import CombinedTuning
@@ -264,7 +262,7 @@ def build(game, reference, output):
             else:
                 tuning_locations[source_id] = (path, entry)
     selection = select_resources(records)
-    strings, keys = merge_strings(records, selection, tables)
+    strings, keys = merge_strings(records, selection, tables, audit=audit)
     entries, conflicts = {}, {}
     for record in records:
         if record["type"] != COMBINED or record["source_id"] not in selection[record["tgi"]]["selected"]:
@@ -306,16 +304,18 @@ def build(game, reference, output):
                "limits": ["No explicit XML field is not proof of no game text: defaults, inheritance and client-only fields are not expanded.",
                           "Static alternatives do not identify the runtime-selected variant or historical dynamic tokens."]}
     output.mkdir(parents=True, exist_ok=True)
-    write_json(output / "strings_zh.json", strings)
-    write_json(output / "string-candidates.json", keys)
+    strings_hash = write_json(output / "strings_zh.json", strings)
     metadata = {"format": "string_sources_v1", "provenance": provenance, "sources": manifest["sources"],
-                **compact_sources(keys),
-                "strings_sha256": digest((output / "strings_zh.json").read_bytes())}
-    write_json(output / "string_sources.json", metadata)
-    write_json(output / "resource_catalog.json", catalog)
-    manifest["outputs"] = {name: digest((output / name).read_bytes()) for name in
-                           ("strings_zh.json", "string-candidates.json", "string_sources.json", "resource_catalog.json")}
+                **compact_sources(keys), "strings_sha256": strings_hash}
+    manifest["outputs"] = {"strings_zh.json": strings_hash,
+                           "string_sources.json": write_json(output / "string_sources.json", metadata),
+                           "resource_catalog.json": write_json(output / "resource_catalog.json", catalog)}
+    audit_path = output / "string-candidates.json"
+    if audit:
+        manifest["outputs"][audit_path.name] = write_json(audit_path, keys)
     write_json(output / "manifest.json", manifest)
+    if not audit and audit_path.exists():
+        audit_path.unlink()
     print(json.dumps(manifest["counts"], sort_keys=True), flush=True)
 
 
@@ -324,11 +324,12 @@ def main():
     parser.add_argument("--game", type=Path, default=Path("D:/Games/The Sims 4"))
     parser.add_argument("--reference", type=Path, default=Path("C:/sources/sims4-python"))
     parser.add_argument("--output", type=Path, default=ROOT / ".local/resource-semantics")
+    parser.add_argument("--audit", action="store_true", help="Also export all candidate strings for offline auditing")
     args = parser.parse_args()
     for source in (args.game.resolve(), args.reference.resolve()):
         if source == args.output.resolve() or source in args.output.resolve().parents:
             raise SystemExit("Output must be outside game and reference inputs")
-    build(args.game, args.reference, args.output)
+    build(args.game, args.reference, args.output, audit=args.audit)
 
 
 if __name__ == "__main__":

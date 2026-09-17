@@ -1,10 +1,28 @@
 """Deterministic Chinese explanations; facts are never modified."""
 
 from context_overlay import VERSION
-from context_overlay.model import copy_data
 from context_overlay.profiles import OBJECT_STATES
-from context_overlay.event_sources import LABELS
 
+
+LABELS = {
+    "autonomy.decision": "Autonomy 决策",
+    "mood.changed": "情绪变化", "skill.level": "技能等级变化", "trait.added": "特征添加",
+    "trait.removed": "特征移除", "relationship.spouse": "配偶变化",
+    "relationship.knowledge": "对他人的知识变化", "relationship.sentiment": "情感印象变化",
+    "career.changed": "职业变化", "career.promoted": "职业晋升",
+    "career.demoted": "职业降职", "career.retirement": "退休状态变化",
+    "career.work_started": "开始工作日", "career.work_completed": "工作日结算",
+    "life.offspring_created": "子女出生", "life.adopted": "收养",
+    "life.pregnancy": "怀孕状态变化", "life.age": "年龄阶段变化",
+    "life.death": "死亡状态变化", "life.household": "家庭归属变化",
+    "life.milestone": "人生里程碑解锁", "crafting.completed": "制作产物",
+    "collection.acquired": "获得收藏项", "progress.unlocked": "解锁",
+    "progress.item_unlocked": "解锁条目", "aspiration.goal_completed": "目标完成通知",
+    "aspiration.stage_completed": "阶段完成通知", "inventory.transfer": "物品库存变化",
+    "buff.refreshed": "Buff 再次应用", "reaction.started": "反应开始",
+    "broadcast.effect": "广播效果执行", "payment.completed": "支付结果",
+    "statistic.direct": "直接数值效果",
+}
 
 FIELD_NAMES = {"needs.hunger": "饥饿需求值", "needs.energy": "精力需求值",
                "needs.fun": "娱乐需求值", "needs.social": "社交需求值",
@@ -20,12 +38,23 @@ FIELD_NAMES.update({"object_states." + identifier: entry[1] for identifier, entr
 FIELD_NAMES.update({"target": "对象", "tracks": "关系数值", "bits": "关系标记"})
 STATUS_NAMES = {"not_present": "未实例化", "not_applicable": "不适用", "unsupported": "尚未支持",
                 "out_of_scope": "不在观测范围", "disabled": "已停用", "error": "读取失败"}
+DETAIL_BASES = {"static_reference_not_historical_observation": "静态参考，未确认当时使用",
+                "base_description_overrides_not_evaluated": "基础说明，未判断年龄或特征覆盖",
+                "observed_buff_owner_context": "按持有者解析",
+                "tooltip_condition_not_evaluated": "未判断触发条件",
+                "runtime_text": "当时记录的文本"}
 SOURCES = {"PIE_MENU": "玩家指令", "AUTONOMY": "自主选择", "SCRIPT": "脚本触发",
            "SCRIPT_WITH_USER_INTENT": "带玩家意图的脚本触发", "REACTION": "系统反应",
            "SOCIAL_ADJUSTMENT": "社交调整", "GET_COMFORTABLE": "姿态调整",
            "POSTURE_GRAPH": "姿态系统", "UNIT_TEST": "游戏测试来源",
            "BODY_CANCEL_AOP": "身体姿态取消衔接", "CARRY_CANCEL_AOP": "携带动作取消衔接",
            "VEHCILE_CANCEL_AOP": "载具动作取消衔接"}
+
+
+def game_time(value):
+    if isinstance(value, dict):
+        return str(value.get("display") or ("ticks " + str(value["ticks"]) if value.get("ticks") is not None else "时间未取得"))
+    return str(value) if value is not None else "时间未取得"
 
 
 def display(value):
@@ -132,14 +161,8 @@ def detail_text(value):
     rows = []
     for item in result["items"]:
         label = {"name": "参考名称", "description": "资源说明", "tooltip": "条件提示"}[item["role"]]
-        if item["basis"] == "static_reference_not_historical_observation":
-            label += "（静态参考，未确认当时使用）"
-        elif item["basis"] == "base_description_overrides_not_evaluated":
-            label += "（基础说明，未判断年龄或特征覆盖）"
-        elif item["basis"] == "observed_buff_owner_context":
-            label += "（按持有者解析）"
-        elif item["role"] == "tooltip":
-            label += "（未判断触发条件）"
+        if item["basis"] != "runtime_text":
+            label += "（{}）".format(DETAIL_BASES[item["basis"]])
         if item["status"] == "unresolved_tokens":
             label += "（未完整解析）"
         rows.append("{} · {}：{}".format(item["label"], label, item["text"]))
@@ -333,20 +356,3 @@ def render(packet):
     history = [explain_event(event) for event in packet.get("history", {}).get("events", [])]
     return {"language": "zh-CN", "rules_version": VERSION, "current": current, "history": history,
             "resource_details": resource_details(packet)}
-
-
-def translate(packet, catalog=None):
-    result = copy_data(packet)
-    view = catalog.enrich(packet) if catalog is not None else packet
-    result["rendered"] = render(view)
-    if catalog is not None:
-        result["semantic_view"] = {key: value for key, value in view.items() if key in ("snapshot", "history", "target")}
-        for item in result["rendered"]["resource_details"]["items"]:
-            if item["evidence_ref"].split(".", 1)[0] in result["semantic_view"]:
-                item["evidence_ref"] = "semantic_view." + item["evidence_ref"]
-        result["rendered"]["name_resolution"] = {"catalog_format": catalog.data["format"],
-            "catalog_inputs": catalog.data.get("inputs", {}),
-            "catalog_provenance": catalog.data.get("provenance", {}),
-            "historical_facts_preserved": True,
-            **catalog.provenance}
-    return result

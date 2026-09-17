@@ -4,6 +4,10 @@ import functools
 import inspect
 
 
+def arg(args, kwargs, index, name, default=None):
+    return args[index] if len(args) > index else kwargs.get(name, default)
+
+
 class Hooks:
     def __init__(self, on_error):
         self.entries = []

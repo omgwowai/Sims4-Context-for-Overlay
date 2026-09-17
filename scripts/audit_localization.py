@@ -2,16 +2,12 @@
 
 import argparse
 from collections import Counter
-import hashlib
-import json
 from pathlib import Path
-import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from offline import load_catalog, read_packet
+from tool_support import report as emit_report
 from context_overlay import VERSION
-from context_overlay.localization import Localizer, gap_category
-from context_overlay.name_catalog import NameCatalog
-from context_overlay.storage import replay
+from context_overlay.localization import gap_category
 
 
 SKIP = {"rendered", "semantic_view", "localization", "raw_name"}
@@ -45,20 +41,19 @@ def label_pairs(before, after, path=""):
             yield from label_pairs(old, new, path + "[]")
 
 
-def audit(directories, catalog):
+def audit(directories, catalog, event_scope="all"):
     counts_before, counts_after = Counter(), Counter()
     unique, changes, sources, errors = {}, {}, [], []
     gaps, expressions, references, categories = Counter(), Counter(), {}, Counter()
     for directory in directories:
         journal = directory / "journal.jsonl"
-        loaded = replay(journal, include_observations=False)
-        errors.extend({"run": directory.name, **item} for item in loaded["errors"])
-        packets = [(journal, {"history": {"events": loaded["events"]}})]
-        for path in sorted(directory.glob("context-*.json")):
-            packets.append((path, json.loads(path.read_text(encoding="utf-8-sig"))))
-        for path, packet in packets:
-            sources.append({"run": directory.name, "file": path.name,
-                            "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+        for path in [journal] + sorted(directory.glob("context-*.json")):
+            try:
+                packet, digest = read_packet(path, event_scope)
+            except (ValueError, OSError) as exc:
+                errors.append({"run": directory.name, "file": path.name, "error": str(exc)})
+                continue
+            sources.append({"run": directory.name, "file": path.name, "sha256": digest})
             enriched = catalog.enrich(packet)
             for before, after, location in label_pairs(packet, enriched):
                 counts_before[before["status"]] += 1
@@ -77,8 +72,8 @@ def audit(directories, catalog):
                     changes[key] = {"before": before, "after": after,
                                     "example_path": directory.name + "/" + path.name + location}
             references.update(reference_fields(enriched))
-    return {"module_version": VERSION, "runs": [path.name for path in directories],
-            "method": "Latest event revisions per journal plus every context export; display labels counted once, raw_name evidence excluded. Exports may repeat journal facts. Unique counts use distinct before/after text, hash and status transformations, not entity count or coverage of all game resources.",
+    return {"module_version": VERSION, "event_scope": event_scope, "runs": [path.name for path in directories],
+            "method": "Latest event revisions in the declared event_scope plus every context export; display labels counted once, raw_name evidence excluded. Exports may repeat journal facts. Unique counts use distinct before/after text, hash and status transformations, not entity count or coverage of all game resources.",
             "occurrences_before": dict(counts_before), "occurrences_after": dict(counts_after),
             "unique_before": dict(Counter(value[0] for value in unique.values())),
             "unique_after": dict(Counter(value[1] for value in unique.values())),
@@ -98,26 +93,16 @@ def main():
     parser.add_argument("--strings", type=Path, required=True)
     parser.add_argument("--catalog", type=Path, required=True)
     parser.add_argument("--string-sources", type=Path)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--output", type=Path, help="Save the full report; default prints a summary")
+    parser.add_argument("--event-scope", choices=("all", "retained"), default="all")
     args = parser.parse_args()
-    inputs = {args.strings.resolve(), args.catalog.resolve()}
-    if args.string_sources:
-        inputs.add(args.string_sources.resolve())
-    inputs.update(path.resolve() for directory in args.runs for path in directory.glob("*.json*"))
-    if args.output.resolve() in inputs:
-        raise SystemExit("Report must not replace input evidence or resources")
-    metadata = json.loads(args.string_sources.read_text(encoding="utf-8")) if args.string_sources else None
-    if metadata and metadata.get("strings_sha256") != hashlib.sha256(args.strings.read_bytes()).hexdigest():
-        raise SystemExit("String source metadata does not match dictionary")
-    catalog = NameCatalog(json.loads(args.catalog.read_text(encoding="utf-8")),
-                          Localizer(json.loads(args.strings.read_text(encoding="utf-8")), metadata))
-    result = audit(args.runs, catalog)
-    result["catalog_sha256"] = hashlib.sha256(args.catalog.read_bytes()).hexdigest()
-    result["strings_sha256"] = hashlib.sha256(args.strings.read_bytes()).hexdigest()
-    result["string_sources_sha256"] = hashlib.sha256(args.string_sources.read_bytes()).hexdigest() if args.string_sources else None
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({key: result[key] for key in ("occurrences_before", "occurrences_after", "unique_before", "unique_after", "errors")}, ensure_ascii=False))
+    inputs = [args.strings, args.catalog, args.string_sources]
+    inputs.extend(path for directory in args.runs for path in directory.glob("*.json*"))
+    catalog, hashes = load_catalog(args.strings, args.catalog, args.string_sources)
+    result = audit(args.runs, catalog, args.event_scope)
+    result.update(hashes)
+    summary = {key: result[key] for key in ("event_scope", "occurrences_before", "occurrences_after", "unique_before", "unique_after", "errors")}
+    emit_report(result, summary, args.output, inputs)
     if result["errors"]:
         raise SystemExit(1)
 

@@ -14,7 +14,7 @@ from types import SimpleNamespace
 from context_overlay.autonomy import PendingDecisions, number, selection_stage
 from context_overlay.ea_adapter import enum_name
 from context_overlay.event_policy import internal_interaction
-from context_overlay.hooks import Hooks
+from context_overlay.hooks import Hooks, arg
 from context_overlay.model import copy_data
 
 
@@ -30,10 +30,6 @@ SCORE_FIELDS = (
 COMMODITY_FIELDS = ("score", "advertise", "commodity_value", "interval", "fulfillment_rate",
                     "object_stat_use_multiplier", "already_solving_motive_multiplier", "modified_desire")
 SCORE_MAPS = ("opportunity_costs", "attention_cost_scores", "attention_cost_bonus_scores", "attention_cost_penalty_scores")
-
-
-def arg(args, kwargs, index, name, default=None):
-    return args[index] if len(args) > index else kwargs.get(name, default)
 
 
 def index_is(items, selected):

@@ -10,7 +10,7 @@ from context_overlay.model import entity, field, number
 from context_overlay.profiles import OBJECT_STATES, PROFILE_VERSION, resource_name
 from context_overlay.localization import Localizer
 from context_overlay.event_policy import internal_interaction
-from context_overlay.semantic_fields import RUNTIME_DETAILS
+from context_overlay.semantic_fields import RUNTIME_FIELDS
 
 
 NEEDS = {"hunger": "motive_Hunger", "energy": "motive_Energy", "fun": "motive_Fun",
@@ -259,13 +259,13 @@ class EAAdapter:
         name["visible"] = getattr(interaction, "visible", None)
         return name
 
-    def resource(self, resource, label_attribute=None, resource_kind=None, tokens=(), intensity=None):
+    def resource(self, resource, resource_kind=None, tokens=(), intensity=None):
         if resource is None:
             return None
         cls = resource if isinstance(resource, type) else type(resource)
         identifier = getattr(resource, "guid64", getattr(cls, "guid64", None))
         tuning_name = getattr(resource, "__name__", cls.__name__)
-        if label_attribute is None and resource_kind is None:
+        if resource_kind is None:
             # These are verified EA resource fields, not English-name guesses.
             for kind, marker in (("buff", "buff_name"), ("statistic", "stat_name"),
                                  ("mood", "mood_names"), ("recipe", "get_recipe_name"),
@@ -273,12 +273,10 @@ class EAAdapter:
                 if hasattr(resource, marker):
                     resource_kind = kind
                     break
-            if resource_kind is None and hasattr(resource, "display_name"):
-                label_attribute = "display_name"
-        attribute = label_attribute or {"buff": "buff_name", "relbit": "display_name",
-            "statistic": "stat_name", "object_state": "display_name", "trait": "display_name",
-            "recipe": "get_recipe_name", "interaction": "get_name", "mood": "mood_names",
-            "career_track": "career_name", "career_level": "title", "aspiration": "display_name"}.get(resource_kind)
+        fields = RUNTIME_FIELDS.get(resource_kind, {})
+        attribute = fields.get("name")
+        if resource_kind is None and hasattr(resource, "display_name"):
+            attribute = "display_name"
         interaction_label = resource_kind == "interaction" and attribute == "get_name"
         try:
             localized = getattr(resource, attribute, None) if attribute else None
@@ -305,7 +303,9 @@ class EAAdapter:
         result = {"id": str(identifier) if identifier is not None else None,
                   "resource_kind": resource_kind, "visible": getattr(resource, "visible", None),
                   "tuning_name": tuning_name, "name": resource_name(identifier, tuning_name, name)}
-        for role, detail_attribute in RUNTIME_DETAILS.get(resource_kind, {}).items():
+        for role, detail_attribute in fields.items():
+            if role == "name":
+                continue
             try:
                 if not hasattr(resource, detail_attribute):
                     continue  # A subclass may not provide this optional interface.

@@ -2,16 +2,14 @@
 
 import argparse
 from collections import Counter
-import json
-import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from context_overlay.storage import replay
+from offline import read_journal, read_packet
+from tool_support import report as emit_report
 
 
-def audit(directory):
-    result = replay(directory / "journal.jsonl")
+def audit(directory, event_scope="all"):
+    result = read_journal(directory / "journal.jsonl", event_scope)
     events = result["events"]
     interactions = [item for item in events if item["event_type"] == "interaction"]
     changes = [item for item in events if item["event_type"] == "state_change"]
@@ -27,14 +25,18 @@ def audit(directory):
                 errors.append({"event_id": event["event_id"], "error": "Unsubstantiated completion"})
     exports = []
     for path in sorted(directory.glob("context-*.json")):
-        packet = json.loads(path.read_text(encoding="utf-8"))
+        try:
+            packet, _ = read_packet(path)
+        except (ValueError, OSError) as exc:
+            errors.append({"export": path.name, "error": str(exc)})
+            continue
         refs = {event["event_id"] for event in packet.get("history", {}).get("events", [])}
         for line in packet.get("rendered", {}).get("history", []):
             if line["event_id"] not in refs:
                 errors.append({"export": path.name, "error": "Unresolved semantic evidence reference"})
         exports.append({"file": path.name, "status": packet.get("status"), "target": packet.get("target"),
                         "history_events": len(refs), "fields": list(packet.get("snapshot", {}))})
-    return {"session_id": result["session_id"], "integrity_passed": not errors, "errors": errors,
+    return {"session_id": result["session_id"], "event_scope": event_scope, "source_sha256": result["sha256"], "integrity_passed": not errors, "errors": errors,
             "event_count": len(events), "observation_count": len(result["observations"]),
             "interaction_tiers": dict(Counter(item["tier"] for item in interactions)),
             "interaction_outcomes": dict(Counter(item["outcome"] for item in interactions)),
@@ -47,14 +49,13 @@ def audit(directory):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("run", type=Path)
-    parser.add_argument("--output", type=Path)
+    parser.add_argument("--output", type=Path, help="Save the full report; default prints a summary")
+    parser.add_argument("--event-scope", choices=("all", "retained"), default="all")
     args = parser.parse_args()
-    result = audit(args.run)
-    text = json.dumps(result, ensure_ascii=False, indent=2)
-    if args.output:
-        args.output.write_text(text, encoding="utf-8")
-    else:
-        print(text)
+    inputs = list(args.run.glob("*.json*"))
+    result = audit(args.run, args.event_scope)
+    summary = {key: result[key] for key in ("session_id", "event_scope", "event_count", "observation_count", "integrity_passed", "errors")}
+    emit_report(result, dict(summary, exports=len(result["exports"])), args.output, inputs)
     if not result["integrity_passed"]:
         raise SystemExit(1)
 

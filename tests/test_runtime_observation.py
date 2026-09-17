@@ -9,9 +9,8 @@ from unittest.mock import Mock, patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from test_core import MemoryJournal
+from support import MemoryJournal, runtime_fixture
 from context_overlay import game_runtime
-from context_overlay.collector import Collector
 from context_overlay.ea_adapter import EAAdapter, NEEDS, RELATIONSHIP_TRACKS
 from context_overlay.recorder import Recorder
 
@@ -44,18 +43,14 @@ class RuntimeObservationChecks(unittest.TestCase):
         adapter.object_for = lambda target: next(sim for sim in self.sims if str(sim.id) == target["id"])
         adapter.resource = lambda value, **kwargs: {"id": str(value.guid64)} if hasattr(value, "guid64") else {"name": value}
         self.journal = MemoryJournal()
-        self.runtime = game_runtime.Runtime.__new__(game_runtime.Runtime)
-        self.runtime.adapter = adapter
-        self.runtime.config = adapter.config
-        self.runtime.recorder = Recorder(self.journal, session_id="events-only")
-        self.runtime.collector = Collector(adapter, self.runtime.recorder)
-        self.runtime.closed = False
+        self.runtime = runtime_fixture(self, adapter, Recorder(self.journal, session_id="events-only"))
         self.runtime.driver = None
         self.runtime.known = {}
         self.runtime.poll_count = 0
         self.runtime.poll_max_ms = 0
 
     def test_background_ticks_leave_values_unread_and_history_unwritten(self):
+        self.runtime.adapter.reference = Mock(wraps=self.runtime.adapter.reference)
         with patch.object(game_runtime, "_retired", []):
             self.runtime.poll(None)
             self.assertEqual([record["category"] for record in self.journal.records], ["scope_entry", "scope_entry"])
@@ -68,14 +63,16 @@ class RuntimeObservationChecks(unittest.TestCase):
         self.relationship_reads.assert_not_called()
         self.assertEqual(len(self.journal.records), 2)
         self.assertEqual(self.runtime.recorder.history("sim:1")["events"], [])
+        self.assertEqual(self.runtime.adapter.reference.call_count, 8)  # Two entities across four polls.
 
     def test_context_reads_live_needs_and_relationships_without_writing_history(self):
-        first = self.runtime.collector.collect("sim", "1", fields=["needs", "relationships"])
+        target = self.runtime.adapter.reference(self.sims[0])
+        first = self.runtime.collector.collect(target, fields=["needs", "relationships"])
         self.values[NEEDS["hunger"]] = 30
         self.values[RELATIONSHIP_TRACKS["friendship"]] = 25
         self.values[RELATIONSHIP_TRACKS["romance"]] = -5
         self.now = 100000
-        second = self.runtime.collector.collect("sim", "1", fields=["needs", "relationships"])
+        second = self.runtime.collector.collect(target, fields=["needs", "relationships"])
         self.assertEqual(first["snapshot"]["needs"]["value"]["hunger"]["value"]["value"], 50)
         self.assertEqual(second["snapshot"]["needs"]["value"]["hunger"]["value"]["value"], 30)
         tracks = second["snapshot"]["relationships"]["value"][0]["tracks"]

@@ -1,31 +1,10 @@
-# ContextOverlay 公共 API v1 与 SDK 方案
+# 公共 API 与 SDK
 
-2026-09-16：提供方 0.7.0 新增能力 `events.autonomy_decision`，API／SDK 保持 1.1.0。通过 `fields=["autonomy.decision"]` 查询，`include_internal=True` 包含子行为；`get_status().autonomy` 返回覆盖与缓冲诊断。结构与概率含义见[Autonomy 说明](autonomy-capture.md)。本构建尚未实机验收。
+公共 API／SDK 版本为 1.1.0，数据 schema 为 1。`context_overlay.api` 是稳定消费入口；`sdk/context_overlay_client.py` 提供可选依赖检测、错误转换和分页句柄。当前提供方与实测状态统一见项目 README 及验证摘要，不依赖内部 `_runtime`。
 
-日期：2026-09-15。提供方 MOD：**0.6.0 试用版**；公共 API：**1.1.0**；数据 schema：**1**；Python SDK：**1.1.0**。已完成离线契约测试，真实下游 MOD 接入验收仍待补。新增 `get_nearby_entities` 与 `context.nearby_entities` 能力，按半径、楼层和房间筛选 Sim／物件；完整参数、返回包和限制见[附近实体接口](nearby-entities.md)。原有方法保持兼容。0.6.0 事件支持情况及首局修正见[覆盖说明](event-coverage-0.6.0.md)。
+Context、历史与附近实体查询同步返回普通 JSON 数据；游戏对象读取在模拟线程进行。SDK 不调用模型、不创建窗口、不发网络请求，也不自动跨线程调度或重试。API v1 与已删除的旧 v1 名称目录是不同契约。
 
-## 1. 交付与边界
-
-采用同一个 ContextOverlay MOD 提供版本化的进程内 Python 接口，下游可直接调用 `context_overlay.api`，也可将轻量 SDK 放进自己的包。SDK 只处理依赖、兼容性、错误和查询生命周期，数据始终来自玩家安装的那一份 ContextOverlay。
-
-```mermaid
-flowchart LR
-    Consumer[下游 MOD 的游戏线程回调] --> SDK[可选轻量 SDK]
-    SDK --> API[context_overlay.api v1]
-    API --> Collector[Context 采集器]
-    API --> Recorder[历史查询与分页]
-    Collector --> Text[语义化]
-    Recorder --> Text
-    API --> Packet[独立 JSON 数据]
-    Packet --> Worker[下游后台模型或业务处理]
-    Worker --> UI[下游游戏线程展示]
-```
-
-接口是同步、只读的，不要求打开控制台或写文件，也不改变游戏行为。历史查询会占用有界查询资源，需要关闭。接口不启动游戏、打开窗口、改变配置、触发事件或连接模型；跨线程调度、推送订阅、HTTP 服务和批量完整 Context 展开不属于当前 API；附近查询只返回有限的身份与空间数据。
-
-这样下游可以先用简单回调完成“选定实体 → 读取 Context → 生成文本 → 展示”，后续 API 1.x 可增加可选能力，不再要求消费方跟随内部 Collector／Recorder 的变化。
-
-## 2. 安装和最小接入
+## 安装和最小接入
 
 玩家安装 **ContextOverlay 0.5.0 或后续支持 API 1.x 的版本**。0.3.2／0.4.0 不提供这个公共入口。SDK 是源代码工具包，不是额外安装的脚本 MOD；开发者将 `sdk/context_overlay_client.py` 复制进自己的包，例如 `my_overlay_mod/vendor/`，并按 Python 3.7 打包。各级目录需要自己的 `__init__.py`。
 
@@ -53,9 +32,9 @@ from context_overlay import api
 packet = api.get_context("sim", "active", fields=["identity", "needs"], history_limit=5)
 ```
 
-直接入口会抛出 `api.APIError`；SDK 转换为自己的 `ContextOverlayError`。不要再引用 `game_runtime._runtime`、`runtime.collector` 或 `runtime.recorder`，也不要把核心包复制到下游。旧示例迁移后的版本见 `examples/mod_consumer.py`。
+直接入口会抛出 `api.APIError`；SDK 转换为自己的 `ContextOverlayError`。不要再引用 `game_runtime._runtime`、`runtime.collector` 或 `runtime.recorder`，也不要把核心包复制到下游。SDK 接入示例见 [consumer.py](../sdk/examples/consumer.py)。
 
-## 3. 版本与能力发现
+## 版本与能力发现
 
 ```python
 info = client.get_api_info()
@@ -67,12 +46,12 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 | 字段 | 含义 |
 | --- | --- |
 | `api_version` | 当前公共契约版本 `1.1.0` |
-| `module_version` | 提供方 MOD 版本，目前 `0.6.0` |
+| `module_version` | 提供方 MOD 版本，以本次返回值为准 |
 | `schema_version` | 数据协议版本 `1` |
 | `capabilities` | `context.read`、`history.query`、`history.page`、`history.close`、`text.zh-CN` |
 | `context_fields`、`default_fields` | 支持的字段与 Sim／Object 的默认选择 |
 | `nearby` | 附近查询类型、指标、单位、返回数、扫描预算和半径限制；能力为 `context.nearby_entities` |
-| `resource_text` | 可选 name／description／tooltip 文本证据，能力为 `text.resource_details`；官方中文词表与 MOD 覆盖边界见[资源语义目录](resource-semantics.md) |
+| `resource_text` | 可选 name／description／tooltip 文本证据，能力为 `text.resource_details`；官方中文词表与 MOD 覆盖边界见[资源语义目录](architecture.md) |
 | `max_history_page_size`、`max_context_history_limit` | 请求单页／近期条数上限，各为 500 |
 | `thread_policy`、`transport` | `simulation_thread`、`in_process_python` |
 | `scope`、`history_scope` | 当前地块已实例化实体、本次运行历史 |
@@ -83,7 +62,7 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 SDK 检查 API 主版本为 1、schema 为 1，接受兼容的 1.x 小版本；不固定准确 MOD 版本。API 1.x 保持已公开的方法和现有字段含义，允许增加可选参数、字段和能力；消费者忽略未知附加字段，对状态／枚举保留未知分支。删除接口或改变既有语义需升级 API 主版本，数据不兼容变化需升级 schema。内部 Python 模块不属于这个承诺。
 
-## 4. 当前 Context
+## 当前 Context
 
 公共函数和 SDK 的参数含义一致：
 
@@ -126,7 +105,7 @@ rendered? = {language, rules_version, current, history} 或 {status:"disabled", 
 
 返回值已复制为 JSON 数据，下游修改字典不会更改记录器。所有 ID 和 ticks 输出使用字符串以保留精度；数值需求是游戏内部单位，不是百分比。
 
-## 5. 历史查询、翻页和关闭
+## 历史查询、翻页和关闭
 
 ```python
 query_history(kind="sim", identifier="active", *, page_size=15,
@@ -155,11 +134,11 @@ close_history(cursor, *, expected_session_id)
 
 列表筛选最多 64 个非空字符串；None 表示不筛选。不同条件取交集。没有开始／结束时间的事件不匹配对应时间筛选，状态变化按通知观测时间筛选。
 
-0.6.0 不生成需求／关系定时差值，也不返回采样区间。`state_change` 保留 Buff、关系标记、物件状态前后值；新增 `game_event` 使用 `category/field/payload`。`statistic.direct` 的 `payload.before/after` 只来自明确 Loot 操作内真实通知，`cause` 保留可核验操作／交互依据。当前数值仍使用 `get_context(fields=["needs", "relationships"])`。没有记录不证明数值未变化。
+当前不生成需求／关系定时差值，也不返回采样区间。`state_change` 保留 Buff、关系标记、物件状态前后值；新增 `game_event` 使用 `category/field/payload`。`statistic.direct` 的 `payload.before/after` 只来自明确 Loot 操作内真实通知，`cause` 保留可核验操作／交互依据。当前数值仍使用 `get_context(fields=["needs", "relationships"])`。没有记录不证明数值未变化。
 
-新增能力标识为 `history.effects`、`history.retained_identity`、`history.fifo`、`events.gameplay`；`get_api_info()` 返回 `event_types/event_categories/retention_policy`，`get_status()` 返回具体源的 `event_coverage`。SDK 1.0.0 已支持透传筛选参数，无需升级 SDK 主版本。按能力发现后再使用新参数，0.5.0 提供方不支持它们。
+新增能力标识为 `history.effects`、`history.retained_identity`、`history.fifo`、`events.gameplay`；`get_api_info()` 返回 `event_types/event_categories/retention_policy`，`get_status()` 返回具体源的 `event_coverage`。SDK 透传这些筛选参数。按能力发现后再使用新参数，0.5.0 提供方不支持它们。
 
-0.6.0 首局修正增加 `get_status().event_diagnostics`，包含 `callbacks`、`suppressed_statistics`、`suppression_policy` 和 `timing`。它们是适配器回调／计时通知的汇总数，不是事件数量或性能测量；目前 timing 为 not_measured。事件源健康与汇总在会话开始、结束落盘。TimeSince 计时统计不再发布为历史，当前 Context 不受影响。使用角色判断效果归属，不要把 entities 索引列表当作受影响者列表；具体新增字段见[事件契约](event-coverage-0.6.0.md)。
+运行状态提供 `get_status().event_diagnostics`，包含 `callbacks`、`suppressed_statistics`、`suppression_policy` 和 `timing`。它们是适配器回调／计时通知的汇总数，不是事件数量或性能测量；目前 timing 为 not_measured。事件源健康与汇总在会话开始、结束落盘。TimeSince 计时统计不再发布为历史，当前 Context 不受影响。使用角色判断效果归属，不要把 entities 索引列表当作受影响者列表；事件语义见[架构与采集语义](architecture.md)。
 
 按数字 ID 查询历史时先使用本运行保留的实体身份，不要求当前仍有可读取实例；Context 继续独立报告 out_of_scope。分组后 `total_matches` 是显示行数，快照预算仍计入全部效果事实。某动作未进入筛选结果或已被 FIFO 淘汰时，相关效果保持独立行。完整示例见 [SDK 事件示例](../sdk/examples/event_history.py)。
 
@@ -183,7 +162,7 @@ close_history(cursor, *, expected_session_id)
 
 默认最多同时 8 个查询、合计 100,000 个事件引用和 256 MiB 估算预算；**这是所有下游及本 MOD 窗口共享的预算**，不是每个 SDK 客户端单独拥有。查询资源不是权限隔离机制。`query_limit/query_budget` 只拒绝新查询，不暂停采集；应缩小范围并及时释放，不应反复重试宽查询。
 
-## 6. SDK 管理句柄
+## SDK 管理句柄
 
 ```python
 with client.history("sim", str(sim_id), page_size=15,
@@ -197,7 +176,7 @@ with client.history("sim", str(sim_id), page_size=15,
 
 `with` 会在正常退出和消费逻辑抛异常时尝试关闭，不用垃圾回收析构函数触发游戏调用。跨多个 UI 回调时持有句柄，并在关闭回调显式释放。示例见 SDK 包的 `examples/consumer.py`。
 
-## 7. 错误契约
+## 错误契约
 
 直接调用抛 `api.APIError`，SDK 抛 `ContextOverlayError`，均有 `code/message/details` 和 `to_dict()`。调用参数名称错误也转换成 invalid_request。按 code 分支，不解析 message 的措辞。
 
@@ -221,9 +200,9 @@ with client.history("sim", str(sim_id), page_size=15,
 
 字段不可用和历史采集失败通常在正常响应中形成 partial，并非全部变成异常。不得将 `disabled/error/out_of_scope/not_observed` 当成数值 0 或“没有发生”。
 
-## 8. 线程、频率和结果时效
+## 线程、频率和结果时效
 
-附近接口另外使用 `target_out_of_scope` 和 `spatial_unavailable`；旧提供方不支持邻近能力时 SDK 返回 `capability_unavailable`。具体语义见[附近查询错误表](nearby-entities.md)。
+附近接口另外使用 `target_out_of_scope` 和 `spatial_unavailable`；旧提供方不支持邻近能力时 SDK 返回 `capability_unavailable`。具体语义见[附近查询错误表](#附近实体查询)。
 
 Runtime 记录初始化它的线程身份；有活动 Runtime 时，公共运行接口在任何游戏对象读取或查询表操作之前验证调用线程。嵌入式游戏线程不假定等于 Python 的 `main_thread()`。`get_api_info` 无此要求；尚未建立 Runtime 时状态可报告 waiting_for_zone，但这不意味着游戏调用支持后台线程。
 
@@ -231,8 +210,122 @@ Runtime 记录初始化它的线程身份；有活动 Runtime 时，公共运行
 
 将返回的普通字典交给后台模型或网络逻辑；不要把游戏对象、SDK 查询句柄或 `_runtime` 交给后台。模型结果返回后，通过下游自己的游戏线程回调检查当前 session_id、目标身份和最近 request_id，再展示或丢弃。session_id 相同并不能证明同一次运行内的较旧请求仍然适合展示。
 
-## 9. 测试和后续演进
 
-本仓库的 `tests/test_public_api.py` 使用真实 Collector／Recorder 加替身适配器，覆盖就绪、线程检查、参数验证、模块降级、复制隔离、会话切换、固定版本分页、资源释放、错误处理与 SDK 兼容性。SDK 附带合成 ContextPacket 和离线预览，允许下游先开发 Prompt／展示层；`Client(provider=...)` 支持注入契约替身。
+## 附近实体查询
 
-仍需实机验证跨 MOD 导入顺序、游戏线程身份和加载／旅行／重启时机。SDK 无需读取游戏源码，但下游负责安排自己的线程回调。通过真实消费 MOD 验证 v1 后，再按实际需求考虑异步请求队列、增量事件订阅、批量实体查询或更多字段；目前这些都不属于已实现能力。
+先通过能力标识 `context.nearby_entities` 判断支持情况。查询返回候选实体，再按需调用 `get_context`；不连续追踪位置。
+
+### 参数
+
+```python
+get_nearby_entities(identifier="active", *, kinds=("sim",), radius=None,
+                    metric="horizontal", same_level=True, same_room=False,
+                    include_self=False, limit=32, expected_session_id=None)
+```
+
+| 参数 | 约定 |
+| --- | --- |
+| identifier | 中心 Sim，支持 `active` 或正的 64 位 Sim ID；不接收游戏对象。active 只解析一次 |
+| kinds | 非空、不重复的 list／tuple，可选 `sim`、`object`；默认只查 Sim。Sim 按游戏 `is_sim` 分类，可能包含宠物等非人类 Sim |
+| radius | 0–1,000,000 的有限数值，单位 `game_world_units`；边界包含。None 只允许与 same_room=True 同用 |
+| metric | `horizontal`（默认，x/z 平面）或 `euclidean`（三维直线距离），同时决定半径筛选和排序 |
+| same_level | 默认 True，要求游戏 level 相等；不使用高度差或路由表面相等代替楼层 |
+| same_room | 默认 False；True 时增加同房间约束。与半径共同指定时取交集 |
+| include_self | 默认 False；True 时中心 Sim 也须满足 kinds 和空间筛选条件 |
+| limit | 整数 1–64，默认 32；不是候选扫描上限，不创建分页游标 |
+| expected_session_id | 可选会话约束；读档／旅行／重启后拒绝旧 session |
+
+同房间、不限定半径：
+
+```python
+client.get_nearby_entities("active", same_room=True, radius=None)
+```
+
+跨楼层按三维距离查询：
+
+```python
+client.get_nearby_entities("active", radius=12, metric="euclidean", same_level=False)
+```
+
+`get_api_info().nearby` 公布类型、距离指标、单位、最大返回数、候选扫描预算、最大半径及房间筛选能力。
+
+### 返回结构与完整性
+
+```text
+kind = "nearby_entities"
+api_version / module_version / schema_version
+session_id / request_id / recorded_at / provenance
+target                  固定的中心 Sim 身份
+scope                   active_lot_instantiated，场外排除
+query                   实际执行参数、单位、distance_basis、排序规则
+read_started / read_finished
+origin                  中心的 position、level、routing_surface、room
+results[]
+  entity                kind / id / key / name；物件有 definition_id
+  identity_status       身份名称读取失败时保留 ID，状态为 error
+  distance              horizontal / vertical / euclidean
+  spatial               position / level / routing_surface / room
+  relative              same_lot / same_level / same_room / same_routing_surface
+count / matched_count / matched_count_exact / truncated
+coverage / status
+```
+
+空间字段与相对关系使用 `{status, value, source, reason?}`。ID 和时钟 ticks 为字符串，楼层和距离为数值。vertical 是非负高度差。距离未四舍五入后再筛选，不承诺等于米、可行走路程或到家具外轮廓的距离。
+
+位置使用实体的世界坐标点。routing_surface 保留 primary_id、secondary_id 和 type；与 level 分开。room.value 为 `{zone_id, id}`；同房间比较 zone、游戏房间 ID 和 level。房间名称／用途不在此接口范围内。
+
+排序优先使用所选 metric，距离相同按 kind、数值 ID 排序。ID 不转换成浮点数。在扫描完整时，先考察全部候选再保留最近 limit 个；不会直接截取管理器的前 limit 个实体。
+
+| 标记 | 含义 |
+| --- | --- |
+| count | 实际返回的结果数 |
+| matched_count | 已核实匹配的数量，包含因 limit 未返回的条目 |
+| matched_count_exact | 查询是否完成所有相关候选的判定；False 时 matched_count 仅为已知数量 |
+| truncated | 已知匹配数超过 limit，结果经过数量截断；不代表有可用游标 |
+| coverage.complete | 枚举完整，且没有候选因为读数／必需筛选字段不可用而无法判定 |
+| coverage.enumeration_complete | 是否完成候选枚举；扫描预算耗尽或枚举器异常时为 False |
+| coverage.scanned_count / candidate_count | 遍历到的管理器对象数／通过类型与范围筛选并去重后的候选数 |
+| coverage.unresolved_count / reasons | 无法判定的候选数量，以及有限的原因计数 |
+| status | `complete` 或 `partial`；可选空间信息不可用也会令整个包为 partial |
+
+`truncated=False` 不保证查询完整，还要检查 coverage。`coverage.complete=True` 表示当前限定范围内的查询完整，不表示场外、库存或隐藏实体也被查询。
+
+可出现 `status=partial` 且 `coverage.complete=True`：例如已确认所有半径和楼层条件，但室外房间信息未知。可选房间信息不足不改变已经核实的几何邻近结果。
+
+中心必需空间信息不可用返回错误，不输出“正常但没有邻居”。个别候选不可判定时跳过该候选，返回已确认结果并标记 coverage 缺口。覆盖不完整时，最近 N 个仅指已成功判定的候选。
+
+### 房间、库存与采集范围
+
+使用当前对象管理器的非隐藏实例，复用当前地块范围检查。Sim 必须有活动实例；场外 Sim、未实例化 Sim 排除。非 Sim 对象包括可枚举的家具、食物和装饰等，不保证存在玩家可点击的交互。墙体、地板和纯客户端视觉元素不保证作为独立 GameObject 枚举。
+
+另外检查实体及父对象是否处于库存；背包、冰箱等容器里的内容不算摆放在附近。桌面插槽物件、携带物件若仍是范围内非隐藏世界实例，可以按其世界坐标进入结果。父链异常会形成缺口。
+
+EA Python 中存在 `build_buy.get_room_id` 原生别名，并在房间物件筛选中使用它。正的整数返回作为游戏房间标识；None、0、负值及异常保留不可用状态，整数哨兵值放在 raw_id。其室外／特殊场景含义尚未实机验证，不能把两个无效结果相等解释为同房间。正房间 ID 也不代表具有人类语义的“厨房”等房间用途。
+
+默认只为中心和最终返回的实体查询房间；启用 same_room 时，对已通过半径／楼层筛选的候选查询房间。中心房间无可靠结果则抛 `spatial_unavailable`，不会降级为仅按距离查询。
+
+本接口不判断视线、寻路、可交互性、听见／目睹或角色知情程度。
+
+### 生命周期、开销与错误
+
+一次调用同步完成，不缓存游戏对象、不创建历史快照或定时采样。扫描最多 10,000 个管理器条目，临时保留最多 64 个结果对象，扫描去重键也受扫描上限约束。扫描超限在 coverage 中报告。本次范围并不保证原子世界快照，保留读取时间区间；性能尚未实机测量，不建议每帧调用。
+
+查询与后续 `get_context` 是两次读取。session 一致只证明同一次运行，角色在期间仍可能移动；需要最新邻近关系时重新查询。单次查询不影响事件 FIFO、历史页预算、写盘队列，也不依赖事件记录器／中文解释启用。Collector 关闭时返回 `collector_disabled`。
+
+沿用 `invalid_request/not_ready/wrong_thread/session_changed/session_closed/collector_disabled`；新增相关错误：
+
+| code | 含义 |
+| --- | --- |
+| target_unavailable | 无当前操控 Sim，或指定中心没有可读取实例 |
+| target_out_of_scope | 中心实例不在当前采集范围 |
+| spatial_unavailable | 中心缺少必需位置／楼层／房间；details 中保留字段与证据 |
+| capability_unavailable | SDK 检测旧提供方未声明 context.nearby_entities |
+
+
+## Autonomy 与文本详情
+
+`events.autonomy_decision` 支持 `fields=["autonomy.decision"]` 的历史筛选；获取子行为决策时使用 `include_internal=True`。`payload.interaction_event_id` 与交互的 `facts.decision_event_id` 相互关联。`rendered.history[].decision_details` 提供分层候选与评分说明。
+
+`text.resource_details` 表示可选 `rendered.resource_details`：包含 `items`、`truncated`、`limit`。每项有资源身份、`label/role/text/status/basis/evidence_ref`；资源说明与名称独立，静态参考不代表当时使用。每包最多 128 项、遍历最多 20,000 个节点，单个游戏详情最多 32 项。
+
+当前字段、事实关联及概率解释见[架构与采集语义](architecture.md)。SDK 包附带[Context 合成样例](../sdk/examples/context-packet.json)、[附近实体合成样例](../sdk/examples/nearby-packet.json)和可运行消费示例；样例不作为实机证据。

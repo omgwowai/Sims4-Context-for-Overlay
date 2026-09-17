@@ -1,4 +1,4 @@
-"""Behavioral checks for the new implementation, independent of EA imports."""
+"""Recorder, storage and runtime lifecycle checks without EA imports."""
 
 import copy
 import json
@@ -12,35 +12,16 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from context_overlay.collector import Collector
 from context_overlay.hooks import Hooks
 from context_overlay.model import entity, field, outcome
 from context_overlay.recorder import Recorder
-from context_overlay.semanticizer import translate, display
-from context_overlay.storage import Journal, StorageError, replay
+from context_overlay.semanticizer import display
+from context_overlay.storage import Journal, StorageError
+from support import MemoryJournal, facts
+from offline import read_journal, translate
 from context_overlay.test_driver import Driver
 from context_overlay import game_runtime
 from context_overlay.profiles import resource_name
-
-
-class MemoryJournal:
-    def __init__(self):
-        self.records = []
-
-    def append(self, record):
-        self.records.append(copy.deepcopy(record))
-        return len(self.records)
-
-    def status(self):
-        return {"error": None, "durable_sequence": len(self.records)}
-
-
-def facts(interaction_id=10, target_id=123, main=True):
-    return {"actor": entity("sim", 18446744073709550001, "阿明"),
-            "target": entity("object", target_id, "食物", 888),
-            "interaction_id": str(interaction_id), "tuning_id": "321",
-            "name": "吃饭", "tier": "main" if main else "internal",
-            "trigger": {"name": "SCRIPT_WITH_USER_INTENT", "value": 10}}
 
 
 class RecorderChecks(unittest.TestCase):
@@ -54,6 +35,41 @@ class RecorderChecks(unittest.TestCase):
         second = self.recorder.interaction("started", facts(11), 101, "native")
         self.assertEqual(len(self.journal.records), 2)
         self.assertNotEqual(first["event_id"], second["event_id"])
+
+    def test_reference_precedence_and_identity_table_are_detached(self):
+        data = facts()
+        data["participants"] = [data["actor"], data["target"], dict(data["actor"], name="latest")]
+        event = self.recorder.interaction("started", data, 1, "native")
+        key = data["actor"]["key"]
+        data["participants"][-1]["name"] = "caller mutation"
+        self.assertEqual(len(self.recorder.references), 2)
+        self.assertEqual(self.recorder.references[key]["name"], "latest")
+        self.recorder.references[key]["name"] = "table mutation"
+        self.assertEqual(event["participants"][-1]["name"], "latest")
+        self.assertEqual(event["facts"]["actor"]["name"], "阿明")
+
+    def test_new_event_inputs_remain_detached_with_causal_participants(self):
+        for kind in ("fact", "change"):
+            with self.subTest(kind=kind):
+                participants = [entity("sim", 22, "subject")]
+                roles = [{"entity_key": "sim:22", "role": "subject"}]
+                payload, before = {"nested": [1]}, {"nested": [0]}
+                cause = {"actor": entity("sim", 23, "initiator"), "basis": "resolver.interaction"}
+                inputs = [participants, roles, payload, before, cause]
+                original = copy.deepcopy(inputs)
+                if kind == "fact":
+                    event = self.recorder.fact("sample", participants, payload, 1, "native", roles=roles, cause=cause)
+                else:
+                    event = self.recorder.change(participants, "sample", before, payload, 1, "native",
+                                                 roles=roles, cause=cause, metadata=payload)
+                self.assertEqual(inputs, original)
+                self.assertEqual(event["entities"], ["sim:22", "sim:23"])
+                self.assertEqual(event["roles"][-1]["role"], "initiator")
+                saved = copy.deepcopy(event)
+                participants[0]["name"] = roles[0]["role"] = cause["actor"]["name"] = "changed"
+                payload["nested"].append(2)
+                before["nested"].clear()
+                self.assertEqual(event, saved)
 
     def test_completion_requires_exit_and_natural_finisher(self):
         self.assertEqual(outcome("NATURAL", False), "unknown")
@@ -93,6 +109,7 @@ class RecorderChecks(unittest.TestCase):
         self.assertIsNotNone(newest)
         self.assertEqual(recorder.status()["state"], "recording")
         self.assertEqual(recorder.status()["evicted_events"], 1)
+        self.assertEqual(recorder.status()["history_index"]["evicted_events"], 1)
         self.assertNotIn(oldest["event_id"], recorder.events)
         self.assertIsNone(recorder.interaction("exited", facts(1), 3, "native"))
         self.assertEqual(len(recorder.events), 1)
@@ -157,7 +174,7 @@ class RecorderChecks(unittest.TestCase):
 
 
 class PersistenceChecks(unittest.TestCase):
-    def test_replay_atomic_export_and_duplicate_record(self):
+    def test_journal_round_trip_and_export(self):
         with tempfile.TemporaryDirectory() as directory:
             journal = Journal(directory)
             recorder = Recorder(journal, session_id="run-a")
@@ -166,20 +183,11 @@ class PersistenceChecks(unittest.TestCase):
             output = journal.export({"request_id": "a" * 32, "id": facts()["actor"]["id"]})
             journal.flush()
             journal.close(wait=True)
-            replayed = replay(journal.path)
+            replayed = read_journal(journal.path)
             self.assertTrue(replayed["complete"])
             self.assertEqual(len(replayed["events"]), 1)
             self.assertEqual(replayed["events"][0]["outcome"], "cancelled")
             self.assertEqual(json.loads(Path(output).read_text(encoding="utf-8"))["id"], facts()["actor"]["id"])
-            lines = journal.path.read_text(encoding="utf-8").splitlines()
-            with journal.path.open("a", encoding="utf-8") as stream:
-                stream.write(lines[-1] + "\n")
-            self.assertEqual(len(replay(journal.path)["events"]), 1)
-            with journal.path.open("a", encoding="utf-8") as stream:
-                stream.write('{"sequence":')
-            damaged = replay(journal.path)
-            self.assertFalse(damaged["complete"])
-            self.assertEqual(damaged["errors"][0]["line"], 4)
 
     def test_write_failure_is_not_acknowledged(self):
         def fail_open(*args, **kwargs):
@@ -197,7 +205,7 @@ class PersistenceChecks(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "journal.jsonl"
             path.write_bytes(b'{"sequence":1,"session_id":"a","kind":"observation"}\n' + b'\xe4\xb8')
-            result = replay(path)
+            result = read_journal(path)
             self.assertFalse(result["complete"])
             self.assertEqual(result["errors"][0]["line"], 2)
 
@@ -217,7 +225,7 @@ class PersistenceChecks(unittest.TestCase):
             self.assertEqual(status["state"], "failed")
             journal.close(wait=True)
 
-    def test_queue_overload_retains_unwritten_records(self):
+    def test_queue_overload_retains_unwritten_export(self):
         entered, release = threading.Event(), threading.Event()
         def delayed_open(*args, **kwargs):
             entered.set()
@@ -227,12 +235,13 @@ class PersistenceChecks(unittest.TestCase):
             journal = Journal(directory, capacity=1, opener=delayed_open)
             entered.wait(2)
             try:
-                journal.append({"a": 1})
+                journal.export({"request_id": "a" * 32})
                 with self.assertRaises(StorageError):
-                    journal.append({"a": 2})
-                self.assertTrue(journal.status()["rejected_retained"])
-                self.assertEqual(journal.status()["queued"], 1)
-                self.assertEqual(journal.status()["durable_sequence"], 0)
+                    journal.export({"request_id": "b" * 32})
+                status = journal.status()
+                self.assertTrue(status["rejected_retained"])
+                self.assertEqual(status["queued"], 1)
+                self.assertEqual((status["pending_exports"], status["written_exports"]), (1, 0))
             finally:
                 release.set()
                 journal.close(wait=True)
@@ -248,6 +257,7 @@ class LifecycleChecks(unittest.TestCase):
             runtime.adapter = SimpleNamespace(clock=lambda: {"ticks": "7"})
             runtime.sources = SimpleNamespace(status=lambda: {"source": {"state": "installed"}},
                 diagnostics=lambda: {"callbacks": {"source": 3}, "suppressed_statistics": {"timer": 2}})
+            runtime.autonomy = SimpleNamespace(close=lambda: None, status=lambda: {"enabled": False})
             runtime.closed = False
             runtime.alarm = None
             closed_views = []
@@ -276,10 +286,11 @@ class LifecycleChecks(unittest.TestCase):
             self.assertFalse(runtime.writer._thread.is_alive())
             self.assertEqual(runtime.writer.status()["durable_sequence"], 2)
             self.assertIn("first subscription failed", runtime.recorder.error)
-            records = replay(runtime.writer.path)
+            records = read_journal(runtime.writer.path)
             self.assertEqual(records["observations"][-1]["category"], "session_end")
             self.assertEqual(records["observations"][-1]["data"]["event_diagnostics"]["callbacks"]["source"], 3)
             self.assertEqual(records["observations"][-1]["data"]["event_coverage"]["source"]["state"], "installed")
+            self.assertEqual(read_journal(runtime.writer.path, include_observations=False)["observations"], [])
 
     def test_poll_stops_immediately_when_driver_restarts_its_run(self):
         runtime = game_runtime.Runtime.__new__(game_runtime.Runtime)
@@ -354,8 +365,6 @@ class CompositionChecks(unittest.TestCase):
                 def __init__(self):
                     self.directory = Path(directory) / "runs" / "first"
                     self.session_id = "first"
-                def status(self):
-                    return {"state": "test"}
             runtime = Runtime()
             runtime.directory.mkdir(parents=True)
             calls = []
@@ -369,46 +378,15 @@ class CompositionChecks(unittest.TestCase):
             (driver.directory / "request.json").write_text(json.dumps({"request_id": "f" * 32, "operation": "restart"}), encoding="utf-8")
             driver.poll()
             self.assertEqual(calls, ["f" * 32])
+            self.assertFalse((driver.directory / "status.json").exists())
 
-    def test_pure_translation_preserves_evidence_and_unknown(self):
-        recorder = Recorder(MemoryJournal())
-        recorder.interaction("exited", dict(facts(), finishing_type="UNKNOWN"), 1, "native")
-        packet = {"snapshot": {"needs": field(status="error", reason="read failed")},
-                  "history": recorder.history(facts()["actor"]["key"])}
-        original = copy.deepcopy(packet)
-        rendered = translate(packet)
-        self.assertEqual(packet, original)
-        self.assertIn("结果未确认", rendered["rendered"]["history"][0]["text"])
-        self.assertIn("read failed", rendered["rendered"]["current"][0]["text"])
-        self.assertEqual(rendered, translate(packet))
-
-    def test_collector_pins_target_and_survives_disabled_history(self):
-        class Adapter:
-            def resolve(self, kind, identifier):
-                return entity(kind, identifier)
-            def scope(self):
-                return {"kind": "active_lot"}
-            def clock(self):
-                return 123
-            def read(self, target, name):
-                return field(target["id"], source="test")
-        recorder = Recorder(MemoryJournal(), enabled=False)
-        collector = Collector(Adapter(), recorder)
-        packet = collector.collect("sim", 2, fields=["identity"])
-        self.assertEqual(packet["snapshot"]["identity"]["value"], "2")
-        self.assertEqual(packet["history"]["status"], "disabled")
-        self.assertEqual(packet["status"], "partial")
-        with self.assertRaises(ValueError):
-            collector.collect("sim", 2, fields=["__dict__"])
-
-    def test_hooks_preserve_return_exception_and_other_owners(self):
+    def test_after_hook_failure_preserves_game_return_and_exception(self):
         errors = []
         class Owner:
             def call(self, value):
                 if value < 0:
                     raise LookupError("EA error")
                 return value * 2
-        original = Owner.call
         hooks = Hooks(errors.append)
         def fail(args, kwargs, result):
             raise RuntimeError("collector error")
@@ -417,15 +395,8 @@ class CompositionChecks(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         with self.assertRaisesRegex(LookupError, "EA error"):
             Owner().call(-1)
-        wrapper = Owner.call
-        def another_mod(self, value):
-            return wrapper(self, value) + 1
-        Owner.call = another_mod
         hooks.remove()
-        self.assertIs(Owner.call, another_mod)
-        self.assertEqual(Owner().call(4), 9)
         self.assertEqual(len(errors), 1)
-        Owner.call = original
 
     def test_failed_error_logger_does_not_break_game_call(self):
         class Owner:

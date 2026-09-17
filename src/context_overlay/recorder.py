@@ -2,7 +2,7 @@
 
 from collections import OrderedDict
 
-from context_overlay.history import DEFAULT_EVENT_CAPACITY, DEFAULT_MEMORY_BYTES, HistoryError, HistoryIndex
+from context_overlay.history import DEFAULT_EVENT_CAPACITY, DEFAULT_MEMORY_BYTES, HistoryError, HistoryIndex, copy_events
 from context_overlay.model import copy_data, envelope, new_id, outcome, utc_now
 from context_overlay.storage import StorageError
 
@@ -18,7 +18,6 @@ class Recorder:
         self.error = None
         self.index = HistoryIndex(self.session_id, capacity, memory_bytes, **query_options)
         self.events = self.index.events
-        self.evicted = 0
         self.started_at = utc_now()
         self._scopes = {}
         self._relationship_bits = {}
@@ -37,7 +36,7 @@ class Recorder:
         return {"state": "disabled" if not self.enabled else ("failed" if self.paused else "recording"),
                 "error": self.error, "session_id": self.session_id,
                 "started_at": self.started_at, "retained_events": len(self.events),
-                "evicted_events": self.evicted, "persistence": persistence,
+                "evicted_events": self.index.evicted, "persistence": persistence,
                 "history_index": self.index.status()}
 
     def _write(self, record):
@@ -62,7 +61,7 @@ class Recorder:
         if actor:
             if actor["key"] not in event["entities"]:
                 event["entities"].append(actor["key"])
-                event.setdefault("participants", []).append(copy_data(actor))
+                event.setdefault("participants", []).append(actor)
             if not any(role["entity_key"] == actor["key"] for role in event.get("roles", [])):
                 event.setdefault("roles", []).append({"entity_key": actor["key"], "role": "initiator",
                                                       "basis": event["cause"].get("basis", "recorded_cause_actor")})
@@ -82,7 +81,6 @@ class Recorder:
             return None
         discarded = self.index.publish(event, sequence, charge)
         if discarded:
-            self.evicted = self.index.evicted
             if discarded["event_type"] == "interaction":
                 self._retired_interactions[discarded["event_id"]] = None
                 if len(self._retired_interactions) > self.capacity:
@@ -98,20 +96,20 @@ class Recorder:
         facts = event.get("facts", {})
         refs.extend(item for item in (facts.get("actor"), facts.get("target")) if item)
         refs.extend(facts.get("participants", []))
-        for reference in refs:
-            self.references[reference["key"]] = copy_data(reference)
+        self.references.update(copy_data({reference["key"]: reference for reference in refs}))
         return event
 
     def fact(self, category, participants, payload, game_time, source, roles=None,
              cause=None, tier="main", event_id=None, evidence="notification"):
         event_id = event_id or self.session_id + ":fact:" + new_id()
         previous = self.events.get(event_id)
+        # Own the lists extended by _save; prepare detaches all nested input.
         event = {"event_id": event_id, "revision": previous["revision"] + 1 if previous else 1,
                  "event_type": "game_event", "category": category, "field": category,
                  "tier": tier, "entities": [ref["key"] for ref in participants],
-                 "participants": copy_data(participants), "roles": copy_data(roles or []),
-                 "payload": copy_data(payload), "last_observed_time": game_time,
-                 "source": source, "evidence_type": evidence, "cause": copy_data(cause)}
+                 "participants": list(participants), "roles": list(roles or []),
+                 "payload": payload, "last_observed_time": game_time,
+                 "source": source, "evidence_type": evidence, "cause": cause}
         if previous:
             event["first_observed_time"] = previous["first_observed_time"]
         return self._save(event)
@@ -190,17 +188,17 @@ class Recorder:
         event = {"event_id": self.session_id + ":change:" + new_id(), "revision": 1,
                  "event_type": "state_change", "tier": tier,
                  "entities": [item["key"] for item in entities],
-                 "participants": copy_data(entities), "field": field_name,
-                 "before": copy_data(before), "after": copy_data(after),
+                 "participants": list(entities), "field": field_name,
+                 "before": before, "after": after,
                  "last_observed_time": game_time, "source": source,
                  "evidence_type": "notification"}
-        event["roles"] = copy_data(roles if roles is not None else [
+        event["roles"] = list(roles) if roles is not None else [
             {"entity_key": ref["key"], "role": "subject" if i == 0 else "target", "basis": "state_change_owner"}
-            for i, ref in enumerate(entities)])
+            for i, ref in enumerate(entities)]
         if cause:
-            event["cause"] = copy_data(cause)
+            event["cause"] = cause
         if metadata:
-            event["metadata"] = copy_data(metadata)
+            event["metadata"] = metadata
         return self._save(event)
 
     def relationship_bit(self, actor, other, bit, added, game_time, source, bidirectional, cause=None):
@@ -268,23 +266,17 @@ class Recorder:
             raise ValueError("History limit must be between 1 and 500")
         state = self.status()
         selected, truncated = self.index.recent(entity_key, limit, include_internal, group_effects)
-        durable = state["persistence"]["durable_sequence"]
-        records = copy_data(selected)
-        for record in records:
-            record["persistence"] = "written" if record["accepted_sequence"] <= durable else "accepted"
-            for effect in record.get("effects", []):
-                effect["persistence"] = "written" if effect["accepted_sequence"] <= durable else "accepted"
+        records = copy_events(selected, state["persistence"]["durable_sequence"])
         return {"status": state["state"], "events": records, "coverage": state,
                 "target_observation": copy_data(self._scopes.get(entity_key, {"currently_observed": False, "status": "not_observed"})),
-                "limit": limit, "truncated": truncated or self.evicted > 0,
+                "limit": limit, "truncated": truncated or self.index.evicted > 0,
                 "scope": "current_session_recent_cache", "include_internal": include_internal}
 
     def query_history(self, entity_key, target=None, **filters):
         state = self.status()
         metadata = {"status": state["state"], "coverage": state,
-                    "target": copy_data(target or {"key": entity_key}),
-                    "target_observation": copy_data(self._scopes.get(entity_key, {
-                        "currently_observed": False, "status": "not_observed"}))}
+                    "target": target or {"key": entity_key},
+                    "target_observation": self._scopes.get(entity_key, {"currently_observed": False, "status": "not_observed"})}
         return self.index.query(entity_key, metadata, **filters)
 
     def history_page(self, cursor):

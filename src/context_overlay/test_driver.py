@@ -26,16 +26,11 @@ class Driver:
         os.replace(str(pending), str(destination))
 
     def poll(self):
-        self.write("status.json", self.runtime.status())
         path = self.directory / "request.json"
         if not path.exists():
             return
-        if path.stat().st_size > 65536:
-            raise ValueError("Validation request too large")
         request = json.loads(path.read_text(encoding="utf-8-sig"))
         request_id = request["request_id"]
-        if not isinstance(request_id, str) or len(request_id) != 32 or any(c not in "0123456789abcdef" for c in request_id):
-            raise ValueError("Invalid validation request ID")
         if request_id == self.last_request:
             return
         self.last_request = request_id
@@ -70,16 +65,14 @@ class Driver:
         if operation == "export":
             return runtime.export(request.get("kind", "sim"), request.get("id", "active"),
                                   int(request.get("limit", 50)), request.get("internal", False), request.get("fields"),
-                                  request.get("representation", "both"), request.get("history", True), request.get("history_query"))
+                                  request.get("representation", "both"), request.get("history", True))
         if operation == "history":
             return runtime.history(request.get("kind", "sim"), request.get("id", "active"),
                                    int(request.get("limit", 50)), request.get("internal", False))
         if operation == "history_query":
             return runtime.history_query(request.get("kind", "sim"), request.get("id", "active"), **request.get("filters", {}))
-        if operation == "history_next":
-            return runtime.history_next(request["cursor"])
-        if operation == "history_close":
-            return runtime.history_close(request["cursor"])
+        if operation in ("history_next", "history_close"):
+            return getattr(runtime, operation)(request["cursor"])
         if operation == "marker":
             runtime.recorder.note("validation_marker", {"label": request["label"]}, adapter.clock())
             return {"marked": request["label"]}
@@ -126,10 +119,9 @@ class Driver:
             if not adapter.in_scope(destination):
                 raise ValueError("Interaction target outside active lot")
             context = InteractionContext(obj, InteractionContext.SOURCE_SCRIPT, Priority.High)
-            kwargs = {}
             if request.get("recipe_id"):
                 raise ValueError("Select the recipe through the game's picker; recipe_id is not a push argument")
-            result = obj.push_super_affordance(affordance, destination, context, **kwargs)
+            result = obj.push_super_affordance(affordance, destination, context)
             return {"accepted": bool(result), "detail": str(result)}
         if operation == "cancel":
             from interactions.interaction_finisher import FinishingType

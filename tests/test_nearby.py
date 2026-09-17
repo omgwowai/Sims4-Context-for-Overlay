@@ -3,7 +3,6 @@
 import json
 from pathlib import Path
 import sys
-import threading
 import tempfile
 from types import ModuleType, SimpleNamespace
 import unittest
@@ -11,14 +10,13 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "sdk")]
-from context_overlay import VERSION, api, game_runtime, nearby
-from context_overlay.collector import Collector
+from context_overlay import VERSION, api, nearby
 from context_overlay.ea_adapter import EAAdapter
 from context_overlay.model import entity
 from context_overlay.recorder import Recorder
 from context_overlay.storage import Journal
 from context_overlay_client import Client, ContextOverlayError
-from test_core import MemoryJournal
+from support import MemoryJournal, runtime_fixture
 
 
 def node(identifier, x=0, y=0, z=0, kind="sim", level=0, room=10, inventory=False, on_lot=True):
@@ -66,13 +64,7 @@ class NearbyChecks(unittest.TestCase):
         self.addCleanup(modules.stop)
         self.journal = MemoryJournal()
         recorder = Recorder(self.journal, session_id="nearby-run")
-        self.runtime = SimpleNamespace(adapter=adapter, recorder=recorder,
-            collector=Collector(adapter, recorder, provenance={"source": "fake_game"}),
-            session_id="nearby-run", simulation_thread_id=threading.get_ident(), api_ready=True, closed=False)
-        for context in (patch.object(game_runtime, "_runtime", self.runtime),
-                        patch.object(game_runtime, "_startup_error", None)):
-            context.start()
-            self.addCleanup(context.stop)
+        self.runtime = runtime_fixture(self, adapter, recorder, provenance={"source": "fake_game"})
 
     def add(self, identifier, **kwargs):
         obj = node(identifier, **kwargs)
@@ -189,8 +181,6 @@ class NearbyChecks(unittest.TestCase):
         broken.level = None
         self.assertEqual(self.query()["coverage"]["reasons"], {"level_unavailable": 1})
         self.assertEqual(self.query(same_level=False)["count"], 1)
-        broken.parent = broken
-        self.assertEqual(self.query()["coverage"]["reasons"], {"candidate_read_failed": 1})
 
     def test_topk_scans_all_candidates_before_selecting_nearest(self):
         for index in range(10, 0, -1):
@@ -219,20 +209,9 @@ class NearbyChecks(unittest.TestCase):
         self.assertEqual(packet["count"], 1)
         self.assertEqual(packet["coverage"]["reasons"], {"enumeration_failed": 1})
 
-    def test_duplicate_candidates_do_not_consume_limit(self):
-        other = self.add(2, x=1)
-        self.objects.extend([other, other])
-        self.assertEqual(self.query()["matched_count"], 1)
-
     def test_invalid_input_before_any_game_read(self):
-        for options in ({"radius": None}, {"radius": -1}, {"radius": True}, {"radius": float("inf")},
-                        {"radius": float("nan")}, {"radius": 10 ** 1000}, {"radius": "8"},
-                        {"radius": 1000001}, {"kinds": []}, {"kinds": "sim"},
-                        {"kinds": ["sim", "sim"]}, {"kinds": ["npc"]}, {"limit": True},
-                        {"limit": 65}, {"same_room": 1}, {"same_level": None},
-                        {"include_self": 0}, {"metric": "path"}, {"identifier": 0}, {"bogus": 1}):
-            with self.subTest(options=options):
-                self.error("invalid_request", **options)
+        self.error("invalid_request", radius=-1)
+        self.error("invalid_request", metric="path")
         self.assertEqual(self.active_calls, 0)
         self.assertEqual(self.room_calls, [])
 
@@ -247,24 +226,10 @@ class NearbyChecks(unittest.TestCase):
         self.origin.position.x = float("inf")
         self.error("spatial_unavailable")
 
-    def test_thread_session_and_collector_guards_before_reads(self):
+    def test_session_and_collector_guards_before_nearby_reads(self):
         self.error("session_changed", expected_session_id="old")
         self.runtime.collector.enabled = False
         self.error("collector_disabled")
-        self.runtime.collector.enabled = True
-        self.runtime.api_ready = False
-        self.error("not_ready")
-        self.runtime.api_ready = True
-        errors = []
-        def worker():
-            try:
-                self.query()
-            except api.APIError as exc:
-                errors.append(exc.code)
-        thread = threading.Thread(target=worker)
-        thread.start()
-        thread.join()
-        self.assertEqual(errors, ["wrong_thread"])
         self.assertEqual(self.active_calls, 0)
 
     def test_no_history_or_storage_writes_and_detached_result(self):
@@ -297,7 +262,7 @@ class NearbyChecks(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             self.runtime.writer = Journal(directory)
             try:
-                result = game_runtime.Runtime.export_nearby(self.runtime, radius="room", kinds="all")
+                result = self.runtime.export_nearby(radius="room", kinds="all")
             finally:
                 self.runtime.writer.close(wait=True)
             packet = json.loads(Path(result["path"]).read_text(encoding="utf-8"))

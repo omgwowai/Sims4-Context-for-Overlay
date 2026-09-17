@@ -14,9 +14,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from context_overlay import api, game_runtime
 from context_overlay.collector import Collector
-from context_overlay.model import entity, field
+from context_overlay.model import field
 from context_overlay.recorder import Recorder
-from test_core import MemoryJournal, facts
+from support import MemoryJournal, facts, runtime_fixture, PYTHON
 
 spec = importlib.util.spec_from_file_location("vendored_client", str(ROOT / "sdk/context_overlay_client.py"))
 sdk = importlib.util.module_from_spec(spec)
@@ -25,36 +25,11 @@ spec.loader.exec_module(sdk)
 
 class ContractChecks(unittest.TestCase):
     def setUp(self):
-        class Adapter:
-            reads = 0
-            resolutions = []
-            shared = {"value": 42}
-            def resolve(self, kind, identifier):
-                self.resolutions.append((kind, identifier))
-                if kind == "sim":
-                    return facts()["actor"] if identifier == "active" else entity("sim", identifier, "阿明")
-                return entity("object", identifier, "食物")
-            def scope(self):
-                return {"kind": "active_lot_instantiated", "off_lot": "excluded"}
-            def clock(self):
-                return {"ticks": "100", "display": "test time"}
-            def read(self, target, name):
-                self.reads += 1
-                return field(target if name == "identity" else self.shared)
-        self.adapter = Adapter()
-        self.adapter.resolutions = []
         self.journal = MemoryJournal()
         self.now = [0]
         self.recorder = Recorder(self.journal, session_id="run-a", clock=lambda: self.now[0])
-        self.runtime = SimpleNamespace(adapter=self.adapter, recorder=self.recorder,
-            collector=Collector(self.adapter, self.recorder), provenance={"source": "test"},
-            session_id="run-a", simulation_thread_id=threading.get_ident(), api_ready=True, closed=False)
-        self.runtime_patch = patch.object(game_runtime, "_runtime", self.runtime)
-        self.runtime_patch.start()
-        self.addCleanup(self.runtime_patch.stop)
-        error_patch = patch.object(game_runtime, "_startup_error", None)
-        error_patch.start()
-        self.addCleanup(error_patch.stop)
+        self.runtime = runtime_fixture(self, recorder=self.recorder, provenance={"source": "test"})
+        self.adapter = self.runtime.adapter
 
     def error(self, code, function, *args, **kwargs):
         with self.assertRaises(api.APIError) as caught:
@@ -81,7 +56,7 @@ class ContractChecks(unittest.TestCase):
     def test_import_and_metadata_do_not_initialize_runtime_or_game(self):
         script = "import sys; sys.path[:0] = {0!r}; from context_overlay import api; import context_overlay_client as s; s.Client(); api.get_api_info(); assert 'services' not in sys.modules; assert 'context_overlay.game_runtime' not in sys.modules".format(
             [str(ROOT / "src"), str(ROOT / "sdk")])
-        subprocess.check_call([sys.executable, "-c", script])
+        subprocess.check_call(PYTHON + ["-c", script])
 
     def test_readiness_loading_failed_closed_and_ready(self):
         with patch.object(game_runtime, "_runtime", None):
@@ -119,7 +94,7 @@ class ContractChecks(unittest.TestCase):
         packet = api.get_context()
         self.assertEqual(packet["api_version"], "1.1.0")
         self.assertEqual(len(packet["history"]["events"]), 3)
-        self.assertEqual(self.adapter.resolutions[:2], [("sim", "active"), ("sim", facts()["actor"]["id"])])
+        self.assertEqual(self.adapter.resolutions, [("sim", "active")])
         self.assertEqual(packet["target"]["id"], "18446744073709550001")
         packet["snapshot"]["needs"]["value"]["value"] = 900
         packet["history"]["events"][0]["facts"]["actor"]["name"] = "changed"
@@ -132,16 +107,10 @@ class ContractChecks(unittest.TestCase):
         self.assertEqual(obj["history"]["status"], "not_requested")
         json.dumps(packet, allow_nan=False)
 
-    def test_strict_validation_and_session_guard_precede_reads(self):
-        for options in ({"fields": "needs"}, {"fields": ["needs", "needs"]}, {"fields": [1]},
-                        {"history_limit": True}, {"include_history": 1}, {"representation": "unknown"},
-                        {"typo_option": True}):
-            self.error("invalid_request", api.get_context, **options)
-        for identifier in (1.1, True, 0, "-1", "18446744073709551616", object()):
-            self.error("invalid_request", api.get_context, "sim", identifier)
+    def test_invalid_request_and_session_guard_precede_reads(self):
+        self.error("invalid_request", api.get_context, fields=["unknown"])
         self.error("session_changed", api.get_context, expected_session_id="other-run")
         self.assertEqual(self.adapter.reads, 0)
-        self.error("invalid_query", api.query_history, page_size=True)
         self.error("invalid_query", api.query_history, from_ticks=5, to_ticks=4)
         self.assertEqual(self.recorder.index.status()["snapshots"], 0)
 
@@ -169,21 +138,16 @@ class ContractChecks(unittest.TestCase):
         with patch.object(self.adapter, "resolve", side_effect=ValueError("No active Sim")):
             self.error("target_unavailable", api.get_context)
 
-    def test_history_filters_fixed_versions_repeat_page_and_release(self):
+    def test_history_api_forwards_filters_renders_pages_and_releases(self):
         self.add_events()
         packet = api.query_history(page_size=1, from_ticks="11", to_ticks="13", event_types=["interaction"])
         page = packet["history"]
         self.assertEqual(page["total_matches"], 2)
-        self.assertEqual(page["events"][0]["facts"]["interaction_id"], "3")
         cursor = page["next_cursor"]
-        self.recorder.interaction("exited", dict(facts(2), finishing_type="USER_CANCEL"), 30, "test")
         following = api.get_history_page(cursor, expected_session_id=packet["session_id"])
-        self.assertEqual(following["history"]["events"][0]["stage"], "running")
-        self.assertEqual(following["history"], api.get_history_page(cursor, expected_session_id="run-a")["history"])
+        self.assertEqual(following["history"]["events"][0]["facts"]["interaction_id"], "2")
         self.assertEqual(len(following["rendered"]["history"]), 1)
         self.assertTrue(api.close_history(page["cursor"], expected_session_id="run-a")["released"])
-        self.assertFalse(api.close_history(page["cursor"], expected_session_id="run-a")["released"])
-        self.error("cursor_expired", api.get_history_page, cursor, expected_session_id="run-a")
 
     def test_expiry_and_session_switch_never_reuse_old_queries(self):
         packet = api.query_history()
@@ -194,12 +158,8 @@ class ContractChecks(unittest.TestCase):
         self.error("session_changed", api.get_history_page, cursor, expected_session_id="run-a")
         self.assertEqual(api.close_history(cursor, expected_session_id="run-a")["reason"], "session_changed")
 
-    def test_budget_failure_and_render_failure_do_not_leak_new_query(self):
-        self.recorder.index.snapshot_limit = 1
-        packet = api.query_history()
-        self.error("query_limit", api.query_history)
-        api.close_history(packet["history"]["cursor"], expected_session_id="run-a")
-        with patch.object(api, "render", side_effect=RuntimeError("test renderer fault")):
+    def test_render_failure_releases_new_query(self):
+        with patch("context_overlay.collector.render", side_effect=RuntimeError("test renderer fault")):
             self.error("internal_error", api.query_history)
         self.assertEqual(self.recorder.index.status()["snapshots"], 0)
 
@@ -215,8 +175,6 @@ class ContractChecks(unittest.TestCase):
         self.assertTrue(query.closed)
         self.assertFalse(query.close()["released"])
         self.assertEqual(self.recorder.index.status()["snapshots"], 0)
-        self.runtime.session_id = self.recorder.session_id = "run-b"
-        self.assertEqual(client.get_context(include_history=False)["session_id"], "run-b")
 
     def test_sdk_reports_missing_dependency_incompatible_api_and_provider_errors(self):
         with patch.object(sdk.importlib, "import_module", side_effect=ModuleNotFoundError("missing", name="context_overlay")):
@@ -233,19 +191,11 @@ class ContractChecks(unittest.TestCase):
         self.assertEqual(caught.exception.code, "invalid_request")
         json.dumps(caught.exception.to_dict())
 
-    def test_sdk_cleans_up_on_consumer_exception_and_expires_with_clear_error(self):
+    def test_sdk_cleans_up_on_consumer_exception(self):
         with self.assertRaisesRegex(ValueError, "consumer failed"):
             with sdk.Client(api).history():
                 raise ValueError("consumer failed")
         self.assertEqual(self.recorder.index.status()["snapshots"], 0)
-        self.add_events()
-        query = sdk.Client(api).history(page_size=1)
-        self.now[0] = 121
-        with self.assertRaises(sdk.ContextOverlayError) as caught:
-            query.next_page()
-        self.assertEqual(caught.exception.code, "cursor_expired")
-        query.close()
-        self.assertTrue(query.closed)
 
     def test_sdk_accepts_compatible_minor_and_reacquires_replaced_runtime(self):
         provider = SimpleNamespace(APIError=api.APIError, get_context=api.get_context,

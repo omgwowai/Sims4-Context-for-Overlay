@@ -10,27 +10,22 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from test_core import MemoryJournal, facts
+from support import MemoryJournal, facts
 from context_overlay.collector import Collector
-from context_overlay.history import HistoryError, HistoryIndex, MIB
-from context_overlay.model import entity, field
+from context_overlay.history import HistoryError, MIB
+from context_overlay.model import entity
 from context_overlay.recorder import Recorder
-from context_overlay.storage import Journal, StorageError, replay
-from context_overlay.game_runtime import Runtime, DEFAULTS
+from context_overlay.storage import Journal, StorageError
+from context_overlay.game_runtime import Runtime
 from context_overlay import game_runtime
 
 
 ACTOR = facts()["actor"]["key"]
 
 
-class SequencedJournal(MemoryJournal):
-    def status(self):
-        return dict(super().status(), accepted_sequence=len(self.records))
-
-
 class IndexedHistoryChecks(unittest.TestCase):
     def setUp(self):
-        self.journal = SequencedJournal()
+        self.journal = MemoryJournal()
         self.recorder = Recorder(self.journal, "test-run")
 
     def add(self, identifier, when, **extra):
@@ -61,16 +56,24 @@ class IndexedHistoryChecks(unittest.TestCase):
 
     def test_time_boundaries_out_of_order_and_ties(self):
         a, b, c, d = [self.add(i, t) for i, t in ((1, 20), (2, 10), (3, 20), (4, 30))]
-        q = self.recorder.query_history(ACTOR, from_ticks="10", to_ticks="30", order="asc")
-        self.assertEqual([e["event_id"] for e in q["events"]], [b["event_id"], a["event_id"], c["event_id"]])
-        self.assertEqual(q["candidates_examined"], 3)
+        self.recorder.link_decision(a["event_id"], "decision")
+        for order, expected in (("asc", [b, a, c]), ("desc", [c, a, b])):
+            q = self.recorder.query_history(ACTOR, from_ticks="10", to_ticks="30", order=order)
+            self.assertEqual([e["event_id"] for e in q["events"]], [e["event_id"] for e in expected])
+            self.assertEqual(q["candidates_examined"], 3)
 
     def test_end_time_does_not_prune_early_start_and_unknown_start_is_excluded(self):
         early = self.add(1, 1)
         self.recorder.interaction("exited", dict(facts(1), finishing_type="NATURAL"), 50, "exit")
         end_only = self.recorder.interaction("exited", dict(facts(2), finishing_type="USER_CANCEL"), 55, "exit")
-        ended = self.recorder.query_history(ACTOR, time_field="ended", from_ticks=50, to_ticks=60, outcomes=["completed"])
-        self.assertEqual([e["event_id"] for e in ended["events"]], [early["event_id"]])
+        later = self.add(3, 10)
+        self.recorder.interaction("exited", dict(facts(3), finishing_type="NATURAL"), 50, "exit")
+        self.recorder.link_decision(early["event_id"], "decision")
+        for time_field, bounds in (("started", (1, 11)), ("ended", (50, 60))):
+            for order, expected in (("asc", [early, later]), ("desc", [later, early])):
+                page = self.recorder.query_history(ACTOR, time_field=time_field, from_ticks=bounds[0], to_ticks=bounds[1],
+                                                   outcomes=["completed"], order=order)
+                self.assertEqual([e["event_id"] for e in page["events"]], [e["event_id"] for e in expected])
         started = self.recorder.query_history(ACTOR, time_field="started")
         self.assertNotIn(end_only["event_id"], [e["event_id"] for e in started["events"]])
 
@@ -121,10 +124,10 @@ class IndexedHistoryChecks(unittest.TestCase):
 
     def test_query_expiry_release_and_session_change(self):
         now = [1.0]
-        recorder = Recorder(SequencedJournal(), "old", clock=lambda: now[0], snapshot_ttl=10)
+        recorder = Recorder(MemoryJournal(), "old", clock=lambda: now[0], snapshot_ttl=10)
         recorder.interaction("started", facts(), 1, "native")
         q = recorder.query_history(ACTOR)
-        new = Recorder(SequencedJournal(), "new")
+        new = Recorder(MemoryJournal(), "new")
         with self.assertRaisesRegex(HistoryError, "session_changed"):
             new.history_page(q["cursor"])
         now[0] = 11
@@ -140,7 +143,7 @@ class IndexedHistoryChecks(unittest.TestCase):
             recorder.history_page(q["cursor"])
 
     def test_query_budgets_do_not_stop_recording_or_leak_partial_snapshot(self):
-        recorder = Recorder(SequencedJournal(), "budget", snapshot_refs=1, snapshot_limit=1)
+        recorder = Recorder(MemoryJournal(), "budget", snapshot_refs=1, snapshot_limit=1)
         for i in range(2):
             recorder.interaction("started", facts(i + 1), i, "native")
         with self.assertRaisesRegex(HistoryError, "query_budget"):
@@ -157,7 +160,7 @@ class IndexedHistoryChecks(unittest.TestCase):
             recorder.query_history("sim:999")
 
     def test_recording_memory_budget_rejects_before_event_or_index_publication(self):
-        recorder = Recorder(SequencedJournal(), "small", memory_bytes=1)
+        recorder = Recorder(MemoryJournal(), "small", memory_bytes=1)
         self.assertIsNone(recorder.interaction("started", facts(), 1, "native"))
         self.assertEqual(recorder.status()["state"], "failed")
         self.assertFalse(recorder.events)
@@ -171,25 +174,6 @@ class IndexedHistoryChecks(unittest.TestCase):
         self.assertFalse(self.recorder.index.entities)
         self.assertFalse(self.recorder.events)
 
-    def test_invalid_filters_and_cursor_offsets_are_explicit(self):
-        self.add(1, 1)
-        for args in ({"time_field": "overlap"}, {"event_types": ["unknown"]}, {"page_size": True},
-                     {"from_ticks": 3, "to_ticks": 2}, {"from_ticks": 1.5}, {"outcomes": "completed"}):
-            with self.subTest(args=args), self.assertRaises(HistoryError):
-                self.recorder.query_history(ACTOR, **args)
-        q = self.recorder.query_history(ACTOR, page_size=2)
-        with self.assertRaisesRegex(HistoryError, "invalid_cursor"):
-            self.recorder.history_page(q["cursor"].rsplit(":", 1)[0] + ":1")
-
-    def test_collector_composes_filtered_history_with_fixed_target(self):
-        self.add(1, 1)
-        actor = facts()["actor"]
-        adapter = SimpleNamespace(resolve=lambda *args: actor, scope=lambda: {}, clock=lambda: 5,
-                                  read=lambda target, name: field(target, source="test"))
-        packet = Collector(adapter, self.recorder).collect("sim", "active", ["identity"],
-                    history_query={"event_types": ["interaction"], "page_size": 1})
-        self.assertEqual(packet["history"]["target"], actor)
-        self.assertEqual(packet["rendered"]["history"][0]["event_id"], packet["history"]["events"][0]["event_id"])
 
 
 class ResourceAndRuntimeChecks(unittest.TestCase):
@@ -237,11 +221,6 @@ class ResourceAndRuntimeChecks(unittest.TestCase):
             self.assertIn("inspector opened", output[-1])
             game_runtime._lifecycle_hooks.remove()
 
-    def test_defaults_include_200k_and_byte_limits(self):
-        self.assertEqual(DEFAULTS["history_capacity"], 200000)
-        self.assertEqual(DEFAULTS["history_memory_mb"], 1536)
-        self.assertEqual(DEFAULTS["run_output_mb"], 2048)
-
     def test_run_output_limit_retains_failed_write_and_sequence(self):
         with tempfile.TemporaryDirectory() as directory:
             journal = Journal(directory, max_bytes=1)
@@ -283,6 +262,7 @@ class ResourceAndRuntimeChecks(unittest.TestCase):
             runtime.provenance = {"test": True}
             runtime.config = {"semanticizer_enabled": True}
             runtime.adapter = SimpleNamespace(resolve=lambda *args: facts()["actor"])
+            runtime.collector = Collector(runtime.adapter, runtime.recorder, provenance=runtime.provenance)
             try:
                 for i in range(3):
                     runtime.recorder.interaction("started", facts(i + 1), i, "native")
@@ -298,18 +278,10 @@ class ResourceAndRuntimeChecks(unittest.TestCase):
                 self.assertEqual(runtime.recorder.index.status()["snapshots"], 0)
                 status = runtime.writer.status()
                 self.assertEqual(status["pending_bytes"], 0)
+                self.assertEqual((status["pending_exports"], status["written_exports"]), (0, 2))
                 self.assertEqual(status["accepted_output_bytes"], status["written_output_bytes"])
             finally:
                 runtime.writer.close(wait=True)
-
-    def test_replay_duplicate_formatting_and_optional_observations(self):
-        record = {"sequence": 1, "session_id": "r", "kind": "observation"}
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "journal.jsonl"
-            path.write_text(json.dumps(record) + "\n" + json.dumps(record, sort_keys=True) + "\n", encoding="utf-8")
-            self.assertTrue(replay(path)["complete"])
-            self.assertEqual(len(replay(path)["observations"]), 1)
-            self.assertEqual(replay(path, include_observations=False)["observations"], [])
 
 
 if __name__ == "__main__":

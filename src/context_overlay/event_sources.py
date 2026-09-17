@@ -11,6 +11,7 @@ import weakref
 from collections import OrderedDict
 
 from context_overlay.ea_adapter import enum_name
+from context_overlay.hooks import arg
 from context_overlay.model import copy_data, entity, new_id
 from context_overlay.event_policy import suppressed_statistic, completion_tier
 
@@ -36,31 +37,6 @@ NATIVE = {
     "AspirationGoalComplete": ("aspiration.goal_completed", ()),
     "MilestoneCompleted": ("aspiration.stage_completed", ()),
 }
-
-LABELS = {
-    "autonomy.decision": "Autonomy 决策",
-    "mood.changed": "情绪变化", "skill.level": "技能等级变化", "trait.added": "特征添加",
-    "trait.removed": "特征移除", "relationship.spouse": "配偶变化",
-    "relationship.knowledge": "对他人的知识变化", "relationship.sentiment": "情感印象变化",
-    "career.changed": "职业变化", "career.promoted": "职业晋升",
-    "career.demoted": "职业降职", "career.retirement": "退休状态变化",
-    "career.work_started": "开始工作日", "career.work_completed": "工作日结算",
-    "life.offspring_created": "子女出生", "life.adopted": "收养",
-    "life.pregnancy": "怀孕状态变化", "life.age": "年龄阶段变化",
-    "life.death": "死亡状态变化", "life.household": "家庭归属变化",
-    "life.milestone": "人生里程碑解锁", "crafting.completed": "制作产物",
-    "collection.acquired": "获得收藏项", "progress.unlocked": "解锁",
-    "progress.item_unlocked": "解锁条目", "aspiration.goal_completed": "目标完成通知",
-    "aspiration.stage_completed": "阶段完成通知", "inventory.transfer": "物品库存变化",
-    "buff.refreshed": "Buff 再次应用", "reaction.started": "反应开始",
-    "broadcast.effect": "广播效果执行", "payment.completed": "支付结果",
-    "statistic.direct": "直接数值效果",
-}
-
-
-def arg(args, kwargs, index, name, default=None):
-    return args[index] if len(args) > index else kwargs.get(name, default)
-
 
 def resolved(resolver, key):
     try:
@@ -106,15 +82,13 @@ class EventSources:
         reference = self.adapter.event_reference(value)
         if reference:
             return reference
-        if isinstance(value, (list, tuple, set, frozenset)):
+        if isinstance(value, (list, tuple, set, frozenset, dict)):
             if len(value) > self.runtime.config["max_entities"]:
                 raise RuntimeError("Event payload exceeds entity budget")
+            if isinstance(value, dict):
+                return {str(self.scalar(key, depth + 1)): self.scalar(item, depth + 1) for key, item in value.items()}
             items = [self.scalar(item, depth + 1) for item in value]
             return sorted(items, key=str) if isinstance(value, (set, frozenset)) else items
-        if isinstance(value, dict):
-            if len(value) > self.runtime.config["max_entities"]:
-                raise RuntimeError("Event mapping exceeds entity budget")
-            return {str(self.scalar(key, depth + 1)): self.scalar(item, depth + 1) for key, item in value.items()}
         if hasattr(value, "guid64") or hasattr(type(value), "guid64"):
             return self.adapter.resource(value)
         if hasattr(value, "in_ticks"):
@@ -175,25 +149,24 @@ class EventSources:
             return True  # The method adapter checks the actual discrete levels.
         category, keys = NATIVE[name]
         values = [sim_info]
-        payload = {key: (str(resolved(resolver, key)) if resolved(resolver, key) is not None and
-            key.endswith(("_id", "_guid")) else self.scalar(resolved(resolver, key))) for key in keys}
-        for key, attribute, resource_kind in (("skill", "stat_name", "statistic"),
-                ("track", "career_name", "career_track")):
-            value = resolved(resolver, key)
-            if key in keys and value is not None:
-                payload[key] = self.adapter.resource(value, attribute, resource_kind, tokens=(sim_info,))
+        observed = {key: resolved(resolver, key) for key in (*keys, "crafted_object", "adopted_sim_info")}
+        payload = {key: (str(observed[key]) if observed[key] is not None and key.endswith(("_id", "_guid"))
+                         else self.scalar(observed[key])) for key in keys}
+        for key, resource_kind in (("skill", "statistic"), ("track", "career_track")):
+            if observed.get(key) is not None:
+                payload[key] = self.adapter.resource(observed[key], resource_kind, tokens=(sim_info,))
         roles = []
         cause = self.cause(resolved(resolver, "resolver"))
         if name == "MoodChange":
             frame = next((f for f in reversed(self.frames) if f["kind"] == "mood_context" and
                           f["mood_owner"].owner is sim_info), None)
-            old_level = frame["old_intensity"] if frame and frame["old_mood"] is resolved(resolver, "old_mood") else None
+            old_level = frame["old_intensity"] if frame and frame["old_mood"] is observed["old_mood"] else None
             new_level = (getattr(frame["mood_owner"], "_active_mood_intensity", None) if frame and
-                         getattr(frame["mood_owner"], "_active_mood", None) is resolved(resolver, "new_mood") else None)
+                         getattr(frame["mood_owner"], "_active_mood", None) is observed["new_mood"] else None)
             for key, level in (("old_mood", old_level), ("new_mood", new_level)):
-                payload[key] = self.adapter.resource(resolved(resolver, key), resource_kind="mood", tokens=(sim_info,), intensity=level)
+                payload[key] = self.adapter.resource(observed[key], resource_kind="mood", tokens=(sim_info,), intensity=level)
             payload.update(old_intensity=old_level, new_intensity=new_level,
-                change_kind="mood" if resolved(resolver, "old_mood") is not resolved(resolver, "new_mood") else
+                change_kind="mood" if observed["old_mood"] is not observed["new_mood"] else
                             ("intensity" if old_level is not None and new_level is not None and old_level != new_level else "notification"))
         if name == "SkillLevelChange":
             payload["interpretation"] = "notification_only_initialization_not_excluded"
@@ -202,7 +175,7 @@ class EventSources:
         if sim_info is not None:
             roles.append({"entity_key": self.adapter.event_reference(sim_info)["key"], "role": "subject", "basis": "TestEvent.sim_info"})
         for key, role in (("crafted_object", "product"), ("adopted_sim_info", "adopted_child")):
-            value = resolved(resolver, key)
+            value = observed[key]
             if value is not None:
                 values.append(value)
                 roles.append({"entity_key": self.adapter.event_reference(value)["key"], "role": role, "basis": key})
@@ -215,10 +188,10 @@ class EventSources:
             if sim_info is None or not (self.local(values) or any(f["local"] for f in self.frames)):
                 return True
             for key, married in (("ex_spouse_sim_id", False), ("spouse_sim_id", True)):
-                identifier = resolved(resolver, key)
+                identifier = observed[key]
                 if not identifier:
                     continue
-                if resolved(resolver, "ex_spouse_sim_id") == resolved(resolver, "spouse_sim_id"):
+                if observed["ex_spouse_sim_id"] == observed["spouse_sim_id"]:
                     continue
                 pair = tuple(sorted((str(sim_info.sim_id), str(identifier))))
                 previous = self._spouses.get(pair)
@@ -240,16 +213,16 @@ class EventSources:
             return True
         if name in ("TraitAddEvent", "TraitRemoveEvent"):
             import sims4.resources
-            trait = self.adapter.services.get_instance_manager(sims4.resources.Types.TRAIT).get(resolved(resolver, "trait_guid"))
+            trait = self.adapter.services.get_instance_manager(sims4.resources.Types.TRAIT).get(observed["trait_guid"])
             if trait is not None:
-                payload["trait"] = self.adapter.resource(trait, "display_name", "trait", tokens=(sim_info,))
+                payload["trait"] = self.adapter.resource(trait, "trait", tokens=(sim_info,))
         if name == "ItemCrafted":
-            product = resolved(resolver, "crafted_object")
+            product = observed["crafted_object"]
             component = getattr(product, "crafting_component", None)
             process = getattr(component, "_crafting_process", None)
             payload["recipe"] = self.adapter.resource(getattr(process, "recipe", None), resource_kind="recipe", tokens=(sim_info,))
-            payload["masterwork"] = self.adapter.resource(resolved(resolver, "masterwork"), resource_kind="object_state")
-            payload["quality"] = self.adapter.resource(resolved(resolver, "quality"), resource_kind="object_state")
+            payload["masterwork"] = self.adapter.resource(observed["masterwork"], resource_kind="object_state")
+            payload["quality"] = self.adapter.resource(observed["quality"], resource_kind="object_state")
             interaction = getattr(process, "_current_crafting_interaction", None)
             cause = self.cause(interaction=interaction, basis="crafting_process.current_interaction") or cause
             payload["record_origin"] = "item_crafted_notification"
@@ -379,11 +352,11 @@ class EventSources:
                 frame["roles"] = self.roles(frame["values"], ("subject", "target"), "statistic_tracker_owner")
                 frame["before"] = arg(args, kwargs, 1, "old_value")
                 frame["after"] = getattr(obj, "_value", None)
-                frame["statistic"] = self.adapter.resource(obj, "stat_name", "statistic")
+                frame["statistic"] = self.adapter.resource(obj, "statistic")
                 frame["cause"] = copy_data(context["cause"])
                 frame["operation_frame"] = context
         else:
-            frame.update(self.capture_before(kind, args, kwargs))
+            frame.update(capture_before(self, kind, args, kwargs))
         frame["local"] = self.local(frame["values"]) or any(f["local"] for f in self.frames)
         self.frames.append(frame)
         frame["entered"] = True
@@ -410,12 +383,9 @@ class EventSources:
             elif kind in ("broadcast", "broadcast_remove"):
                 self.broadcast_after(frame)
             else:
-                self.capture_after(frame, args, kwargs, result)
+                capture_after(self, frame, args, kwargs, result)
         finally:
-            if self.frames and self.frames[-1] is frame:
-                self.frames.pop()
-            else:
-                self.frames.remove(frame)
+            self.frames.pop()
 
     def broadcast_after(self, frame):
         if not frame["local"]:
@@ -439,13 +409,6 @@ class EventSources:
             self._broadcasts.move_to_end(key)
             if len(self._broadcasts) > self.recorder.capacity:
                 self._broadcasts.popitem(last=False)
-
-    def capture_before(self, kind, args, kwargs):
-        return capture_before(self, kind, args, kwargs)
-
-    def capture_after(self, frame, args, kwargs, result):
-        return capture_after(self, frame, args, kwargs, result)
-
 
 # Method adapters are kept separate below; all snapshots are event-bound and
 # discrete. Numeric snapshots are exclusively scoped _notify_change arguments.
@@ -502,12 +465,28 @@ KNOWLEDGE_FIELDS = ("_known_traits", "_knows_career", "_known_stats", "_known_re
     "_unconfronted_secret", "_known_relationship_expectations")
 
 
+# The same discrete reader is used before and after a method call.
+TRANSITIONS = {
+    "knowledge": ("relationship.knowledge", lambda s, obj: {key: s.scalar(getattr(obj, key, None)) for key in KNOWLEDGE_FIELDS}),
+    "sentiment": ("relationship.sentiment", lambda s, obj: {str(stat.guid64): s.scalar(stat) for stat in obj}),
+    "skill": ("skill.level", lambda s, obj: obj.convert_to_user_value(obj._value)),
+    "demotion": ("career.demoted", lambda s, obj: obj.level),
+    "retirement": ("career.retirement", lambda s, obj: str(obj.retired_career_uid) if obj.retired_career_uid else None),
+    "pregnancy": ("life.pregnancy", lambda s, obj: {
+        "is_pregnant": bool(obj.is_pregnant), "parent_ids": [str(v) for v in obj._parent_ids]}),
+    "death": ("life.death", lambda s, obj: s.scalar(obj.death_type)),
+    "age": ("life.age", lambda s, obj: s.scalar(obj.age)),
+    "household": ("life.household", lambda s, obj: str(obj.household_id) if obj.household_id else None),
+    "money": ("payment.completed", lambda s, obj: obj._funds),
+}
+
+
 def buff_snapshot(sources, component):
     buffs = component._active_buffs
     if len(buffs) > sources.runtime.config["max_buffs_per_sim"]:
         raise RuntimeError("Buff observation exceeds configured budget")
     return {str(buff_type.guid64): {
-        "buff": sources.adapter.resource(buff_type, "buff_name", "buff", tokens=(component.owner,)),
+        "buff": sources.adapter.resource(buff_type, "buff", tokens=(component.owner,)),
         "handles": sorted(str(handle) for handle in buff.handle_ids),
         "reason": sources.scalar(getattr(buff, "buff_reason", None)),
         "mood": sources.adapter.resource(getattr(buff, "mood_type", None), resource_kind="mood"),
@@ -558,46 +537,28 @@ def capture_before(sources, kind, args, kwargs):
             cause = sources.cause(interaction=buff_source if hasattr(buff_source, "sim") else None)
             if cause:
                 extra["cause"] = cause
-    elif kind == "knowledge":
-        rel = obj._rel_data
+    elif kind in ("knowledge", "sentiment"):
+        rel = obj._rel_data if kind == "knowledge" else obj.rel_data
         values = [sources.info(rel.sim_id_a), sources.info(rel.sim_id_b)]
-        if sources.local(values):
-            before = {key: sources.scalar(getattr(obj, key, None)) for key in KNOWLEDGE_FIELDS}
-    elif kind == "sentiment":
-        rel = obj.rel_data
-        values = [sources.info(rel.sim_id_a), sources.info(rel.sim_id_b)]
-        if sources.local(values):
-            before = {str(stat.guid64): sources.scalar(stat) for stat in obj}
     elif kind == "skill":
         values = [getattr(getattr(obj, "tracker", None), "owner", None)]
         if sources.local(values):
-            before = obj.convert_to_user_value(obj._value)
-            extra["skill"] = sources.adapter.resource(obj, "stat_name", "statistic")
-    elif kind in ("demotion", "retirement"):
+            extra["skill"] = sources.adapter.resource(obj, "statistic")
+    elif kind in ("demotion", "retirement", "pregnancy", "death", "milestone", "local_context"):
         values = [obj._sim_info]
         if kind == "demotion":
-            before = obj.level
             extra.update(career=sources.scalar(obj), track=sources.scalar(obj.current_track_tuning),
                          reason=sources.scalar(kwargs.get("reason")))
-        else:
-            before = str(obj.retired_career_uid) if obj.retired_career_uid else None
-    elif kind in ("pregnancy", "death", "milestone", "local_context"):
-        values = [obj._sim_info]
-        if kind == "pregnancy":
-            before = {"is_pregnant": bool(obj.is_pregnant), "parent_ids": [str(v) for v in obj._parent_ids]}
+        elif kind == "pregnancy":
             values.extend(sources.info(v) for v in obj._parent_ids)
-        elif kind == "death":
-            before = sources.scalar(obj.death_type)
         elif kind == "milestone":
             milestone = kwargs.get("milestone")
             data = obj._active_milestones_data.get(milestone)
             before = enum_name(data.state) if data else None
             extra.update(milestone=milestone, milestone_data=data,
                          telemetry_context=sources.scalar(kwargs.get("telemetry_context")))
-    elif kind == "age":
-        values, before = [obj], sources.scalar(obj.age)
-    elif kind == "household":
-        values, before = [obj], str(obj.household_id) if obj.household_id else None
+    elif kind in ("age", "household"):
+        values = [obj]
     elif kind in ("inventory_insert", "inventory_remove", "inventory_split", "inventory_move"):
         if kind == "inventory_insert":
             item = kwargs.get("obj")
@@ -616,7 +577,6 @@ def capture_before(sources, kind, args, kwargs):
         if not any(values):
             values = next((f["values"] for f in reversed(sources.frames) if f["kind"] in
                            ("operation", "craft_payment_context", "payment_context")), [])
-        before = obj._funds
         extra["reason"] = sources.scalar(kwargs.get("reason"))
         extra["requested_amount"] = sources.scalar(kwargs.get("amount"))
         extra["payment_recipe"] = next((f["payment_recipe"] for f in reversed(sources.frames) if f.get("payment_recipe")), None)
@@ -628,6 +588,8 @@ def capture_before(sources, kind, args, kwargs):
             ("objective_instance", "aspiration", "tuning_class", "name") if kwargs.get(key) is not None}
         if kwargs.get("aspiration") is not None:
             extra["identities"]["aspiration_type"] = enum_name(getattr(kwargs["aspiration"], "aspiration_type", None))
+    if kind in TRANSITIONS and (kind not in ("knowledge", "sentiment", "skill") or sources.local(values)):
+        before = TRANSITIONS[kind][1](sources, obj)
     extra.update(values=values, before=before)
     return extra
 
@@ -637,7 +599,11 @@ def capture_after(sources, frame, args, kwargs, result):
     if not frame["local"]:
         return
     def same_snapshot(other):
-        if other["kind"] != kind or other.get("owner_id") != id(obj):
+        if other.get("owner_id") != id(obj):
+            return False
+        if kind in ("buff_add", "buff_remove"):
+            return other["kind"] in ("buff_add", "buff_remove")
+        if other["kind"] != kind:
             return False
         if kind == "milestone":
             return other.get("milestone") is frame.get("milestone")
@@ -646,13 +612,13 @@ def capture_after(sources, frame, args, kwargs, result):
         return True
     if any(same_snapshot(other) for other in sources.frames[:-1]):
         return
-    before, after, category = frame["before"], None, None
+    before = frame["before"]
+    if kind in ("knowledge", "sentiment", "skill") and before is None:
+        return
+    category, snapshot = TRANSITIONS.get(kind, (None, None))
+    after = snapshot(sources, obj) if snapshot else None
     payload = {}
     if kind in ("buff_add", "buff_remove"):
-        # Nested calls share the outer operation; emit once from the outermost
-        # component snapshot to avoid double reporting remove_buff_entry.
-        if any(f["kind"] in ("buff_add", "buff_remove") and f.get("owner_id") == id(obj) for f in sources.frames[:-1]):
-            return
         if before is None:
             return
         after = buff_snapshot(sources, obj)
@@ -671,37 +637,19 @@ def capture_after(sources, frame, args, kwargs, result):
                 sources.emit("buff.refreshed", frame["values"], {"before": old, "after": new},
                              frame["source"], cause=frame["cause"], roles=sources.roles(frame["values"], ("subject",), "buff_component.owner"), evidence="observed_handle_change")
         return
-    if kind == "knowledge" and before is not None:
-        current = {key: sources.scalar(getattr(obj, key, None)) for key in KNOWLEDGE_FIELDS}
-        changed = [key for key in current if current[key] != before[key]]
+    if kind == "knowledge":
+        changed = [key for key in after if after[key] != before[key]]
         if not changed:
             return
         payload["changed_fields"] = changed
-        before, after = ({key: before[key] for key in changed}, {key: current[key] for key in changed})
-        category = "relationship.knowledge"
-    elif kind == "sentiment" and before is not None:
-        after = {str(stat.guid64): sources.scalar(stat) for stat in obj}
-        category = "relationship.sentiment"
-    elif kind == "skill" and before is not None:
-        after, category = obj.convert_to_user_value(obj._value), "skill.level"
+        before, after = ({key: before[key] for key in changed}, {key: after[key] for key in changed})
+    elif kind == "skill":
         payload["skill"] = frame["skill"]
     elif kind == "demotion":
-        after, category = obj.level, "career.demoted"
         payload.update(career=frame["career"], track=frame["track"], reason=frame["reason"])
-    elif kind == "retirement":
-        after = str(obj.retired_career_uid) if obj.retired_career_uid else None
-        category = "career.retirement"
     elif kind == "pregnancy":
-        after = {"is_pregnant": bool(obj.is_pregnant), "parent_ids": [str(v) for v in obj._parent_ids]}
         frame["values"].extend(sources.info(v) for v in obj._parent_ids)
-        category = "life.pregnancy"
         payload["reason"] = "state_transition_only_not_inferred"
-    elif kind == "death":
-        after, category = sources.scalar(obj.death_type), "life.death"
-    elif kind == "age":
-        after, category = sources.scalar(obj.age), "life.age"
-    elif kind == "household":
-        after, category = str(obj.household_id) if obj.household_id else None, "life.household"
     elif kind == "milestone":
         data = frame["milestone_data"]
         after = enum_name(data.state) if data else None
@@ -725,7 +673,6 @@ def capture_after(sources, frame, args, kwargs, result):
             payload["split_product"] = sources.scalar(result)
             payload["split_product_state"] = inventory_snapshot(sources, result)
     elif kind == "money":
-        after, category = obj._funds, "payment.completed"
         payload.update(actual_amount=after - before, reason=frame["reason"], requested_amount=frame["requested_amount"])
         if frame.get("payment_recipe"):
             payload["recipe"] = frame["payment_recipe"]
@@ -741,9 +688,5 @@ def capture_after(sources, frame, args, kwargs, result):
                 if container:
                     roles.append({"entity_key": container["key"], "role": role, "basis": "inventory_snapshot"})
         if category in ("relationship.knowledge", "relationship.sentiment"):
-            roles = []
-            for value, role in zip(frame["values"], ("subject", "target")):
-                reference = sources.adapter.event_reference(value)
-                if reference:
-                    roles.append({"entity_key": reference["key"], "role": role, "basis": "relationship_data_direction"})
+            roles = sources.roles(frame["values"], ("subject", "target"), "relationship_data_direction")
         sources.emit(category, frame["values"], payload, frame["source"], roles=roles, cause=frame["cause"], evidence="observed_transition")

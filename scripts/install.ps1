@@ -76,6 +76,23 @@ try {
     }
 } finally { $archive.Dispose() }
 
+# A source checkout must install its current sources, including added/deleted files.
+$sourceRoot = Join-Path $PSScriptRoot '..\src'
+if ((Test-Path -LiteralPath $sourceRoot -PathType Container) -and
+    [IO.Path]::GetFullPath($PackageDirectory) -ieq [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\dist'))) {
+    $sourceRoot = (Resolve-Path -LiteralPath $sourceRoot).Path
+    $sourceFiles = @(Get-ChildItem -LiteralPath $sourceRoot -Filter '*.py' -File -Recurse)
+    $manifestFiles = @($manifest.files.PSObject.Properties)
+    if ($sourceFiles.Count -ne $manifestFiles.Count) { throw 'Source file set differs from build; rebuild first.' }
+    foreach ($file in $sourceFiles) {
+        $relative = $file.FullName.Substring($sourceRoot.Length + 1).Replace('\', '/')
+        $expected = $manifest.files.PSObject.Properties[$relative]
+        if ($null -eq $expected -or (Get-Sha256 $file.FullName) -ne $expected.Value) {
+            throw ('Source differs from build; rebuild first: ' + $relative)
+        }
+    }
+}
+
 if (-not $UserData) {
     $documentRoots = @([Environment]::GetFolderPath('MyDocuments'), (Join-Path $env:USERPROFILE 'Documents'))
     foreach ($oneDriveRoot in @($env:OneDrive, $env:OneDriveCommercial)) {
@@ -152,6 +169,26 @@ $receipt = [ordered]@{
     backup = $backup
 }
 [IO.File]::WriteAllText((Join-Path $supportRoot 'install-receipt.json'), ($receipt | ConvertTo-Json), [Text.UTF8Encoding]::new($false))
+# Retain only the package just replaced. Never prune until installation succeeds.
+if ($backup) {
+    $backupRoot = [IO.Path]::GetFullPath((Join-Path $supportRoot 'install-backups'))
+    if ((Get-Item -LiteralPath $backupRoot).Attributes -band [IO.FileAttributes]::ReparsePoint) {
+        throw 'Backup directory must not be a link.'
+    }
+    foreach ($directory in @(Get-ChildItem -LiteralPath $backupRoot -Directory)) {
+        if ($directory.Name -eq $stamp) { continue }
+        if ($directory.Name -notmatch '^\d{8}T\d{13}Z$' -or
+            ($directory.Attributes -band [IO.FileAttributes]::ReparsePoint)) { continue }
+        $old = [IO.Path]::GetFullPath((Join-Path $directory.FullName 'ContextOverlay.ts4script'))
+        if (-not $old.StartsWith($backupRoot + '\', [StringComparison]::OrdinalIgnoreCase)) { throw 'Backup outside support directory.' }
+        if ($old -ieq $backup -or -not (Test-Path -LiteralPath $old -PathType Leaf)) { continue }
+        if ((Get-Item -LiteralPath $old).Attributes -band [IO.FileAttributes]::ReparsePoint) { continue }
+        Remove-Item -LiteralPath $old
+        if (@(Get-ChildItem -LiteralPath $directory.FullName -Force).Count -eq 0) {
+            Remove-Item -LiteralPath $directory.FullName
+        }
+    }
+}
 Write-Host 'Installation complete. Enable Custom Content and Mods + Script Mods Allowed in game options, then restart the game.'
 if ($backup) { Write-Host ('Previous package backup: ' + $backup) }
 Write-Host 'Saves, game options, existing config and other Mods were preserved.'

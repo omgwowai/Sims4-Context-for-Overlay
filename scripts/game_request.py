@@ -9,13 +9,23 @@ from pathlib import Path
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("request", type=Path, help="JSON file containing an allowlisted validation operation")
-    parser.add_argument("--user-data", type=Path, default=Path("C:/Users/ZixuanMin/Documents/Electronic Arts/The Sims 4"))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("request", help="Operation name or a JSON request file")
+    parser.add_argument("parameters", nargs="*", help="key=value; JSON values become numbers, booleans, lists or objects")
+    parser.add_argument("--user-data", type=Path, default=Path.home() / "Documents/Electronic Arts/The Sims 4")
     parser.add_argument("--timeout", type=float, default=15)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    request = json.loads(args.request.read_text(encoding="utf-8-sig"))
+    source = Path(args.request)
+    request = json.loads(source.read_text(encoding="utf-8-sig")) if source.is_file() else {"operation": args.request}
+    for parameter in args.parameters:
+        key, separator, value = parameter.partition("=")
+        if not key or not separator:
+            parser.error("Parameters must use key=value")
+        try:
+            request[key] = json.loads(value)
+        except ValueError:
+            request[key] = value
     request["request_id"] = uuid.uuid4().hex
     directory = args.user_data / "ContextOverlay/validation"
     if not directory.exists():

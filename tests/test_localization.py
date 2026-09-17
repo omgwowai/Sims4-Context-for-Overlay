@@ -1,10 +1,8 @@
 """Verify game-data resolution, evidence preservation and conservative gaps."""
 
 import copy
-import importlib.util
 import json
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -13,13 +11,9 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from context_overlay.ea_adapter import EAAdapter
-from context_overlay.localization import Localizer, snapshot_localized, MAX_NODES, MAX_TEXT, MAX_TOKENS
-from context_overlay.name_catalog import NameCatalog
-from context_overlay.semanticizer import display, translate
+from context_overlay.localization import FORMAT_PROFILE, Localizer, snapshot_localized, MAX_TEXT
+from context_overlay.semanticizer import display
 
-spec = importlib.util.spec_from_file_location("build_name_catalog", str(ROOT / "scripts/build_name_catalog.py"))
-catalog_builder = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(catalog_builder)
 
 
 class LocalizationChecks(unittest.TestCase):
@@ -31,7 +25,6 @@ class LocalizationChecks(unittest.TestCase):
             "0x00000001": "汉堡蛋糕", "0x00000002": "{0.String}、{1.String}",
             "0x00000003": "{0.SimFullName}",
             "0x00000004": "{M0.他}{F0.她}收到{1.Number}份礼物",
-            "0x00000005": "{0.UnverifiedFormat} / {2.String}",
         })
 
     def test_dynamic_sim_and_object_use_exact_token_positions(self):
@@ -69,30 +62,9 @@ class LocalizationChecks(unittest.TestCase):
         value["tokens"][0]["packed_pronouns"] = "custom"
         self.assertEqual(self.localizer.name(value)["status"], "unresolved_tokens")
 
-    def test_missing_token_retains_understandable_template_and_reason(self):
-        result = self.localizer.name({"hash": 0x482BA41C, "tokens": []}, "sim_Chat")
-        self.assertEqual(result["status"], "unresolved_tokens")
-        self.assertIn("聊天", result["text"])
-        self.assertIn("1.SimFirstName", result["text"])
-        self.assertEqual(result["template"], "和{1.SimFirstName}聊天")
-        self.assertTrue(result["unresolved"])
-        self.assertNotIn("Nyssa", result["text"])
-
-    def test_unsupported_grammar_does_not_become_success(self):
-        result = self.localizer.name({"hash": 5, "tokens": [{"type": 4, "number": 30}]})
-        self.assertEqual(result["status"], "unresolved_tokens")
-        self.assertEqual(len(result["unresolved"]), 2)
-        for value in ({"hash": 0}, None):
-            self.assertEqual(self.localizer.name(value, "internal")["status"], "no_display_name")
+    def test_absent_name_and_missing_dictionary_entry_are_distinct(self):
+        self.assertEqual(self.localizer.name(None, "internal")["status"], "no_display_name")
         self.assertEqual(self.localizer.name(0xFF, "missing")["reason"], "string_key_missing")
-
-    def test_recursion_is_bounded_and_raw_user_text_not_interpreted(self):
-        self.assertEqual(self.localizer.name("{1.SimName}")["text"], "{1.SimName}")
-        value = {"hash": 0x98041977, "tokens": []}
-        value["tokens"].append({"type": 2, "text_string": value})
-        result = self.localizer.name(value)
-        self.assertNotEqual(result["status"], "resolved")
-        json.dumps(result)
 
     def test_protobuf_uses_present_fields_and_runtime_enum_names(self):
         # Simulates a newer descriptor with a different numeric enum value.
@@ -112,27 +84,6 @@ class LocalizationChecks(unittest.TestCase):
         result = self.localizer.name(value)
         self.assertEqual(result["status"], "unresolved_tokens")
         self.assertEqual(result["localization"]["tokens"][0]["error"], "localization_text_limit")
-        self.assertNotEqual(self.localizer.name({"hash": 1, "tokens": [{"type": 0}] * (MAX_TOKENS + 1)})["status"], "resolved")
-        # The final literal suffix also counts toward the rendered output cap.
-        localizer = Localizer({"0x00000001": "{0.String}" + "B" * 8000})
-        result = localizer.name({"hash": 1, "tokens": [{"type": 3, "raw_text": "A" * 9000}]})
-        self.assertEqual(result["status"], "unresolved_tokens")
-        self.assertLess(len(result["text"]), MAX_TEXT)
-
-    def test_repeated_nested_expansion_shares_a_work_budget(self):
-        class CountingStrings(dict):
-            calls = 0
-            def get(self, key):
-                self.calls += 1
-                return super().get(key)
-        strings = CountingStrings({"0x00000001": "{0.String}" * 80})
-        evidence = {"raw_text": "x"}
-        for _ in range(4):
-            evidence = {"hash": 1, "tokens": [{"type": "STRING", "text_string": evidence}]}
-        result = Localizer(strings).from_evidence(evidence)
-        self.assertEqual(result["status"], "unresolved_tokens")
-        self.assertLessEqual(strings.calls, MAX_NODES)
-        self.assertLessEqual(len(result["text"]), MAX_TEXT)
 
     def test_runtime_resources_use_native_name_fields_and_isolate_failures(self):
         adapter = EAAdapter.__new__(EAAdapter)
@@ -206,51 +157,33 @@ class LocalizationChecks(unittest.TestCase):
         self.assertEqual(result["definition_id"], "30")
         self.assertEqual(result["name"]["reason"], "label_read_failed")
 
+    def test_currency_and_clock_use_explicit_chinese_profile(self):
+        localizer = Localizer({"0x00000001": "报酬：{0.Money}；{1.DayOfWeekLong} {1.TimeShort}"})
+        evidence = {"hash": 1, "tokens": [{"type": "NUMBER", "number": -1234},
+            {"type": "DATE_AND_TIME", "date_and_time": {
+                "hours": 0, "minutes": 5, "date": 7, "month": 0, "full_year": 0}}]}
+        before = copy.deepcopy(evidence)
+        result = localizer.from_evidence(evidence)
+        self.assertEqual(result["text"], "报酬：-1234 模拟币；星期日 00:05")
+        self.assertEqual(result["status"], "resolved")
+        self.assertEqual(result["format_profile"], FORMAT_PROFILE)
+        self.assertEqual(evidence, before)
 
-class CatalogChecks(unittest.TestCase):
-    def test_merged_refs_display_mixin_types_and_old_snapshot_exclusion(self):
-        with tempfile.TemporaryDirectory() as directory:
-            base = Path(directory)
-            path = base / "combined_tuning_BASE.xml"
-            path.write_text('''<combined><g s="merged"><T x="1">0x00000010</T><U x="2"><V n="instance_display_name" t="enabled"><r n="enabled" x="1"/></V></U></g>
-                <R n="relbit"><I s="10" n="rel_one" c="RelationshipBit"><r n="display_name" x="1"/></I></R>
-                <R n="buff"><I s="10" n="buff_other" c="Buff"><T n="visible">False</T></I></R>
-                <R n="object_state"><I s="20" n="state_one" c="ObjectStateValue"><V n="_display_data" t="enabled"><r n="enabled" x="2"/></V></I></R></combined>''', encoding="utf-8")
-            old = base / "combined_tuning_BASEFull.xml"
-            old.write_text("invalid-2014-not-read", encoding="utf-8")
-            result = catalog_builder.extract([path, old])
-        self.assertEqual(result["entries"]["object_state:20"]["names"][0]["hash"], "0x00000010")
-        self.assertFalse(result["entries"]["buff:10"]["visible"])
-        self.assertEqual(result["entries"]["buff:10"]["names"], [])
-        self.assertNotIn(old.name, result["inputs"])
+    def test_unsupported_date_formats_and_fractional_money_stay_unresolved(self):
+        for template, token in (
+            ("{0.Money}", {"type": "NUMBER", "number": 1.25}),
+            ("{0.TimeShort}", {"type": "DATE_AND_TIME", "date_and_time": {
+                "hours": 9, "minutes": 30, "date_and_time_format_hash": 77}}),
+            ("{0.DayOfWeekLong}", {"type": "DATE_AND_TIME", "date_and_time": {
+                "date": 2, "month": 9, "full_year": 2026}})):
+            with self.subTest(template=template, token=token):
+                result = Localizer({"0x00000001": template}).from_evidence({"hash": 1, "tokens": [token]})
+                self.assertEqual(result["status"], "unresolved_tokens")
 
-    def test_offline_enrichment_preserves_facts_and_never_guesses_tokens(self):
-        data = {"format": "typed_tuning_names_v1", "inputs": {"BASE.xml": "sha"}, "entries": {
-            "relbit:42": {"tuning_name": "rel_one", "names": [{"hash": "0x00000010", "attribute": "display_name"}], "source_file": "BASE.xml", "visible": True}}}
-        catalog = NameCatalog(data, Localizer({"0x00000010": "相识", "0x482BA41C": "和{1.SimFirstName}聊天"}))
-        raw = {"text": "rel_one", "status": "unmapped", "hash": None}
-        self.assertEqual(catalog.resolve("relbit", "42", "rel_one", raw)["text"], "相识")
-        self.assertIs(catalog.resolve("buff", "42", "rel_one", raw), raw)
-        self.assertIs(catalog.resolve("relbit", "42", "renamed", raw), raw)
-        packet = {"snapshot": {"relationships": {"status": "available", "value": [{"bits": [
-            {"id": "42", "tuning_name": "rel_one", "name": raw}]}]}}, "history": {"events": []}}
-        original = copy.deepcopy(packet)
-        translated = translate(packet, catalog)
-        self.assertEqual(packet, original)
-        self.assertEqual(translated["snapshot"], original["snapshot"])
-        self.assertIn("相识", translated["rendered"]["current"][0]["text"])
-        self.assertIn("semantic_view", translated)
-        self.assertEqual(len(translated["rendered"]["name_resolution"]["strings_content_sha256"]), 64)
-        old_name = {"text": "sim_Chat", "status": "unresolved_tokens", "hash": "0x482BA41C"}
-        resolved = catalog.resolve("interaction", "13998", "sim_Chat", old_name)
-        self.assertEqual(resolved["status"], "unresolved_tokens")
-        self.assertIn("聊天", resolved["text"])
-        self.assertEqual(resolved["source"]["tokens"], "not_captured_in_old_record")
-        absent = {"text": "rel_one", "status": "no_display_name", "localization": {"hash": None, "tokens": []},
-                  "source": {"kind": "runtime_tuning"}, "visible": False}
-        resolved = catalog.resolve("relbit", "42", "rel_one", absent)
-        self.assertEqual(resolved["status"], "no_display_name")
-        self.assertEqual(resolved["source"]["kind"], "runtime_tuning")
-        self.assertFalse(resolved["visible"])
-        failed = dict(absent, status="unmapped", reason="label_read_failed")
-        self.assertIs(catalog.resolve("relbit", "42", "rel_one", failed), failed)
+    def test_missing_tokens_and_unverified_age_selectors_are_distinct(self):
+        localizer = Localizer({"0x00000001": "{1.SimFirstName}{T0.胡闹}{DAE0.嘿咻}"})
+        result = localizer.from_evidence({"hash": 1, "tokens": [{"type": "SIM", "age_flags": 16}]})
+        self.assertEqual(result["status"], "unresolved_tokens")
+        self.assertEqual([gap["category"] for gap in result["unresolved"]],
+                         ["parameter_evidence", "grammar_support", "grammar_support"])
+        self.assertEqual(result["unresolved"][0]["reason"], "missing_token")

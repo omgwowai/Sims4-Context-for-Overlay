@@ -1,7 +1,5 @@
 """Bounded asynchronous persistence. A failed write is never acknowledged."""
 
-import json
-import hashlib
 import os
 import queue
 import shutil
@@ -32,7 +30,7 @@ class Journal:
         self._error = None
         self._inflight = None
         self._rejected = None
-        self._exports = {}
+        self._accepted_exports = self._written_exports = 0
         self._max_bytes = max_bytes
         self._reserve_bytes = reserve_bytes
         self._queue_limit_bytes = queue_bytes
@@ -91,8 +89,8 @@ class Journal:
             raise ValueError("Invalid export request ID")
         text = encode(packet)
         with self._lock:
-            self._exports[request_id] = "queued"
-        self._put(("export", request_id, text))
+            self._put(("export", request_id, text))
+            self._accepted_exports += 1
         return str(self.directory / ("context-" + request_id + ".json"))
 
     @staticmethod
@@ -117,8 +115,6 @@ class Journal:
                     if kind == "record":
                         stream.write(text + "\n")
                         self._sync(stream)
-                        with self._lock:
-                            self._durable_seq = identity
                     else:
                         destination = self.directory / ("context-" + identity + ".json")
                         pending = destination.with_suffix(".pending")
@@ -126,11 +122,13 @@ class Journal:
                             output.write(text + "\n")
                             self._sync(output)
                         os.replace(str(pending), str(destination))
-                        with self._lock:
-                            self._exports[identity] = "written"
                     with self._lock:
                         self._pending_bytes -= memory_bytes
                         self._written_bytes += disk_bytes
+                        if kind == "record":
+                            self._durable_seq = identity
+                        else:
+                            self._written_exports += 1
                     self._inflight = None
                     self._queue.task_done()
         except Exception as exc:
@@ -145,7 +143,8 @@ class Journal:
                     "pending_bytes": self._pending_bytes, "queue_budget_bytes": self._queue_limit_bytes,
                     "accepted_output_bytes": self._accepted_bytes, "written_output_bytes": self._written_bytes,
                     "run_output_budget_bytes": self._max_bytes, "disk_reserve_bytes": self._reserve_bytes,
-                    "error": self._error, "exports": dict(self._exports)}
+                    "error": self._error, "pending_exports": self._accepted_exports - self._written_exports,
+                    "written_exports": self._written_exports}
 
     def flush(self, timeout=5.0):
         """For offline checks / explicit shutdown, never for a per-frame callback."""
@@ -154,9 +153,7 @@ class Journal:
             state = self.status()
             if state["error"]:
                 raise StorageError(state["error"])
-            if (not state["queued"] and not state["inflight"]
-                    and state["durable_sequence"] == state["accepted_sequence"]
-                    and all(value == "written" for value in state["exports"].values())):
+            if state["pending_bytes"] == 0:
                 return
             time.sleep(0.005)
         raise StorageError("Timed out waiting for persistence")
@@ -168,49 +165,3 @@ class Journal:
             if self._thread.is_alive():
                 raise StorageError("Writer did not close")
         return self.status()
-
-
-def replay(path, include_observations=True):
-    """Strict replay: report damaged tails, conflicting sequences and sessions."""
-    events = {}
-    observations = []
-    errors = []
-    seen = {}
-    session_id = None
-    next_sequence = 1
-    with open(str(path), "rb") as stream:
-        for line_number, line in enumerate(stream, 1):
-            try:
-                record = json.loads(line.decode("utf-8"))
-                sequence = record["sequence"]
-                current_session = record["session_id"]
-                if session_id is None:
-                    session_id = current_session
-                if current_session != session_id:
-                    raise ValueError("Mixed sessions")
-                if isinstance(sequence, bool) or not isinstance(sequence, int) or sequence <= 0:
-                    raise ValueError("Invalid sequence")
-                digest = hashlib.sha256(json.dumps(record, sort_keys=True, ensure_ascii=False).encode("utf-8")).digest()
-                if sequence in seen:
-                    if seen[sequence] != digest:
-                        raise ValueError("Conflicting duplicate sequence")
-                    continue
-                if sequence != next_sequence:
-                    raise ValueError("Missing or reordered sequence")
-                seen[sequence] = digest
-                next_sequence += 1
-                if record["kind"] == "event_revision":
-                    event = record["event"]
-                    for removed in record.get("evicted_event_ids", []):
-                        events.pop(removed, None)
-                    previous = events.get(event["event_id"])
-                    if previous is not None and event["revision"] <= previous["revision"]:
-                        raise ValueError("Non-increasing event revision")
-                    events[event["event_id"]] = event
-                elif include_observations:
-                    observations.append(record)
-            except (ValueError, KeyError, TypeError) as exc:
-                errors.append({"line": line_number, "error": str(exc)})
-                break
-    return {"session_id": session_id, "events": list(events.values()),
-            "observations": observations, "errors": errors, "complete": not errors}

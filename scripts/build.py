@@ -7,6 +7,7 @@ import importlib.util
 import json
 import py_compile
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -41,13 +42,13 @@ def main():
     game_version = game_config.get("Version", "gameversion")
     if args.string_sources and metadata.get("provenance", {}).get("game_version") != game_version:
         raise SystemExit("String resources were extracted for a different game version; rebuild the resource catalog")
-    build = ROOT / "build"
     dist = ROOT / "dist"
-    build.mkdir(exist_ok=True)
     dist.mkdir(exist_ok=True)
     output = dist / "ContextOverlay.ts4script"
     manifest = {"python": sys.version, "game_bytecode_magic": game_magic.hex(), "files": {}}
-    with zipfile.ZipFile(str(output), "w", compression=zipfile.ZIP_DEFLATED) as archive:
+    with tempfile.TemporaryDirectory(prefix="context-overlay-build-") as directory, \
+            zipfile.ZipFile(str(output), "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        build = Path(directory)
         for source in sorted((ROOT / "src").rglob("*.py")):
             relative = source.relative_to(ROOT / "src")
             compiled = build / relative.with_suffix(".pyc")

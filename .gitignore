@@ -6,4 +6,3 @@ tmp/
 build/
 dist/
 .local/
-.validation/

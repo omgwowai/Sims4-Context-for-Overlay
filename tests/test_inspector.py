@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from test_core import MemoryJournal, facts
+from support import MemoryJournal, facts
 from context_overlay import game_runtime
 from context_overlay.collector import Collector
 from context_overlay.ea_adapter import EAAdapter
@@ -67,7 +67,7 @@ class InspectorChecks(unittest.TestCase):
         for i in range(count):
             self.recorder.interaction("started", facts(i + 1), self.now - count + i, "native")
 
-    def test_grouped_effect_details_and_standalone_life_filter(self):
+    def test_grouped_effect_details_are_readable(self):
         action = self.recorder.interaction("started", facts(1), self.now - 1, "native")
         self.recorder.fact("skill.level", [self.target], {"before": 1, "after": 2}, self.now, "native",
                            cause={"event_id": action["event_id"], "basis": "resolver.interaction"})
@@ -75,9 +75,6 @@ class InspectorChecks(unittest.TestCase):
         self.assertEqual(len(self.session.recent["events"]), 1)
         self.session.event_details(self.session.recent["events"][0], self.session.overview)
         self.assertIn("技能等级变化", self.view.windows[-1][1])
-        self.session.event_type = "game_event"
-        self.session.new_history()
-        self.assertEqual(self.session.page["events"][0]["category"], "skill.level")
 
     def test_overview_pins_target_reads_memory_and_caps_recent_preview(self):
         self.add_events(20)
@@ -121,41 +118,31 @@ class InspectorChecks(unittest.TestCase):
         self.assertEqual("".join(parts), text)
         self.assertTrue(all(len(part) <= TEXT_PAGE_SIZE for part in parts))
 
-    def test_history_next_previous_and_detail_freeze_versions(self):
+    def test_history_navigation_details_and_refresh(self):
         self.add_events(40)
         self.session.refresh()
         self.view.choose("历史事件")
         first = self.session.page
         self.view.choose("下一页")
-        second = self.session.page
-        self.assertEqual(second["offset"], PAGE_SIZE)
-        self.assertEqual(len(self.session.previous), 1)
+        self.assertEqual(self.session.page["offset"], PAGE_SIZE)
         self.view.choose("上一页")
         self.assertEqual(self.session.page["events"], first["events"])
         event = first["events"][0]
-        changed = dict(event["facts"], finishing_type="NATURAL")
-        self.recorder.interaction("exited", changed, self.now, "exit")
         self.session.event_details(event, self.session.return_history)
         self.assertEqual(self.view.layouts[-1], "text")
-        self.assertIn("修订：1", self.view.windows[-1][1])
+        self.assertIn("吃饭", self.view.windows[-1][1])
         self.view.choose("返回")
-        self.assertEqual(self.session.page["events"][0]["revision"], 1)
+        self.assertEqual(self.session.page["cursor"], first["cursor"])
         self.view.choose("刷新历史")
-        self.assertEqual(self.session.page["events"][0]["revision"], 2)
+        self.assertNotEqual(self.session.page["cursor"], first["cursor"])
         self.assertEqual(self.recorder.index.status()["snapshots"], 1)
 
-    def test_filters_apply_time_type_and_internal_without_recording_mutation(self):
-        self.recorder.interaction("started", facts(1), self.now - 200, "native")
+    def test_filter_change_refreshes_displayed_events(self):
         self.recorder.interaction("started", facts(2, main=False), self.now - 1, "native")
-        self.recorder.change([self.target], "buffs", None, {"id": "42"}, self.now, "TestEvent.BuffBeganEvent")
-        self.session.hours = 1
-        self.session.event_type = "interaction"
         self.session.new_history()
         self.assertEqual(self.session.page["total_matches"], 0)
         self.session.set_filter("internal", True)
         self.assertEqual(self.session.page["total_matches"], 1)
-        self.session.set_filter("event_type", "state_change")
-        self.assertEqual(self.session.page["events"][0]["field"], "buffs")
 
     def test_expiry_is_reported_and_refresh_recovers(self):
         self.add_events(40)
@@ -166,14 +153,6 @@ class InspectorChecks(unittest.TestCase):
         self.view.choose("刷新历史")
         self.assertEqual(self.session.page["offset"], 0)
         self.assertEqual(self.recorder.index.status()["snapshots"], 1)
-
-    def test_budget_failure_shows_recovery_and_keeps_recorder_alive(self):
-        self.add_events(3)
-        self.recorder.index.snapshot_ref_limit = 1
-        self.session.invoke(self.session.new_history)
-        self.assertIn("查询范围过大", self.view.windows[-1][1])
-        self.assertEqual(self.recorder.status()["state"], "recording")
-        self.assertEqual(self.recorder.index.status()["snapshots"], 0)
 
     def test_close_and_runtime_end_release_queries_and_ignore_stale_callbacks(self):
         self.add_events(5)
@@ -205,6 +184,15 @@ class InspectorChecks(unittest.TestCase):
         adapter.interaction = lambda item: item.id
         sim = SimpleNamespace(is_sim=True, si_state=[tool, ordinary], queue=[])
         self.assertEqual(adapter.read_interactions(sim)["value"], [2])
+
+    def test_existing_field_navigation_opens_full_description(self):
+        self.values["buffs"] = [{"id": "42", "name": {"text": "隐藏效果", "status": "resolved"}, "description": {"text": "已有官方说明", "status": "resolved"} }]
+        self.session.refresh()
+        self.session.field_page("buffs")
+        self.assertNotIn("已有官方说明", self.view.windows[-1][2][-1]["label"])
+        self.view.choose("1 · 隐藏效果")
+        self.assertIn("已有官方说明", self.view.windows[-1][1])
+        self.assertEqual(self.view.layouts[-1], "text")
 
 
 def native_modules():

@@ -9,19 +9,16 @@ import inspect
 import threading
 
 from context_overlay import SCHEMA_VERSION, VERSION
-from context_overlay.collector import FIELDS
+from context_overlay.collector import FIELDS, PRESETS
 from context_overlay.history import HistoryError
-from context_overlay.model import copy_data, envelope, new_id
+from context_overlay.model import copy_data
 from context_overlay.localization import FORMAT_PROFILE
 from context_overlay.nearby import MAX_RESULTS, MAX_SCANNED, NearbyError, validate as validate_nearby
-from context_overlay.semanticizer import render
 
 
 API_VERSION = "1.1.0"
 __all__ = ["API_VERSION", "APIError", "get_api_info", "get_status", "get_context",
            "query_history", "get_history_page", "close_history", "get_nearby_entities"]
-_PRESETS = {"sim": ("identity", "time", "location", "needs", "buffs", "relationships", "interactions"),
-            "object": ("identity", "time", "location", "object_states")}
 
 
 class APIError(RuntimeError):
@@ -116,8 +113,10 @@ def _representation(value):
         raise APIError("invalid_request", "representation must be raw, text or both")
 
 
-def _resolve(runtime, kind, identifier):
+def _resolve(runtime, kind, identifier, history=False):
     try:
+        if history:
+            return runtime.collector.resolve_history(kind, identifier)
         return runtime.adapter.resolve(kind, identifier)
     except ValueError as exc:
         raise APIError("target_unavailable", str(exc)) from None
@@ -126,7 +125,7 @@ def _resolve(runtime, kind, identifier):
 @_endpoint
 def get_api_info():
     """Pure capability/version discovery, safe before game load or on a worker."""
-    from context_overlay.event_sources import LABELS
+    from context_overlay.semanticizer import LABELS
     return {"api_version": API_VERSION, "module_version": VERSION, "schema_version": SCHEMA_VERSION,
             "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
                              "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
@@ -144,7 +143,7 @@ def get_api_info():
                        "max_radius": 1000000, "unit": "game_world_units", "room_filter": True},
             "event_types": ["interaction", "state_change", "game_event"], "event_categories": list(LABELS),
             "retention_policy": "fifo_first_accepted",
-            "context_fields": list(FIELDS), "default_fields": copy_data(_PRESETS),
+            "context_fields": list(FIELDS), "default_fields": copy_data(PRESETS),
             "max_history_page_size": 500, "max_context_history_limit": 500,
             "thread_policy": "simulation_thread", "transport": "in_process_python",
             "scope": "active_lot_instantiated", "history_scope": "current_session"}
@@ -166,9 +165,9 @@ def get_status():
                                         "max_references": runtime.recorder.index.snapshot_ref_limit,
                                         "max_bytes": runtime.recorder.index.snapshot_byte_limit,
                                         "ttl_seconds": runtime.recorder.index.snapshot_ttl}})
-        result["event_coverage"] = runtime.sources.status() if hasattr(runtime, "sources") else {}
-        result["event_diagnostics"] = runtime.sources.diagnostics() if hasattr(runtime, "sources") else {}
-        result["autonomy"] = runtime.autonomy.status() if hasattr(runtime, "autonomy") else {"enabled": False}
+        result["event_coverage"] = runtime.sources.status()
+        result["event_diagnostics"] = runtime.sources.diagnostics()
+        result["autonomy"] = runtime.autonomy.status()
     return copy_data(result)
 
 
@@ -182,7 +181,7 @@ def get_context(kind="sim", identifier="active", *, fields=None, include_history
     _representation(representation)
     if isinstance(history_limit, bool) or not isinstance(history_limit, int) or not 1 <= history_limit <= 500:
         raise APIError("invalid_request", "history_limit must be an integer between 1 and 500")
-    selected = _PRESETS[kind] if fields is None else fields
+    selected = PRESETS[kind] if fields is None else fields
     if (not isinstance(selected, (list, tuple)) or not selected or len(selected) > len(FIELDS)
             or any(not isinstance(name, str) or name not in FIELDS for name in selected)
             or len(set(selected)) != len(selected)):
@@ -190,9 +189,8 @@ def get_context(kind="sim", identifier="active", *, fields=None, include_history
     runtime = _current(expected_session_id)
     if not runtime.collector.enabled:
         raise APIError("collector_disabled", "Context collection is disabled")
-    # Resolve active once, then pass its fixed identity to the collector.
     target = _resolve(runtime, kind, identifier)
-    packet = runtime.collector.collect(kind, target["id"], fields=selected, history_limit=history_limit,
+    packet = runtime.collector.collect(target, fields=selected, history_limit=history_limit,
                                        include_history=include_history, include_internal=include_internal,
                                        representation=representation)
     packet["api_version"] = API_VERSION
@@ -212,21 +210,7 @@ def get_nearby_entities(identifier="active", *, kinds=("sim",), radius=None,
     target = _resolve(runtime, "sim", identifier)
     packet = runtime.collector.nearby(target, query)
     packet["api_version"] = API_VERSION
-    return copy_data(packet)
-
-
-def _history_packet(runtime, page, representation):
-    packet = envelope("history", runtime.session_id)
-    packet.update({"api_version": API_VERSION, "request_id": new_id(), "target": page["target"],
-                   "provenance": runtime.provenance, "history": page, "representation": representation,
-                   "status": "complete" if page["status"] == "recording" else "partial"})
-    if representation != "raw":
-        if runtime.collector.semantic_enabled:
-            packet["rendered"] = render(packet)
-        else:
-            packet["rendered"] = {"status": "disabled", "reason": "Semanticizer is disabled"}
-            packet["status"] = "partial"
-    return copy_data(packet)
+    return packet
 
 
 @_endpoint
@@ -238,18 +222,12 @@ def query_history(kind="sim", identifier="active", *, page_size=15, include_inte
     identifier = _identifier(kind, identifier)
     _representation(representation)
     runtime = _current(expected_session_id)
-    target = runtime.recorder.references.get("{}:{}".format(kind, identifier))
-    if target is None:
-        target = _resolve(runtime, kind, identifier)
-    page = runtime.recorder.query_history(target["key"], target=target, page_size=page_size,
+    target = _resolve(runtime, kind, identifier, history=True)
+    packet = runtime.collector.query_history(target, representation, page_size=page_size,
         include_internal=include_internal, time_field=time_field, from_ticks=from_ticks, to_ticks=to_ticks,
         event_types=event_types, fields=fields, outcomes=outcomes, tuning_ids=tuning_ids, order=order,
         group_effects=group_effects)
-    try:
-        return _history_packet(runtime, page, representation)
-    except Exception:
-        runtime.recorder.close_query(page["cursor"])
-        raise
+    return dict(packet, api_version=API_VERSION)
 
 
 @_endpoint
@@ -258,7 +236,8 @@ def get_history_page(cursor, *, expected_session_id, representation="both"):
     _session(expected_session_id, required=True)
     _representation(representation)
     runtime = _current(expected_session_id)
-    return _history_packet(runtime, runtime.recorder.history_page(cursor), representation)
+    packet = runtime.collector.history_packet(runtime.recorder.history_page(cursor), representation)
+    return dict(packet, api_version=API_VERSION)
 
 
 @_endpoint

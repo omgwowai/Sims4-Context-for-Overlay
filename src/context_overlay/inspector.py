@@ -2,26 +2,17 @@
 
 from context_overlay.history import HistoryError
 from context_overlay.model import copy_data
-from context_overlay.semanticizer import FIELD_NAMES, STATUS_NAMES, display, explain_event, detail_text
-from context_overlay.event_sources import LABELS
+from context_overlay.semanticizer import FIELD_NAMES, STATUS_NAMES, LABELS, display, explain_event, detail_text, game_time
 
 
 PAGE_SIZE = 15
 TEXT_PAGE_SIZE = 700
-SIM_FIELDS = ("identity", "time", "location", "needs", "interactions", "buffs", "relationships")
-OBJECT_FIELDS = ("identity", "time", "location", "object_states")
 RECORDING_NAMES = {"recording": "记录中", "disabled": "记录已停用", "failed": "记录已暂停：发生错误"}
 
 
 def short(value, length=140):
     text = str(value).replace("\r", " ").replace("\n", " ")
     return text if len(text) <= length else text[:length - 1] + "…"
-
-
-def game_time(value):
-    if isinstance(value, dict):
-        return str(value.get("display") or value.get("ticks") or "未知")
-    return "未知" if value is None else str(value)
 
 
 def event_label(event):
@@ -133,11 +124,9 @@ class InspectorSession:
         self.context_error = None
         self.packet = None
         if self.runtime.collector.enabled:
-            fields = SIM_FIELDS if self.target["kind"] == "sim" else OBJECT_FIELDS
             try:
                 self.packet = self.runtime.collector.collect(
-                    self.target["kind"], self.target["id"], fields=fields,
-                    include_history=False, representation="raw")
+                    self.target, include_history=False, representation="raw")
             except Exception as exc:
                 self.context_error = short(exc, 200)
                 self.on_error("Inspector context: " + str(exc))

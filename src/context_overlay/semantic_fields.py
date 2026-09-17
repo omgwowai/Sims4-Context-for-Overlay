@@ -28,15 +28,16 @@ FIELDS = {
 
 # Only these direct fields have a safe runtime read. Composite/dynamic fields
 # stay in the static reference catalog until their actual runtime accessor is known.
-RUNTIME_DETAILS = {
-    "mood": {"description": "descriptions"},
-    "buff": {"description": "buff_description"},
-    "relbit": {"description": "bit_description"},
-    "statistic": {"description": "skill_description"},
-    "trait": {"description": "trait_description"},
-    "recipe": {"description": "recipe_description", "tooltip": "unavailable_tooltip"},
-    "object_state": {"description": "display_description"},
-    "aspiration": {"description": "display_description", "tooltip": "display_tooltip"},
-    "career_track": {"description": "career_description"},
-    "career_level": {"description": "title_description"},
+RUNTIME_FIELDS = {
+    "mood": {"name": "mood_names", "description": "descriptions"},
+    "buff": {"name": "buff_name", "description": "buff_description"},
+    "relbit": {"name": "display_name", "description": "bit_description"},
+    "statistic": {"name": "stat_name", "description": "skill_description"},
+    "trait": {"name": "display_name", "description": "trait_description"},
+    "recipe": {"name": "get_recipe_name", "description": "recipe_description", "tooltip": "unavailable_tooltip"},
+    "object_state": {"name": "display_name", "description": "display_description"},
+    "aspiration": {"name": "display_name", "description": "display_description", "tooltip": "display_tooltip"},
+    "career_track": {"name": "career_name", "description": "career_description"},
+    "career_level": {"name": "title", "description": "title_description"},
+    "interaction": {"name": "get_name"},
 }

@@ -64,7 +64,7 @@ def _partial(spatial):
 def collect(adapter, target, session_id, provenance, query):
     packet = envelope("nearby_entities", session_id)
     packet.update(request_id=new_id(), target=target, scope=adapter.scope(),
-                  provenance=copy_data(provenance), query=query, read_started=adapter.clock())
+                  provenance=provenance, query=query, read_started=adapter.clock())
     origin = adapter.object_for(target)
     if origin is None:
         raise NearbyError("target_unavailable", "The center Sim has no current instance")

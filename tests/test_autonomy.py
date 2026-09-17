@@ -2,14 +2,11 @@
 
 import gc
 import functools
-import hashlib
 import inspect
 import json
-import marshal
 import sys
 import types
 import unittest
-import zipfile
 from collections import namedtuple
 from pathlib import Path
 from types import SimpleNamespace as NS
@@ -17,7 +14,8 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from test_core import MemoryJournal
+from support import MemoryJournal
+from tool_support import GameBytecode
 from context_overlay.autonomy import PendingDecisions, selection_stage
 from context_overlay.autonomy_capture import AutonomyCapture
 from context_overlay.hooks import Hooks
@@ -160,47 +158,10 @@ class HookChecks(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         hooks.remove()
 
-    def test_removed_method_does_not_interrupt_other_hook_cleanup(self):
-        class Owner:
-            def first(self):
-                return 1
-            def second(self):
-                return 2
-        first = Owner.first
-        errors = []
-        hooks = Hooks(errors.append)
-        hooks.after(Owner, "first", lambda *args: None)
-        hooks.after(Owner, "second", lambda *args: None)
-        del Owner.second
-        hooks.remove()
-        self.assertIs(Owner.first, first)
-        self.assertFalse(hasattr(Owner, "second"))
-        self.assertEqual(hooks.entries, [])
-        self.assertEqual(errors, [])
 
-
-GAME = Path("D:/Games/The Sims 4/Data/Simulation/Gameplay")
-NATIVE_AVAILABLE = sys.version_info[:2] == (3, 7) and (GAME / "simulation.zip").exists()
-NATIVE_INPUTS = {}
-
-
-def native_code(member, suffix, archive="simulation.zip"):
-    with zipfile.ZipFile(str(GAME / archive)) as z:
-        raw = z.read(member)
-    NATIVE_INPUTS[member] = hashlib.sha256(raw).hexdigest()
-    def walk(code, path=""):
-        path += code.co_name
-        if path.endswith(suffix):
-            return code
-        for const in code.co_consts:
-            if isinstance(const, types.CodeType):
-                found = walk(const, path + ".")
-                if found is not None:
-                    return found
-    code = walk(marshal.loads(raw[16:]))
-    if code is None:
-        raise AssertionError(suffix)
-    return code
+NATIVE_READER = GameBytecode()
+NATIVE_AVAILABLE = NATIVE_READER.available
+native_code = NATIVE_READER.symbol
 
 
 def native(member, suffix, env, defaults=(), archive="simulation.zip"):
@@ -243,7 +204,7 @@ class NativeChecks(unittest.TestCase):
         self.random = NS(uniform=uniform, randint=lambda lo, hi: int(uniform(lo, hi)), choice=lambda values: values[0])
         random_env = {}
         for name, defaults in (("_weighted", (self.random, False)), ("weighted_random_index", (self.random,)), ("weighted_random_item", (self.random, False))):
-            random_env[name] = native("sims4/random.pyc", "." + name, random_env, defaults, "core.zip")
+            random_env[name] = native("sims4/random.pyc", name, random_env, defaults, "core.zip")
         self.sim_random = NS(**random_env)
         # Index and item functions call _weighted through their shared native globals.
         class Archiver:

@@ -10,11 +10,11 @@ import traceback
 from pathlib import Path
 
 from context_overlay import VERSION
-from context_overlay.collector import Collector
+from context_overlay.collector import Collector, FIELDS
 from context_overlay.ea_adapter import EAAdapter, enum_name
 from context_overlay.hooks import Hooks
 from context_overlay.history import DEFAULT_EVENT_CAPACITY, MIB
-from context_overlay.model import envelope, new_id, utc_now
+from context_overlay.model import new_id, utc_now
 from context_overlay.recorder import Recorder
 from context_overlay.storage import Journal
 
@@ -211,10 +211,10 @@ class Runtime:
             return
         try:
             name = self.event_names.get(event_type, enum_name(event_type))
-            sources = getattr(self, "sources", None)
-            if sources is not None and any(frame["from_load"] for frame in sources.frames):
+            sources = self.sources
+            if any(frame["from_load"] for frame in sources.frames):
                 return
-            if sources is not None and sources.native(sim_info, name, resolver):
+            if sources.native(sim_info, name, resolver):
                 return
             if name in ("InteractionStart", "InteractionExitedPipeline"):
                 interaction = resolver.get_resolved_arg("interaction")
@@ -226,13 +226,13 @@ class Runtime:
                 return
             actor = self.adapter.reference(sim)
             if name in ("BuffBeganEvent", "BuffEndedEvent"):
-                if sources is not None and any(f["kind"] in ("buff_add", "buff_remove") for f in sources.frames):
+                if any(f["kind"] in ("buff_add", "buff_remove") for f in sources.frames):
                     return  # The method adapter retains handles, reason and source.
                 value = self.adapter.resource(resolver.get_resolved_arg("buff"), resource_kind="buff", tokens=(sim,))
                 added = name == "BuffBeganEvent"
                 self.recorder.change([actor], "buffs", None if added else value, value if added else None,
                                      self.adapter.clock(), "TestEvent." + name,
-                                     cause=sources.cause() if sources is not None else None)
+                                     cause=sources.cause())
             elif name in ("AddRelationshipBit", "RemoveRelationshipBit"):
                 target_id = resolver.get_resolved_arg("target_sim_id")
                 info = self.adapter.services.sim_info_manager().get(target_id)
@@ -242,10 +242,10 @@ class Runtime:
                     bit = resolver.get_resolved_arg("relationship_bit")
                     value = self.adapter.resource(bit, resource_kind="relbit", tokens=(sim, other))
                     added = name == "AddRelationshipBit"
-                    event = self.recorder.relationship_bit(actor, self.adapter.event_reference(info), value, added,
+                    self.recorder.relationship_bit(actor, self.adapter.event_reference(info), value, added,
                                                     self.adapter.clock(), "TestEvent." + name,
                                                     bit.directionality == RelationshipDirection.BIDIRECTIONAL,
-                                                    cause=sources.cause() if sources is not None else None)
+                                                    cause=sources.cause())
         except Exception:
             self.fail(traceback.format_exc())
 
@@ -254,14 +254,14 @@ class Runtime:
             return
         component, state, old, new = args[:4]
         owner = component.owner
-        sources = getattr(self, "sources", None)
-        if sources is not None and any(frame["from_load"] for frame in sources.frames):
+        sources = self.sources
+        if any(frame["from_load"] for frame in sources.frames):
             return
         if not getattr(owner, "is_sim", False) and self.adapter.common_state(state) and self.adapter.in_scope(owner):
             self.recorder.change([self.adapter.reference(owner)], "object_states." + str(state.guid64),
                                  self.adapter.resource(old, resource_kind="object_state"), self.adapter.resource(new, resource_kind="object_state"),
                                   self.adapter.clock(), "StateComponent._trigger_on_state_changed",
-                                  cause=sources.cause() if sources is not None else None)
+                                  cause=sources.cause())
 
     def poll(self, _):
         if self.closed:
@@ -276,22 +276,25 @@ class Runtime:
             if self.recorder.status()["state"] != "recording":
                 return
             now = self.adapter.clock()
-            if getattr(self, "autonomy", None) is not None:
-                self.autonomy.poll()
+            self.autonomy.poll()
             objects = self.adapter.live_objects()
             if len(objects) > self.config["max_entities"]:
                 raise RuntimeError("Entity enumeration exceeds configured read budget")
-            local = {self.adapter.reference(obj)["key"]: obj for obj in objects if self.adapter.in_scope(obj)}
+            local = {}
+            for obj in objects:
+                if self.adapter.in_scope(obj):
+                    reference = self.adapter.reference(obj)
+                    local[reference["key"]] = (obj, reference)
             for key in set(self.known) - set(local):
                 self.recorder.leave(self.known[key], now)
             for key in set(local) - set(self.known):
-                reference = self.adapter.reference(local[key])
+                obj, reference = local[key]
                 self.recorder.enter(reference, now)
-                if getattr(local[key], "is_sim", False):
-                    for item in self.adapter.interaction_objects(local[key]):
+                if getattr(obj, "is_sim", False):
+                    for item in self.adapter.interaction_objects(obj):
                         phase = "observed_running" if enum_name(item.pipeline_progress) == "RUNNING" else "observed"
                         self.capture(phase, item, "scope_entry_snapshot")
-            self.known = {key: self.adapter.reference(obj) for key, obj in local.items()}
+            self.known = {key: reference for key, (_, reference) in local.items()}
         except Exception:
             self.fail(traceback.format_exc())
         finally:
@@ -313,13 +316,12 @@ class Runtime:
                               self.inspector.status() if self.inspector is not None else {"state": "disabled"})}
 
     def export(self, kind="sim", identifier="active", limit=50, internal=False, fields=None,
-               representation="both", include_history=True, history_query=None):
-        if self.closed:
-            raise RuntimeError("This recording run is closed")
-        packet = self.collector.collect(kind, identifier, fields, limit, include_internal=internal,
-                                        representation=representation, include_history=include_history, history_query=history_query)
-        path = self.writer.export(packet)
-        return {"request_id": packet["request_id"], "path": path, "status": "queued", "packet_status": packet["status"]}
+               representation="both", include_history=True):
+        from context_overlay import api
+        packet = api.get_context(kind, identifier, fields=FIELDS if fields is None else fields,
+            history_limit=limit, include_internal=internal, representation=representation,
+            include_history=include_history, expected_session_id=self.session_id)
+        return self._export_packet(packet)
 
     def export_nearby(self, identifier="active", radius="8", kinds="sim", same_level=True,
                       same_room=False, limit=32, metric="horizontal"):
@@ -329,53 +331,33 @@ class Runtime:
             radius=None if radius == "room" else float(radius), metric=metric,
             same_level=same_level, same_room=True if radius == "room" else same_room,
             limit=limit, expected_session_id=self.session_id)
-        return {"request_id": packet["request_id"], "path": self.writer.export(packet),
-                "status": "queued", "packet_status": packet["status"], "count": packet["count"],
-                "matched_count": packet["matched_count"], "truncated": packet["truncated"],
-                "coverage": packet["coverage"]}
+        return self._export_packet(packet)
+
+    def _export_packet(self, packet):
+        summary = {"request_id": packet["request_id"], "path": self.writer.export(packet),
+                   "status": "queued", "packet_status": packet["status"]}
+        summary.update({key: packet[key] for key in ("count", "matched_count", "truncated", "coverage") if key in packet})
+        history = packet.get("history", {})
+        summary.update({key: history[key] for key in ("cursor", "next_cursor", "has_more", "total_matches") if key in history})
+        return summary
 
     def history(self, kind="sim", identifier="active", limit=50, internal=False):
         if self.closed:
             raise RuntimeError("This recording run is closed")
-        target = self.resolve_history(kind, identifier)
-        packet = envelope("history", self.session_id)
-        packet.update({"request_id": new_id(), "target": target,
-                       "provenance": self.provenance,
-                       "history": self.recorder.history(target["key"], limit, internal)})
-        if self.config["semanticizer_enabled"]:
-            from context_overlay.semanticizer import render
-            packet["rendered"] = render(packet)
-        return {"request_id": packet["request_id"], "path": self.writer.export(packet), "status": "queued"}
-
-    def _export_history_page(self, page):
-        packet = envelope("history", self.session_id)
-        packet.update({"request_id": new_id(), "target": page["target"],
-                       "provenance": self.provenance, "history": page})
-        if self.config["semanticizer_enabled"]:
-            from context_overlay.semanticizer import render
-            packet["rendered"] = render(packet)
-        return {"request_id": packet["request_id"], "path": self.writer.export(packet), "status": "queued",
-                "cursor": page["cursor"], "next_cursor": page["next_cursor"], "has_more": page["has_more"],
-                "total_matches": page["total_matches"]}
+        target = self.collector.resolve_history(kind, identifier)
+        page = self.recorder.history(target["key"], limit, internal)
+        return self._export_packet(self.collector.history_packet(page, target=target))
 
     def history_query(self, kind="sim", identifier="active", **filters):
         if self.closed:
             raise RuntimeError("This recording run is closed")
-        target = self.resolve_history(kind, identifier)
-        return self._export_history_page(self.recorder.query_history(target["key"], target=target, **filters))
-
-    def resolve_history(self, kind, identifier):
-        key = "{}:{}".format(kind, identifier)
-        reference = self.recorder.references.get(key)
-        if reference is not None:
-            from context_overlay.model import copy_data
-            return copy_data(reference)
-        return self.adapter.resolve(kind, identifier)
+        target = self.collector.resolve_history(kind, identifier)
+        return self._export_packet(self.collector.query_history(target, **filters))
 
     def history_next(self, cursor):
         if self.closed:
             raise RuntimeError("This recording run is closed")
-        return self._export_history_page(self.recorder.history_page(cursor))
+        return self._export_packet(self.collector.history_packet(self.recorder.history_page(cursor)))
 
     def history_close(self, cursor):
         self.recorder.close_query(cursor)
@@ -387,8 +369,6 @@ class Runtime:
         self.api_ready = False
         self.closed = True
         errors = []
-        sources = getattr(self, "sources", None)
-        autonomy = getattr(self, "autonomy", None)
 
         def attempt(label, action):
             try:
@@ -396,13 +376,11 @@ class Runtime:
             except Exception as exc:
                 errors.append("{}: {}: {}".format(label, type(exc).__name__, exc))
 
-        if autonomy is not None:
-            attempt("close_autonomy", autonomy.close)
+        attempt("close_autonomy", self.autonomy.close)
         attempt("session_end", lambda: self.recorder.note(
             "session_end", {"reason": reason, "status": self.recorder.status(),
-                            "event_coverage": sources.status() if sources else {},
-                            "autonomy": autonomy.status() if autonomy else {},
-                            "event_diagnostics": sources.diagnostics() if sources else {}}, self.adapter.clock()))
+                            "event_coverage": self.sources.status(), "autonomy": self.autonomy.status(),
+                            "event_diagnostics": self.sources.diagnostics()}, self.adapter.clock()))
         if self.inspector is not None:
             attempt("close_inspector", self.inspector.close)
         attempt("close_queries", self.recorder.close_queries)
@@ -464,6 +442,15 @@ def initialize():
     _lifecycle_hooks.after(Zone, "on_loading_screen_animation_finished", lambda args, kwargs, result: start())
     _lifecycle_hooks.before(Zone, "on_teardown", lambda args, kwargs: stop())
 
+    def respond(connection, operation, *args, **kwargs):
+        output = sims4.commands.CheatOutput(connection)
+        try:
+            if _runtime is None:
+                raise RuntimeError("Wait for the zone to load")
+            output(json.dumps(getattr(_runtime, operation)(*args, **kwargs), ensure_ascii=False))
+        except Exception as exc:
+            output("ContextOverlay {} failed: {}".format(operation, exc))
+
     @sims4.commands.Command("co.status", command_type=sims4.commands.CommandType.Live)
     def status_command(_connection=None):
         state = _runtime.status() if _runtime else {"state": "waiting_for_zone"}
@@ -474,34 +461,19 @@ def initialize():
     @sims4.commands.Command("co.export", command_type=sims4.commands.CommandType.Live)
     def export_command(kind: str="sim", identifier: str="active", limit: int=50, internal: bool=False,
                        representation: str="both", history: bool=True, fields: str="all", _connection=None):
-        output = sims4.commands.CheatOutput(_connection)
-        try:
-            selected = None if fields == "all" else fields.split(",")
-            output(json.dumps(_runtime.export(kind, identifier, limit, internal, selected, representation, history), ensure_ascii=False))
-        except Exception as exc:
-            output("ContextOverlay export failed: " + str(exc))
+        selected = None if fields == "all" else fields.split(",")
+        respond(_connection, "export", kind, identifier, limit, internal, selected, representation, history)
 
     @sims4.commands.Command("co.nearby", command_type=sims4.commands.CommandType.Live)
     def nearby_command(identifier: str="active", radius: str="8", kinds: str="sim",
                        same_level: bool=True, same_room: bool=False, limit: int=32,
                        metric: str="horizontal", _connection=None):
-        output = sims4.commands.CheatOutput(_connection)
-        try:
-            if _runtime is None:
-                raise RuntimeError("Wait for the zone to load")
-            result = _runtime.export_nearby(identifier, radius, kinds, same_level, same_room, limit, metric)
-            output(json.dumps(result, ensure_ascii=False))
-        except Exception as exc:
-            output("ContextOverlay nearby query failed: " + str(exc))
+        respond(_connection, "export_nearby", identifier, radius, kinds, same_level, same_room, limit, metric)
 
     @sims4.commands.Command("co.history", command_type=sims4.commands.CommandType.Live)
     def history_command(kind: str="sim", identifier: str="active", limit: int=50,
                         internal: bool=False, _connection=None):
-        output = sims4.commands.CheatOutput(_connection)
-        try:
-            output(json.dumps(_runtime.history(kind, identifier, limit, internal), ensure_ascii=False))
-        except Exception as exc:
-            output("ContextOverlay history failed: " + str(exc))
+        respond(_connection, "history", kind, identifier, limit, internal)
 
     @sims4.commands.Command("co.restart", command_type=sims4.commands.CommandType.Live)
     def restart_command(_connection=None):
@@ -525,34 +497,20 @@ def initialize():
                               from_ticks: str="none", to_ticks: str="none", event_types: str="all",
                               fields: str="all", outcomes: str="all", tuning_ids: str="all",
                               order: str="desc", _connection=None):
-        output = sims4.commands.CheatOutput(_connection)
-        try:
-            values = lambda value: None if value == "all" else value.split(",")
-            result = _runtime.history_query(kind, identifier, page_size=page_size, include_internal=internal,
-                                            time_field=time_field,
-                                            from_ticks=None if from_ticks == "none" else from_ticks,
-                                            to_ticks=None if to_ticks == "none" else to_ticks,
-                                            event_types=values(event_types), fields=values(fields),
-                                            outcomes=values(outcomes), tuning_ids=values(tuning_ids), order=order)
-            output(json.dumps(result, ensure_ascii=False))
-        except Exception as exc:
-            output("ContextOverlay history query failed: " + str(exc))
+        values = lambda value: None if value == "all" else value.split(",")
+        respond(_connection, "history_query", kind, identifier, page_size=page_size, include_internal=internal,
+                time_field=time_field, from_ticks=None if from_ticks == "none" else from_ticks,
+                to_ticks=None if to_ticks == "none" else to_ticks,
+                event_types=values(event_types), fields=values(fields), outcomes=values(outcomes),
+                tuning_ids=values(tuning_ids), order=order)
 
     @sims4.commands.Command("co.history_next", command_type=sims4.commands.CommandType.Live)
     def history_next_command(cursor: str, _connection=None):
-        output = sims4.commands.CheatOutput(_connection)
-        try:
-            output(json.dumps(_runtime.history_next(cursor), ensure_ascii=False))
-        except Exception as exc:
-            output("ContextOverlay history page failed: " + str(exc))
+        respond(_connection, "history_next", cursor)
 
     @sims4.commands.Command("co.history_close", command_type=sims4.commands.CommandType.Live)
     def history_close_command(cursor: str, _connection=None):
-        output = sims4.commands.CheatOutput(_connection)
-        try:
-            output(json.dumps(_runtime.history_close(cursor)))
-        except Exception as exc:
-            output("ContextOverlay history close failed: " + str(exc))
+        respond(_connection, "history_close", cursor)
 
     log("LOADED version={} python={} roots={}".format(VERSION, sys.version, sys.path))
     zone = services.current_zone()

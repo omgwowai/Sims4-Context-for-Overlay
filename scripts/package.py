@@ -19,7 +19,9 @@ from context_overlay.api import API_VERSION
 
 
 DOCS = ("docs/quickstart.md", "docs/install.md", "docs/public-api-v2.md", "docs/public-api-v1.md",
-        "docs/architecture.md", "docs/validation.md", "docs/development.md", "docs/future.md")
+        "docs/architecture.md", "docs/validation.md", "docs/development.md", "docs/future.md",
+        "docs/experience-recap-plan.md", "docs/experience-recap-debug.md", "docs/event-views.md",
+        "docs/event-views-validation.md")
 
 
 def check_links(contents):
@@ -49,7 +51,7 @@ def build_bundle(kind, root=ROOT):
     if kind == "windows":
         build = json.loads((root / "dist/build-manifest.json").read_text(encoding="utf-8"))
         sources = {path.relative_to(root / "src").as_posix(): sha256(path)
-                   for path in (root / "src").rglob("*.py")}
+                   for path in (root / "src").rglob("*") if path.is_file() and path.suffix in (".py", ".json")}
         if sha256(root / "dist/ContextOverlay.ts4script") != build["package_sha256"] or sources != build["files"]:
             raise ValueError("Package or sources differ from build; rebuild before packaging")
         expected = {"module_version": VERSION, "public_api_version": API_VERSION, "schema_version": SCHEMA_VERSION}

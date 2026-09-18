@@ -15,12 +15,14 @@ from context_overlay.external import ExternalError, LIMITS
 from context_overlay.model import copy_data
 from context_overlay.localization import FORMAT_PROFILE
 from context_overlay.nearby import MAX_RESULTS, MAX_SCANNED, NearbyError, validate as validate_nearby
+from context_overlay.view_source import ViewError
 
 
-API_VERSION = "2.1.0"
+API_VERSION = "2.2.0"
 __all__ = ["API_VERSION", "APIError", "get_api_info", "get_status", "get_context",
            "query_history", "get_history_page", "close_history", "get_nearby_entities",
-           "append_event", "read_event_changes"]
+           "append_event", "read_event_changes", "query_event_view", "get_event_view_status",
+           "get_event_view_page", "explain_event_view", "close_event_view"]
 
 
 class APIError(RuntimeError):
@@ -51,7 +53,7 @@ def _endpoint(function):
             raise APIError(exc.code, str(exc), exc.details) from None
         except ExternalError as exc:
             raise APIError(exc.code, str(exc), exc.details) from None
-        except HistoryError as exc:
+        except (HistoryError, ViewError) as exc:
             raise APIError(exc.code, str(exc)) from None
         except Exception as exc:
             raise APIError("internal_error", "ContextOverlay could not complete the request",
@@ -134,7 +136,12 @@ def get_api_info():
             "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
                              "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
                              "context.nearby_entities", "text.resource_details", "events.autonomy_decision",
-                             "events.append", "history.sources", "history.global", "history.changes", "history.travel"],
+                             "events.append", "history.sources", "history.global", "history.changes", "history.travel",
+                             "event_views.query", "event_views.explain", "event_views.durable_session"],
+            "event_views": {"schema_version": "event_views_v1", "views": ["records", "events", "organized", "recap"],
+                            "sources": ["durable_session"], "profiles": ["recap_v1"], "max_page_size": 100,
+                            "construction": "asynchronous_in_process_worker", "time_windows": "whole_durable_session",
+                            "facets": ["lineage", "policy", "labels", "revisions", "events", "units"]},
             "session_lifecycle": {"travel": "preserved", "reload": "new_session", "restart": "new_session",
                                   "loading": "temporarily_unavailable", "query_ttl": "wall_clock"},
             "external_events": dict(LIMITS, payload="opaque_json", writes="append_only",
@@ -178,6 +185,7 @@ def get_status():
                                         "ttl_seconds": runtime.recorder.index.snapshot_ttl}})
         result["event_coverage"] = runtime.sources.status()
         result["event_diagnostics"] = runtime.sources.diagnostics()
+        result["event_views"] = runtime.event_views.metrics() if getattr(runtime, "event_views", None) is not None else {"state": "not_started"}
         result["autonomy"] = runtime.autonomy.status()
     return copy_data(result)
 
@@ -306,3 +314,66 @@ def close_history(cursor, *, expected_session_id):
             raise
         return {"api_version": API_VERSION, "released": False, "reason": exc.code}
     return {"api_version": API_VERSION, "released": True, "reason": "closed"}
+
+
+def _views(runtime):
+    if getattr(runtime, "event_views", None) is None:
+        from context_overlay.event_views import ViewStore
+        config = runtime.config
+        runtime.event_views = ViewStore(runtime.writer.path, runtime.session_id,
+            runtime.provenance.get("build_game_version"),
+            max_queries=config["event_view_query_limit"], memory_bytes=config["event_view_memory_mb"] * 1024 * 1024,
+            source_bytes=config["event_view_source_mb"] * 1024 * 1024, ttl=config["event_view_ttl_seconds"],
+            build_seconds=config["event_view_build_seconds"])
+    return runtime.event_views
+
+
+@_endpoint
+def query_event_view(view="recap", kind="sim", identifier="active", *, source="durable_session",
+                     source_snapshot_id=None, profile="recap_v1", page_size=20, expected_session_id):
+    """Start a bounded durable view; poll status, then request its first cursor."""
+    _session(expected_session_id, required=True)
+    identifier = _identifier(kind, identifier)
+    if source != "durable_session":
+        raise APIError("invalid_request", "Only durable_session is supported by event views")
+    if source_snapshot_id is not None and (not isinstance(source_snapshot_id, str) or len(source_snapshot_id) != 32):
+        raise APIError("invalid_request", "Expected an opaque source_snapshot_id")
+    runtime = _current(expected_session_id)
+    # Explicit historical IDs must not depend on the live lot or FIFO identity cache.
+    key = _resolve(runtime, kind, identifier)["key"] if identifier == "active" else kind + ":" + identifier
+    head = runtime.recorder.status()
+    head = dict(head.get("persistence", {}), recorder_state=head.get("state"),
+                capture_scope="active_lot_instantiated")
+    return dict(_views(runtime).query(view, key, head, source_snapshot_id, profile, page_size), api_version=API_VERSION)
+
+
+@_endpoint
+def get_event_view_status(request_id, *, expected_session_id):
+    _session(expected_session_id, required=True)
+    return dict(_views(_current(expected_session_id)).status(request_id), api_version=API_VERSION)
+
+
+@_endpoint
+def get_event_view_page(cursor, *, expected_session_id):
+    _session(expected_session_id, required=True)
+    return dict(_views(_current(expected_session_id)).page(cursor), api_version=API_VERSION)
+
+
+@_endpoint
+def explain_event_view(snapshot_id, item_id, *, facet="lineage", page_size=20, expected_session_id):
+    _session(expected_session_id, required=True)
+    if not isinstance(snapshot_id, str) or len(snapshot_id) != 64:
+        raise APIError("invalid_request", "Expected an event-view snapshot_id")
+    return dict(_views(_current(expected_session_id)).explain(snapshot_id, item_id, facet, page_size), api_version=API_VERSION)
+
+
+@_endpoint
+def close_event_view(request_id, *, expected_session_id):
+    """Cancel a build or release a ready/failed request; safe during travel."""
+    _session(expected_session_id, required=True)
+    if not isinstance(request_id, str) or len(request_id) != 32:
+        raise APIError("invalid_request", "Expected an event-view request_id")
+    runtime, state = _provider_state()
+    if runtime is None or runtime.session_id != expected_session_id or getattr(runtime, "event_views", None) is None:
+        return {"api_version": API_VERSION, "released": False}
+    return dict(runtime.event_views.close(request_id), api_version=API_VERSION)

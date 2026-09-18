@@ -79,7 +79,7 @@ class TrialExamples(unittest.TestCase):
 
     def test_game_examples_import_without_starting_game_or_writing(self):
         with patch.object(api, "get_status", side_effect=AssertionError("Import must not read game")):
-            for name in ("quickstart", "consumer", "overlay_events", "event_history", "nearby_entities"):
+            for name in ("quickstart", "consumer", "overlay_events", "event_history", "event_views", "nearby_entities"):
                 load_example(name)
         self.assertEqual(self.runtime.recorder.journal.records, [])
 

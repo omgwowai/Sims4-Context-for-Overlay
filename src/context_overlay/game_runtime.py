@@ -31,6 +31,8 @@ DEFAULTS = {"recorder_enabled": True, "collector_enabled": True, "semanticizer_e
 DEFAULTS.update(external_rate_per_second=20, external_burst=40)
 DEFAULTS.update(autonomy_enabled=True, autonomy_top_n=5, autonomy_pending_capacity=256,
                 autonomy_pending_memory_mb=8, autonomy_pending_ttl_seconds=600)
+DEFAULTS.update(event_view_memory_mb=512, event_view_source_mb=128,
+                event_view_query_limit=8, event_view_ttl_seconds=300, event_view_build_seconds=120)
 _runtime = None
 _lifecycle_hooks = None
 _retired = []
@@ -96,6 +98,7 @@ class Runtime:
         self.game_service_manager = game_services.service_manager
         self.history_suspended = False
         self.resumed = previous is not None
+        self.event_views = getattr(previous, "event_views", None)
         self.adapter = EAAdapter(self.config)
         self.initial_scope = self.adapter.scope()
         self.manager = services.get_event_manager()
@@ -375,6 +378,8 @@ class Runtime:
 
     def finish_history(self):
         self.history_suspended = False
+        if getattr(self, "event_views", None) is not None:
+            self.event_views.shutdown()
         try:
             self.recorder.close_queries()
         finally:
@@ -416,6 +421,8 @@ class Runtime:
                             "event_diagnostics": self.sources.diagnostics()}, self.boundary_time))
         if self.inspector is not None:
             attempt("close_inspector", self.inspector.close)
+        if getattr(self, "driver", None) is not None:
+            attempt("close_driver", self.driver.close)
         if self.alarm is not None:
             def cancel_alarm():
                 import alarms

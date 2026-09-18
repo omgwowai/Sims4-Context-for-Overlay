@@ -238,7 +238,7 @@ class NearbyChecks(unittest.TestCase):
         self.runtime.collector.semantic_enabled = False
         before = self.runtime.recorder.status()
         packet = Client().get_nearby_entities(radius=8)
-        self.assertEqual(packet["api_version"], "2.1.0")
+        self.assertEqual(packet["api_version"], "2.2.0")
         self.assertEqual(packet["module_version"], VERSION)
         self.assertEqual(packet["status"], "complete")
         packet["results"][0]["spatial"]["position"]["value"]["x"] = 900

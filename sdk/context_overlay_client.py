@@ -1,4 +1,4 @@
-"""ContextOverlay Python 3.7 SDK 2.1.0; vendor under your own MOD namespace.
+"""ContextOverlay Python 3.7 SDK 2.2.0; vendor under your own MOD namespace.
 
 No game/provider imports occur until a method is called. The SDK negotiates
 API v2, not an exact MOD version. It never starts a game, thread, or network job.
@@ -7,7 +7,7 @@ API v2, not an exact MOD version. It never starts a game, thread, or network job
 import importlib
 
 
-SDK_VERSION = "2.1.0"
+SDK_VERSION = "2.2.0"
 __all__ = ["SDK_VERSION", "ContextOverlayError", "Client", "HistoryQuery"]
 
 
@@ -59,6 +59,8 @@ class Client:
         provider, info = self._api()
         required = {"get_nearby_entities": "context.nearby_entities", "append_event": "events.append",
                     "read_event_changes": "history.changes"}.get(method)
+        if method in ("query_event_view", "get_event_view_status", "get_event_view_page", "close_event_view", "explain_event_view"):
+            required = "event_views.explain" if method == "explain_event_view" else "event_views.query"
         if required and required not in info.get("capabilities", []):
             raise ContextOverlayError("capability_unavailable", "Provider does not support " + method,
                                       {"required_capability": required,
@@ -101,6 +103,22 @@ class Client:
     def query_history(self, kind="sim", identifier="active", **options):
         """Low-level first page; caller owns explicit close_history cleanup."""
         return self._call("query_history", kind, identifier, **options)
+
+    def query_event_view(self, view="recap", kind="sim", identifier="active", *, expected_session_id, **options):
+        """Submit a view build; do not loop-wait on the simulation thread."""
+        return self._call("query_event_view", view, kind, identifier, expected_session_id=expected_session_id, **options)
+
+    def get_event_view_status(self, request_id, *, expected_session_id):
+        return self._call("get_event_view_status", request_id, expected_session_id=expected_session_id)
+
+    def get_event_view_page(self, cursor, *, expected_session_id):
+        return self._call("get_event_view_page", cursor, expected_session_id=expected_session_id)
+
+    def explain_event_view(self, snapshot_id, item_id, *, expected_session_id, **options):
+        return self._call("explain_event_view", snapshot_id, item_id, expected_session_id=expected_session_id, **options)
+
+    def close_event_view(self, request_id, *, expected_session_id):
+        return self._call("close_event_view", request_id, expected_session_id=expected_session_id)
 
     def get_history_page(self, cursor, *, expected_session_id, representation="both"):
         return self._call("get_history_page", cursor, expected_session_id=expected_session_id,

@@ -32,6 +32,7 @@ class Journal:
         self._closing = threading.Event()
         self._next_seq = 0
         self._durable_seq = 0
+        self._durable_offset = 0
         self._error = None
         self._inflight = None
         self._rejected = None
@@ -140,6 +141,7 @@ class Journal:
                         self._written_bytes += disk_bytes
                         if kind == "record":
                             self._durable_seq = identity
+                            self._durable_offset = stream.tell()
                         else:
                             self._written_exports += 1
                     self._inflight = None
@@ -151,6 +153,7 @@ class Journal:
         with self._lock:
             return {"state": "failed" if self._error else ("closing" if self._closing.is_set() else "ready"),
                     "accepted_sequence": self._next_seq, "durable_sequence": self._durable_seq,
+                    "durable_byte_offset": self._durable_offset,
                     "queued": self._queue.qsize(), "inflight": self._inflight is not None,
                     "rejected_retained": self._rejected is not None,
                     "pending_bytes": self._pending_bytes, "queue_budget_bytes": self._queue_limit_bytes,

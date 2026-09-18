@@ -4,6 +4,12 @@
 
 ## 环境与来源
 
+事件分层的共享核心位于 `src/context_overlay/experience/`，`scripts/experience_*.py` 和 `scripts/filter_events.py` 保留离线命令入口。规则 JSON 通过包资源读取；构建和安装 manifest 同时校验 Python 源码与规则资源。新 API 使用 `event_views.py` 的后台任务和 `view_source.py` 的固定日志前缀，契约与预算见[分层查询文档](event-views.md)。
+
+开发驱动开启时，可用 `api_view/api_view_status/api_view_page/api_view_explain/api_view_close` 转发对应公共方法，参数放在请求的 `params`。响应的 `execution_ms` 只测该次游戏线程 API 调用。`frame_probe seconds=20` 采样有界的 `Zone.update` 间隔，再用不带 seconds 的 `frame_probe` 读取分位数；它不是渲染 FPS，不能代替完整性能分析，采样到期或退出运行时移除 Hook。
+
+可复制的请求命令、同源四层对账及旅行／负载判据集中在[分层接口验收](event-views-validation.md)，由测试者手动加载游戏后执行。
+
 游戏基线为 `1.126.73.1030`，嵌入式 Python 3.7，字节码魔数 `420d0d0a`。本机游戏在 `D:/Games/The Sims 4`，参考仓库在 `C:/sources/sims4-python`，主要源码为 `ea-source/EA/`；参考提交由 `src/context_overlay/__init__.py` 的 `EA_REFERENCE_COMMIT` 指定。
 
 先核对实际发送点、参数、返回、默认值、加载时机及反编译来源，必要时对照游戏字节码。Atlas 只用于定位，旧 Experience 只用于必要的实现经验；自研 MOD 示例不能当作游戏内置接口。是否可用最终由目标游戏版本中的行为验证。
@@ -68,7 +74,7 @@ python -B -X utf8 scripts/translate.py "输入.json" "报告.md" --strings .loca
 
 ### 试验中的事件筛选
 
-`scripts/filter_events.py` 在最终修订之上再做一层规则筛选，用来研究哪些细节不需要单独出现在人物经历里。它是离线工具，尚未接入游戏历史、Context 或 Overlay API，也不负责把事件总结成一天的故事。
+`scripts/filter_events.py` 在最终修订之上再做一层规则筛选，用来研究哪些细节不需要单独出现在人物经历里。它保留离线命令入口，核心已由新分层 API 的 organized/recap 共用；旧游戏历史及 Context 接口不应用这些规则。
 
 输入目前只接受当前版本的一次运行 `journal.jsonl`，使用已结束运行的日志或稳定副本。包含全日志中已被内存淘汰的事件，以及内部层事件；按人物筛选采用实体关联索引，不等于该人物看见了这些事。
 
@@ -96,7 +102,7 @@ python -B -X utf8 scripts/filter_events.py "某次运行/journal.jsonl" --entity
 
 ### 试验中的离线经历视图
 
-`scripts/experience_view.py` 在完整运行日志上建立活动关联、状态区间和决策补充，再按实体生成派生视图。它复用上面的基础筛选，但会在省略小动作决策前提取上层活动评分。没有接入游戏历史或公共 API；新增代码只属于离线工具，不改变游戏脚本包。
+`scripts/experience_view.py` 在完整运行日志上建立活动关联、状态区间和决策补充，再按实体生成派生视图。它复用上面的基础筛选，但会在省略小动作决策前提取上层活动评分。该命令和游戏内分层 API 共用 `src/context_overlay/experience/` 核心，旧游戏历史接口的默认行为保持不变。
 
 ```powershell
 python -B -X utf8 scripts/experience_view.py "某次运行/journal.jsonl" --entity sim:123 --game-version 1.126.73.1030 --output .local/analysis/experience.json --markdown .local/analysis/experience.md
@@ -121,7 +127,7 @@ Buff 按实际主体、资源和地块访问配对；缺失、重复或不连续
 
 决策摘要保留每层赢家和最多两个备选、赢家/备选的前三项非零 commodity 贡献；provider 按同一活动保留首末评分样本。原生评分文本最多摘取 1,200 字符，并报告省略与截断；已有结构化贡献时，默认摘要指向详情中的原生文本，缺少结构化贡献时才直接携带文本摘录。它不是人物想法，也不代表首末样本之间评分不变。完整候选、评分字段和被省略记录需回查原日志。
 
-资源角色表 `scripts/experience_resources.json` 来自游戏 `1.126.73.1030` 的单局四人物研究，按资源类型、ID、tuning 名精确匹配。当前有 447 条映射；本轮新增的 188 条在 `cross_sim_tuning_evidence` 中附有安装资源及展开 XML 哈希。内部频道计数、大学提示标记按已核实的具体资源归入内部用途，不把所有 `FULL_ASPIRATION` 或所有隐藏 trait 一概处理。Buff handles 维护只有前后非空且其余字段完全一致时才省略。
+资源角色表 `src/context_overlay/experience/experience_resources.json` 来自游戏 `1.126.73.1030` 的单局四人物研究，按资源类型、ID、tuning 名精确匹配。当前有 447 条映射；本轮新增的 188 条在 `cross_sim_tuning_evidence` 中附有安装资源及展开 XML 哈希。内部频道计数、大学提示标记按已核实的具体资源归入内部用途，不把所有 `FULL_ASPIRATION` 或所有隐藏 trait 一概处理。Buff handles 维护只有前后非空且其余字段完全一致时才省略。
 
 未识别内容保留待核查；不凭 hidden、显示名称或取消标签删除。传入不同 `--game-version` 会停用这批资源规则及基础省略规则；未传版本仍使用试验规则，**不代表自动验证了游戏版本或第三方覆盖**。目前待核查较多的新人物／玩法不能用摘要缺项推断“没有发生”。活动输出带 `action_tuning`，用于区分过于笼统或错误的本地化文本。经精确身份核实的“练习吉他”“研究死亡学”使用明确名称，并在 `observed_action_name` 中保留原记录名称；没有改写游戏原始日志。
 
@@ -207,6 +213,32 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/game_test.ps1 re
 准备时暂存 Mods、存档、选项和原配置，在存档副本上测试并开启开发驱动。加载测试存档后才能发送请求。`game_request.py` 接受操作名与 `key=value`，JSON 值解析为对应类型，其余作为字符串；复杂请求仍可传 JSON 文件。用 `--user-data` 指定非默认目录（默认 `~/Documents/Electronic Arts/The Sims 4`），`--output` 按需保存响应。状态通过 `status` 请求获取，不再每秒生成 `status.json`；保留已消费请求标记，避免重启后重复执行。
 
 恢复按字节还原选项和配置（原本没有配置文件则移除测试配置），核对存档哈希后删除临时测试副本及 `ContextOverlay/test-backup`，不保留逐次状态归档。恢复后默认安装当前包，`-SkipInstall` 可跳过。测试未恢复前不要删除备份目录；游戏日志仍按需保留，普通安装不调用测试环境工具。
+
+## 短版经历回顾与证据回查
+
+`scripts/experience_recap.py` 是离线消费层，输入完整、稳定的单 session 日志，复用经历组织器。默认 JSON 保留已组织活动、非数值结果、关系数值的局部变化次数、感受／情绪区间以及待核查提示；连续数值、评分与背景在详情中。未开始、已执行后取消、未见结束分别表达，不将交互退出写成玩法完成。
+
+```powershell
+python -B -X utf8 scripts/experience_recap.py build tmp/journal.jsonl --entity sim:123 --game-version 1.126.73.1030 --output tmp/recap-bundle.json --recap tmp/recap.json --markdown tmp/recap.md
+python -B -X utf8 scripts/experience_recap.py query tmp/recap-bundle.json --snapshot SNAPSHOT_ID --ref r1 --facet evidence --limit 20
+python -B -X utf8 scripts/experience_recap.py query tmp/recap-bundle.json --snapshot SNAPSHOT_ID --ref r1 --facet raw --journal tmp/journal.jsonl
+```
+
+将 `SNAPSHOT_ID` 替换为生成结果的 `snapshot_id`。`recap.json` 是默认输入；bundle 保存来源 manifest、完整组织单元、去向表和审计引用，不应整包作为默认模型输入。可选 `--token-encoding o200k_base` 使用已安装的 tiktoken 实测默认 JSON 与 Markdown，不从字节估算 token。3–8 千 token 是样例试验目标，不会触发截断。
+
+查询支持短引用 `r1`、完整 unit ID、证据短编号 `e123` 和 `@activities/@facts/@states/@decisions/@background/@details/@review/@external` 分组。`@audit --facet evidence` 可分页查询全部证据，包含没有组织单元的筛选记录。facet 为 `units`、`decisions`、`evidence`、`raw` 或 `links`；`evidence/raw/links` 查询活动时包含已关联的结果、状态和决策。`units` 返回该条目的组织单元，其中关联 ID 也可直接查询。
+
+每页最多 100 项，响应包含 `total`、`offset`、`next_offset`。按 `next_offset` 继续，直到为 null；内容不静默截断。原生评分保留在原日志，`decisions` 返回组织器摘取的评分样本，完整内容通过 `raw` 获取。原事件只返回指定日志的最终修订，不冒充中间修订历史。
+
+快照绑定原日志哈希、session、人物、事件观测边界、组织规则、资源映射与实现哈希，以及实际输出内容。别的快照中的同名 `r1/e123` 不可混用；bundle 内容修改或原日志变化会报错。原始证据查询必须提供匹配日志。来源读取额外检查混合 session 与读取期间写入；应先冻结日志副本。快照是内容一致性校验，不是数字签名或来源认证。
+
+时间为游戏周／日的分钟展示，精确 ticks 在详情中；观察到的最早／最晚事件不代表完整日历日或连续采集。默认活动角色和自然退出、状态已配对边界的省略语义在 `scope` 中说明。仅为依赖关联引入的其他人物活动会标明上下文，不能据此推断主角参与或知情。未知行为仍显示待核查，未知数值和背景可从对应分组展开。
+
+对应测试为 `tests/test_experience_recap.py`。CLI 包装保留在 scripts，共享核心及规则资源进入游戏脚本包，供新分层 API 使用；实施依据见[计划](experience-recap-plan.md)，当前接口验收按[操作步骤](event-views-validation.md)执行。
+
+`experience_recap_v1_1` 将执行 `time` 与 `queued_at`／`observed_at` 分开：未见开始时 `time[0]` 为 null，不再拿首次观测代替开始。入队使用原交互的 queued observation，无此证据时仅说明首次观测。阅读表将行动者独立显示，同名同时间的不同实例继续保留。
+
+名称经过 `scripts/experience_labels.py` 统一处理，压缩保留 `tuning_name`、`name_status` 和参数缺口；精确释义在 `src/context_overlay/experience/experience_labels.json`，原名、状态和来源在 `audit.labels`。使用 `--facet labels` 查询某条目的名称依据，或 `--ref @labels --facet labels` 分页读取名称质量记录。未解析／部分解析在 `recap.name_quality` 公开，名称规则文件哈希纳入 snapshot。原始结果与退出原因仍可用 `raw` 或 `units` 查询。案例、边界与对照见[debug 记录](experience-recap-debug.md)。
 
 ## 按需分发
 

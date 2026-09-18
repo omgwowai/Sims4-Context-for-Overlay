@@ -56,6 +56,14 @@ def main():
             py_compile.compile(str(source), cfile=str(compiled), dfile=relative.as_posix(), doraise=True)
             archive.write(str(compiled), relative.with_suffix(".pyc").as_posix())
             manifest["files"][relative.as_posix()] = hashlib.sha256(source.read_bytes()).hexdigest()
+        for source in sorted((ROOT / "src").rglob("*.json")):
+            relative = source.relative_to(ROOT / "src").as_posix()
+            data = source.read_bytes()
+            json.loads(data.decode("utf-8"))
+            archive.writestr(relative, data)
+            manifest["files"][relative] = hashlib.sha256(data).hexdigest()
+        from context_overlay.experience.resources import implementation_hashes
+        archive.writestr("context_overlay/experience/core_manifest.json", json.dumps(implementation_hashes(), sort_keys=True))
         if args.strings:
             data = args.strings.read_bytes()
             json.loads(data.decode("utf-8"))

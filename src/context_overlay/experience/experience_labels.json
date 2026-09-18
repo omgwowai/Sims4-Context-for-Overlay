@@ -1,0 +1,187 @@
+{
+  "version": "experience_labels_v1",
+  "game_version": "1.126.73.1030",
+  "scope": "Offline editorial descriptions of exact resource identities; not inferred outcomes or official localized strings. Missing name parameters are not filled from participant order.",
+  "labels": [
+    {
+      "kind": "interaction",
+      "id": "190163",
+      "tuning_name": "Sim_RainStart_Reaction",
+      "text": "对开始下雨作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "4e3d7f6ced8d6b288b8a223a223fa6ceeffd025470f66049860e5df6caa5ca6a",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "130523",
+      "tuning_name": "socialMixer_Greetings_Wave",
+      "text": "挥手打招呼",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "04ad11cb929bdc50681eaf1577670f74a86cff8c2119411fff685384afab946f",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "130519",
+      "tuning_name": "socialMixer_Greetings_AnnoyedSigh",
+      "text": "不耐烦地叹气打招呼",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "91ee5903a7bdf72a600f13e26e987cfde1485adfdf577501290938aab3b3a3d3",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "127770",
+      "tuning_name": "si_nonTouching_Greetings_Glare",
+      "text": "瞪视打招呼",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c3811a6a6c0c5d5ed17f352642477133993e68563f88631b8c9bd5edbfaf1149",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "27173",
+      "tuning_name": "Idle_Chatting_STC",
+      "text": "闲聊",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c91cf954fe2f9b359a996b7c27289793ac149d04c57cd257f0bc4046b3abcd74",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "303686",
+      "tuning_name": "idle_Chatting_ListenWithPhone_STC",
+      "text": "闲聊聆听（持手机）",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "aafcc0eb1ea875fcc5c6ea2de0cb71771c75d5241a531d9b98b382a1034cf741",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "381007",
+      "tuning_name": "computer_Research_Thanatology",
+      "text": "研究死亡学",
+      "override": true,
+      "source": {
+        "package": "Delta/EP17/SimulationPreload.package",
+        "tgi": "62E94D38:0000003A:E23BB07404760B2F",
+        "source_sha256": "f58287ac7c671eb2420996b74b9448abe150eb2b465a33a8a950afe7997490c4",
+        "xml_sha256": "295c5d5094cbc348a81e57764a83616368eb0ac891d9184f8769370a463dd57e",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13471",
+      "tuning_name": "guitar_Practice",
+      "text": "练习吉他",
+      "override": true,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "4184d81085ee5e27e2a44e09693f5e85b8d70c230a6cb58bdb8dd905fce9fb9a",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "relbit",
+      "id": "99712",
+      "tuning_name": "ShortTerm_RecentNegativeSocial",
+      "text": "近期负面社交（短期标记）",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "169d1799219ab8038641863a3e44828dcf2164d6f3ed741302c10bec78d71204",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "192283",
+      "tuning_name": "rankedStatistic_Reputation",
+      "text": "声誉值",
+      "override": false,
+      "source": {
+        "package": "Delta/EP06/SimulationPreload.package",
+        "tgi": "62E94D38:0000001B:E23BB17404760CFD",
+        "source_sha256": "9d720beb401c3b9e4c22ffa1917cab596919e99600aa969575e8c14f47aabfac",
+        "xml_sha256": "ee651a6ea14fe9bb3324e5bfc6c05bbc4bf30692c103314b06abf2a4e018211d",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "358555",
+      "tuning_name": "URT_Attraction_Main",
+      "text": "单向吸引力值",
+      "override": false,
+      "source": {
+        "package": "Delta/EP16/SimulationPreload.package",
+        "tgi": "62E94D38:00000039:E23BB07404760B2E",
+        "source_sha256": "69ea3acf395b79adedb9aa6eea577a954642e4ea42e3249381672c98eee2abba",
+        "xml_sha256": "89c1ce1a9af01269eb3759e3c1ae711ccbe7836520356f3affc7e156261eb893",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "16650",
+      "tuning_name": "LTR_Friendship_Main",
+      "text": "友谊值",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "510ec9b1c305e2bbc43d5e6c9a407604a53b5c38960b0c5576067541ac706d59",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "16651",
+      "tuning_name": "LTR_Romance_Main",
+      "text": "浪漫关系值",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c51ecb28c47c9fa4963d27e9b71518a3c3cef87d91c1466c8fac557eb823f037",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    }
+  ]
+}

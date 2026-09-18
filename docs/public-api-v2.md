@@ -1,6 +1,8 @@
 # API 参考：读状态、查历史、写事件
 
-第一次接入先看[快速接入](quickstart.md)，需要查准确参数时再回到这页。当前 API / SDK 是 **2.1.0**，schema 是 **2**；本次试用搭配 **ContextOverlay 0.9.0**。
+第一次接入先看[快速接入](quickstart.md)，需要查准确参数时再回到这页。当前 API / SDK 是 **2.2.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.10.1**。
+
+新增的 records/events/organized/recap 查询使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。以下现有历史接口仍保持原语义。
 
 直接调用用 `context_overlay.api`；希望统一处理“没安装、版本不匹配、分页关闭”等情况，可以用 `sdk/context_overlay_client.py`。两者提供同一套读写能力。
 

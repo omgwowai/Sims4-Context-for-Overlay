@@ -1,0 +1,4954 @@
+{
+  "format": "experience_resource_roles_v1",
+  "game_version": "1.126.73.1030",
+  "scope": "Exact resource roles checked against two recorded sessions and installed tuning 1.126.73.1030; not universal deletion rules. Third-party overrides are not verified.",
+  "classification_source_sha256": "f273261bbadd1608a2a2562a53b5b8dd95c7c2fa5fb0f5f387b6467d44e204ba",
+  "resources": [
+    [
+      "aspiration",
+      "33188",
+      "aspiration_Utility_AllChannelsStations",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "100156",
+      "Buff_walkbyNPC_ringDoorbell_cooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "10090",
+      "buff_Sim_IsCooking",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "10094",
+      "buff_Sim_IsSleeping",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "101052",
+      "Buff_Role_Appropriateness_NoCallToMeal",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "10591",
+      "buff_Food_Cooking_0",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "10593",
+      "buff_Food_Cooking_2",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "10651",
+      "Buff_CoreSocial_Embarrassing",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "112148",
+      "buff_SicknessSystem_Sleep_SymptomSuppression",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "120201",
+      "buff_Role_WelcomeWagon_Neighbor_Ungreeted",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "12429",
+      "Buff_Environment_Negative_UnpleasantSurroundings",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "12490",
+      "buff_Object_Chair_IsSitting",
+      "posture"
+    ],
+    [
+      "buffs",
+      "12656",
+      "Buff_Trait_Bro_Broximity(Hidden)",
+      "proximity"
+    ],
+    [
+      "buffs",
+      "127122",
+      "buff_Sim_Speaking_Block_Jealousy",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "12732",
+      "buff_walkby_doorbell_ringer",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "12733",
+      "buff_walkby_stand_idle",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "12820",
+      "Buff_Motives_Hunger_Hungry",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "12827",
+      "MoodBuff_Hidden_Furious",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12829",
+      "MoodBuff_Hidden_Bored",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12830",
+      "MoodBuff_Hidden_Confident",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12831",
+      "MoodBuff_Hidden_Angry",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12835",
+      "MoodBuff_Hidden_Embarrassed",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12841",
+      "MoodBuff_Hidden_Happy",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12845",
+      "MoodBuff_Hidden_Inspired",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12847",
+      "MoodBuff_Hidden_Miserable",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12849",
+      "MoodBuff_Hidden_Neutral",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12851",
+      "MoodBuff_Hidden_Playful",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12853",
+      "MoodBuff_Hidden_Sad",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12856",
+      "MoodBuff_Hidden_Stressed",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12857",
+      "MoodBuff_Hidden_Tense",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "12858",
+      "MoodBuff_Hidden_Uncomfortable",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "128980",
+      "buff_Object_Movie_Hidden_WatchedRomance",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "129019",
+      "buff_Object_Movie_InterestingFlick",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "132413",
+      "buff_Food_HasEatenRecently",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "133051",
+      "buff_Role_Appropriateness_NoWorkout_BG",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "137573",
+      "buff_Food_HasEatenRecently_IncludingCancel",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "149760",
+      "buff_RecentlyPreparedFood_Hidden",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "154883",
+      "buff_Event_NPC_VisitedMailbox_Cooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "155562",
+      "buff_Food_HasEatenToday_Hidden",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "156116",
+      "buff_AutonomyMod_Leave",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "157507",
+      "buff_Object_Toy_CleanUp_Hidden_Cooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "160060",
+      "buff_Families_Arguments_Type_Music",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "160065",
+      "buff_Families_Arguments_Type_HouseRules",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "160066",
+      "buff_Families_Arguments_Type_WhosBetter",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "166821",
+      "buff_ChildhoodPhase_Bear_NotInCostume_Ignore",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "167444",
+      "buff_Swear_Cooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "167531",
+      "buff_Walkby_PetWorld_NoHunger",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "170451",
+      "buff_ImmediatelyPreparedFood_Hidden",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "179867",
+      "buff_Object_TV_Fireplace_Winter",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "181954",
+      "buff_Holidays_Hidden_BaseSocials",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "182184",
+      "buff_HolidayTraditions_Visible_FamilyTimeTomorrow",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "182654",
+      "buff_Sim_Weather_Hidden_Raining",
+      "environment"
+    ],
+    [
+      "buffs",
+      "182695",
+      "buff_ClothingCatagory_Temperature_ColdClothing",
+      "environment"
+    ],
+    [
+      "buffs",
+      "183122",
+      "buff_Sim_SeasonWeather_Rain_LightRain_Outside",
+      "environment"
+    ],
+    [
+      "buffs",
+      "183253",
+      "buff_HolidayTraditions_Hidden_GiveGiftsActive",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "183475",
+      "buff_Sim_SeasonWeather_Rain_LightRain_Inside",
+      "environment"
+    ],
+    [
+      "buffs",
+      "184873",
+      "buff_Object_PreventFreezing",
+      "environment"
+    ],
+    [
+      "buffs",
+      "185065",
+      "buff_Temperature_Immune_To_Temperature",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "185824",
+      "buff_HolidayTraditions_Hidden_BeFestive",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "185904",
+      "buff_HolidayTraditions_Hidden_FatherWinter",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "185979",
+      "buff_Sim_Weather_Hidden_Sunny",
+      "environment"
+    ],
+    [
+      "buffs",
+      "185980",
+      "buff_Sim_Weather_Hidden_Cloudy",
+      "environment"
+    ],
+    [
+      "buffs",
+      "186056",
+      "buff_GlobalTemperature_Cold",
+      "environment"
+    ],
+    [
+      "buffs",
+      "189166",
+      "buff_Weather_Preference_LovesColdTemp_IsCold",
+      "environment"
+    ],
+    [
+      "buffs",
+      "189822",
+      "buff_HolidayTraditions_Hidden_Sing_BoxOfDecorations",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "189824",
+      "buff_HolidayTraditions_Hidden_Sing_PresentPile",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "189826",
+      "buff_HolidayTraditions_Hidden_Sing_GrandMeal",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "189839",
+      "buff_HolidayTraditions_Hidden_Sing_HolidayTree",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "190002",
+      "buff_ClothingCatagory_Temperature_Modifer",
+      "environment"
+    ],
+    [
+      "buffs",
+      "190549",
+      "buff_Holiday_Base_Active",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "190554",
+      "buff_Holiday_Base_Singing_Terrain",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "190771",
+      "buff_Umbrella_AddUmbrella",
+      "environment"
+    ],
+    [
+      "buffs",
+      "190849",
+      "buff_Temperature_Hidden_Neutral",
+      "environment"
+    ],
+    [
+      "buffs",
+      "191128",
+      "buff_Object_Movie_Autonomy",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "197103",
+      "buff_Paparazzi_PhotoOpportunity",
+      "proximity"
+    ],
+    [
+      "buffs",
+      "197339",
+      "buff_Reputation_Seen",
+      "proximity"
+    ],
+    [
+      "buffs",
+      "198690",
+      "buff_Fame_Quirk_PublicNumber_Hidden_Cooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "200372",
+      "buff_Sim_isPerforming",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "204302",
+      "buff_Role_Go_To_Front_Door",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "212237",
+      "buff_Food_HasEaten_withinHour",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "238490",
+      "buff_Environment_BBGameplayEffects_SnobSmall",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "240234",
+      "buff_Environment_Hidden_Positive",
+      "environment"
+    ],
+    [
+      "buffs",
+      "240248",
+      "buff_Environment_BBGameplayEffects_GoodEnvironmentSmall",
+      "environment"
+    ],
+    [
+      "buffs",
+      "241005",
+      "buff_Sentiment_Furious_Angry_Primary_generic",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "241018",
+      "buff_Sentiment_Bitter_Contagion_Happy_generic",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "241020",
+      "buff_Sentiment_Bitter_Tense_Primary_generic",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "241022",
+      "buff_Sentiment_Bitter_Angry_generic",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "24238",
+      "buff_role_LeaveLotNow",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "247316",
+      "buff_Sentiment_Bitter_Angry_fight",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "247317",
+      "buff_Sentiment_Bitter_Tense_Primary_fight",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "247583",
+      "buff_Sentiment_Hurt_Sad_Primary_generic",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "247589",
+      "buff_Sentiment_Hurt_Angry_generic",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "247594",
+      "buff_Sentiment_Hurt_Angry_saddened",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "247909",
+      "buff_ChopsticksOptional_preferForks",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "25003",
+      "buff_Object_Seating_Happy",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "254476",
+      "buff_Dust_State_Clean",
+      "environment"
+    ],
+    [
+      "buffs",
+      "254477",
+      "buff_Dust_State_Dusty",
+      "environment"
+    ],
+    [
+      "buffs",
+      "256947",
+      "buff_Motives_Fun_High",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "257335",
+      "filthyFabulous_Toilet_Buffs_UsedToilet",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "257336",
+      "filthyFabulous_Toilet_Buffs_DidntWashHands",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "257337",
+      "filthyFabulous_Toilet_Buffs_WashedHands",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "258775",
+      "buff_SimPreference_Likes_Activities_VideoGaming",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "259496",
+      "buff_SimPreference_Recent_Likes_Videogaming",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "264204",
+      "buff_SimPreference_Likes_Activities_Comedy",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "264210",
+      "buff_SimPreference_Likes_Activities_Guitar",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "264388",
+      "buff_SimPreference_Recent_Likes_Comedy",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "264393",
+      "buff_SimPreference_Recent_Likes_Guitar",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "268126",
+      "buff_Environment_Hidden_Negative_Snob",
+      "environment"
+    ],
+    [
+      "buffs",
+      "26886",
+      "Buff_Motives_AllMotivesHigh",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "269253",
+      "buff_SimPreference_IdleCooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "27108",
+      "Buff_Motives_Bladder_ReallyHasToPee",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "27109",
+      "Buff_Motives_Bladder_HasToPee",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "27132",
+      "Buff_Motives_InvisDecayMods_BladderYellow",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "27139",
+      "Buff_Motives_InvisDecayMods_EnergyYellow",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "27140",
+      "Buff_Motives_InvisDecayMods_SocialYellow",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "27142",
+      "Buff_Motives_InvisDecayMods_HungerYellow",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "27147",
+      "MoodBuff_Hidden_Asleep",
+      "mood_mirror"
+    ],
+    [
+      "buffs",
+      "27207",
+      "Buff_Trait_FeelingAngry",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "273098",
+      "buff_Sim_Fear_Genius_Wrong",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "273579",
+      "buff_Want_AspirationGoalCompleted",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "274204",
+      "buff_Sentiment_Bitter_Tense_Primary_WhatsSoSpecial",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "27549",
+      "Buff_Trait_Geek_LowGameingNeed(Hidden)",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "282273",
+      "buff_SkillUp_CheckFlag",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "283789",
+      "buff_Fear_Failure_TriggerProgress",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "28380",
+      "buff_role_LeaveLotSoon",
+      "holiday_role"
+    ],
+    [
+      "buffs",
+      "284204",
+      "buff_Fear_Gained_Anxiety",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "284205",
+      "buff_Want_Gained_Happy",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "288479",
+      "buff_Fear_BeingJudged_Tracker",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "28980",
+      "Buff_Trait_Lazy_Nap",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "292511",
+      "buff_Social_Media_Enable_ReviewedMedia",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "306626",
+      "buff_FamilyDynamics_FamilyTropeAdventureCooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "306713",
+      "buff_Burnout_Hidden_CreativeTracker_IncreaseSmall",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "306715",
+      "buff_Burnout_Hidden_CreativeTracker_DecreaseSmall",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "306780",
+      "buff_Burnout_Hidden_MentalTracker_DecreaseSmall",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "310164",
+      "buff_PhoneIdleCooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "312466",
+      "buff_CrossAge_Interactions_DisapproveLackOfChildDiscipline",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "318084",
+      "buff_FamilyDynamics_Social_Difficult",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "318706",
+      "buff_Dust_ReactionCooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "32807",
+      "Buff_Near_Friendly",
+      "proximity"
+    ],
+    [
+      "buffs",
+      "32818",
+      "Buff_Near_Unfriendly",
+      "proximity"
+    ],
+    [
+      "buffs",
+      "334507",
+      "buff_SelfDiscovery_Mood_CurrentSituation_Angry",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "334508",
+      "buff_SelfDiscovery_Mood_CurrentSituation_Sad",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "347915",
+      "buff_Hidden_Scenario_Inheritance_Phase1SentimentDecay",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "35365",
+      "Buff_Role_Appropriateness_NoCooking",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "35368",
+      "Buff_Role_Appropriateness_NoBathing",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "35370",
+      "Buff_Role_Appropriateness_NoCleaning",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "35372",
+      "Buff_Role_Appropriateness_NoEating",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "35390",
+      "Buff_Role_Appropriateness_NoSleeping",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "357713",
+      "buff_PivotalMoments_Hidden_AspirationGoalComplete",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "36123",
+      "buff_AllowSleepDesire",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "36973",
+      "buff_Object_Guitar_RighteousRiffs",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "372621",
+      "buff_Trait_PracticeMakesPerfect_Whim_Tracker_Hidden",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "37334",
+      "Buff_Happy_MeanMischief",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "375277",
+      "buff_MentoreeTracker_BuffBased_HomestyleCooking",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "37656",
+      "Buffs_CoreSocialBuffs_DullHumor",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "37659",
+      "Buffs_CoreSocialBuffs_AwkwardTurtle",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "379622",
+      "buff_MovingOn_Hidden_WantProgress",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "380949",
+      "buff_Tattooing_CheckOut_Confident",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "381011",
+      "buff_Skill_Thanatology_Inspired",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "381285",
+      "buff_UnfinishedBusiness_AutonomousGoalGain_Short",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "38292",
+      "buff_offLotAutonomyMod_OnLotOnly",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "38293",
+      "buff_offLotAutonomyMod_OffLotOnly",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "385701",
+      "buff_NewSkill_CheckFlag",
+      "goal_internal"
+    ],
+    [
+      "buffs",
+      "385801",
+      "buff_TattooingTable_Hidden_CustomCASTracker_Cancelled",
+      "review_hidden"
+    ],
+    [
+      "buffs",
+      "388562",
+      "buff_Suppress_SocialPickerSI_AsActor",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "39303",
+      "Privacy_Immune",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "433169",
+      "buff_Ailments_SleepFlag",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "445361",
+      "buff_NLS_ExtremeWeather_Hidden",
+      "environment"
+    ],
+    [
+      "buffs",
+      "452766",
+      "buff_LuckSys_CraftingQuality_Bad",
+      "feeling"
+    ],
+    [
+      "buffs",
+      "494300",
+      "buff_WelcomeWagon_GoToFrontDoorCooldown",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "500390",
+      "Buff_Near_Family",
+      "proximity"
+    ],
+    [
+      "buffs",
+      "500391",
+      "Buff_Near_HH",
+      "proximity"
+    ],
+    [
+      "buffs",
+      "501845",
+      "buff_SimPreference_Timer_ComputerRecreation",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "74232",
+      "Buff_Trait_FamilyOriented(Hidden)",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "74343",
+      "buff_PreventRunning",
+      "cooldown"
+    ],
+    [
+      "buffs",
+      "76610",
+      "Buff_Skill_Cooking_Hidden",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "76778",
+      "Buff_OutsideCheck",
+      "outside_check"
+    ],
+    [
+      "buffs",
+      "76781",
+      "Buff_OutsideCheck_CurrentlyInside",
+      "outside_check"
+    ],
+    [
+      "buffs",
+      "77288",
+      "buff_Sim_WakeupInXHoursHidden",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "8847",
+      "buff_SmallSleepDesire",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "8876",
+      "buff_Sim_IsTalking",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "8904",
+      "buff_LargeSleepDesire",
+      "need_modifier"
+    ],
+    [
+      "buffs",
+      "9273",
+      "buff_Sim_IsEating",
+      "activity_marker"
+    ],
+    [
+      "buffs",
+      "9341",
+      "Buff_Trait_FeelingPlayful",
+      "feeling"
+    ],
+    [
+      "interaction",
+      "100082",
+      "bed_Autonomous_DoubleBed_Sleep",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "100083",
+      "bed_Autonomous_SingleBed_Sleep",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "100104",
+      "sink_washDishes_Counter",
+      "action"
+    ],
+    [
+      "interaction",
+      "100109",
+      "sink_washDish_After_Eat_Counter",
+      "action"
+    ],
+    [
+      "interaction",
+      "100327",
+      "fridge_CreateSnackAndConsume_Generic",
+      "action"
+    ],
+    [
+      "interaction",
+      "127770",
+      "si_nonTouching_Greetings_Glare",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "128726",
+      "movie_Watch_RoaringHeights",
+      "action"
+    ],
+    [
+      "interaction",
+      "128727",
+      "movie_Watch_TheSpiral",
+      "action"
+    ],
+    [
+      "interaction",
+      "128842",
+      "reaction_Mixers_Movie_Reactions_ActionSequence",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "128846",
+      "reaction_Mixers_Movie_Reactions_BreathtakingScene",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "128847",
+      "reaction_Mixers_Movie_Reactions_RomanticScene",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "128848",
+      "reaction_Mixers_Movie_Reactions_HeartBreakingScene",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "128849",
+      "reaction_Mixers_Movie_Reactions_PlotTwist",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "128871",
+      "watch-movie",
+      "micro"
+    ],
+    [
+      "interaction",
+      "129209",
+      "tv_MovieWatchCurrentChannelAutonomously",
+      "router"
+    ],
+    [
+      "interaction",
+      "129264",
+      "reactions_Movie_Fallback_RomanceScene",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "129288",
+      "Reaction_Movie_Shush",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "130519",
+      "socialMixer_Greetings_AnnoyedSigh",
+      "conversation"
+    ],
+    [
+      "interaction",
+      "130523",
+      "socialMixer_Greetings_Wave",
+      "conversation"
+    ],
+    [
+      "interaction",
+      "13094",
+      "bed_sleep",
+      "action"
+    ],
+    [
+      "interaction",
+      "13135",
+      "carry_holdobject",
+      "posture"
+    ],
+    [
+      "interaction",
+      "13169",
+      "Collect_Dish",
+      "action"
+    ],
+    [
+      "interaction",
+      "13170",
+      "Collect_Dish_As_Trash",
+      "action"
+    ],
+    [
+      "interaction",
+      "13175",
+      "Collect_Trash",
+      "action"
+    ],
+    [
+      "interaction",
+      "13176",
+      "collect_Trash_Aggregate",
+      "router"
+    ],
+    [
+      "interaction",
+      "13188",
+      "Computer_Browse_Keyboard",
+      "micro"
+    ],
+    [
+      "interaction",
+      "13189",
+      "Computer_Browse_Mouse",
+      "micro"
+    ],
+    [
+      "interaction",
+      "13240",
+      "computer_TrollForum",
+      "action"
+    ],
+    [
+      "interaction",
+      "132401",
+      "tv_PickMovieAutonomously",
+      "router"
+    ],
+    [
+      "interaction",
+      "13261",
+      "Cooking_Shared_AddSpice_Basic",
+      "micro"
+    ],
+    [
+      "interaction",
+      "13263",
+      "Cooking_Shared_Passive_Basic",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13264",
+      "Cooking_Shared_Passive_Emotion",
+      "micro"
+    ],
+    [
+      "interaction",
+      "13267",
+      "Counter_CuttingBoard_Chop_Lettuce",
+      "micro"
+    ],
+    [
+      "interaction",
+      "13268",
+      "Counter_CuttingBoard_Chop_Onion",
+      "micro"
+    ],
+    [
+      "interaction",
+      "13269",
+      "Counter_CuttingBoard_Chop_Tomato",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13276",
+      "counter_Ico_Transition",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13277",
+      "counter_MakeFood_Staging_Basic",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13285",
+      "Counter_MixingBowl_Toss_Basic",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13287",
+      "crafting_resume",
+      "action"
+    ],
+    [
+      "interaction",
+      "13360",
+      "Empty_Trash",
+      "action"
+    ],
+    [
+      "interaction",
+      "13377",
+      "Food_Eat_Active",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13378",
+      "Food_Eat_Passive",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13388",
+      "fridge_CookAutonomously",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13395",
+      "fridge_CreateTray",
+      "action"
+    ],
+    [
+      "interaction",
+      "13397",
+      "fridge_GrabSnackAutonomously",
+      "router"
+    ],
+    [
+      "interaction",
+      "13433",
+      "generic_consume_food",
+      "action"
+    ],
+    [
+      "interaction",
+      "13434",
+      "generic_cook",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13443",
+      "generic_ToiletSit",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13471",
+      "guitar_Practice",
+      "action"
+    ],
+    [
+      "interaction",
+      "13499",
+      "Idle_Trait_Hotheaded",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "13521",
+      "Kick_Over_Outdoor",
+      "action"
+    ],
+    [
+      "interaction",
+      "13609",
+      "mirror_CalmSelfDown",
+      "action"
+    ],
+    [
+      "interaction",
+      "13610",
+      "Mirror_CalmSelfDown1",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13611",
+      "Mirror_CalmSelfDown2",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13612",
+      "Mirror_CalmSelfDown3",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13642",
+      "mirror_SelfPepTalk",
+      "action"
+    ],
+    [
+      "interaction",
+      "13643",
+      "mirror_SelfPepTalk1",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13644",
+      "mirror_SelfPepTalk2",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13645",
+      "mirror_SelfPepTalk3",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13646",
+      "mirror_SelfPepTalk4",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "13820",
+      "Pickup_Outdoor",
+      "action"
+    ],
+    [
+      "interaction",
+      "13851",
+      "putdownchooser",
+      "posture"
+    ],
+    [
+      "interaction",
+      "13983",
+      "sim-stand",
+      "posture"
+    ],
+    [
+      "interaction",
+      "13991",
+      "sim_BeAffectionate",
+      "conversation"
+    ],
+    [
+      "interaction",
+      "13993",
+      "sim_BladderDistress",
+      "action"
+    ],
+    [
+      "interaction",
+      "13998",
+      "sim_Chat",
+      "conversation"
+    ],
+    [
+      "interaction",
+      "14241",
+      "sink_washHands",
+      "action"
+    ],
+    [
+      "interaction",
+      "14244",
+      "sit_Passive",
+      "posture"
+    ],
+    [
+      "interaction",
+      "14305",
+      "sofa_Nap",
+      "action"
+    ],
+    [
+      "interaction",
+      "14310",
+      "stand_Passive",
+      "posture"
+    ],
+    [
+      "interaction",
+      "14330",
+      "Stomp_Trash_Pile",
+      "action"
+    ],
+    [
+      "interaction",
+      "14333",
+      "Stove_FryingPan_Flip_Basic",
+      "micro"
+    ],
+    [
+      "interaction",
+      "14335",
+      "Stove_FryingPan_Stir_Basic",
+      "micro"
+    ],
+    [
+      "interaction",
+      "14337",
+      "stove_Ico_Transition",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "14338",
+      "stove_MakeFood_FryingPan_Staging_Basic",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "14421",
+      "Throw_Away_Indoor",
+      "action"
+    ],
+    [
+      "interaction",
+      "14424",
+      "Throw_Away_Outdoor",
+      "action"
+    ],
+    [
+      "interaction",
+      "14426",
+      "toilet-flush",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "14427",
+      "toilet-use-sitting",
+      "action"
+    ],
+    [
+      "interaction",
+      "14488",
+      "tv-watch-romance",
+      "action"
+    ],
+    [
+      "interaction",
+      "14491",
+      "tv_PickChannelAutonomously",
+      "router"
+    ],
+    [
+      "interaction",
+      "14543",
+      "watch-passive",
+      "micro"
+    ],
+    [
+      "interaction",
+      "149274",
+      "mixer_social_DebateExistenceOfVampires_Targeted_Friendly_AlwaysOn",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "151428",
+      "generic_Bed_Sleep",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "157506",
+      "toybox_CleanUp_Autonomous",
+      "review_zero"
+    ],
+    [
+      "interaction",
+      "159288",
+      "argument_Mixers_FrustYellSucceed",
+      "review_other"
+    ],
+    [
+      "interaction",
+      "160016",
+      "mixer_Argument_Start_Music",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "160022",
+      "mixer_Argument_Start_HouseRules",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "160023",
+      "mixer_Argument_Start_WhosBetter",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "162994",
+      "solo_Swear",
+      "action"
+    ],
+    [
+      "interaction",
+      "178209",
+      "autonomous_ObjectPicker_Art_View",
+      "router"
+    ],
+    [
+      "interaction",
+      "178754",
+      "autonomous_ObjectPicker_CollectDishes",
+      "router"
+    ],
+    [
+      "interaction",
+      "178935",
+      "autonomous_ObjectPicker_CollectDishesAsTrash",
+      "router"
+    ],
+    [
+      "interaction",
+      "178939",
+      "autonomous_ObjectPicker_CollectTrash",
+      "router"
+    ],
+    [
+      "interaction",
+      "179829",
+      "tv_Watch_Weather",
+      "action"
+    ],
+    [
+      "interaction",
+      "190163",
+      "Sim_RainStart_Reaction",
+      "action"
+    ],
+    [
+      "interaction",
+      "204297",
+      "welcomeWagon_Interactions_go_to_front_door",
+      "action"
+    ],
+    [
+      "interaction",
+      "226202",
+      "computer_PlayGame_SimScuffle_E-Sports",
+      "action"
+    ],
+    [
+      "interaction",
+      "227883",
+      "sim_doPushUps_CivicPolicy_Exercise",
+      "action"
+    ],
+    [
+      "interaction",
+      "240238",
+      "idle_Buff_EnvironmentScore_Positive",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "240239",
+      "idle_Buff_EnvironmentScore_Negative",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "24556",
+      "mixer_Social_GetToKnow_Friendly_STC",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "25211",
+      "door_RingDoorbell",
+      "action"
+    ],
+    [
+      "interaction",
+      "25674",
+      "mixer_social_Insult_Mean_STC",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "25717",
+      "Emotion_Idle",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "258196",
+      "reactions_Trait_Ambitious_MischiefNearby",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "25888",
+      "mixer_social_InsultFace_targeted_mean_emotionSpecific",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "26151",
+      "mixer_social_YellAT_targeted_mean",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "26172",
+      "put_down_anywhere",
+      "posture"
+    ],
+    [
+      "interaction",
+      "26407",
+      "mixer_socials_TellFunnyStory_group_Funny_alwaysOn",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "264448",
+      "socials_Targeted_Friendly_SimPreference_Recent_Likes_Guitar",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "265468",
+      "idle_Buff_SimPreference_Likes_Activities_Comedy",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "265476",
+      "idle_Buff_SimPreference_Likes_Activities_Guitar",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "265489",
+      "idle_Buff_SimPreference_Likes_Activities_VideoGaming",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "26683",
+      "mixer_social_StartPreposterousRumor_group_mischief_skills",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "26693",
+      "mixer_social_LieAboutCareer_group_mischief_skills",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "26909",
+      "mixer_social_AskAboutDay_targeted_Friendly_alwaysOn",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "269311",
+      "counter_Ico_Transition_placeOnCounter",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "270747",
+      "computer_Recreation_Autonomous_PseudoAggregate_PlayGame",
+      "router"
+    ],
+    [
+      "interaction",
+      "27173",
+      "Idle_Chatting_STC",
+      "conversation"
+    ],
+    [
+      "interaction",
+      "27284",
+      "Puddle_Mop_Small",
+      "action"
+    ],
+    [
+      "interaction",
+      "273821",
+      "watch-passive-withphone",
+      "micro"
+    ],
+    [
+      "interaction",
+      "28610",
+      "mixer_social_TalkAboutCooking_targeted_Friendly_alwaysOn_skills",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "287026",
+      "social_Friendly_PubertyChanges_Support_Hair_Face",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "287036",
+      "social_Funny_PubertyChanges_Joke_Hair_Body",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "287037",
+      "social_Funny_PubertyChanges_Joke_Hair_Face",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "288595",
+      "seating_sit_Bed_SitOnly_NotVisible",
+      "posture"
+    ],
+    [
+      "interaction",
+      "28880",
+      "generic_SofaNap",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "29691",
+      "Throw_Away_Outdoor_Failure",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "30307",
+      "mixer_TV_WatchRomanceAndFireplace",
+      "micro"
+    ],
+    [
+      "interaction",
+      "303686",
+      "idle_Chatting_ListenWithPhone_STC",
+      "conversation"
+    ],
+    [
+      "interaction",
+      "30755",
+      "mixer_social_PraisePianoSonatas_targeted_Friendly_alwaysOn_skills",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "30917",
+      "SocialPickerSI",
+      "router"
+    ],
+    [
+      "interaction",
+      "31236",
+      "mixer_social_DebateGameStrategy_targeted_Friendly_alwaysOn_skills",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "314510",
+      "socials_Friendly_CrossAge_Interactions_AskQuestionAboutTechnology",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "31564",
+      "seating_Sit",
+      "posture"
+    ],
+    [
+      "interaction",
+      "31650",
+      "Computer_Use_Mouse",
+      "micro"
+    ],
+    [
+      "interaction",
+      "31654",
+      "Computer_Use_Troll_Forums",
+      "micro"
+    ],
+    [
+      "interaction",
+      "31662",
+      "Computer_Use_React_Positive",
+      "micro"
+    ],
+    [
+      "interaction",
+      "31663",
+      "Computer_Use_React_Negative",
+      "micro"
+    ],
+    [
+      "interaction",
+      "31664",
+      "Computer_Use_PlayGame_Mild",
+      "micro"
+    ],
+    [
+      "interaction",
+      "31665",
+      "Computer_Use_PlayGame_Intense",
+      "micro"
+    ],
+    [
+      "interaction",
+      "31740",
+      "computer_PlayGame_SimsForeverRenamed",
+      "action"
+    ],
+    [
+      "interaction",
+      "31742",
+      "computer_PlayGame_MariaSisters",
+      "action"
+    ],
+    [
+      "interaction",
+      "31743",
+      "computer_PlayGame_REFUGE",
+      "action"
+    ],
+    [
+      "interaction",
+      "31746",
+      "computer_PlayGame_Hillock",
+      "action"
+    ],
+    [
+      "interaction",
+      "33623",
+      "art_View",
+      "action"
+    ],
+    [
+      "interaction",
+      "33975",
+      "Bed_Undercovers_Cry",
+      "action"
+    ],
+    [
+      "interaction",
+      "34080",
+      "Bed_Undercovers_Hide",
+      "action"
+    ],
+    [
+      "interaction",
+      "34347",
+      "tv_WatchCurrentChannelAutonomously",
+      "router"
+    ],
+    [
+      "interaction",
+      "380354",
+      "mirror_Tattooing_CheckOut",
+      "action"
+    ],
+    [
+      "interaction",
+      "381007",
+      "computer_Research_Thanatology",
+      "action"
+    ],
+    [
+      "interaction",
+      "40413",
+      "Toilet_Use_Action",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "468659",
+      "autonomous_ObjectPicker_Puddle_Mop_Small",
+      "router"
+    ],
+    [
+      "interaction",
+      "502981",
+      "aggregate_SocialObservation_Chat",
+      "router"
+    ],
+    [
+      "interaction",
+      "502983",
+      "autonomousSimPicker_SocialObservation_FamiliarChat",
+      "router"
+    ],
+    [
+      "interaction",
+      "73869",
+      "generic_BedUndercovers",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "74259",
+      "reaction_AnnoyedByMess",
+      "action"
+    ],
+    [
+      "interaction",
+      "74901",
+      "cleanup_Dishes_After_Eating_Aggregate",
+      "router"
+    ],
+    [
+      "interaction",
+      "74918",
+      "Collect_Dish_After_Eating",
+      "action"
+    ],
+    [
+      "interaction",
+      "75242",
+      "eat_to_clean_from_sit",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "9109",
+      "tv_WatchFireplace",
+      "action"
+    ],
+    [
+      "interaction",
+      "9230",
+      "SleepMixer_Dream",
+      "micro"
+    ],
+    [
+      "interaction",
+      "9339",
+      "Idle_Trait_Goofball",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "9601",
+      "Idle_Trait_Lazy",
+      "gesture"
+    ],
+    [
+      "interaction",
+      "96864",
+      "sleep_Passive",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "97431",
+      "social_adjustment",
+      "posture"
+    ],
+    [
+      "interaction",
+      "9844",
+      "painting_View_Passive",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "98638",
+      "mixer_social_DiscussLocalFishingSpots_targeted_friendly_alwaysOn_neighbor",
+      "social_content"
+    ],
+    [
+      "interaction",
+      "98860",
+      "mirror_SelfPepTalk5",
+      "activity_phase"
+    ],
+    [
+      "interaction",
+      "99858",
+      "Computer_Use_React",
+      "micro"
+    ],
+    [
+      "relationship.bits",
+      "115902",
+      "relbit_SocialContext_Awkwardness_Casual",
+      "neutral_social"
+    ],
+    [
+      "relationship.bits",
+      "115903",
+      "relbit_SocialContext_Fun_Casual",
+      "neutral_social"
+    ],
+    [
+      "relationship.bits",
+      "115904",
+      "relbit_SocialContext_Romance_Casual",
+      "neutral_social"
+    ],
+    [
+      "relationship.bits",
+      "120016",
+      "situation_bit_WelcomeWagonGuest",
+      "holiday_role"
+    ],
+    [
+      "relationship.bits",
+      "122768",
+      "SpecialBits_Greeted",
+      "holiday_role"
+    ],
+    [
+      "relationship.bits",
+      "15792",
+      "friendship-acquaintances",
+      "relationship_baseline"
+    ],
+    [
+      "relationship.bits",
+      "24032",
+      "relbit_SocialContext_Casual",
+      "neutral_social"
+    ],
+    [
+      "relationship.bits",
+      "24081",
+      "relbit_SocialContext_Fun_Boring",
+      "social_state"
+    ],
+    [
+      "relationship.bits",
+      "24082",
+      "relbit_SocialContext_Fun_Tedious",
+      "social_state"
+    ],
+    [
+      "relationship.bits",
+      "308877",
+      "relationshipbit_Compatibility_Amazing",
+      "relationship_baseline"
+    ],
+    [
+      "relationship.bits",
+      "308890",
+      "relationshipbit_Compatibility_Good",
+      "relationship_baseline"
+    ],
+    [
+      "relationship.bits",
+      "310888",
+      "familyTrope_difficult",
+      "social_state"
+    ],
+    [
+      "relationship.bits",
+      "358557",
+      "relBit_Attraction_3_Actor_NeutralTo_Target",
+      "relationship_baseline"
+    ],
+    [
+      "relationship.bits",
+      "358558",
+      "relBit_Attraction_4_Actor_AttractedTo_Target",
+      "social_state"
+    ],
+    [
+      "relationship.bits",
+      "363631",
+      "relBit_Attraction_SuppressChangeBehavior",
+      "cooldown"
+    ],
+    [
+      "relationship.bits",
+      "75294",
+      "neighbor",
+      "relationship_baseline"
+    ],
+    [
+      "relationship.bits",
+      "99712",
+      "ShortTerm_RecentNegativeSocial",
+      "social_state"
+    ],
+    [
+      "statistic.direct",
+      "10637891138512773696",
+      "buff_Sentiment_Hurt_Angry_generic",
+      "timer"
+    ],
+    [
+      "statistic.direct",
+      "10640",
+      "commodity_Buff_Social_PlayfulConversation",
+      "social_state"
+    ],
+    [
+      "statistic.direct",
+      "10642",
+      "commodity_Buff_Social_AngryConversation",
+      "social_state"
+    ],
+    [
+      "statistic.direct",
+      "10643",
+      "commodity_Buff_Social_EmbarrassingConversation",
+      "social_state"
+    ],
+    [
+      "statistic.direct",
+      "128901",
+      "commodity_Object_Movie_Enjoyment",
+      "activity_marker"
+    ],
+    [
+      "statistic.direct",
+      "12927137887120801839",
+      "buff_SimPreference_Recent_Likes_Videogaming",
+      "timer"
+    ],
+    [
+      "statistic.direct",
+      "16455",
+      "commodity_Emotion_Autonomy_Angry",
+      "motivation_numeric"
+    ],
+    [
+      "statistic.direct",
+      "16462",
+      "commodity_Emotion_Autonomy_Embarrassed",
+      "motivation_numeric"
+    ],
+    [
+      "statistic.direct",
+      "16469",
+      "commodity_Emotion_Autonomy_Sad",
+      "motivation_numeric"
+    ],
+    [
+      "statistic.direct",
+      "16471",
+      "commodity_Emotion_Autonomy_Stressed",
+      "motivation_numeric"
+    ],
+    [
+      "statistic.direct",
+      "16566482290043870913",
+      "whimSet_Mischief",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "16575",
+      "commodity_dirtiness",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16589",
+      "commodity_Fitness_Fat",
+      "need_effect"
+    ],
+    [
+      "statistic.direct",
+      "16616",
+      "commodity_Motive_HygieneHands",
+      "need_effect"
+    ],
+    [
+      "statistic.direct",
+      "16633",
+      "commodity_Object_Brokenness",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16634",
+      "commodity_Object_Consumable",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16650",
+      "LTR_Friendship_Main",
+      "relationship_numeric"
+    ],
+    [
+      "statistic.direct",
+      "16655",
+      "motive_Fun",
+      "need_effect"
+    ],
+    [
+      "statistic.direct",
+      "16656",
+      "motive_Hunger",
+      "need_effect"
+    ],
+    [
+      "statistic.direct",
+      "16657",
+      "motive_Hygiene",
+      "need_effect"
+    ],
+    [
+      "statistic.direct",
+      "16658",
+      "motive_Social",
+      "need_effect"
+    ],
+    [
+      "statistic.direct",
+      "16659",
+      "skill_Fitness",
+      "skill_progress"
+    ],
+    [
+      "statistic.direct",
+      "16671",
+      "statistic_Object_Consumable-Quality",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16674",
+      "statistic_Object_Dishes_DishCount",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16676",
+      "statistic_Object_Puddle-Water",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16680",
+      "statistic_Object_Trash-Amount",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16681",
+      "statistic_Object_Trash-Capacity",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "16705",
+      "statistic_Skill_AdultMajor_HomestyleCooking",
+      "skill_progress"
+    ],
+    [
+      "statistic.direct",
+      "16707",
+      "statistic_Skill_AdultMajor_Mischief",
+      "skill_progress"
+    ],
+    [
+      "statistic.direct",
+      "181204",
+      "statistic_sim_EffectiveTemperature",
+      "environment"
+    ],
+    [
+      "statistic.direct",
+      "192283",
+      "rankedStatistic_Reputation",
+      "relationship_numeric"
+    ],
+    [
+      "statistic.direct",
+      "2136811844669550994",
+      "buff_SimPreference_Recent_Likes_Comedy",
+      "timer"
+    ],
+    [
+      "statistic.direct",
+      "217240",
+      "commodity_UnbalancedMeal_Counter",
+      "activity_marker"
+    ],
+    [
+      "statistic.direct",
+      "24099",
+      "SocialContext_Friendship",
+      "neutral_social"
+    ],
+    [
+      "statistic.direct",
+      "24100",
+      "SocialContext_Fun",
+      "neutral_social"
+    ],
+    [
+      "statistic.direct",
+      "24101",
+      "SocialContext_Romance",
+      "neutral_social"
+    ],
+    [
+      "statistic.direct",
+      "245280",
+      "commodity_SlowExperiences_Progress",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "247601",
+      "traitStatistic_Lifestyles_Food",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "272961",
+      "commodity_Sim_Fulfillment",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "27550",
+      "commodity_Trait_Geek_GamingNeed",
+      "motivation_numeric"
+    ],
+    [
+      "statistic.direct",
+      "277010",
+      "commodity_Social_Media_PostFeed",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "27956",
+      "commodity_PoliteHunger",
+      "need_effect"
+    ],
+    [
+      "statistic.direct",
+      "286272",
+      "statistic_PubertyChanges_Hair",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "29111",
+      "commodity_Trait_Autonomy_Lazy",
+      "motivation_numeric"
+    ],
+    [
+      "statistic.direct",
+      "29113",
+      "commodity_Trait_Autonomy_MusicLover",
+      "motivation_numeric"
+    ],
+    [
+      "statistic.direct",
+      "303796",
+      "commodity_SelfDiscovery_Tracker_Virtues",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "303927",
+      "commodity_SelfDiscovery_Tracker_Silly",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "304271",
+      "commodity_Burnout_CreativeTracker",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "306816",
+      "commodity_SelfDiscovery_Tracker_Metabolism",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "306826",
+      "commodity_SelfDiscovery_Tracker_Mood",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "306827",
+      "commodity_SelfDiscovery_Tracker_Social",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "306829",
+      "commodity_SelfDiscovery_Tracker_Romance",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "306830",
+      "commodity_SelfDiscovery_Tracker_Hygiene",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "306831",
+      "commodity_SelfDiscovery_Tracker_Active",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "306839",
+      "commodity_SelfDiscovery_Tracker_Creative",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "312963",
+      "commodity_MidlifeCrisis_PreMidlife",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "358555",
+      "URT_Attraction_Main",
+      "relationship_numeric"
+    ],
+    [
+      "statistic.direct",
+      "377782",
+      "rankedStatistic_MovingOn_SoulsJourney",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "37843",
+      "commodity_Buff_Social_AwkwardTurtle",
+      "social_state"
+    ],
+    [
+      "statistic.direct",
+      "37856",
+      "commodity_Buff_Social_DullHumor",
+      "social_state"
+    ],
+    [
+      "statistic.direct",
+      "37950",
+      "commodity_Buff_Social_OnARoll",
+      "social_state"
+    ],
+    [
+      "statistic.direct",
+      "3808103188172113048",
+      "buff_Sentiment_Bitter_Angry_fight",
+      "timer"
+    ],
+    [
+      "statistic.direct",
+      "401759",
+      "commodity_FamilyRecipes_MotivatingTracker",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "405604",
+      "commodity_FamilyRecipes_DreamChaser",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "424115",
+      "commodity_SelfDiscovery_Tracker_Lawfulness",
+      "review_hidden"
+    ],
+    [
+      "statistic.direct",
+      "433756",
+      "commodity_SelfDiscovery_Tracker_Fantasy",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "470716",
+      "commodity_ChildhoodInspiration_DiscoveryPhoneCallTimer",
+      "goal_internal"
+    ],
+    [
+      "statistic.direct",
+      "6718094964272744992",
+      "buff_CrossAge_Interactions_DisapproveLackOfChildDiscipline",
+      "timer"
+    ],
+    [
+      "statistic.direct",
+      "74225",
+      "commodity_trait_FamilyOriented_NearFamily",
+      "proximity"
+    ],
+    [
+      "statistic.direct",
+      "74875",
+      "commodity_collect_after_eating_timer",
+      "timer"
+    ],
+    [
+      "statistic.direct",
+      "7562815207063302325",
+      "buff_Sentiment_Bitter_Tense_Primary_fight",
+      "timer"
+    ],
+    [
+      "statistic.direct",
+      "76727",
+      "statistic_Object_Trash-Consumable",
+      "object_effect"
+    ],
+    [
+      "statistic.direct",
+      "76777",
+      "commodity_SimInfo_OutdoorsCheck",
+      "outside_check"
+    ],
+    [
+      "statistic.direct",
+      "99446",
+      "commodity_Object_Trash_JustFailedOutdoor",
+      "review_hidden"
+    ],
+    [
+      "trait",
+      "230113",
+      "trait_Hidden_UniversityEnrollment_HasSeenEnrollmentInfo",
+      "goal_internal"
+    ]
+  ],
+  "cross_sim_tuning_evidence": {
+    "interaction:128726": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "movie_Watch_RoaringHeights",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "xml_sha256": "d80e0e4c0a6192a68913840c0f94c308b96de08a66f931648a15e131dfb2f04e",
+      "role": "action"
+    },
+    "interaction:128727": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "movie_Watch_TheSpiral",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "xml_sha256": "eb8fb63b8a120c3b123ffba3bc009db8749e5fa4663623045b0bf1737aac9a14",
+      "role": "action"
+    },
+    "interaction:14488": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "tv-watch-romance",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "xml_sha256": "7cb9a98f6ead8b1983aac7955f9980e7a1aa5ac5bcc3cdd1555fd891a6bf7ff8",
+      "role": "action"
+    },
+    "interaction:179829": {
+      "source_id": "r0319",
+      "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+      "tuning_name": "tv_Watch_Weather",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "xml_sha256": "fc100d12dd586462ff5df76b5720c8b56b8638b72ace44a8dd0d79b78fe78090",
+      "role": "action"
+    },
+    "interaction:9109": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "tv_WatchFireplace",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "xml_sha256": "80cdb393ccd739be7db6e8655342920f2008b71f16f7ded6b0ad0e5c16348438",
+      "role": "action"
+    },
+    "interaction:13471": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "guitar_Practice",
+      "class_name": "PlayAudioSuperInteractionNonTieredMenu",
+      "module": "crafting.music_interactions",
+      "xml_sha256": "4184d81085ee5e27e2a44e09693f5e85b8d70c230a6cb58bdb8dd905fce9fb9a",
+      "role": "action"
+    },
+    "interaction:381007": {
+      "source_id": "r0343",
+      "source_sha256": "f58287ac7c671eb2420996b74b9448abe150eb2b465a33a8a950afe7997490c4",
+      "tuning_name": "computer_Research_Thanatology",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "295c5d5094cbc348a81e57764a83616368eb0ac891d9184f8769370a463dd57e",
+      "role": "action"
+    },
+    "interaction:13609": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mirror_CalmSelfDown",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "cfd314e69d479471ee55b97397f056ee41604570b5d6cc8f129dcd76f8242f21",
+      "role": "action"
+    },
+    "interaction:100327": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "fridge_CreateSnackAndConsume_Generic",
+      "class_name": "CreateConsumableAndPushConsumeSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "8bb093ef4ab55321d231c3020d6fdbb56e085bfb3179aef2a76b72816bf0e3d1",
+      "role": "action"
+    },
+    "interaction:13287": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "crafting_resume",
+      "class_name": "CraftingResumeInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "23a93abeaf3f03e47884e596b312b674224ee2987f655c8e63a3e92653bbf5c4",
+      "role": "action"
+    },
+    "interaction:13521": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Kick_Over_Outdoor",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "91ba9b561bd5cab0df5d1ce15688640b87f092ac5669cd8ce6d72dc9d28ec346",
+      "role": "action"
+    },
+    "interaction:14330": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Stomp_Trash_Pile",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "b440399a1ae284b9c82b06c6c5a4b73bb20efb16774d3999b2653bedb193d181",
+      "role": "action"
+    },
+    "interaction:100104": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "sink_washDishes_Counter",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "e5976c33ae97b57332372538844732a8e58894d491cbdf837566fa6191345ec3",
+      "role": "action"
+    },
+    "interaction:100109": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "sink_washDish_After_Eat_Counter",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "9917dcd54e89c9f3c6a2e84b78ae4abe9e89989ac8f6aafeecf6aa366982279a",
+      "role": "action"
+    },
+    "interaction:14421": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Throw_Away_Indoor",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "60fc6a02c451c2be5c7bd1a6f04307c1faaaf3ec401daba6f49756d770a57dc8",
+      "role": "action"
+    },
+    "interaction:14424": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Throw_Away_Outdoor",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "8b24a6e87eb8984fd9f6dccb75bb07d8b041f56df4ea4b85dc2bcda9142a3862",
+      "role": "action"
+    },
+    "interaction:13169": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Collect_Dish",
+      "class_name": "CollectManyInteraction",
+      "module": "carry.put_down_interactions",
+      "xml_sha256": "9a44ff53fc359b39f1bc74bc64dda08a3704b836530183e79ebd83202eb64b0f",
+      "role": "action"
+    },
+    "interaction:13170": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Collect_Dish_As_Trash",
+      "class_name": "CollectManyInteraction",
+      "module": "carry.put_down_interactions",
+      "xml_sha256": "e8348787b8203d9d2d3c895d5f892f84601ac250680b7f0fa7bd0f866a82dd63",
+      "role": "action"
+    },
+    "interaction:13175": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Collect_Trash",
+      "class_name": "CollectManyInteraction",
+      "module": "carry.put_down_interactions",
+      "xml_sha256": "360c7536e04b3803fb8dd5fcb8f6c522c756bb9503c0d60f6b0d5e1b0d8b8184",
+      "role": "action"
+    },
+    "interaction:74918": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Collect_Dish_After_Eating",
+      "class_name": "CollectManyInteraction",
+      "module": "carry.put_down_interactions",
+      "xml_sha256": "31d529a05a8fc57316525e9f023e770ad66007f7ff937379aa7deb732ff83a91",
+      "role": "action"
+    },
+    "interaction:27284": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Puddle_Mop_Small",
+      "class_name": "ClearSpaceSuperInteraction",
+      "module": "interactions.utils.clear_space_interaction",
+      "xml_sha256": "808afc1911ca133262f1fad76b9a012a39298328bd706dda0a25a289c74a5a66",
+      "role": "action"
+    },
+    "interaction:25211": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "door_RingDoorbell",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "146fdfad361269939c0839670fe2e7d2279a0a54a37f7bfc91bc30d6d5622696",
+      "role": "action"
+    },
+    "interaction:227883": {
+      "source_id": "r0327",
+      "source_sha256": "5d6e4deb7b0574ff4fa1bbc67ed666c32fd32448f3fafe7eb27ef4376760903f",
+      "tuning_name": "sim_doPushUps_CivicPolicy_Exercise",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "c935bc84f4470116fa71eb901ec12978ab1b22ec43da13a1e0665e4104be5394",
+      "role": "action"
+    },
+    "interaction:380354": {
+      "source_id": "r0345",
+      "source_sha256": "79e4466179883cfcc8aa06068b8fb4ba07814e1632b558a5ab27c5d6d896012f",
+      "tuning_name": "mirror_Tattooing_CheckOut",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "fa58feb04b11232e3ea35c05f6866c7c9f66f6c252acfce75057e30394895e4d",
+      "role": "action"
+    },
+    "interaction:31742": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "computer_PlayGame_MariaSisters",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "c3484d19e620c5c9fd01f7233a5da938b50d7fb03302e67184998c8c4602512b",
+      "role": "action"
+    },
+    "interaction:226202": {
+      "source_id": "r0325",
+      "source_sha256": "79754ae7c875c130758169cca4e0e7d037f00a91e8aa1044e5bdd4193a470449",
+      "tuning_name": "computer_PlayGame_SimScuffle_E-Sports",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "15d76454b3211029fcc283f17e6e56a3fd91a8d0fd42e5941420db450d76c5a3",
+      "role": "action"
+    },
+    "interaction:204297": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "welcomeWagon_Interactions_go_to_front_door",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "ae9b4929a1e24ed9b2ec6fab21265807c4f50a17e09ee37a83ea559ff10c247e",
+      "role": "action"
+    },
+    "interaction:13993": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "sim_BladderDistress",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "360bdf7af82102ff80b1877c5f2d6e2dbab0a8998e39c275ae10421fe2558ebc",
+      "role": "action"
+    },
+    "interaction:25674": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_social_Insult_Mean_STC",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "92dadb986e02cc979e09eb5ab770843ff581028186e57026ea15c5cbee72922b",
+      "role": "social_content"
+    },
+    "interaction:24556": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_Social_GetToKnow_Friendly_STC",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "6f80981a6cddff32869d9074365011306445a5ada1f22bae4df7f803dc0d7750",
+      "role": "social_content"
+    },
+    "interaction:26151": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_social_YellAT_targeted_mean",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "6ad10f3aa0748aa1db41b793db40b6ab6ab4f28b743944ed5124d8758f4dee31",
+      "role": "social_content"
+    },
+    "interaction:160016": {
+      "source_id": "r0363",
+      "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+      "tuning_name": "mixer_Argument_Start_Music",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "521a21a54ebd219b5340acbae19e06baf7319d12798676b376f2d408a9ee9b57",
+      "role": "social_content"
+    },
+    "interaction:160023": {
+      "source_id": "r0363",
+      "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+      "tuning_name": "mixer_Argument_Start_WhosBetter",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "971bfba7128a0f697d02fe1a9c10a3f3731db2396b22d39133d1751e6b63fe17",
+      "role": "social_content"
+    },
+    "interaction:160022": {
+      "source_id": "r0363",
+      "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+      "tuning_name": "mixer_Argument_Start_HouseRules",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "dd9d0d896db3c41bea6fa5aec9c2ee6a4007400e099f4dfd56f8f64898b69879",
+      "role": "social_content"
+    },
+    "interaction:98638": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_social_DiscussLocalFishingSpots_targeted_friendly_alwaysOn_neighbor",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "6f36629035eac366178b4a1dc15eacdc4989cf78a3511540aa6173cf7847d9a8",
+      "role": "social_content"
+    },
+    "interaction:314510": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "socials_Friendly_CrossAge_Interactions_AskQuestionAboutTechnology",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "49c10173164c45c6fc3d934923775d6a7b4e11a0b363950f1417119b90ef81bc",
+      "role": "social_content"
+    },
+    "interaction:264448": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "socials_Targeted_Friendly_SimPreference_Recent_Likes_Guitar",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "aae58a0b6b78b762bb84b1f9f81c6aa2579791f76480de91bd0d5a98057c8f01",
+      "role": "social_content"
+    },
+    "interaction:287036": {
+      "source_id": "r0333",
+      "source_sha256": "f7d0a37bb59c7a9b9aace1942b3b01ae93e54d5f7a341fae0def73cab6f5d95f",
+      "tuning_name": "social_Funny_PubertyChanges_Joke_Hair_Body",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "f15561fae9c93e52ad5b5c34c196a63c6764b9a831350c258c3df03a413f2aa5",
+      "role": "social_content"
+    },
+    "interaction:149274": {
+      "source_id": "r0361",
+      "source_sha256": "e4a4e7767dcc0b0bb58b6236c49894c4778b1773c40d382637c8ddcf81392ff2",
+      "tuning_name": "mixer_social_DebateExistenceOfVampires_Targeted_Friendly_AlwaysOn",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "e418ade746966d18110f27cf6722f407c17b2cb932ee54c9383d102a185e8aed",
+      "role": "social_content"
+    },
+    "interaction:25888": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_social_InsultFace_targeted_mean_emotionSpecific",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "8bf4edbab12be0b6bb00601ffe648d6c07a0528ab2e4fe3462c8d607f583fdba",
+      "role": "social_content"
+    },
+    "interaction:28610": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_social_TalkAboutCooking_targeted_Friendly_alwaysOn_skills",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "fbc3738659ed2bc7f14b74fad898ca5c1ae8f21a548e7d4b49833d8a5935e76f",
+      "role": "social_content"
+    },
+    "interaction:30755": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_social_PraisePianoSonatas_targeted_Friendly_alwaysOn_skills",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "xml_sha256": "7db131a22febe29239c1837d6cb9f05921835c4d294430a41449f10f8505abac",
+      "role": "social_content"
+    },
+    "interaction:127770": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "si_nonTouching_Greetings_Glare",
+      "class_name": "SocialSuperInteraction",
+      "module": "interactions.social.social_super_interaction",
+      "xml_sha256": "c3811a6a6c0c5d5ed17f352642477133993e68563f88631b8c9bd5edbfaf1149",
+      "role": "social_content"
+    },
+    "interaction:129288": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "Reaction_Movie_Shush",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "10343ad63b60a95d471c2a0f023b05252382f71fad824ca713a435281e234523",
+      "role": "social_content"
+    },
+    "interaction:14543": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "watch-passive",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "24616c9eeb06b2cc6400b6e5ca22efbde69a4beea16e4b73d1254a653615a6ac",
+      "role": "micro"
+    },
+    "interaction:273821": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "watch-passive-withphone",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "d49f61fb27fc18b1cd4cee3961ad4e63b04d069ea90bba833bd85facf4a5224e",
+      "role": "micro"
+    },
+    "interaction:128871": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "watch-movie",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "9435f8c566c102eb579e2d8ed7e7ea3cec99257912aba2fbb6787cc5ae91957a",
+      "role": "micro"
+    },
+    "interaction:30307": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mixer_TV_WatchRomanceAndFireplace",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "bb8ae7da4db53b365627ddfaf18f53512b837704b3313ab41ea21d43861b217d",
+      "role": "micro"
+    },
+    "interaction:13188": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Computer_Browse_Keyboard",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "58184fbea7d03238e0ba0eb2847f7372cf6eb951e5184a667cfe455604486abb",
+      "role": "micro"
+    },
+    "interaction:13189": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Computer_Browse_Mouse",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "6399cda4c808ba45ec84f0e454c2c5d2e16f17b383903da815c956697f5787d5",
+      "role": "micro"
+    },
+    "interaction:13267": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Counter_CuttingBoard_Chop_Lettuce",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "0059ba97eff49d2e480f6aef5ceee6dda108d4c6bdab16c328238e6565bc22cf",
+      "role": "micro"
+    },
+    "interaction:13261": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Cooking_Shared_AddSpice_Basic",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "c567b80b3867fb540752d49cd5678e5c01efc0c66aecd4bd29bcb1216b6c204e",
+      "role": "micro"
+    },
+    "interaction:13268": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Counter_CuttingBoard_Chop_Onion",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "edc2c7a25561e147f52d7fc10344806c84dd2abba8298d2396dc990f7ca39017",
+      "role": "micro"
+    },
+    "interaction:14335": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Stove_FryingPan_Stir_Basic",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "85b5d57f9412a88dca681e58feaba97bd97a544190c43bce5b96fcf924cbc564",
+      "role": "micro"
+    },
+    "interaction:13264": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Cooking_Shared_Passive_Emotion",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "36cf15da8e81b4f5269b25af25f83017e8975fe2bb4dc5d37ccd6288806c761d",
+      "role": "micro"
+    },
+    "interaction:14333": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Stove_FryingPan_Flip_Basic",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "e371649301e1a5c709b1ce2ab95dcccdc6e021a456ee5ad0a99fcff941397520",
+      "role": "micro"
+    },
+    "interaction:13610": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Mirror_CalmSelfDown1",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "aa80b82ad216bf540d7a7a7bdc64d2eb5ae646da64b5bb56b03fce14fbdb2e5a",
+      "role": "activity_phase"
+    },
+    "interaction:13611": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Mirror_CalmSelfDown2",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "b17868585b29dc0d9da2eb098ee585c8dc6a239de7fa82418ecaebaf7397d21d",
+      "role": "activity_phase"
+    },
+    "interaction:13612": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Mirror_CalmSelfDown3",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "702ebb0caf64592888e2f6bf01691962425650deefdca3a1248ec2f819c8a85f",
+      "role": "activity_phase"
+    },
+    "interaction:98860": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mirror_SelfPepTalk5",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "bd42af052e910e8b09ca2e186869e5b4b49f33f7abb471a6475f7727cdcceea7",
+      "role": "activity_phase"
+    },
+    "interaction:13643": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mirror_SelfPepTalk1",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "1e56e5bc44d457ca3f72d74601e0a471188990cd4785c71c237585809c2e5421",
+      "role": "activity_phase"
+    },
+    "interaction:13645": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "mirror_SelfPepTalk3",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "3ff38ac55fbef6567b6b06b7dede850325e3fce20307fcda43dbb84343c95794",
+      "role": "activity_phase"
+    },
+    "interaction:100083": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "bed_Autonomous_SingleBed_Sleep",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "a897663f46da15d5f23a54e61254cf004a6b2497defeff7e1636515d06716546",
+      "role": "activity_phase"
+    },
+    "interaction:14337": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "stove_Ico_Transition",
+      "class_name": "CraftingPhaseCreateObjectFromCarryingSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "cde023990d12eef9c9948e33ae4a6fdfd6537e054b69de1c8ce2758d496aa3d5",
+      "role": "activity_phase"
+    },
+    "interaction:14338": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "stove_MakeFood_FryingPan_Staging_Basic",
+      "class_name": "CraftingPhaseStagingSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "2e5a8d011c9cc5e28ff03b333da28e4e79b8b1b7daa7d1b96786a9d3106c9056",
+      "role": "activity_phase"
+    },
+    "interaction:34347": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "tv_WatchCurrentChannelAutonomously",
+      "class_name": "WatchCurrentChannelAutonomouslySuperInteraction",
+      "module": "objects.electronics.pick_channel",
+      "xml_sha256": "f9da1e3413914edfd7e11f1af6ed2a4fecb9b942a7a1b745779dae14657f288a",
+      "role": "router"
+    },
+    "interaction:14491": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "tv_PickChannelAutonomously",
+      "class_name": "PickChannelAutonomouslySuperInteraction",
+      "module": "objects.electronics.pick_channel",
+      "xml_sha256": "b4d52ea425805de6fd1b6ab48305623f22789a6fce034ef8b533785b6a3e08f4",
+      "role": "router"
+    },
+    "interaction:132401": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "tv_PickMovieAutonomously",
+      "class_name": "PickChannelAutonomouslySuperInteraction",
+      "module": "objects.electronics.pick_channel",
+      "xml_sha256": "18be0bd5931d07c42b2d903dfc4c7cd4ce70b50993d70ee7e6f4576e28662c07",
+      "role": "router"
+    },
+    "interaction:129209": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "tv_MovieWatchCurrentChannelAutonomously",
+      "class_name": "WatchCurrentChannelAutonomouslySuperInteraction",
+      "module": "objects.electronics.pick_channel",
+      "xml_sha256": "0ed6f663baadd5867c72b88ac750f84ebf43560dcadc8442849c1656e6b2637f",
+      "role": "router"
+    },
+    "interaction:13397": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "fridge_GrabSnackAutonomously",
+      "class_name": "StartCraftingAutonomouslySuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "xml_sha256": "09b39246c50da66dbc8747d901b7befc53927e228c5f9f521b324d2ed6e4dd1d",
+      "role": "router"
+    },
+    "interaction:178754": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "autonomous_ObjectPicker_CollectDishes",
+      "class_name": "AutonomousObjectTaggedPickerInteraction",
+      "module": "interactions.base.picker_interaction",
+      "xml_sha256": "e34035a1d129d34e90f1d2c13e79360bfab0f8c8fa67e5c13b236fe52e47cffa",
+      "role": "router"
+    },
+    "interaction:178939": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "autonomous_ObjectPicker_CollectTrash",
+      "class_name": "AutonomousObjectTaggedPickerInteraction",
+      "module": "interactions.base.picker_interaction",
+      "xml_sha256": "5d9d3499ab0e6c5a87cbdb099515d1d66745482329c9fcaa794ce7a38cf5f3bf",
+      "role": "router"
+    },
+    "interaction:178935": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "autonomous_ObjectPicker_CollectDishesAsTrash",
+      "class_name": "AutonomousObjectTaggedPickerInteraction",
+      "module": "interactions.base.picker_interaction",
+      "xml_sha256": "a2ab1e34e9589107100ad72ca3f6103656fc7e24d15a335a17788b8f7de40960",
+      "role": "router"
+    },
+    "interaction:468659": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "autonomous_ObjectPicker_Puddle_Mop_Small",
+      "class_name": "AutonomousObjectTaggedPickerInteraction",
+      "module": "interactions.base.picker_interaction",
+      "xml_sha256": "233a34fe98c228a7c689ad2a8f99aa8956a2ae363a77c670c71cf97aaaaa8ebf",
+      "role": "router"
+    },
+    "interaction:13176": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "collect_Trash_Aggregate",
+      "class_name": "AggregateSuperInteraction",
+      "module": "objects.base_interactions",
+      "xml_sha256": "0205e46cdff0bf2e0b1d4a381e2aaf054302c2200fd71b087cc832b2ec353e63",
+      "role": "router"
+    },
+    "interaction:74901": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "cleanup_Dishes_After_Eating_Aggregate",
+      "class_name": "AggregateSuperInteraction",
+      "module": "objects.base_interactions",
+      "xml_sha256": "414bbaad0b99955305fcbf9617478d8dfb7deffba0cd3c01c9cbe9603b420309",
+      "role": "router"
+    },
+    "interaction:240239": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "idle_Buff_EnvironmentScore_Negative",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "0ccc3b0af35d796bfe30792a645717f1a36b231404595082c762e13bfaa2874b",
+      "role": "gesture"
+    },
+    "interaction:13499": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Idle_Trait_Hotheaded",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "f822ac1371da4b5c8a1b15e99e7de04422a1a84119e69e1899cb231b75e073d2",
+      "role": "gesture"
+    },
+    "interaction:265476": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "idle_Buff_SimPreference_Likes_Activities_Guitar",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "7dd3f2dafded4a4f57224ca8fd8e5ebc1c2b438cbd3992e18d0582c22e2455c1",
+      "role": "gesture"
+    },
+    "interaction:128847": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_RomanticScene",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "f57e534be0f1223f1c7d9145e96e8a68429a3f83108c77b720f72617405117f8",
+      "role": "gesture"
+    },
+    "interaction:129264": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "reactions_Movie_Fallback_RomanceScene",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "xml_sha256": "dbf641e98d09f9e79aa0fe0b0ccbc17487b16d58796f2f4f010dc760fe87261a",
+      "role": "gesture"
+    },
+    "interaction:128842": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_ActionSequence",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "db5bef0b91c3f8e45b61d74115ef2c2a4eadeec2c18be7cfa462bef7d37228f2",
+      "role": "gesture"
+    },
+    "interaction:128846": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_BreathtakingScene",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "422a1ce1299acd1ce2b2a58af9f7bfc8f23c9ea793e819733370d5d12af7528a",
+      "role": "gesture"
+    },
+    "interaction:128849": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_PlotTwist",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "d92e27962ba3f23b6f30d8cb5030c323797279ca7cdc54ae28674756b32efc0a",
+      "role": "gesture"
+    },
+    "interaction:128848": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_HeartBreakingScene",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "xml_sha256": "0c7476683cb9116c74d7bb69fbdb8a01b8fd37d744497ab1d55966e148511b16",
+      "role": "gesture"
+    },
+    "buff:238490": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Environment_BBGameplayEffects_SnobSmall",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "7867d0b9c74c12642f0f3e3f35e74b8b4fa08cca936e3b93de647f9f1a967e2d",
+      "role": "feeling"
+    },
+    "buff:27207": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Trait_FeelingAngry",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "afe42de70c6db6015fa8f17b0b4881f6c199502866db4abf3d00d1b4259cdd3b",
+      "role": "feeling"
+    },
+    "buff:10593": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Food_Cooking_2",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "e63fde68b068d268fc5ee82be808a8e5c16a63325f8b504a79f6df36b89efdf1",
+      "role": "feeling"
+    },
+    "buff:12820": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Motives_Hunger_Hungry",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "5285849c9f9daac4b3df3d8beb590941cd4e7a4f88fb41dac360c68211ea7560",
+      "role": "feeling"
+    },
+    "buff:129019": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "buff_Object_Movie_InterestingFlick",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "b2a8511f97af1c2d543e6b60715a6b43f04b5afb54e817ead8fe93cbb85eaed5",
+      "role": "feeling"
+    },
+    "buff:179867": {
+      "source_id": "r0319",
+      "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+      "tuning_name": "buff_Object_TV_Fireplace_Winter",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "ff2f9343c24becfbe1d5c07f5523be6a2fb0a3c2f922d411658bd8759acbb777",
+      "role": "feeling"
+    },
+    "buff:241005": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sentiment_Furious_Angry_Primary_generic",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "919eeb0191f1fc5a232d86923e939880e4c85f75e6f4a543c1c235d850fb472a",
+      "role": "feeling"
+    },
+    "buff:241018": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sentiment_Bitter_Contagion_Happy_generic",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "2b6eb09cbb953bbd1be19e1aac257b6fccc5b5c47e46de05ab6e3ffd2ba6fe80",
+      "role": "feeling"
+    },
+    "buff:241022": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sentiment_Bitter_Angry_generic",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "37618c281e3778a1eb2f228948ed910c27107a8847e5ffe6de30da87d7d7cd60",
+      "role": "feeling"
+    },
+    "buff:241020": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sentiment_Bitter_Tense_Primary_generic",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "4ce9c5f156de0a0f93a42bced715599436362fea01dd6f0ba444fa9e9ac342e2",
+      "role": "feeling"
+    },
+    "buff:274204": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sentiment_Bitter_Tense_Primary_WhatsSoSpecial",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "f84aa57837993525b76b207bd86d79d225490a90907be83daf1c31fc628dc0ec",
+      "role": "feeling"
+    },
+    "buff:247594": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sentiment_Hurt_Angry_saddened",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "1241aa1251b629d22627e99271fefb708a3ce94d73b70146fc32e17902ff681b",
+      "role": "feeling"
+    },
+    "buff:12429": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Environment_Negative_UnpleasantSurroundings",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "961b20b0fdf63416548b6deae8cacb127497adc2ad0cac401db761a59ef4c861",
+      "role": "feeling"
+    },
+    "buff:27109": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Motives_Bladder_HasToPee",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "90e6be846b6acad530877dfb1c2830d3e6c2e6bd561978aeebf21afff224a676",
+      "role": "feeling"
+    },
+    "buff:27108": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Motives_Bladder_ReallyHasToPee",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "ced49f64c0107764ca9cf7337fa9f5816233424d38b4baffde88cf5885011827",
+      "role": "feeling"
+    },
+    "buff:25003": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Object_Seating_Happy",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "196cc950779a94c351f3b87e6689ebed51423a60e419f689ca23dacca4eaf62c",
+      "role": "feeling"
+    },
+    "buff:264210": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_SimPreference_Likes_Activities_Guitar",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "f9162164965df1151e57f247fd0a56d9988fa36338ad714375115e937f214b82",
+      "role": "feeling"
+    },
+    "buff:36973": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Object_Guitar_RighteousRiffs",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "7b4e2ea5454276694e900a3d6396723202d8bb5c72339752eeb3bbf8bd14fd2a",
+      "role": "feeling"
+    },
+    "buff:381011": {
+      "source_id": "r0343",
+      "source_sha256": "f58287ac7c671eb2420996b74b9448abe150eb2b465a33a8a950afe7997490c4",
+      "tuning_name": "buff_Skill_Thanatology_Inspired",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "bfbb90248fe5946b2bf7f67cd18655d3a13428b95689a5933fd2f789f4d9eecf",
+      "role": "feeling"
+    },
+    "buff:318084": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "buff_FamilyDynamics_Social_Difficult",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "c1999981465b21b3adc91917435d5feeb20b311345d6d8d1a971104521d1470c",
+      "role": "feeling"
+    },
+    "buff:380949": {
+      "source_id": "r0345",
+      "source_sha256": "79e4466179883cfcc8aa06068b8fb4ba07814e1632b558a5ab27c5d6d896012f",
+      "tuning_name": "buff_Tattooing_CheckOut_Confident",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "ed9516ec7c21e21779479cdc53f9702078e3baf6f1fb1cbac816d6033ff49263",
+      "role": "feeling"
+    },
+    "buff:452766": {
+      "source_id": "r0347",
+      "source_sha256": "4580a2185bb836e14e245dd7a67df2f18af450b9b827960fc7d104e2641d4403",
+      "tuning_name": "buff_LuckSys_CraftingQuality_Bad",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "c473e36e8cb9ddc1d9b08a6f17eb30ac9ca997a342cab741551d8c48d4550755",
+      "role": "feeling"
+    },
+    "buff:284204": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Fear_Gained_Anxiety",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "d63b33a9ee8078532888392fa6000fc1dc5d8d353b200fa59bdb3536ce0ad174",
+      "role": "feeling"
+    },
+    "buff:37334": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Happy_MeanMischief",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "03081d9a5ef91e92aa9dc332ffa8aed568c700620040fc6c9c84a80841cff580",
+      "role": "feeling"
+    },
+    "buff:182184": {
+      "source_id": "r0319",
+      "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+      "tuning_name": "buff_HolidayTraditions_Visible_FamilyTimeTomorrow",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "1fd0c1b1a74e5e61e650a2306c6ef86e9f47326202bd8270320052e0aa06c5b7",
+      "role": "feeling"
+    },
+    "buff:12858": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "MoodBuff_Hidden_Uncomfortable",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "3abfacf67fa6995e2a91cfe608a36c4532ee7a11d9803ff2721ad73ddff0099d",
+      "role": "mood_mirror"
+    },
+    "buff:12830": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "MoodBuff_Hidden_Confident",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "f6faf8356e30461afb958c948d261c871fe79e27727400326f39acf926b1e16c",
+      "role": "mood_mirror"
+    },
+    "buff:12845": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "MoodBuff_Hidden_Inspired",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "e9d4ff7dd6d0e7bcfd7ffd09e75fc89a269727d02b414d6ab08ec46e2403db47",
+      "role": "mood_mirror"
+    },
+    "buff:12827": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "MoodBuff_Hidden_Furious",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "031de6a0bd63e007f910f8a1053934f7ee83fae2d3a38d01b7cf882910ea028c",
+      "role": "mood_mirror"
+    },
+    "buff:12856": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "MoodBuff_Hidden_Stressed",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "83a830f51eac9ac2395b288f16fc5eed4ab19f30b0362decc2dd6237e1485937",
+      "role": "mood_mirror"
+    },
+    "buff:12847": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "MoodBuff_Hidden_Miserable",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "a5cb5322ec7fc651a5e3fa138d4ef98cd409aad13b621d4a9498d4a1d7ddf56a",
+      "role": "mood_mirror"
+    },
+    "buff:35368": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Role_Appropriateness_NoBathing",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "4ac1923f1979f1415a5f7654a2a0eaf69a559a29e05031a3e4065e811ba328a8",
+      "role": "need_modifier"
+    },
+    "buff:35390": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Role_Appropriateness_NoSleeping",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "707501dfc5821f79c0c8231aa64654a70eef929aaee5973f691d2177ddc4a6b6",
+      "role": "need_modifier"
+    },
+    "buff:35365": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Role_Appropriateness_NoCooking",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "8df3b362dc01a512403d7c8bbc984c8536d14628479d3abf30f107997c315b02",
+      "role": "need_modifier"
+    },
+    "buff:35370": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Role_Appropriateness_NoCleaning",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "aa20b3cc1ab6fe405c61411e8a6b8fa80b73849eaadf33e10ae7ae82e83956d0",
+      "role": "need_modifier"
+    },
+    "buff:101052": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Role_Appropriateness_NoCallToMeal",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "bc95083eb56260ae6ecfa33156a83625800b69ca114669c3b1ff7a7df3b1581e",
+      "role": "need_modifier"
+    },
+    "buff:35372": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Role_Appropriateness_NoEating",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "1bbd21944ba85d179516b143abb0e3afd915059ce699272ea90c45e7ff93e06d",
+      "role": "need_modifier"
+    },
+    "buff:133051": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Role_Appropriateness_NoWorkout_BG",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "a7c663f688181790f07d65538ca8911d7afd1201b56afe0a555e8463bec19bd5",
+      "role": "need_modifier"
+    },
+    "buff:388562": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Suppress_SocialPickerSI_AsActor",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "c58044fda1b074ac9d88799510e7e4b26eadb25ae104317cb2c0f8086deb9f02",
+      "role": "need_modifier"
+    },
+    "buff:156116": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_AutonomyMod_Leave",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "352a50c5ac3c6b938895d7c490d0a8bcd7aca32597fb669e43e48fcf78c443d3",
+      "role": "need_modifier"
+    },
+    "buff:38292": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_offLotAutonomyMod_OnLotOnly",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "44171d080c9934086244f7b133da115e77a5f29c6df2abcb6679bf74bec8ff79",
+      "role": "need_modifier"
+    },
+    "buff:38293": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_offLotAutonomyMod_OffLotOnly",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "1e4c1bc22f161cfaf6cdda829f96274be278bf7c3eb73146726bd247afdc6f07",
+      "role": "need_modifier"
+    },
+    "buff:74232": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Trait_FamilyOriented(Hidden)",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "47585feca269c47bde469ea222bdfb91c33cd86397346bc972fb9e1a52ff2518",
+      "role": "need_modifier"
+    },
+    "buff:167531": {
+      "source_id": "r0317",
+      "source_sha256": "3477d4acdda526cb2e011e741d917117134e8fc3d680ff7d17306012346e02a2",
+      "tuning_name": "buff_Walkby_PetWorld_NoHunger",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "a77d04e0e2baa565f90aed6dbca6c0cc2cb7b7e5de496578451dacacbd029218",
+      "role": "need_modifier"
+    },
+    "buff:185065": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Temperature_Immune_To_Temperature",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "82b5d17d88751b5598f80f9eb413303d68a3254d0d0dc946955577d77ecacb78",
+      "role": "need_modifier"
+    },
+    "buff:27140": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Motives_InvisDecayMods_SocialYellow",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "8e3e21fa787d2416bad5f2199e54c5bd239633dd07ec687826d9848a295018e4",
+      "role": "need_modifier"
+    },
+    "buff:494300": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_WelcomeWagon_GoToFrontDoorCooldown",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "8d196ba3882410e54f4250ba8134f3a7c09d49db70433c6ac23e814777b1ea9c",
+      "role": "cooldown"
+    },
+    "buff:501845": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_SimPreference_Timer_ComputerRecreation",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "75fadc2fdb93ffe8e1affe512c87be9b4008a6ee221e106ecf56239833fa4e59",
+      "role": "cooldown"
+    },
+    "buff:306626": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "buff_FamilyDynamics_FamilyTropeAdventureCooldown",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "5db7969978a061ed521909e4a0dac513370779fad506a1ea0a3c59ea2b674ea1",
+      "role": "cooldown"
+    },
+    "buff:154883": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Event_NPC_VisitedMailbox_Cooldown",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "eacd3f16c4f073b1f2f2bc580ec2063d0bf8a67a3a9ccdd38e1bfddd4be3f682",
+      "role": "cooldown"
+    },
+    "buff:100156": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_walkbyNPC_ringDoorbell_cooldown",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "c43346e78b2c873412157793400adadc5bfc625b2d06e7c05f4cc221c1cdacd4",
+      "role": "cooldown"
+    },
+    "buff:191128": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "buff_Object_Movie_Autonomy",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "83e9b198b6eb0f5d604728a663c4c4ce95baa6ce6eece3559fb267694d3c29b9",
+      "role": "activity_marker"
+    },
+    "buff:433169": {
+      "source_id": "r0347",
+      "source_sha256": "4580a2185bb836e14e245dd7a67df2f18af450b9b827960fc7d104e2641d4403",
+      "tuning_name": "buff_Ailments_SleepFlag",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "81d7f75150dc68b2ccfb652acad97cb5e1456a0f7e9c9e2e70f1bbfab8898b94",
+      "role": "activity_marker"
+    },
+    "buff:77288": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sim_WakeupInXHoursHidden",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "b5a7447053eb15fca6f66a0314cf20fa1fa4c43de6e60a63a7868b475aa91407",
+      "role": "activity_marker"
+    },
+    "buff:128980": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "buff_Object_Movie_Hidden_WatchedRomance",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "e3a272552309ec25662e71c32db6433f1f49b8c670bcc1c2e925c8bf6d35935e",
+      "role": "activity_marker"
+    },
+    "buff:264393": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_SimPreference_Recent_Likes_Guitar",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "028fbc73467dae856beac307be8196037f4766371649aeab67dbe2f27c743b89",
+      "role": "activity_marker"
+    },
+    "buff:200372": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Sim_isPerforming",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "060f8c7100fdf15cbf4222945a9e535dda03d5720c6f879e8af9f241d4ec983f",
+      "role": "activity_marker"
+    },
+    "buff:160060": {
+      "source_id": "r0363",
+      "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+      "tuning_name": "buff_Families_Arguments_Type_Music",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "f59ed4427fbc4000f0452df7ac07c63d6ef9b883db597c6ec5e78191b6f278e7",
+      "role": "activity_marker"
+    },
+    "buff:160065": {
+      "source_id": "r0363",
+      "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+      "tuning_name": "buff_Families_Arguments_Type_HouseRules",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "ef9eeb4a759bf3854064c9c13c0f202386f8426c6c3a977ce2644152ca42ef2b",
+      "role": "activity_marker"
+    },
+    "buff:160066": {
+      "source_id": "r0363",
+      "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+      "tuning_name": "buff_Families_Arguments_Type_WhosBetter",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "7db58f099da73ab39bd9c037f0021bb89f125338c7f57980361ef6977ede7d78",
+      "role": "activity_marker"
+    },
+    "buff:268126": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Environment_Hidden_Negative_Snob",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "44d5cb0bf3073d012572a0ad51abb43add2327a58fa3fc0a4948c4d9e29989b4",
+      "role": "environment"
+    },
+    "buff:190849": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Temperature_Hidden_Neutral",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "a3f97acc3e39f23df044e87f08ebd7805c84a597c5e13f23891b3ccb7b7d5e27",
+      "role": "environment"
+    },
+    "buff:182695": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_ClothingCatagory_Temperature_ColdClothing",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "f62bcbad4b71d62743e281c177486d4bc3c2b30450cb7d21b6ec78d8e8b6aeb0",
+      "role": "environment"
+    },
+    "buff:190771": {
+      "source_id": "r0319",
+      "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+      "tuning_name": "buff_Umbrella_AddUmbrella",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "0a7a35586214e8d3a00f64cbc59d2e04383aa46ae559d23d92eacdee5316181c",
+      "role": "environment"
+    },
+    "buff:190002": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_ClothingCatagory_Temperature_Modifer",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "1a89dab9fb5fe6dc0e366af6f3f53580a8ade018f5b0e0ea9d93356fbd1d6041",
+      "role": "environment"
+    },
+    "buff:32807": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Near_Friendly",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "17ef32983fd296274e9364736a6332bd0b7e839b8468b2756caf74c253e964b6",
+      "role": "proximity"
+    },
+    "buff:12656": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "Buff_Trait_Bro_Broximity(Hidden)",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "d31b3f8f0ff3ed4f532bf78ebf3029cd16ec8fc870c78530fc267b0e056ecc0c",
+      "role": "proximity"
+    },
+    "buff:204302": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Role_Go_To_Front_Door",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "53ec24497ba8f2b88658408d3f6396fb498d2a0c5650883986e8bd0402792958",
+      "role": "holiday_role"
+    },
+    "buff:28380": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_role_LeaveLotSoon",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "6b79a4a9aa3648a02384cf2fc4cf505a808c8174051f83b2fe220ceaf730f7dc",
+      "role": "holiday_role"
+    },
+    "buff:24238": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_role_LeaveLotNow",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "de1aa16731b2eabb480d55de4f0740f5e9f52cae5df0de8e1c440bc8684fe90c",
+      "role": "holiday_role"
+    },
+    "buff:12732": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_walkby_doorbell_ringer",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "633bc9df1ec734608f7b061085ac3b27d50f4b079bb773ee23ec856e3c8c5328",
+      "role": "holiday_role"
+    },
+    "buff:12733": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_walkby_stand_idle",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "0c822ef958825209f98ee8118c4c762968a5bd43a2a466fb5c1ee2c0c78b688c",
+      "role": "holiday_role"
+    },
+    "buff:334507": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "buff_SelfDiscovery_Mood_CurrentSituation_Angry",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "913d0181edc472667efd8508209693886ea3cf07f726e1a980ba63c9b3bcfa79",
+      "role": "goal_internal"
+    },
+    "buff:288479": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "buff_Fear_BeingJudged_Tracker",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "a7e73465baee13eb7991276c1ea465b6fa5d7ce9ec262479ba22d2c30f587a58",
+      "role": "goal_internal"
+    },
+    "buff:306713": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "buff_Burnout_Hidden_CreativeTracker_IncreaseSmall",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "85e69919948f3a0b303dcf6db9fe77f923d17a86a053aadc6ea1e1616604fdf4",
+      "role": "goal_internal"
+    },
+    "buff:292511": {
+      "source_id": "r0333",
+      "source_sha256": "f7d0a37bb59c7a9b9aace1942b3b01ae93e54d5f7a341fae0def73cab6f5d95f",
+      "tuning_name": "buff_Social_Media_Enable_ReviewedMedia",
+      "class_name": "Buff",
+      "module": "buffs.buff",
+      "xml_sha256": "b5694e95b016e722bcbb282d3181065177a980692603fb347e07dd8b6248fd72",
+      "role": "goal_internal"
+    },
+    "statistic:29113": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "commodity_Trait_Autonomy_MusicLover",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "d9ee1cc32eb210a120d7d30b26f82d8357647195595cdb25465368307f633e07",
+      "role": "motivation_numeric"
+    },
+    "statistic:10640": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "commodity_Buff_Social_PlayfulConversation",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "3d99211835efb42220e3d98b1ff4cdb364475fb8f8d83c8e8d4590e795f356b2",
+      "role": "social_state"
+    },
+    "statistic:10642": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "commodity_Buff_Social_AngryConversation",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "dcc29df7aae5f35573283b893341a57915a6a41fe87d17c8e655fa932a15c6ba",
+      "role": "social_state"
+    },
+    "statistic:37950": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "commodity_Buff_Social_OnARoll",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "6182f8ea7146fc53e2848c0ee3a90f7f094123453a534f0386e9a94664250bde",
+      "role": "social_state"
+    },
+    "statistic:16674": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "statistic_Object_Dishes_DishCount",
+      "class_name": "Statistic",
+      "module": "statistics.statistic",
+      "xml_sha256": "18c80f80479293f871acce8c91c26efc77c3ed9a496fa33b6560b5ed36e66638",
+      "role": "object_effect"
+    },
+    "statistic:16676": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "statistic_Object_Puddle-Water",
+      "class_name": "Statistic",
+      "module": "statistics.statistic",
+      "xml_sha256": "6073385fdd287a03c368dd7131223a55386b36402996d654961465245cb37bb5",
+      "role": "object_effect"
+    },
+    "statistic:16671": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "statistic_Object_Consumable-Quality",
+      "class_name": "Statistic",
+      "module": "statistics.statistic",
+      "xml_sha256": "99f3dae231ec2345337309b59de09f707ad1b7850a95c478bf94a54073d7f5c6",
+      "role": "object_effect"
+    },
+    "statistic:16680": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "statistic_Object_Trash-Amount",
+      "class_name": "Statistic",
+      "module": "statistics.statistic",
+      "xml_sha256": "5c95a1fc03540fbee4d695664d9177f807ecc859fab39a3494bf2bd67f46b996",
+      "role": "object_effect"
+    },
+    "statistic:128901": {
+      "source_id": "r0387",
+      "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+      "tuning_name": "commodity_Object_Movie_Enjoyment",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "0632f48e17a985b76cd7766d24bee04cb3342cd6dd56fa2013f920c137867f56",
+      "role": "activity_marker"
+    },
+    "statistic:217240": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "commodity_UnbalancedMeal_Counter",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "031a7a38883b822dbecdac03ed3444388fefc9bef516e9bcfd736e1b6be0e16d",
+      "role": "activity_marker"
+    },
+    "statistic:74225": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "commodity_trait_FamilyOriented_NearFamily",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "ae7d89219fedc813b6772ad6a664f6299a19dadd6542060658dc80fa2cf55896",
+      "role": "proximity"
+    },
+    "statistic:16659": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "skill_Fitness",
+      "class_name": "Skill",
+      "module": "statistics.skill",
+      "xml_sha256": "9bdb2922b9bb8c9b5c01ea59bb91976ae38040d0ce679462cfce671683a1c22e",
+      "role": "skill_progress"
+    },
+    "statistic:306831": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_SelfDiscovery_Tracker_Active",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "e28a35adc438599aff4c0b55630bdffb2740b7489c8117f207cf0488bfa7c043",
+      "role": "goal_internal"
+    },
+    "statistic:306827": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_SelfDiscovery_Tracker_Social",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "41241c9fca2e879c8d5f80b7af162af5fbe231767ce7038fca16ec67ca14421b",
+      "role": "goal_internal"
+    },
+    "statistic:306829": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_SelfDiscovery_Tracker_Romance",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "82a1660c88865e1e4120802aa2f8ed85e6557fb54401ad47ecba456db34872af",
+      "role": "goal_internal"
+    },
+    "statistic:306816": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_SelfDiscovery_Tracker_Metabolism",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "c672e2fff196795c061de9af0c3c3f42f111478929bfae73bc6f8cbacf9ec465",
+      "role": "goal_internal"
+    },
+    "statistic:303927": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_SelfDiscovery_Tracker_Silly",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "478db1072195904b599afeff5849f2b491d6640c9df0cd8bdfc239d096072d8e",
+      "role": "goal_internal"
+    },
+    "statistic:303796": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_SelfDiscovery_Tracker_Virtues",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "b860c9de0dafd45d5470fa553dcf5df5d4b1c8482805e95ea952eb3d988917b5",
+      "role": "goal_internal"
+    },
+    "statistic:433756": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_SelfDiscovery_Tracker_Fantasy",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "65842fae91c7cf44f760c60818783f837a815b79135f34a7985315e7dbb38ec3",
+      "role": "goal_internal"
+    },
+    "statistic:304271": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "commodity_Burnout_CreativeTracker",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "7e7583a858cdc25ed8f0572796d90d07c83962d8f99e02832f30f04a14e861b0",
+      "role": "goal_internal"
+    },
+    "statistic:286272": {
+      "source_id": "r0333",
+      "source_sha256": "f7d0a37bb59c7a9b9aace1942b3b01ae93e54d5f7a341fae0def73cab6f5d95f",
+      "tuning_name": "statistic_PubertyChanges_Hair",
+      "class_name": "Statistic",
+      "module": "statistics.statistic",
+      "xml_sha256": "89271d96676a9da727df89b1a21a65ff25c7c160dfe90db5b6205ed54c197c33",
+      "role": "goal_internal"
+    },
+    "statistic:470716": {
+      "source_id": "r0349",
+      "source_sha256": "7fd754e98683b59b74c7f3a51417de9e3732daa1522ece4bd13820adfcde263c",
+      "tuning_name": "commodity_ChildhoodInspiration_DiscoveryPhoneCallTimer",
+      "class_name": "Commodity",
+      "module": "statistics.commodity",
+      "xml_sha256": "f4d1a4d9e05f635b401385156fac66ce8f474c39f2a7de37b1307aab314351ed",
+      "role": "goal_internal"
+    },
+    "relbit:308877": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "relationshipbit_Compatibility_Amazing",
+      "class_name": "RelationshipBit",
+      "module": "relationships.relationship_bit",
+      "xml_sha256": "88a9a7b903dbd6130cf22abc1bdbbee61361176f319af0cbb3c4efc3b949953f",
+      "role": "relationship_baseline"
+    },
+    "relbit:310888": {
+      "source_id": "r0335",
+      "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+      "tuning_name": "familyTrope_difficult",
+      "class_name": "RelationshipBit",
+      "module": "relationships.relationship_bit",
+      "xml_sha256": "dce8dd385dcadd022a6817ec9421554dea09d701587dbd99d1f786b60eb093b7",
+      "role": "social_state"
+    },
+    "relbit:358558": {
+      "source_id": "r0341",
+      "source_sha256": "69ea3acf395b79adedb9aa6eea577a954642e4ea42e3249381672c98eee2abba",
+      "tuning_name": "relBit_Attraction_4_Actor_AttractedTo_Target",
+      "class_name": "RelationshipBit",
+      "module": "relationships.relationship_bit",
+      "xml_sha256": "19c191ea386c5205637650b7ff345278baa7a892fd30af8fc9072630e1fc55fe",
+      "role": "social_state"
+    },
+    "aspiration:33188": {
+      "source_id": "r0001",
+      "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+      "tuning_name": "aspiration_Utility_AllChannelsStations",
+      "class_name": "Aspiration",
+      "module": "aspirations.aspiration_tuning",
+      "xml_sha256": "33bd2c479267ab6ebbdcf7ff2c65be618a26c3cae73cbec704ddb604ce7e36ad",
+      "role": "goal_internal"
+    },
+    "trait:230113": {
+      "source_id": "r0325",
+      "source_sha256": "79754ae7c875c130758169cca4e0e7d037f00a91e8aa1044e5bdd4193a470449",
+      "tuning_name": "trait_Hidden_UniversityEnrollment_HasSeenEnrollmentInfo",
+      "class_name": "Trait",
+      "module": "traits.traits",
+      "xml_sha256": "9397ff0f1a8fcf86b271f81a3afc826caea13de3a9b3e9834e57f2bedf3efb6c",
+      "role": "goal_internal"
+    }
+  },
+  "reviewed_activity_rules": [
+    {
+      "id": "75076",
+      "tuning_name": "fire_reacting_to_fire",
+      "role": "action",
+      "class_name": "ImmediateSuperInteraction",
+      "module": "interactions.base.immediate_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5a7743ce237246fe2ef5a224360f8b3a7685ecb41815fa1f3ae48417d3089e05",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "importance": "critical"
+    },
+    {
+      "id": "39466",
+      "tuning_name": "fire_Panic",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "463a6af89b06918dcbaf36e9797b6ba3b0f36c69bb77e61d9050953d3636fb0c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "importance": "critical"
+    },
+    {
+      "id": "75247",
+      "tuning_name": "sim_Fire_RouteToSafety",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "b9ca0226a8f687756b2ab5750d367d8046bf09ed7d2ad96e9b667f6e9974141f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "importance": "critical"
+    },
+    {
+      "id": "40111",
+      "tuning_name": "fire_Extinguish",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "648b50aa988f0641485521ebd657f4c6c72d722b1f0d61386aa3deb1170ca3e9",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "importance": "critical"
+    },
+    {
+      "id": "40870",
+      "tuning_name": "fire_OnFire",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "4472d1a0f456c37c69abdf5d8a154b278f7b209b7a43a1adfa76cc24b1d52a8b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "on_fire",
+      "importance": "critical"
+    },
+    {
+      "id": "77464",
+      "tuning_name": "Fire_OnFire_PassiveMixer",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "d00a35532b1cb5b2c2e66e7b2d25afd9b41f1dd35eb6561195d974cfbeaed177",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "on_fire"
+    },
+    {
+      "id": "26138",
+      "tuning_name": "mixer_social_Fight_targeted_mean",
+      "role": "social_content",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "659928ff37978f17e6a799e08ccf152870dbcc382f18a5b7f8de8b8e76e62749",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "importance": "important"
+    },
+    {
+      "id": "13117",
+      "tuning_name": "book_read",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "88db94a9338205ccf0b75382005ac65a76bc69ed8a10365b3abf8c8bb9c34d77",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "reading"
+    },
+    {
+      "id": "76988",
+      "tuning_name": "book_read_browse",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "36dde51ba1c53f1dc95d4ec945c5562583dc53423c70924fc4f50fef9c2a92b3",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "reading"
+    },
+    {
+      "id": "77329",
+      "tuning_name": "autonomous_bookshelf_read_picker",
+      "role": "router",
+      "class_name": "AutonomousObjectInInventoryPickerInteraction",
+      "module": "interactions.base.picker_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "029cde6cf04360a5069d3116a3ebcb51305bfd393e08209bc69a23bfddc05c89",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "id": "77412",
+      "tuning_name": "autonomous_Bookshelf_Browse_Picker",
+      "role": "router",
+      "class_name": "AutonomousObjectInInventoryPickerInteraction",
+      "module": "interactions.base.picker_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "e4decf9e359edf7adf81baac33cd66670801e1f826b237b18dafd71264af2582",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "id": "13120",
+      "tuning_name": "Book_Read_Active",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "cae4c7b80fddbc67c8e4eeddd044e6067e03e12c01026fb6517f8015ca0fb87b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "reading"
+    },
+    {
+      "id": "13121",
+      "tuning_name": "Book_Read_Passive",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bef0eec69e5f4d649ce3fe8b2904b200259dbc673cdff69ff7d57348c49ba166",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "reading"
+    },
+    {
+      "id": "122714",
+      "tuning_name": "cancelReplacements_ReadtoCarry",
+      "role": "router",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0ed000e25c496643f9c2932f7421d3d3b1362b024e41d8457ae528326b7b4ec2",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "id": "128723",
+      "tuning_name": "movie_Watch_MoonlightMassacre",
+      "role": "action",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "3b0d5fe96e8ab96c928abfbbad52d8c52a6246f3b820289cddfd613ed1205d77",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "television"
+    },
+    {
+      "id": "128729",
+      "tuning_name": "movie_Watch_SuperHeroes",
+      "role": "action",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "78a6b663a82ab5aed49d59fa1997130d45f9fe18caffea803870995924cf9ca6",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "television"
+    },
+    {
+      "id": "14489",
+      "tuning_name": "tv-watch-sports",
+      "role": "action",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0d0324650ce92bc55a71af498bb2038dc4671b7a6690c3ebd1a4d154d7141d6b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "television"
+    },
+    {
+      "id": "153443",
+      "tuning_name": "tv_watch_Politics",
+      "role": "action",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/EP03/SimulationPreload.package",
+        "tgi": "62E94D38:00000018:E23BB17404760CF8",
+        "source_sha256": "58a18ec0aa4ec1c0f4934b54bd89e67de1a050a940a35618f2b8861c9a55fa4e",
+        "xml_sha256": "13de90f93e9dbb6801b60ff76d1b36267f80ae5c6b4e51f7bbfefa2ce9ec4e44",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "television"
+    },
+    {
+      "id": "128843",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_JumpScare",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "d64a529d3f76df23205fe8a0c8c71376a5d8c8a3bfcbbe915d93083a82b2e9e0",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "television"
+    },
+    {
+      "id": "128844",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_Suspense",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "f3b634a8a1450f691ff4db36139da9ed1b468ba26f1e59eaf227b3479b4cfb97",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "television"
+    },
+    {
+      "id": "128845",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_ComedicMoment",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "1345d3290f9f4ad907c49cbbb5d99d124180b5649e03e6501c9ae6fe3f9abeeb",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "television"
+    },
+    {
+      "id": "14547",
+      "tuning_name": "watch_Mixer_Listen",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1190da00074b3985e9905b8b372f2b0bb5a02f22e681edd879c9491e59da67dc",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "performance_watch"
+    },
+    {
+      "id": "13084",
+      "tuning_name": "bathtub_TakeBath",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "15ddd416493294ab53134054a198d31b5f8c6f62aa20b7012f54ae04c7c077fd",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "bath"
+    },
+    {
+      "id": "13085",
+      "tuning_name": "bathtub_TakeBath_Loop",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6869e7e5e3350f3072fd4a41dd8a23e35bd915fef94f99cfda3c41660eff7d42",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "bath"
+    },
+    {
+      "id": "13427",
+      "tuning_name": "generic_Bath",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "61a44b64a255da010889909e8febf7cb4c2027141719d473460c09c79ce99b7a",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "bath"
+    },
+    {
+      "id": "13087",
+      "tuning_name": "bathtub_TakeBubbleBath",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6e999c06790626e34b226396f1b4b8656d27f3f5e1b03884e2a7e14a7e33e3ad",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "bath"
+    },
+    {
+      "id": "35352",
+      "tuning_name": "generic_Bubblebath",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "f2f34ea9e6d9d15ea51804e999bf737a564d93c38f5409c930eb92c4a3691f9e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "bath"
+    },
+    {
+      "id": "13152",
+      "tuning_name": "chess_practice",
+      "role": "activity_phase",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bbe60bb34643b0235f59e317ec2c9d89fa9f7a1a7f2b0cd40960136b1fd96800",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "chess"
+    },
+    {
+      "id": "13155",
+      "tuning_name": "Chess_Social",
+      "role": "action",
+      "class_name": "SocialSuperInteraction",
+      "module": "interactions.social.social_super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "784cfbd2d761187ff566a82a49fcfb3245293a81a2fb518399e4af56d58c9424",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "chess"
+    },
+    {
+      "id": "13154",
+      "tuning_name": "chess_setup",
+      "role": "activity_phase",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "3d51d6038ca2a8ef1e96a2b64dacb1eea021a2314f0a822ebb2856a594917ea7",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "chess"
+    },
+    {
+      "id": "101269",
+      "tuning_name": "chess_idle_solo",
+      "role": "activity_phase",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ae960a4db4afa14935967a70295bb3276d9060fcbb6290673e7d3e0791e0b4ce",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "chess"
+    },
+    {
+      "id": "13470",
+      "tuning_name": "guitar_Play_Song",
+      "role": "action",
+      "class_name": "PlayAudioSuperInteractionTieredMenu",
+      "module": "crafting.music_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "47ec7ca0bb894690b791016db623945ebcefd80f89d87f7076aa48d2ddb51a0f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "guitar"
+    },
+    {
+      "id": "37544",
+      "tuning_name": "guitar_Jam_Inventory",
+      "role": "action",
+      "class_name": "PlayAudioSuperInteractionNonTieredMenu",
+      "module": "crafting.music_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "a3aca1dccefde9a7fa12d237c43b8a7b2fc67ab64294e9b60c68d8fbdb53e11e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "guitar"
+    },
+    {
+      "id": "110733",
+      "tuning_name": "guitar_Sing_Song",
+      "role": "action",
+      "class_name": "PlayAudioSuperInteractionTieredMenu",
+      "module": "crafting.music_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "9d057f6947c62b12e2b2cbbbeb896b824d3bdf2f67bf6b5390f9620884e8c38a",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "guitar"
+    },
+    {
+      "id": "13506",
+      "tuning_name": "guitar_Watch",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7ad3fbac0745902b944d74b3143ac1720060f828b7a48d5bb30b96975f5f5cbc",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "performance_watch"
+    },
+    {
+      "id": "201424",
+      "tuning_name": "microphone_LoungeEvent_OpenMic_Watch",
+      "role": "action",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Delta/EP06/SimulationPreload.package",
+        "tgi": "62E94D38:0000001B:E23BB17404760CFD",
+        "source_sha256": "9d720beb401c3b9e4c22ffa1917cab596919e99600aa969575e8c14f47aabfac",
+        "xml_sha256": "e826e3595d1ce21ff47d821ad4b09db347829d003cf80c7f7c1bfae1ac5dca29",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "performance_watch"
+    },
+    {
+      "id": "14343",
+      "tuning_name": "Stove_SaucePot_Stir_Basic",
+      "role": "activity_phase",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "498bf57ef12ddf252d3a5936e85c55c0028b40eabd685a248314bbdd334d9eaf",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "cooking"
+    },
+    {
+      "id": "32043",
+      "tuning_name": "stove_MakeFood_Pot_Staging_Basic",
+      "role": "activity_phase",
+      "class_name": "CraftingPhaseStagingSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2481cd547006d809fe41498b0625a8e8db0ca876ea431b7cbd1658bd5c7bd695",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "family": "cooking"
+    }
+  ]
+}

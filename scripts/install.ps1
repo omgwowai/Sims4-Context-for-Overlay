@@ -81,7 +81,7 @@ $sourceRoot = Join-Path $PSScriptRoot '..\src'
 if ((Test-Path -LiteralPath $sourceRoot -PathType Container) -and
     [IO.Path]::GetFullPath($PackageDirectory) -ieq [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\dist'))) {
     $sourceRoot = (Resolve-Path -LiteralPath $sourceRoot).Path
-    $sourceFiles = @(Get-ChildItem -LiteralPath $sourceRoot -Filter '*.py' -File -Recurse)
+    $sourceFiles = @(Get-ChildItem -LiteralPath $sourceRoot -File -Recurse | Where-Object { $_.Extension -in '.py', '.json' })
     $manifestFiles = @($manifest.files.PSObject.Properties)
     if ($sourceFiles.Count -ne $manifestFiles.Count) { throw 'Source file set differs from build; rebuild first.' }
     foreach ($file in $sourceFiles) {

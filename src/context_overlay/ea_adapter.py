@@ -65,6 +65,10 @@ class EAAdapter:
     def local_sims(self):
         return [obj for obj in self.live_objects() if getattr(obj, "is_sim", False) and self.in_scope(obj)]
 
+    def household_members(self):
+        household = self.services.active_household()
+        return [self.event_reference(info) for info in household.sim_info_gen()] if household is not None else []
+
     def nearby_objects(self):
         return self.services.object_manager().get_valid_objects_gen()
 

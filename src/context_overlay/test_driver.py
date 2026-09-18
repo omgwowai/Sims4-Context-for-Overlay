@@ -53,6 +53,12 @@ class Driver:
         operation = request["operation"]
         if operation == "status":
             return runtime.status()
+        if operation in ("api_info", "api_context", "api_history", "api_append", "api_changes", "api_page", "api_close"):
+            from context_overlay import api
+            methods = {"api_info": "get_api_info", "api_context": "get_context", "api_history": "query_history",
+                       "api_append": "append_event", "api_changes": "read_event_changes",
+                       "api_page": "get_history_page", "api_close": "close_history"}
+            return getattr(api, methods[operation])(**request.get("params", {}))
         if operation == "entities":
             results = []
             text = request.get("match", "").lower()

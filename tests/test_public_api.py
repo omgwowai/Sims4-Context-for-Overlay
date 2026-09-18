@@ -75,7 +75,7 @@ class ContractChecks(unittest.TestCase):
     def test_worker_rejected_before_game_reads_and_query_mutations(self):
         result = []
         def worker():
-            self.assertEqual(api.get_api_info()["api_version"], "1.1.0")
+            self.assertEqual(api.get_api_info()["api_version"], "2.1.0")
             for function in (api.get_status, api.get_context, api.query_history):
                 try:
                     function()
@@ -92,7 +92,7 @@ class ContractChecks(unittest.TestCase):
     def test_context_defaults_active_pin_detachment_and_no_file_write(self):
         self.add_events()
         packet = api.get_context()
-        self.assertEqual(packet["api_version"], "1.1.0")
+        self.assertEqual(packet["api_version"], "2.1.0")
         self.assertEqual(len(packet["history"]["events"]), 3)
         self.assertEqual(self.adapter.resolutions, [("sim", "active")])
         self.assertEqual(packet["target"]["id"], "18446744073709550001")
@@ -182,7 +182,7 @@ class ContractChecks(unittest.TestCase):
             with self.assertRaises(sdk.ContextOverlayError) as caught:
                 client.get_api_info()
             self.assertEqual(caught.exception.code, "dependency_missing")
-        with patch.object(api, "get_api_info", return_value={"api_version": "2.0.0", "schema_version": "1"}):
+        with patch.object(api, "get_api_info", return_value={"api_version": "2.1.0", "schema_version": "1"}):
             with self.assertRaises(sdk.ContextOverlayError) as caught:
                 sdk.Client(api).get_context()
             self.assertEqual(caught.exception.code, "incompatible_api")
@@ -199,7 +199,7 @@ class ContractChecks(unittest.TestCase):
 
     def test_sdk_accepts_compatible_minor_and_reacquires_replaced_runtime(self):
         provider = SimpleNamespace(APIError=api.APIError, get_context=api.get_context,
-            get_api_info=lambda: {"api_version": "1.9.0", "module_version": "9.0.0", "schema_version": "1"})
+            get_api_info=lambda: {"api_version": "2.9.0", "module_version": "9.0.0", "schema_version": "2"})
         client = sdk.Client(provider)
         self.assertEqual(client.get_context(include_history=False)["session_id"], "run-a")
         replacement = SimpleNamespace(**vars(self.runtime))

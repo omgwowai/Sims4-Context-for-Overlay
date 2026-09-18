@@ -21,7 +21,7 @@ class MemoryJournal:
     def __init__(self):
         self.records = []
 
-    def append(self, record):
+    def append(self, record, recoverable=False):
         self.records.append(copy.deepcopy(record))
         return len(self.records)
 

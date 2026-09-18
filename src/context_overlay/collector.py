@@ -1,6 +1,6 @@
 """Compose current state and history for a fixed target."""
 
-from context_overlay.model import copy_data, envelope, new_id
+from context_overlay.model import copy_data, envelope, new_id, entity
 from context_overlay.semanticizer import render
 
 
@@ -34,6 +34,8 @@ class Collector:
 
     def resolve_history(self, kind, identifier):
         reference = self.recorder.references.get("{}:{}".format(kind, identifier))
+        if reference is None and "{}:{}".format(kind, identifier) in self.recorder.index.entities:
+            return dict(entity(kind, identifier), identity_status="unverified")
         return copy_data(reference) if reference is not None else self.adapter.resolve(kind, identifier)
 
     def history_packet(self, page, representation="both", target=None):
@@ -44,7 +46,7 @@ class Collector:
         return self.render_packet(packet, representation)
 
     def query_history(self, target, representation="both", **filters):
-        page = self.recorder.query_history(target["key"], target=target, **filters)
+        page = self.recorder.query_history(target["key"] if target else None, target=target, **filters)
         try:
             return self.history_packet(page, representation)
         except Exception:
@@ -52,7 +54,7 @@ class Collector:
             raise
 
     def collect(self, target, fields=None, history_limit=50,
-                include_history=True, include_internal=False, representation="both"):
+                include_history=True, include_internal=False, representation="both", origins=None, producers=None):
         selected = PRESETS[target["kind"]] if fields is None else fields
         packet = envelope("context", self.recorder.session_id)
         packet.update({"request_id": new_id(), "target": target,
@@ -62,7 +64,8 @@ class Collector:
         for name in selected:
             packet["snapshot"][name] = self.adapter.read(target, name)
         packet["read_finished"] = self.adapter.clock()
-        packet["history"] = self.recorder.history(target["key"], history_limit, include_internal) if include_history else {
+        packet["history"] = self.recorder.history(target["key"], history_limit, include_internal,
+            origins=origins, producers=producers) if include_history else {
             "status": "not_requested", "events": []}
         packet["status"] = "partial" if has_unavailable(packet["snapshot"]) else "complete"
         if include_history and packet["history"]["status"] != "recording":

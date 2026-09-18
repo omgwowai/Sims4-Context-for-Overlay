@@ -1,7 +1,7 @@
 {
-  "api_version": "1.0.0",
-  "schema_version": "1",
-  "module_version": "0.5.0",
+  "api_version": "2.1.0",
+  "schema_version": "2",
+  "module_version": "0.9.0",
   "kind": "context",
   "session_id": "synthetic-example-run",
   "request_id": "synthetic-example-request",
@@ -22,7 +22,7 @@
   },
   "history": {"status": "not_requested", "events": []},
   "rendered": {
-    "language": "zh-CN", "rules_version": "0.5.0",
+    "language": "zh-CN", "rules_version": "0.9.0",
     "current": [
       {"field": "identity", "evidence_ref": "snapshot.identity", "text": "身份：示例角色"},
       {"field": "needs", "evidence_ref": "snapshot.needs", "text": "需求：饥饿值 25（游戏内部数值，不是百分比）"}

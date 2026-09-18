@@ -218,16 +218,25 @@ class NativeInspector:
     def open_object(self, obj):
         if not self.active or self.runtime.closed or not self.runtime.adapter.in_scope(obj):
             raise ValueError("Only instantiated entities on the current lot can be inspected")
+        self.open_target(self.runtime.adapter.reference(obj))
+
+    def open_target(self, target, external_history=False):
+        if not self.active or self.runtime.closed:
+            raise ValueError("Wait for a loaded lot")
         if self.session is not None:
             self.session.close()
-        target = self.runtime.adapter.reference(obj)
         self.session = InspectorSession(self.runtime, self.view, target, self.ticks_per_hour, self.error)
-        self.session.invoke(self.session.refresh)
+        if external_history:
+            self.session.origin = "external"
+            self.session.hours = None
+            self.session.invoke(self.session.new_history)
+        else:
+            self.session.invoke(self.session.refresh)
         self.log("INSPECTOR OPEN " + target["key"])
 
     def open(self, kind="sim", identifier="active"):
-        target = self.runtime.adapter.resolve(kind, identifier)
-        self.open_object(self.runtime.adapter.object_for(target))
+        target = self.runtime.collector.resolve_history(kind, identifier)
+        self.open_target(target)
 
     def close(self):
         self.active = False

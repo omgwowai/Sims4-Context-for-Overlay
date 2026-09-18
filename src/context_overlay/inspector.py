@@ -16,6 +16,8 @@ def short(value, length=140):
 
 
 def event_label(event):
+    if event["event_type"] == "external_event":
+        return short("外部 · " + event["producer"], 100)
     if event["event_type"] == "interaction":
         facts = event["facts"]
         name = display(facts.get("name") or facts.get("tuning_name"))
@@ -60,6 +62,7 @@ class InspectorSession:
         self.previous = []
         self.hours = 24
         self.event_type = None
+        self.origin = None
         self.internal = False
         self.closed = False
         self.generation = 0
@@ -147,7 +150,7 @@ class InspectorSession:
         evicted = history.get("coverage", {}).get("evicted_events", 0)
         if evicted:
             text += "\nFIFO 已淘汰 {} 条最早事件；当前查询只覆盖保留范围。".format(evicted)
-        return text + "\n仅本次运行、当前地块的已观测记录；没有记录不代表没有发生。"
+        return text + "\n本次游戏会话的已观测记录（含旅行前）；没有记录不代表没有发生。"
 
     def overview(self):
         if self.recent is None:
@@ -221,6 +224,8 @@ class InspectorSession:
     def event_details(self, event, back):
         explanation = explain_event(event)
         text = explanation["text"]
+        if "payload_json" in explanation:
+            text += "\n\nJSON 内容：\n" + explanation["payload_json"]
         if explanation.get("decision_details"):
             text += "\n\n" + explanation["decision_details"]
         if event.get("facts", {}).get("decision_event_id"):
@@ -233,6 +238,9 @@ class InspectorSession:
             game_time(event.get("ended_time")), game_time(event.get("last_observed_time")))
         text += "\n\n事件 ID：{}\n修订：{}\n持久化：{}（查询时状态）".format(
             event["event_id"], event["revision"], "已写入" if event.get("persistence") == "written" else "已接收，尚未确认写入")
+        if event.get("observation_scope"):
+            text += "\n记录时地块 ID：{}；第 {} 次地块加载".format(
+                event["observation_scope"].get("zone_id", "未知"), event.get("zone_visit", "未知"))
         if event.get("source"):
             text += "\n来源：{}\n证据：{}".format(event["source"], event.get("evidence_type", "未知"))
         if event.get("roles"):
@@ -246,9 +254,9 @@ class InspectorSession:
         self.text_page("事件详情", text, back)
 
     def filter_text(self):
-        return "{}；{}；{}".format("本次运行全部时间" if self.hours is None else "近 {} 游戏小时".format(self.hours),
-            {None: "全部事件类型", "interaction": "交互", "state_change": "状态变化", "game_event": "生活事件"}[self.event_type],
-            "含内部步骤" if self.internal else "仅主要事件")
+        return "{}；{}；{}；{}".format("本次运行全部时间" if self.hours is None else "近 {} 游戏小时".format(self.hours),
+            {None: "全部事件类型", "interaction": "交互", "state_change": "状态变化", "game_event": "生活事件", "external_event": "外部事件"}[self.event_type],
+            "含内部步骤" if self.internal else "仅主要事件", {None: "全部来源", "game": "游戏来源", "external": "外部来源"}[self.origin])
 
     def filters(self):
         self.release_query()
@@ -256,8 +264,10 @@ class InspectorSession:
         for hours in (1, 6, 24, None):
             label = "本次运行全部时间" if hours is None else "近 {} 游戏小时".format(hours)
             rows.append(row("时间：" + label, "选择后立即应用", lambda hours=hours: self.set_filter("hours", hours)))
-        for value, label in ((None, "全部"), ("interaction", "交互"), ("state_change", "状态变化"), ("game_event", "生活事件")):
+        for value, label in ((None, "全部"), ("interaction", "交互"), ("state_change", "状态变化"), ("game_event", "生活事件"), ("external_event", "外部事件")):
             rows.append(row("类型：" + label, "选择后立即应用", lambda value=value: self.set_filter("event_type", value)))
+        for value, label in ((None, "全部"), ("game", "游戏"), ("external", "外部")):
+            rows.append(row("来源：" + label, "选择后立即应用", lambda value=value: self.set_filter("origin", value)))
         rows.append(row("隐藏内部步骤" if self.internal else "显示内部步骤", "默认只看主要事件", lambda: self.set_filter("internal", not self.internal)))
         rows.append(row("应用当前筛选", "", self.new_history))
         self.show("历史筛选", self.filter_text() + "\n时间依据首次观测；查询过大时请缩短范围。", rows)
@@ -273,7 +283,7 @@ class InspectorSession:
             page_size=PAGE_SIZE, include_internal=self.internal, time_field="first_observed", order="desc",
             from_ticks=now - self.hours * self.ticks_per_hour if self.hours is not None else None,
             to_ticks=now + 1, event_types=[self.event_type] if self.event_type else None,
-            group_effects=not self.internal and self.event_type is None)
+            group_effects=not self.internal and self.event_type is None, origins=[self.origin] if self.origin else None)
         self.history_page()
 
     def move_page(self, backwards=False):
@@ -304,5 +314,7 @@ class InspectorSession:
         text = "{}\n第 {} 页，匹配 {} 条；按首次观测时间倒序。\n本查询固定事件版本，更新内容请刷新。\n\n{}".format(
             self.filter_text(), page["offset"] // PAGE_SIZE + 1, page["total_matches"], self.coverage(page))
         if not page["events"]:
-            text += "\n当前筛选下没有已观测事件。"
+            text += "\n当前筛选下没有已观测事件。这里只显示关联到此实体的记录（{}）。".format(self.target["key"])
+            if self.origin == "external":
+                text += "\n自检记录属于执行 co.api_test 时选中的 Sim，可用 co.api_inspect 直接查看。"
         self.show("历史事件", text, rows)

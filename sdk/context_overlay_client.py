@@ -1,13 +1,13 @@
-"""ContextOverlay Python 3.7 SDK 1.1.0; vendor under your own MOD namespace.
+"""ContextOverlay Python 3.7 SDK 2.1.0; vendor under your own MOD namespace.
 
 No game/provider imports occur until a method is called. The SDK negotiates
-API v1, not an exact MOD version. It never starts a game, thread, or network job.
+API v2, not an exact MOD version. It never starts a game, thread, or network job.
 """
 
 import importlib
 
 
-SDK_VERSION = "1.1.0"
+SDK_VERSION = "2.1.0"
 __all__ = ["SDK_VERSION", "ContextOverlayError", "Client", "HistoryQuery"]
 
 
@@ -39,14 +39,14 @@ class Client:
             except ImportError as exc:
                 code = {"context_overlay": "dependency_missing", "context_overlay.api": "incompatible_api"}.get(
                     getattr(exc, "name", None), "provider_error")
-                raise ContextOverlayError(code, "Install ContextOverlay with public API v1 (MOD 0.5.0 or later)",
+                raise ContextOverlayError(code, "Install ContextOverlay with public API v2 (MOD 0.8.0 or later)",
                                           {"reason": str(exc)}) from None
         try:
             info = provider.get_api_info()
             version = info["api_version"].split(".")
-            compatible = len(version) == 3 and all(part.isdigit() for part in version) and int(version[0]) == 1
-            if not compatible or info["schema_version"] != "1":
-                raise ContextOverlayError("incompatible_api", "This SDK requires API 1.x and data schema 1",
+            compatible = len(version) == 3 and all(part.isdigit() for part in version) and int(version[0]) == 2
+            if not compatible or info["schema_version"] != "2":
+                raise ContextOverlayError("incompatible_api", "This SDK requires API 2.x and data schema 2",
                                           {"api_version": info.get("api_version"), "schema_version": info.get("schema_version")})
         except ContextOverlayError:
             raise
@@ -57,9 +57,11 @@ class Client:
 
     def _call(self, method, *args, **kwargs):
         provider, info = self._api()
-        if method == "get_nearby_entities" and "context.nearby_entities" not in info.get("capabilities", []):
-            raise ContextOverlayError("capability_unavailable", "Provider does not support nearby queries",
-                                      {"required_capability": "context.nearby_entities",
+        required = {"get_nearby_entities": "context.nearby_entities", "append_event": "events.append",
+                    "read_event_changes": "history.changes"}.get(method)
+        if required and required not in info.get("capabilities", []):
+            raise ContextOverlayError("capability_unavailable", "Provider does not support " + method,
+                                      {"required_capability": required,
                                        "api_version": info.get("api_version")})
         try:
             return getattr(provider, method)(*args, **kwargs)
@@ -77,11 +79,23 @@ class Client:
     def get_status(self):
         return self._call("get_status")
 
+    def append_event(self, producer, payload, *, expected_session_id, entities=None, idempotency_key=None):
+        return self._call("append_event", producer, payload, expected_session_id=expected_session_id,
+                          entities=entities, idempotency_key=idempotency_key)
+
+    def read_event_changes(self, checkpoint=None, *, expected_session_id, **options):
+        return self._call("read_event_changes", checkpoint, expected_session_id=expected_session_id, **options)
+
+    def changes(self, checkpoint=None, *, expected_session_id, **options):
+        """One frozen change batch; save checkpoint after processing all pages."""
+        return HistoryQuery(self, self.read_event_changes(checkpoint, expected_session_id=expected_session_id,
+                                                         **options), options.get("representation", "both"))
+
     def get_context(self, kind="sim", identifier="active", **options):
         return self._call("get_context", kind, identifier, **options)
 
     def get_nearby_entities(self, identifier="active", **options):
-        """API 1.1 capability; older providers still support the existing methods."""
+        """Read nearby entities when the provider advertises that capability."""
         return self._call("get_nearby_entities", identifier, **options)
 
     def query_history(self, kind="sim", identifier="active", **options):
@@ -113,6 +127,7 @@ class HistoryQuery:
         self._session_id = packet["session_id"]
         self._release_cursor = packet["history"]["cursor"]
         self._next_cursor = packet["history"]["next_cursor"]
+        self._checkpoint = packet["history"].get("checkpoint")
         self._representation = representation
         self._closed = False
 
@@ -129,6 +144,11 @@ class HistoryQuery:
         return self._closed
 
     @property
+    def checkpoint(self):
+        """Available on the last change page; consumer decides when to commit."""
+        return self._checkpoint
+
+    @property
     def has_more(self):
         return not self._closed and self._next_cursor is not None
 
@@ -142,6 +162,7 @@ class HistoryQuery:
         # Update only after success; failed calls leave the same cursor retryable.
         self._packet = packet
         self._next_cursor = packet["history"]["next_cursor"]
+        self._checkpoint = packet["history"].get("checkpoint")
         return packet
 
     def close(self):

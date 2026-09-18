@@ -281,8 +281,7 @@ class AutonomyCapture:
             return
         data["selected"] = self.identity(interaction)
         data["actor"] = self.adapter.reference(interaction.sim)
-        data["interaction_event_id"] = "{}:interaction:{}:{}".format(
-            self.runtime.session_id, data["actor"]["id"], interaction.id)
+        data["interaction_event_id"] = self.runtime.recorder.interaction_event_id(data["actor"]["id"], interaction.id)
         technical = internal_interaction(getattr(interaction, "guid64", None), type(interaction).__name__)
         technical = technical or data["context_source"] in ("POSTURE_GRAPH", "SOCIAL_ADJUSTMENT", "GET_COMFORTABLE",
             "BODY_CANCEL_AOP", "CARRY_CANCEL_AOP", "VEHCILE_CANCEL_AOP")
@@ -454,14 +453,14 @@ class AutonomyCapture:
             return
         data["commit_time"] = when if when is not None else self.adapter.clock()
         data["retention_gate"] = gate
-        data["cache_origin"] = bool(getattr(interaction, "_context_overlay_autonomy_cached", None) == self.runtime.session_id)
+        data["cache_origin"] = bool(getattr(interaction, "_context_overlay_autonomy_cached", None) == self.runtime.recorder.interaction_namespace)
         data["cache_evidence"] = "cached_validation_call" if data["cache_origin"] else "no_cached_validation_observed"
         actor = data["actor"]
         event = self.recorder.fact("autonomy.decision", [actor], data, data["commit_time"],
             "AutonomyCapture." + gate, roles=[{"entity_key": actor["key"], "role": "actor", "basis": "selected_interaction_sim"}],
             tier=data["tier"], event_id=data["decision_id"], evidence="observed_selection_and_submission")
         if event:
-            interaction._context_overlay_autonomy_decision = (self.runtime.session_id, event["event_id"])
+            interaction._context_overlay_autonomy_decision = (self.runtime.recorder.interaction_namespace, event["event_id"])
             self.recorder.link_decision(data["interaction_event_id"], event["event_id"])
             self.counts["committed_" + gate] += 1
 
@@ -479,7 +478,7 @@ class AutonomyCapture:
     def cached(self, args, kwargs):
         interaction = arg(args, kwargs, 1, "interaction_to_run")
         if self.pending.get(interaction) is not None:
-            interaction._context_overlay_autonomy_cached = self.runtime.session_id
+            interaction._context_overlay_autonomy_cached = self.runtime.recorder.interaction_namespace
 
     def immediate_before(self, args, kwargs):
         element = args[0]
@@ -502,7 +501,7 @@ class AutonomyCapture:
         if interaction is None:
             return
         token = getattr(interaction, "_context_overlay_autonomy_decision", None)
-        if token and token[0] == self.runtime.session_id:
+        if token and token[0] == self.runtime.recorder.interaction_namespace:
             event = self.recorder.events.get(token[1])
             if event:
                 data = copy_data(event["payload"])

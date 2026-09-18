@@ -4,12 +4,14 @@ from collections import OrderedDict
 
 from context_overlay.history import DEFAULT_EVENT_CAPACITY, DEFAULT_MEMORY_BYTES, HistoryError, HistoryIndex, copy_events
 from context_overlay.model import copy_data, envelope, new_id, outcome, utc_now
-from context_overlay.storage import StorageError
+from context_overlay.storage import StorageError, StorageBusy
 
 
 class Recorder:
     def __init__(self, journal, session_id=None, capacity=DEFAULT_EVENT_CAPACITY, enabled=True,
                  memory_bytes=DEFAULT_MEMORY_BYTES, **query_options):
+        external_rate = query_options.pop("external_rate", 20)
+        external_burst = query_options.pop("external_burst", 40)
         self.journal = journal
         self.session_id = session_id or new_id()
         self.capacity = capacity
@@ -19,11 +21,16 @@ class Recorder:
         self.index = HistoryIndex(self.session_id, capacity, memory_bytes, **query_options)
         self.events = self.index.events
         self.started_at = utc_now()
+        self.observation_scope = None
+        self.zone_visit = 0
+        self.interaction_namespace = self.session_id
         self._scopes = {}
         self._relationship_bits = {}
         self._relationship_event_keys = {}
         self._retired_interactions = OrderedDict()
         self.references = {}
+        from context_overlay.external import ExternalWriter
+        self.external = ExternalWriter(self, external_rate, external_burst)
 
     def fail(self, message):
         self.paused = True
@@ -36,8 +43,9 @@ class Recorder:
         return {"state": "disabled" if not self.enabled else ("failed" if self.paused else "recording"),
                 "error": self.error, "session_id": self.session_id,
                 "started_at": self.started_at, "retained_events": len(self.events),
+                "zone_visit": self.zone_visit, "observation_scope": copy_data(self.observation_scope),
                 "evicted_events": self.index.evicted, "persistence": persistence,
-                "history_index": self.index.status()}
+                "history_index": self.index.status(), "external": self.external.status()}
 
     def _write(self, record):
         if not self.enabled or self.paused:
@@ -54,9 +62,12 @@ class Recorder:
                        "game_time": game_time, "data": copy_data(data)})
         return self._write(record)
 
-    def _save(self, event):
+    def _save(self, event, external=False):
         if not self.enabled or self.paused:
             return None
+        if self.observation_scope is not None:
+            event.setdefault("observation_scope", copy_data(self.observation_scope))
+            event.setdefault("zone_visit", self.zone_visit)
         actor = (event.get("cause") or {}).get("actor")
         if actor:
             if actor["key"] not in event["entities"]:
@@ -68,6 +79,8 @@ class Recorder:
         try:
             event, charge = self.index.prepare(event)
         except HistoryError as exc:
+            if external:
+                raise
             self.note("recording_error", {"error": str(exc)})
             self.fail(exc)
             return None
@@ -76,7 +89,17 @@ class Recorder:
         eviction = self.index.eviction_for(event["event_id"])
         if eviction:
             record["evicted_event_ids"] = [eviction]
-        sequence = self._write(record)
+        if external:
+            from context_overlay.external import ExternalError
+            try:
+                sequence = self.journal.append(record, recoverable=True)
+            except StorageBusy as exc:
+                raise ExternalError("write_busy", str(exc), {"retry_after_seconds": 0.25}) from None
+            except StorageError as exc:
+                self.fail(exc)
+                raise ExternalError("recorder_failed", str(exc)) from None
+        else:
+            sequence = self._write(record)
         if sequence is None:
             return None
         discarded = self.index.publish(event, sequence, charge)
@@ -96,7 +119,8 @@ class Recorder:
         facts = event.get("facts", {})
         refs.extend(item for item in (facts.get("actor"), facts.get("target")) if item)
         refs.extend(facts.get("participants", []))
-        self.references.update(copy_data({reference["key"]: reference for reference in refs}))
+        if not external:
+            self.references.update(copy_data({reference["key"]: reference for reference in refs}))
         return event
 
     def fact(self, category, participants, payload, game_time, source, roles=None,
@@ -127,12 +151,34 @@ class Recorder:
         event["revision"] += 1
         return self._save(event)
 
+    def interaction_event_id(self, actor_id, interaction_id):
+        return "{}:interaction:{}:{}".format(self.interaction_namespace, actor_id, interaction_id)
+
+    def begin_zone(self, scope):
+        self.zone_visit += 1
+        self.observation_scope = copy_data(scope)
+        # EA instance IDs can be reused after a zone is unloaded. Preserve the
+        # recording session, but never revise an earlier visit's interaction.
+        self.interaction_namespace = self.session_id + ":visit:" + str(self.zone_visit)
+        self._retired_interactions.clear()
+        self._relationship_bits.clear()
+        self._relationship_event_keys.clear()
+
+    def end_zone(self, game_time):
+        for key, scope in list(self._scopes.items()):
+            if scope.get("currently_observed"):
+                self.leave(self.references[key], game_time)
+                # Observation has stopped even if writing the boundary fails.
+                scope = self._scopes[key]
+                scope["currently_observed"] = False
+                scope["last_exit"] = copy_data(game_time)
+
     def interaction(self, phase, facts, game_time, source):
         if not self.enabled or self.paused:
             return None
         actor = facts["actor"]
         interaction_id = str(facts["interaction_id"])
-        event_id = "{}:interaction:{}:{}".format(self.session_id, actor["id"], interaction_id)
+        event_id = self.interaction_event_id(actor["id"], interaction_id)
         if event_id in self._retired_interactions:
             return None
         previous = self.events.get(event_id)
@@ -261,23 +307,30 @@ class Recorder:
                     del self._relationship_bits[identity]
         self._scope_change(target, game_time, False)
 
-    def history(self, entity_key, limit=50, include_internal=False, group_effects=False):
+    def history(self, entity_key, limit=50, include_internal=False, group_effects=False, origins=None, producers=None):
         if not 1 <= limit <= 500:
             raise ValueError("History limit must be between 1 and 500")
         state = self.status()
-        selected, truncated = self.index.recent(entity_key, limit, include_internal, group_effects)
+        selected, truncated = self.index.recent(entity_key, limit, include_internal, group_effects, origins, producers)
         records = copy_events(selected, state["persistence"]["durable_sequence"])
         return {"status": state["state"], "events": records, "coverage": state,
                 "target_observation": copy_data(self._scopes.get(entity_key, {"currently_observed": False, "status": "not_observed"})),
                 "limit": limit, "truncated": truncated or self.index.evicted > 0,
-                "scope": "current_session_recent_cache", "include_internal": include_internal}
+                "scope": "current_session_recent_cache", "include_internal": include_internal,
+                "origins": origins, "producers": producers}
 
     def query_history(self, entity_key, target=None, **filters):
         state = self.status()
         metadata = {"status": state["state"], "coverage": state,
-                    "target": target or {"key": entity_key},
+                    "target": target or ({"key": entity_key} if entity_key else None),
                     "target_observation": self._scopes.get(entity_key, {"currently_observed": False, "status": "not_observed"})}
         return self.index.query(entity_key, metadata, **filters)
+
+    def read_changes(self, **options):
+        state = self.status()
+        if state["state"] != "recording":
+            raise HistoryError("recorder_disabled" if not self.enabled else "recorder_failed", "Cannot advance changes while recorder is unavailable")
+        return self.index.changes({"status": state["state"], "coverage": state}, **options)
 
     def history_page(self, cursor):
         return self.index.next_page(cursor)

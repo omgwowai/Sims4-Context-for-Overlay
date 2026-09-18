@@ -3,7 +3,7 @@
 Change the SDK import to your own vendored package when distributing your MOD.
 """
 
-from context_overlay_client import Client
+from my_overlay_mod.vendor.context_overlay_client import Client
 
 
 client = Client()

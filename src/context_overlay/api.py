@@ -1,4 +1,4 @@
-"""Public ContextOverlay API v1. Importing this module never starts the MOD.
+"""Public ContextOverlay API v2. Importing this module never starts the MOD.
 
 Only get_api_info is independent of the simulation thread. All returned data
 is detached and JSON-safe. Runtime objects and recorder internals stay private.
@@ -11,14 +11,16 @@ import threading
 from context_overlay import SCHEMA_VERSION, VERSION
 from context_overlay.collector import FIELDS, PRESETS
 from context_overlay.history import HistoryError
+from context_overlay.external import ExternalError, LIMITS
 from context_overlay.model import copy_data
 from context_overlay.localization import FORMAT_PROFILE
 from context_overlay.nearby import MAX_RESULTS, MAX_SCANNED, NearbyError, validate as validate_nearby
 
 
-API_VERSION = "1.1.0"
+API_VERSION = "2.1.0"
 __all__ = ["API_VERSION", "APIError", "get_api_info", "get_status", "get_context",
-           "query_history", "get_history_page", "close_history", "get_nearby_entities"]
+           "query_history", "get_history_page", "close_history", "get_nearby_entities",
+           "append_event", "read_event_changes"]
 
 
 class APIError(RuntimeError):
@@ -46,6 +48,8 @@ def _endpoint(function):
         except APIError:
             raise
         except NearbyError as exc:
+            raise APIError(exc.code, str(exc), exc.details) from None
+        except ExternalError as exc:
             raise APIError(exc.code, str(exc), exc.details) from None
         except HistoryError as exc:
             raise APIError(exc.code, str(exc)) from None
@@ -129,7 +133,14 @@ def get_api_info():
     return {"api_version": API_VERSION, "module_version": VERSION, "schema_version": SCHEMA_VERSION,
             "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
                              "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
-                             "context.nearby_entities", "text.resource_details", "events.autonomy_decision"],
+                             "context.nearby_entities", "text.resource_details", "events.autonomy_decision",
+                             "events.append", "history.sources", "history.global", "history.changes", "history.travel"],
+            "session_lifecycle": {"travel": "preserved", "reload": "new_session", "restart": "new_session",
+                                  "loading": "temporarily_unavailable", "query_ttl": "wall_clock"},
+            "external_events": dict(LIMITS, payload="opaque_json", writes="append_only",
+                                    time_basis="received", default_origin_filter="all"),
+            "changes": {"revision_policy": "latest_per_event", "checkpoint_scope": "current_session",
+                        "gap_detection": "conservative_all_sources"},
             "autonomy": {"category": "autonomy.decision", "default_top_n_per_stage": 5,
                          "retention_gates": ["queue_success", "immediate_entered"],
                          "probabilities": "original_complete_stage_pool", "runtime_status": "autonomy"},
@@ -141,7 +152,7 @@ def get_api_info():
             "nearby": {"kinds": ["sim", "object"], "metrics": ["horizontal", "euclidean"],
                        "max_results": MAX_RESULTS, "max_scanned": MAX_SCANNED,
                        "max_radius": 1000000, "unit": "game_world_units", "room_filter": True},
-            "event_types": ["interaction", "state_change", "game_event"], "event_categories": list(LABELS),
+            "event_types": ["interaction", "state_change", "game_event", "external_event"], "event_categories": list(LABELS),
             "retention_policy": "fifo_first_accepted",
             "context_fields": list(FIELDS), "default_fields": copy_data(PRESETS),
             "max_history_page_size": 500, "max_context_history_limit": 500,
@@ -173,12 +184,15 @@ def get_status():
 
 @_endpoint
 def get_context(kind="sim", identifier="active", *, fields=None, include_history=True,
-                history_limit=15, include_internal=False, representation="both", expected_session_id=None):
+                history_limit=15, include_internal=False, representation="both", expected_session_id=None,
+                origins=None, producers=None):
     """Read selected fields and bounded recent history without writing a file."""
     identifier = _identifier(kind, identifier)
     _boolean(include_history, "include_history")
     _boolean(include_internal, "include_internal")
     _representation(representation)
+    from context_overlay.history import HistoryIndex
+    HistoryIndex.source_filters(origins, producers)
     if isinstance(history_limit, bool) or not isinstance(history_limit, int) or not 1 <= history_limit <= 500:
         raise APIError("invalid_request", "history_limit must be an integer between 1 and 500")
     selected = PRESETS[kind] if fields is None else fields
@@ -192,7 +206,7 @@ def get_context(kind="sim", identifier="active", *, fields=None, include_history
     target = _resolve(runtime, kind, identifier)
     packet = runtime.collector.collect(target, fields=selected, history_limit=history_limit,
                                        include_history=include_history, include_internal=include_internal,
-                                       representation=representation)
+                                       representation=representation, origins=origins, producers=producers)
     packet["api_version"] = API_VERSION
     return copy_data(packet)
 
@@ -217,16 +231,49 @@ def get_nearby_entities(identifier="active", *, kinds=("sim",), radius=None,
 def query_history(kind="sim", identifier="active", *, page_size=15, include_internal=False,
                   time_field="first_observed", from_ticks=None, to_ticks=None, event_types=None,
                   fields=None, outcomes=None, tuning_ids=None, order="desc", representation="both",
-                  expected_session_id=None, group_effects=False):
+                  expected_session_id=None, group_effects=False, origins=None, producers=None):
     """Create a bounded snapshot; its cursors must be closed or allowed to expire."""
-    identifier = _identifier(kind, identifier)
+    if kind is not None or identifier is not None:
+        identifier = _identifier(kind, identifier)
     _representation(representation)
     runtime = _current(expected_session_id)
-    target = _resolve(runtime, kind, identifier, history=True)
+    target = _resolve(runtime, kind, identifier, history=True) if kind is not None else None
     packet = runtime.collector.query_history(target, representation, page_size=page_size,
         include_internal=include_internal, time_field=time_field, from_ticks=from_ticks, to_ticks=to_ticks,
         event_types=event_types, fields=fields, outcomes=outcomes, tuning_ids=tuning_ids, order=order,
-        group_effects=group_effects)
+        group_effects=group_effects, origins=origins, producers=producers)
+    return dict(packet, api_version=API_VERSION)
+
+
+@_endpoint
+def append_event(producer, payload, *, entities=None, idempotency_key=None, expected_session_id):
+    """Append opaque JSON on the simulation thread; retries may reuse a key."""
+    _session(expected_session_id, required=True)
+    runtime = _current(expected_session_id)
+    result = runtime.recorder.external.append(producer, payload, entities, idempotency_key, runtime.adapter.clock())
+    return dict(result, api_version=API_VERSION, schema_version=SCHEMA_VERSION, module_version=VERSION)
+
+
+@_endpoint
+def read_event_changes(checkpoint=None, *, start=None, kind=None, identifier=None, origins=None,
+                       producers=None, include_internal=None, page_size=50, representation="both", expected_session_id):
+    """Freeze latest changed revisions; commit checkpoint only after the last page."""
+    _session(expected_session_id, required=True)
+    _representation(representation)
+    if checkpoint is not None and any(v is not None for v in (start, kind, identifier, origins, producers, include_internal)):
+        raise APIError("invalid_request", "Checkpoint binds the initialization filters; omit them on continuation")
+    if kind is not None or identifier is not None:
+        identifier = _identifier(kind, identifier)
+    runtime = _current(expected_session_id)
+    target = _resolve(runtime, kind, identifier, history=True) if kind is not None else None
+    page = runtime.recorder.read_changes(checkpoint=checkpoint, start=start,
+        entity_key=target["key"] if target else None, origins=origins, producers=producers,
+        include_internal=include_internal, page_size=page_size)
+    try:
+        packet = runtime.collector.history_packet(page, representation)
+    except Exception:
+        runtime.recorder.close_query(page["cursor"])
+        raise
     return dict(packet, api_version=API_VERSION)
 
 
@@ -247,7 +294,12 @@ def close_history(cursor, *, expected_session_id):
     if not isinstance(cursor, str) or not cursor or len(cursor) > 200:
         raise APIError("invalid_cursor", "Expected an opaque history cursor")
     try:
-        runtime = _current(expected_session_id)
+        runtime, state = _provider_state()
+        if not (runtime is not None and runtime.session_id == expected_session_id and
+                state == "closed" and getattr(runtime, "history_suspended", False)):
+            runtime = _current(expected_session_id)
+        # Closing a retained query during travel touches no game objects and
+        # must actually release it, even though reads/writes await the new lot.
         runtime.recorder.close_query(cursor)
     except (APIError, HistoryError) as exc:
         if exc.code not in ("cursor_expired", "session_changed", "session_closed", "not_ready"):

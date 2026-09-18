@@ -11,11 +11,11 @@ import json
 
 from .filter_events import actor, compact_size, filter_events, identity, ref, target, tick
 from .experience_policy import (CATALOG, RESOURCE_SHA256, USES, classify, compact, family,
-                               game_event, kind, label, resource)
+                               game_event, importance, kind, label, resource)
 from .experience_digest import digest
 
 
-POLICY_VERSION = "experience_view_v1_2"
+POLICY_VERSION = "experience_view_v1_3"
 
 
 def uid(prefix, event):
@@ -99,6 +99,9 @@ class Builder:
         self.by_id = {e["event_id"]: e for e in events}
         self.alias = {e["event_id"]: "e" + str(i + 1) for i, e in enumerate(events)}
         self.semantic = {e["event_id"]: classify(e, game_version) for e in events}
+        self.important = {e["event_id"]: importance(e, game_version) for e in events if importance(e, game_version)}
+        for identifier in self.important:
+            self.omitted.pop(identifier, None)
         self.selected = {e["event_id"] for e in events if entity_key is None or entity_key in e.get("entities", [])}
         self.units, self.sources, self.routes = {}, defaultdict(set), defaultdict(set)
         self.dispositions, self.link_audit = {}, []
@@ -108,6 +111,7 @@ class Builder:
         for event in self.interactions.values():
             self.instances[(event.get("zone_visit"), actor(event), event.get("facts", {}).get("interaction_id"))].append(event)
         self.membership, self.parent, self.provider_choices = {}, {}, defaultdict(list)
+        self.association_issues = defaultdict(set)
 
     def evidence(self, event):
         return self.alias[event["event_id"]]
@@ -178,12 +182,16 @@ class Builder:
                     or child["facts"].get("decision_event_id") != event["event_id"]
                     or identity(child["facts"]) != identity((payload.get("selected") or {}).get("action") or {})):
                 continue
-            for stage in payload.get("stages", []):
-                if stage.get("kind") != "mixer_provider":
-                    continue
+            stages = [stage for stage in payload.get("stages", []) if stage.get("kind") == "mixer_provider"]
+            if len(stages) > 1:
+                self.association_issues[child["event_id"]].add("ambiguous_provider_stages")
+                continue
+            for stage in stages:
                 provider = self.provider(event, stage)
                 if provider is not None and provider["event_id"] != child["event_id"]:
                     providers[child["event_id"]] = provider["event_id"]
+                else:
+                    self.association_issues[child["event_id"]].add("provider_identity_or_interval_invalid")
 
         merge_to = {}
         for event in self.interactions.values():
@@ -197,9 +205,13 @@ class Builder:
                     continue
                 if basis == "recorded_mixer_provider_instance" and tick(parent.get("ended_time")) is not None:
                     if tick(event.get("ended_time")) is None or tick(event["ended_time"]) > tick(parent["ended_time"]):
+                        self.association_issues[identifier].add("child_outside_provider_execution")
                         continue
                 same_family = family(event, self.game_version) is not None and family(event, self.game_version) == family(parent, self.game_version)
                 phase = semantic in ("activity_phase", "micro") and same_family
+                if phase and basis == "recorded_mixer_provider_instance" and target(event) is not None and target(event) != target(parent):
+                    self.association_issues[identifier].add("phase_target_disagrees_with_provider")
+                    continue
                 topic = (semantic in ("social_content", "conversation") and self.semantic[parent_id] == "conversation"
                          and basis == "recorded_mixer_provider_instance")
                 if phase or topic:
@@ -207,6 +219,7 @@ class Builder:
                     self.link_audit.append({"child": self.evidence(event), "parent": self.evidence(parent),
                                             "basis": basis, "merged": True})
                     break
+                self.association_issues[identifier].add("not_a_compatible_activity_phase")
 
         seeds = {identifier for identifier in self.interactions
                  if self.semantic[identifier] in ("action", "social_content", "conversation")}
@@ -219,6 +232,8 @@ class Builder:
             self.membership[identifier] = self.add("a", event, "activities", category=self.semantic[identifier],
                 time=event.get("started_time") or event.get("first_observed_time"),
                 **occurrence(event), step_count=1, continuation_step_count=1, topics=[], effects=[], decisions=[], product_links=[])["id"]
+            if identifier in self.important:
+                self.units[self.membership[identifier]]["importance"] = self.important[identifier]
 
         for identifier, event in self.interactions.items():
             cursor, seen = identifier, set()
@@ -441,8 +456,13 @@ class Builder:
                     self.dispositions[identifier] = "semantic_detail:" + semantic
                     continue
             if kind(event) == "interaction":
-                self.add("r", event, "details" if use == "merge" else "review", category=semantic, time=event.get("started_time") or event.get("first_observed_time"),
-                         reason="activity_association_or_semantics_unresolved", **occurrence(event))
+                reasons = ["classification_missing"] if use == "review" else ["association_missing"]
+                if use == "omit" and identifier in protected:
+                    reasons.append("protected_detail")
+                self.add("r", event, "details" if use in ("merge", "omit") else "review", category=semantic, time=event.get("started_time") or event.get("first_observed_time"),
+                         reason=reasons[0], review_reasons=reasons,
+                         association_issues=sorted(self.association_issues[identifier]) or ["no_verified_activity_root"],
+                         **occurrence(event))
                 continue
             lane = "background" if use == "background" else "facts" if use in ("core", "context", "merge") else "review"
             if use == "merge" and root is None:
@@ -471,6 +491,9 @@ class Builder:
             self.attach(unit, event, "effects")
             if root is None and (event.get("cause") or {}).get("event_id"):
                 unit["unresolved_cause_event_id"] = event["cause"]["event_id"]
+                unit.setdefault("review_reasons", []).append("association_missing")
+            if lane == "review":
+                unit.setdefault("review_reasons", []).append("classification_missing" if use == "review" else "unsupported_observation_shape")
 
     def link_products(self):
         products = defaultdict(list)
@@ -534,6 +557,10 @@ class Builder:
                 continue
             row = dict(ref(event), semantic_role=self.semantic[identifier], units=memberships[identifier],
                        outside_entity_index=identifier not in self.selected)
+            if resource(event):
+                row["resource_identity"] = [kind(event)] + list(identity(resource(event)))
+            if identifier in self.important:
+                row["importance"] = self.important[identifier]
             if not row["units"]:
                 row["disposition"] = self.dispositions.get(identifier, "unresolved")
             if kind(event) == "interaction" and game_event(event):

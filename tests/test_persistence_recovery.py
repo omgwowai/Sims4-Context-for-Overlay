@@ -176,6 +176,13 @@ class LayerArtifacts(unittest.TestCase):
             bundle = json.loads((folder / "details.bundle.json").read_text(encoding="utf-8"))
             recap = json.loads((folder / "recap.json").read_text(encoding="utf-8"))
             self.assertEqual(bundle["recap"], recap)
+            quality = json.loads((folder / "quality.json").read_text(encoding="utf-8"))
+            self.assertEqual(quality["snapshot_id"], bundle["snapshot_id"])
+            self.assertEqual(quality["totals"]["selected_events"], 1)
+            self.assertTrue(all(quality["checks"].values()))
+            aggregate = json.loads((dest / "quality.json").read_text(encoding="utf-8"))
+            self.assertEqual(aggregate["record_counts"], {"event_revisions": 2, "observations": 2})
+            self.assertIn(person["folder"] + "/quality.md", manifest["files"])
             self.assertEqual(bundle["manifest"]["source_sha256"], hashlib.sha256(writer.path.read_bytes()).hexdigest())
             self.assertIn("采集正常结束", (folder / "recap.md").read_text(encoding="utf-8"))
             self.assertEqual(len((dest / "events.jsonl").read_text().splitlines()), 1)
@@ -183,6 +190,11 @@ class LayerArtifacts(unittest.TestCase):
             with self.assertRaises(ViewError):
                 export_layers(root, "layers", writer.status(), {target["key"]: target["name"]},
                               {"capture_complete": False}, "1.126.73.1030", lambda: None, output_limit=1)
+            self.assertEqual((root / "views/latest.json").read_bytes(), prior)
+            with patch("context_overlay.run_artifacts.quality_report", side_effect=ValueError("accounting failed")):
+                with self.assertRaises(ValueError):
+                    export_layers(root, "layers", writer.status(), {target["key"]: target["name"]},
+                                  {"capture_complete": True}, "1.126.73.1030", lambda: None)
             self.assertEqual((root / "views/latest.json").read_bytes(), prior)
             self.assertFalse(list((root / "views").glob(".pending-*")))
             exporter = RunArtifacts(root, "layers", "1.126.73.1030", 128 * 1024 * 1024, 512 * 1024 * 1024)

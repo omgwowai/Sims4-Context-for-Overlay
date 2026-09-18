@@ -17,7 +17,10 @@ from .experience_view import build_experiences
 from .filter_events import tick
 
 
-VERSION = "experience_recap_v1_1"
+VERSION = "experience_recap_v1_2"
+REVIEW_REASONS = {"classification_missing": "分类待补充", "name_unresolved": "名称或参数未解析",
+                  "association_missing": "所属活动未关联", "protected_detail": "因关联后果保留的执行细节",
+                  "unsupported_observation_shape": "观测结构待核查"}
 LANES = ("activities", "facts", "states", "decisions", "background", "details", "review", "external")
 BOUNDARIES = {"paired_observations": "起止已配对", "end_not_observed": "未见结束",
               "start_not_observed": "未见开始", "discontinuous_observations": "观测不连续",
@@ -68,7 +71,7 @@ def value_text(value, labels=None):
         if "name" in value or "text" in value or "tuning_name" in value or ("id" in value and "kind" in value):
             return (labels or LabelRenderer())(value)
         fields = {"_known_stats": "已知技能", "_known_traits": "已知特征", "mood": "情绪", "intensity": "强度"}
-        return "；".join("{}={}".format(fields.get(k, k), value_text(v, labels)) for k, v in value.items()) or "空"
+        return "；".join("{}={}".format(fields.get(k, k), value_text(value[k], labels)) for k in sorted(value)) or "空"
     if isinstance(value, list):
         return "、".join(value_text(v, labels) for v in value) or "空"
     return str(value)
@@ -207,6 +210,8 @@ def build_recap(loaded, entity_key, game_version=None):
         row = dict(activity_timing(unit), ref=refs[unit["id"]],
                    action=labels(unit["action"], "interaction", unit.get("action_tuning")),
                    execution=execution(unit), roles=participants(unit))
+        if unit.get("importance"):
+            row["importance"] = unit["importance"]
         targets = [r["entity_key"] for r in unit["roles"] if r["role"] == "target" and not r["entity_key"].startswith("sim:")]
         if targets:
             row["target"] = [" / ".join(names.get(k, {}).get("names_observed", [])) or k for k in targets]
@@ -270,10 +275,14 @@ def build_recap(loaded, entity_key, game_version=None):
     packet["states"] = list(groups.values())
     for unit in view["review"]:
         labels.unit = unit["id"]
-        ledger[unit["id"]].update(placement="review", reason="semantics_or_association_unresolved")
+        reasons = unit.setdefault("review_reasons", ["classification_missing"])
+        ledger[unit["id"]].update(placement="review", reason=reasons[0])
         if "action" in unit:
             packet["review_actions"].append({"ref": refs[unit["id"]], "time": at(unit["time"]),
-                "action": labels(unit["action"], "interaction", unit.get("action_tuning")), "execution": execution(unit), "roles": participants(unit), "status": "待核查，不作已确认经历"})
+                "action": labels(unit["action"], "interaction", unit.get("action_tuning")), "execution": execution(unit),
+                "roles": participants(unit), "timing": activity_timing(unit), "zone_visit": unit["zone_visit"],
+                "resource": [unit["action"].get("id"), unit.get("action_tuning")],
+                "review_reasons": reasons, "status": "执行情况按记录保留；分类、名称或关联仍待核查"})
     for unit in view["external"]:
         ledger[unit["id"]].update(placement="external", reason="not_game_fact")
     packet["coverage"] = {"review": dict(sorted(Counter(u["category"] for u in view["review"]).items())),
@@ -281,6 +290,14 @@ def build_recap(loaded, entity_key, game_version=None):
                           "external": len(view["external"]), "note": "待核查未清空；保留全部已组织活动，常规数值和评分按需展开"}
     packet["people"] = list(people.values())
     view["audit"]["labels"] = labels.audit
+    for issue in labels.audit:
+        if issue["basis"] in ("unresolved", "reviewed_partial"):
+            reasons = units[issue["unit"]].setdefault("review_reasons", [])
+            if "name_unresolved" not in reasons:
+                reasons.append("name_unresolved")
+    for key, unit in units.items():
+        if unit.get("review_reasons"):
+            ledger[key]["review_reasons"] = unit["review_reasons"]
     routes["@labels"] = sorted({r["unit"] for r in labels.audit})
     packet["name_quality"] = {
         "reviewed": [ref for uid, ref in refs.items() if any(r["unit"] == uid and r["basis"].startswith("reviewed") for r in labels.audit)],
@@ -295,6 +312,7 @@ def build_recap(loaded, entity_key, game_version=None):
     bundle = {"manifest": {"recap_version": VERSION, "view_version": view["policy_version"],
         "resource_policy": view["resource_policy"], "implementation_sha256": implementation,
         "source_sha256": loaded["sha256"], "session_id": loaded["session_id"], "entity_key": entity_key,
+        "selected_events": view["metrics"]["selected_events"],
         "latest_events_sha256": digest(loaded["events"]), "observed_event_bounds": bounds,
         "bounds_basis": "min_max_event_observations_not_calendar_or_continuous_capture"},
         "recap": packet, "units": units, "routes": routes, "ledger": ledger, "audit": view["audit"]}
@@ -354,6 +372,16 @@ def resolve(bundle, snapshot_id, entry, facet="units", offset=0, limit=20, loade
     return copy.deepcopy({"snapshot_id": snapshot_id, "ref": entry, "facet": facet, "total": total,
                           "offset": offset, "next_offset": offset + limit if offset + limit < total else None,
                           "items": rows[offset:offset + limit]})
+
+
+def review_groups(packet):
+    """Presentation only: every reference still points to its original occurrence."""
+    groups = {}
+    for row in packet["review_actions"]:
+        key = packed([row.get("review_reasons", ["classification_missing"]), row.get("resource", row["ref"]),
+                      row.get("roles"), row.get("zone_visit")], True)
+        groups.setdefault(key, []).append(row)
+    return list(groups.values())
 
 
 def markdown(bundle):
@@ -422,6 +450,14 @@ def markdown(bundle):
     quality = packet.get("name_quality", {})
     lines += ["名称使用中文释义的条目：{}。仍有名称或参数缺口：{}。释义不是游戏显示名；用条目引用及 `labels` 查询原名、解析状态和资源依据。".format(
         ", ".join(quality.get("reviewed", [])) or "无", ", ".join(quality.get("unresolved", [])) or "无"), ""]
-    lines += ["- [{}] {} · {} · {} · {}".format(r["ref"], r["time"], esc(roles(r)), esc(r["action"]), esc(r["execution"])) for r in packet["review_actions"]]
-    lines += ["", "快照：`{}`。使用同一 bundle 的条目引用查询详情；`@review`、`@background`、`@decisions` 可分页展开，`@audit` 查询全部证据。".format(bundle["snapshot_id"]), ""]
+    lines += ["按原因、资源、人物角色和到访分组，仅折叠阅读展示；各次执行与引用保持独立。", ""]
+    for group in review_groups(packet):
+        first = group[0]
+        reasons = "、".join(REVIEW_REASONS.get(code, code) for code in first.get("review_reasons", ["classification_missing"]))
+        lines += ["<details>", "<summary>{} · {} · {} · {} 次</summary>".format(
+            esc(reasons), esc(roles(first)), esc(first["action"]), len(group)), ""]
+        lines += ["- [{}] {} · {} · {}".format(r["ref"], timing(r["timing"]) if r.get("timing") else r["time"],
+                  esc(r["action"]), esc(r["execution"])) for r in group]
+        lines += ["", "</details>", ""]
+    lines += ["", "快照：`{}`。使用同一 bundle 的条目引用查询详情；`@review`、`@details`、`@background`、`@decisions` 可分页展开，`@audit` 查询全部证据。".format(bundle["snapshot_id"]), ""]
     return "\n".join(lines)

@@ -21,7 +21,7 @@ from context_overlay.api import API_VERSION
 DOCS = ("docs/quickstart.md", "docs/install.md", "docs/public-api-v2.md", "docs/public-api-v1.md",
         "docs/architecture.md", "docs/validation.md", "docs/development.md", "docs/future.md",
         "docs/experience-recap-plan.md", "docs/experience-recap-debug.md", "docs/event-views.md",
-        "docs/event-views-validation.md", "docs/run-output.md")
+        "docs/event-views-validation.md", "docs/run-output.md", "docs/event-quality.md")
 
 
 def check_links(contents):

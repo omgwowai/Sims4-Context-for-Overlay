@@ -19,10 +19,14 @@
 | `views/snapshot-…/sim-<ID>/organized.jsonl` | 人物组织单元及未归入单元的 standalone 来源 |
 | `views/snapshot-…/sim-<ID>/recap.md`、`recap.json` | 同一份短版回顾的可读形式与结构化形式 |
 | `views/snapshot-…/sim-<ID>/details.bundle.json` | 组织详情、名称依据、阅读去向和引用回查 |
+| `views/snapshot-…/quality.json` | 全局记录数量、来源和每位人物的对账摘要（0.10.2 起） |
+| `views/snapshot-…/sim-<ID>/quality.md`、`quality.json` | 各层计数、每个源事件的去向、问题原因和重要事件保留检查（0.10.2 起） |
 
 先查看 `view-export-status.json`，成功时按 `views/latest.json` 的 index 打开 README。latest 只在整份快照写完后更新；新一轮生成失败时仍保留上一次成功结果，不能仅凭旧 latest 文件推断本次生成成功。保留最近两份成功快照，原始 journal 不受清理影响。
 
 默认人物范围是本次运行中观察过的当前家庭成员；全局 events 文件仍包含全场已记录事件。没有被记录的家庭成员在 manifest 中标为 `entity_not_recorded`。角色关联不等于参与或知情。
+
+0.10.2 新增的对账文件参与同一次原子发布和文件哈希校验；旧版快照不会自动改写。待核查动作按原因分组阅读，原始单条引用保持独立。规则与同源版本比较命令见[事件整理对账](event-quality.md)。
 
 ## 何时生成
 

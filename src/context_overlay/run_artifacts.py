@@ -7,8 +7,9 @@ import shutil
 import threading
 import time
 
-from context_overlay.event_views import CheckedList
+from context_overlay.event_views import BOUNDARIES, CheckedList
 from context_overlay.experience.experience_recap import build_recap, markdown
+from context_overlay.experience.experience_quality import quality_report, quality_markdown
 from context_overlay.model import copy_data, new_id, utc_now
 from context_overlay.storage import atomic_json
 from context_overlay.view_source import ViewError, packed, read_prefix
@@ -54,7 +55,7 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
         write("events.jsonl", (packed(events[key]) + b"\n" for key in events))
         loaded = {"complete": True, "event_scope": "all", "session_id": session_id,
                   "sha256": data["sha256"], "events": CheckedList(events.values(), checkpoint)}
-        people = []
+        people, quality_people = [], []
         for key, name in sorted(targets.items()):
             checkpoint()
             identifier = key.partition(":")[2]
@@ -67,6 +68,11 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
                 row["state"] = "entity_not_recorded"
                 continue
             bundle = build_recap(loaded, key, game_version)
+            quality = quality_report(bundle)
+            quality["record_counts"] = {"event_revisions": sum(len(data["revisions"][eid]) for eid in selected),
+                "auxiliary_records": sum(category in BOUNDARIES or key in keys for _, category, keys in data["observations"])}
+            if not all(quality["checks"].values()):
+                raise ValueError("Experience quality accounting failed")
             folder = "sim-" + identifier
             accounted = {r["event_id"] for r in bundle["audit"]["evidence"].values()}
             if not set(selected) <= accounted:
@@ -87,6 +93,10 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
             warning = ("采集正常结束；仅代表已接入事件的观测范围。" if coverage.get("capture_complete") is True else
                        "这只是固定截点的片段；采集尚未结束或存在缺口，不能作为完整一局。")
             write(folder + "/recap.md", [("> " + warning + "\n\n" + markdown(bundle)).encode("utf-8")])
+            write(folder + "/quality.json", [packed(quality) + b"\n"])
+            write(folder + "/quality.md", [("> " + warning + "\n\n" + quality_markdown(quality)).encode("utf-8")])
+            quality_people.append({"entity_key": key, "name": name, "snapshot_id": bundle["snapshot_id"],
+                                   "totals": quality["totals"], "checks": quality["checks"]})
             row.update(state="ready", folder=folder, organized=len(bundle["units"]) + sum(not r["units"] for r in bundle["audit"]["evidence"].values()),
                        recap=sum(len(bundle["recap"][section]) for section in
                            ("activities", "results", "relationship_observations", "states", "review_actions")),
@@ -97,13 +107,18 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
                                "records": len(data["records"]), "events": len(events)},
                     "coverage": coverage, "target_scope": "recorded_members_of_observed_active_households",
                     "people": people, "files": files}
+        write("quality.json", [packed({"format": "run_event_quality_v1", "source": manifest["source"],
+              "coverage": coverage, "record_counts": {"event_revisions": sum(len(rows) for rows in data["revisions"].values()),
+                  "observations": len(data["observations"])}, "people": quality_people,
+              "note": "Person projections overlap. Do not sum them as global unique events."}) + b"\n"])
         index = ["# 本次采集的分层输出", "", "采集完整：{}。来源截至 sequence {}。".format(
                  "是" if coverage.get("capture_complete") is True else "否／尚未结束", data["as_of_sequence"]),
                  "", "原始记录在 [journal.jsonl](../../journal.jsonl)，此快照的字节截点与哈希在 [manifest.json](manifest.json)。",
-                 "完整最新事件：[events.jsonl](events.jsonl)。每个人物目录另含 organized.jsonl、recap.json 和 details.bundle.json。", ""]
+                 "完整最新事件：[events.jsonl](events.jsonl)。每个人物目录另含 organized.jsonl、recap.json 和 details.bundle.json。",
+                 "全局记录数与人物对账摘要：[quality.json](quality.json)。各人物的 quality.md / quality.json 给出事件去向、待核查原因与重要事件保留检查。", ""]
         for person in people:
             label = str(person["name"] or person["entity_key"]).replace("[", "(").replace("]", ")").replace("\n", " ")
-            index.append("- [{}]({}/recap.md)：{} 个关联事件，{} 个阅读项。".format(label, person["folder"], person["events"], person["recap"])
+            index.append("- [{}]({}/recap.md)：{} 个关联事件，{} 个阅读项。[对账]({}/quality.md)。".format(label, person["folder"], person["events"], person["recap"], person["folder"])
                          if person["state"] == "ready" else "- {}：此截点没有关联事件。".format(label))
         write("README.md", [("\n".join(index) + "\n").encode("utf-8")])
         atomic_json(pending / "manifest.json", manifest)

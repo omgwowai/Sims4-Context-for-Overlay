@@ -12,6 +12,9 @@ RESOURCE_BYTES = resource_bytes("experience_resources.json")
 CATALOG = json.loads(RESOURCE_BYTES.decode("utf-8"))
 RESOURCE_SHA256 = hashlib.sha256(RESOURCE_BYTES).hexdigest()
 RESOURCES = {(kind, identifier, name): role for kind, identifier, name, role in CATALOG["resources"]}
+ACTIVITY_RULES = {(r["id"], r["tuning_name"]): r for r in CATALOG.get("reviewed_activity_rules", [])}
+RESOURCES.update({("interaction", identifier, name): row["role"]
+                  for (identifier, name), row in ACTIVITY_RULES.items()})
 
 USES = {
     "action": "core", "social_content": "core", "important_result": "core", "knowledge": "core",
@@ -117,7 +120,14 @@ def family(event, game_version=None):
     value = resource(event)
     if resource_role("interaction", value, game_version) == "unknown":
         return None
-    return FAMILIES.get(identity(value)[0])
+    rule = ACTIVITY_RULES.get(identity(value), {})
+    return rule.get("family") or FAMILIES.get(identity(value)[0])
+
+
+def importance(event, game_version=None):
+    if not game_event(event) or kind(event) != "interaction" or resource_role("interaction", resource(event), game_version) == "unknown":
+        return None
+    return ACTIVITY_RULES.get(identity(resource(event)), {}).get("importance")
 
 
 def label(value):

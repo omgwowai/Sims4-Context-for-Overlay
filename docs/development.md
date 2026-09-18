@@ -238,6 +238,8 @@ python -B -X utf8 scripts/experience_recap.py query tmp/recap-bundle.json --snap
 
 对应测试为 `tests/test_experience_recap.py`。CLI 包装保留在 scripts，共享核心及规则资源进入游戏脚本包，供新分层 API 使用；实施依据见[计划](experience-recap-plan.md)，当前接口验收按[操作步骤](event-views-validation.md)执行。
 
+0.10.2 增加 `build --quality/--quality-markdown`、`quality` 和同源 `compare` 命令，覆盖重要事件保留、活动阶段归并和问题原因对账。运行时自动导出也生成相同核心的质量报告；完整命令及计数口径见[事件整理对账](event-quality.md)，回归测试为 `tests/test_experience_quality.py`。
+
 `experience_recap_v1_1` 将执行 `time` 与 `queued_at`／`observed_at` 分开：未见开始时 `time[0]` 为 null，不再拿首次观测代替开始。入队使用原交互的 queued observation，无此证据时仅说明首次观测。阅读表将行动者独立显示，同名同时间的不同实例继续保留。
 
 名称经过 `scripts/experience_labels.py` 统一处理，压缩保留 `tuning_name`、`name_status` 和参数缺口；精确释义在 `src/context_overlay/experience/experience_labels.json`，原名、状态和来源在 `audit.labels`。使用 `--facet labels` 查询某条目的名称依据，或 `--ref @labels --facet labels` 分页读取名称质量记录。未解析／部分解析在 `recap.name_quality` 公开，名称规则文件哈希纳入 snapshot。原始结果与退出原因仍可用 `raw` 或 `units` 查询。案例、边界与对照见[debug 记录](experience-recap-debug.md)。

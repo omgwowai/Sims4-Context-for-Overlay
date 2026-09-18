@@ -182,6 +182,538 @@
         "xml_sha256": "c51ecb28c47c9fa4963d27e9b71518a3c3cef87d91c1466c8fac557eb823f037",
         "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
       }
+    },
+    {
+      "kind": "interaction",
+      "id": "75076",
+      "tuning_name": "fire_reacting_to_fire",
+      "text": "对火灾作出反应",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5a7743ce237246fe2ef5a224360f8b3a7685ecb41815fa1f3ae48417d3089e05",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "39466",
+      "tuning_name": "fire_Panic",
+      "text": "因火灾惊慌",
+      "override": true,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "463a6af89b06918dcbaf36e9797b6ba3b0f36c69bb77e61d9050953d3636fb0c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "75247",
+      "tuning_name": "sim_Fire_RouteToSafety",
+      "text": "因火灾前往安全处",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "b9ca0226a8f687756b2ab5750d367d8046bf09ed7d2ad96e9b667f6e9974141f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "40111",
+      "tuning_name": "fire_Extinguish",
+      "text": "灭火",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "648b50aa988f0641485521ebd657f4c6c72d722b1f0d61386aa3deb1170ca3e9",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "40870",
+      "tuning_name": "fire_OnFire",
+      "text": "身上着火",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "4472d1a0f456c37c69abdf5d8a154b278f7b209b7a43a1adfa76cc24b1d52a8b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "77464",
+      "tuning_name": "Fire_OnFire_PassiveMixer",
+      "text": "身上着火时的持续动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "d00a35532b1cb5b2c2e66e7b2d25afd9b41f1dd35eb6561195d974cfbeaed177",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "26138",
+      "tuning_name": "mixer_social_Fight_targeted_mean",
+      "text": "打架",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "659928ff37978f17e6a799e08ccf152870dbcc382f18a5b7f8de8b8e76e62749",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13117",
+      "tuning_name": "book_read",
+      "text": "阅读书籍",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "88db94a9338205ccf0b75382005ac65a76bc69ed8a10365b3abf8c8bb9c34d77",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "76988",
+      "tuning_name": "book_read_browse",
+      "text": "翻阅书籍",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "36dde51ba1c53f1dc95d4ec945c5562583dc53423c70924fc4f50fef9c2a92b3",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "77329",
+      "tuning_name": "autonomous_bookshelf_read_picker",
+      "text": "从书架选择要读的书",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "029cde6cf04360a5069d3116a3ebcb51305bfd393e08209bc69a23bfddc05c89",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "77412",
+      "tuning_name": "autonomous_Bookshelf_Browse_Picker",
+      "text": "从书架选择要翻阅的书",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "e4decf9e359edf7adf81baac33cd66670801e1f826b237b18dafd71264af2582",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13120",
+      "tuning_name": "Book_Read_Active",
+      "text": "阅读中的动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "cae4c7b80fddbc67c8e4eeddd044e6067e03e12c01026fb6517f8015ca0fb87b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13121",
+      "tuning_name": "Book_Read_Passive",
+      "text": "持续阅读",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bef0eec69e5f4d649ce3fe8b2904b200259dbc673cdff69ff7d57348c49ba166",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "122714",
+      "tuning_name": "cancelReplacements_ReadtoCarry",
+      "text": "结束阅读后处理手持书籍",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0ed000e25c496643f9c2932f7421d3d3b1362b024e41d8457ae528326b7b4ec2",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128723",
+      "tuning_name": "movie_Watch_MoonlightMassacre",
+      "text": "观看电影（资源 128723）",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "3b0d5fe96e8ab96c928abfbbad52d8c52a6246f3b820289cddfd613ed1205d77",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128729",
+      "tuning_name": "movie_Watch_SuperHeroes",
+      "text": "观看超级英雄电影",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "78a6b663a82ab5aed49d59fa1997130d45f9fe18caffea803870995924cf9ca6",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "14489",
+      "tuning_name": "tv-watch-sports",
+      "text": "观看体育节目",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0d0324650ce92bc55a71af498bb2038dc4671b7a6690c3ebd1a4d154d7141d6b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "153443",
+      "tuning_name": "tv_watch_Politics",
+      "text": "观看政治节目",
+      "override": false,
+      "source": {
+        "package": "Delta/EP03/SimulationPreload.package",
+        "tgi": "62E94D38:00000018:E23BB17404760CF8",
+        "source_sha256": "58a18ec0aa4ec1c0f4934b54bd89e67de1a050a940a35618f2b8861c9a55fa4e",
+        "xml_sha256": "13de90f93e9dbb6801b60ff76d1b36267f80ae5c6b4e51f7bbfefa2ce9ec4e44",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128843",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_JumpScare",
+      "text": "对电影的惊吓片段作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "d64a529d3f76df23205fe8a0c8c71376a5d8c8a3bfcbbe915d93083a82b2e9e0",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128844",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_Suspense",
+      "text": "对电影的悬疑片段作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "f3b634a8a1450f691ff4db36139da9ed1b468ba26f1e59eaf227b3479b4cfb97",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128845",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_ComedicMoment",
+      "text": "对电影的喜剧片段作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "1345d3290f9f4ad907c49cbbb5d99d124180b5649e03e6501c9ae6fe3f9abeeb",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "14547",
+      "tuning_name": "watch_Mixer_Listen",
+      "text": "观看表演时聆听",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1190da00074b3985e9905b8b372f2b0bb5a02f22e681edd879c9491e59da67dc",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13084",
+      "tuning_name": "bathtub_TakeBath",
+      "text": "洗澡",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "15ddd416493294ab53134054a198d31b5f8c6f62aa20b7012f54ae04c7c077fd",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13085",
+      "tuning_name": "bathtub_TakeBath_Loop",
+      "text": "持续洗澡",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6869e7e5e3350f3072fd4a41dd8a23e35bd915fef94f99cfda3c41660eff7d42",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13427",
+      "tuning_name": "generic_Bath",
+      "text": "洗澡",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "61a44b64a255da010889909e8febf7cb4c2027141719d473460c09c79ce99b7a",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13087",
+      "tuning_name": "bathtub_TakeBubbleBath",
+      "text": "泡泡浴",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6e999c06790626e34b226396f1b4b8656d27f3f5e1b03884e2a7e14a7e33e3ad",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "35352",
+      "tuning_name": "generic_Bubblebath",
+      "text": "泡泡浴",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "f2f34ea9e6d9d15ea51804e999bf737a564d93c38f5409c930eb92c4a3691f9e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13152",
+      "tuning_name": "chess_practice",
+      "text": "练习国际象棋的动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bbe60bb34643b0235f59e317ec2c9d89fa9f7a1a7f2b0cd40960136b1fd96800",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13155",
+      "tuning_name": "Chess_Social",
+      "text": "下国际象棋",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "784cfbd2d761187ff566a82a49fcfb3245293a81a2fb518399e4af56d58c9424",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13154",
+      "tuning_name": "chess_setup",
+      "text": "布置棋盘",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "3d51d6038ca2a8ef1e96a2b64dacb1eea021a2314f0a822ebb2856a594917ea7",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "101269",
+      "tuning_name": "chess_idle_solo",
+      "text": "独自下棋时的等待动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ae960a4db4afa14935967a70295bb3276d9060fcbb6290673e7d3e0791e0b4ce",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13470",
+      "tuning_name": "guitar_Play_Song",
+      "text": "用吉他演奏歌曲",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "47ec7ca0bb894690b791016db623945ebcefd80f89d87f7076aa48d2ddb51a0f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "37544",
+      "tuning_name": "guitar_Jam_Inventory",
+      "text": "用随身吉他即兴演奏",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "a3aca1dccefde9a7fa12d237c43b8a7b2fc67ab64294e9b60c68d8fbdb53e11e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "110733",
+      "tuning_name": "guitar_Sing_Song",
+      "text": "用吉他弹唱",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "9d057f6947c62b12e2b2cbbbeb896b824d3bdf2f67bf6b5390f9620884e8c38a",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13506",
+      "tuning_name": "guitar_Watch",
+      "text": "观看吉他表演",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7ad3fbac0745902b944d74b3143ac1720060f828b7a48d5bb30b96975f5f5cbc",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "201424",
+      "tuning_name": "microphone_LoungeEvent_OpenMic_Watch",
+      "text": "观看开放麦表演",
+      "override": false,
+      "source": {
+        "package": "Delta/EP06/SimulationPreload.package",
+        "tgi": "62E94D38:0000001B:E23BB17404760CFD",
+        "source_sha256": "9d720beb401c3b9e4c22ffa1917cab596919e99600aa969575e8c14f47aabfac",
+        "xml_sha256": "e826e3595d1ce21ff47d821ad4b09db347829d003cf80c7f7c1bfae1ac5dca29",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "14343",
+      "tuning_name": "Stove_SaucePot_Stir_Basic",
+      "text": "搅拌锅中的食物",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "498bf57ef12ddf252d3a5936e85c55c0028b40eabd685a248314bbdd334d9eaf",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "32043",
+      "tuning_name": "stove_MakeFood_Pot_Staging_Basic",
+      "text": "用锅制作食物的阶段",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2481cd547006d809fe41498b0625a8e8db0ca876ea431b7cbd1658bd5c7bd695",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
     }
   ]
 }

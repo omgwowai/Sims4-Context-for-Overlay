@@ -97,6 +97,8 @@ class Driver:
             return self.frame_probe(request.get("seconds"))
         if operation == "status":
             return runtime.status()
+        if operation == "export_views":
+            return runtime.export_views()
         if operation in ("api_info", "api_context", "api_history", "api_append", "api_changes", "api_page", "api_close",
                          "api_view", "api_view_status", "api_view_page", "api_view_explain", "api_view_close"):
             from context_overlay import api

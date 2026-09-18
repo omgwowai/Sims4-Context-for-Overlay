@@ -17,6 +17,24 @@ from context_overlay.history import HistoryError
 
 
 class TravelHistoryChecks(unittest.TestCase):
+    def test_clean_shutdown_exports_household_layers_and_complete_capture_status(self):
+        from validate_run import audit
+        runtime = game_runtime._runtime
+        target = facts()["actor"]
+        self.adapter.household_members = lambda: [target]
+        runtime._remember_view_targets()
+        rec = runtime.recorder
+        rec.interaction("started", facts(1), self.adapter.clock(), "native")
+        rec.interaction("exited", dict(facts(1), finishing_type="NATURAL"), self.adapter.clock(), "native")
+        runtime.stop("manual_exit")
+        report = audit(runtime.directory)
+        self.assertTrue(report["integrity_passed"])
+        self.assertTrue(report["capture"]["capture_complete"])
+        latest = json.loads((runtime.directory / "views/latest.json").read_text(encoding="utf-8"))
+        self.assertTrue(latest["capture_complete"])
+        self.assertEqual(latest["people"][0]["entity_key"], target["key"])
+        self.assertTrue((runtime.directory / "views" / latest["index"]).exists())
+
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)

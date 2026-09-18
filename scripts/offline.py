@@ -55,7 +55,7 @@ def read_journal(path, event_scope="retained", include_observations=True):
         errors.append({"error": "Empty journal"})
     return {"session_id": session_id, "events": list(events.values()), "observations": observations,
             "errors": errors, "complete": not errors, "event_scope": event_scope,
-            "metadata": metadata, "sha256": digest.hexdigest()}
+            "metadata": metadata, "sha256": digest.hexdigest(), "last_sequence": next_sequence - 1}
 
 
 def read_packet(path, event_scope="all"):

@@ -99,6 +99,28 @@ class LatestEvents(Mapping):
         return [key for key, (_, _, entities) in self.index.items() if entity in entities]
 
 
+def derivation_events(data, cache_budget, checkpoint):
+    """Optionally decode once for worker-private, read-only derivation reuse.
+
+    The caller reserves construction space separately and charges the returned
+    estimate for as long as it retains this mapping. Raw source bytes remain
+    authoritative; public event pages must still decode independent values.
+    """
+    events = data["events"]
+    # Per-event deep sizes were measured by read_prefix. Allow additional space
+    # for mapping slots and the ID sequence without rescanning every object.
+    size = data["latest_event_bytes"] + 256 + 128 * len(events)
+    if size > cache_budget:
+        return events, 0
+    decoded = {}
+    for i, identifier in enumerate(events):
+        if i % 32 == 0:
+            checkpoint()
+        decoded[identifier] = events[identifier]
+    checkpoint()
+    return decoded, size
+
+
 def read_prefix(path, session_id, sequence, byte_offset, checkpoint, memory_limit, line_limit=LINE_LIMIT, record_limit=100000):
     """Validate every record before publishing, retaining raw bytes and latest events.
 

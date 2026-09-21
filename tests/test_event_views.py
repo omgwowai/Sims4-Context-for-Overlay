@@ -18,7 +18,7 @@ from context_overlay import api
 from context_overlay.event_views import ViewStore
 from context_overlay.recorder import Recorder
 from context_overlay.storage import Journal
-from context_overlay.view_source import ViewError, read_prefix, packed
+from context_overlay.view_source import ViewError, read_prefix, packed, LatestEvents
 
 
 class EventViewTests(unittest.TestCase):
@@ -135,6 +135,77 @@ class EventViewTests(unittest.TestCase):
         self.assertEqual(req["state"], "failed")
         self.assertEqual(req["error"]["code"], "view_budget")
         self.assertIn("One item exceeds", req["error"]["message"])
+
+    def shared_people(self):
+        for record in self.rows:
+            if record['kind'] == 'event_revision':
+                record['event']['entities'].append('sim:2')
+                record['event'].setdefault('facts', {})['test_padding'] = 'x' * 100000
+        self.path.write_bytes(b''.join(packed(row) + b'\n' for row in self.rows))
+
+    def test_derivation_reuses_accounted_cache_across_people_and_releases_on_close(self):
+        self.shared_people()
+        calls = []
+        original = LatestEvents.__getitem__
+        def counted(source, key):
+            calls.append(key)
+            return original(source, key)
+        with patch.object(LatestEvents, '__getitem__', counted):
+            first, rows = self.items(self.store.query('organized', 'sim:1', self.head()))
+            count = len(calls)
+            self.assertEqual(count, 2)
+            self.assertGreater(self.store.metrics()['decoded_cache_bytes'], 200000)
+            second, _ = self.items(self.store.query('organized', 'sim:2', self.head(), first['source_snapshot_id']))
+            self.assertEqual(len(calls), count)
+        rows[0]['unit']['action_tuning'] = 'changed'
+        warm, unchanged = self.items(self.store.query('organized', 'sim:1', self.head(), first['source_snapshot_id']))
+        self.assertNotEqual(unchanged[0]['unit']['action_tuning'], 'changed')
+        for request in (first, second, warm):
+            self.store.close(request['request_id'])
+        deadline = time.monotonic() + 3
+        while self.store.metrics()['sources'] and time.monotonic() < deadline:
+            time.sleep(.01)
+        self.assertEqual(self.store.metrics()['decoded_cache_bytes'], 0)
+        self.assertEqual(self.store.metrics()['estimated_bytes'], 0)
+
+    def test_memory_pressure_discards_decoded_cache_without_invalidating_pages(self):
+        self.shared_people()
+        first, expected = self.items(self.store.query('organized', 'sim:1', self.head()))
+        data = self.store._sources[first['source_snapshot_id']]['data']
+        metrics = self.store.metrics()
+        self.store.memory_limit = metrics['estimated_bytes'] - metrics['decoded_cache_bytes'] + 2 * data['latest_event_bytes']
+        second, _ = self.items(self.store.query('organized', 'sim:2', self.head(), first['source_snapshot_id']))
+        self.assertEqual(self.store.metrics()['decoded_cache_bytes'], 0)
+        self.assertLessEqual(self.store.metrics()['estimated_bytes'], self.store.memory_limit)
+        self.assertEqual(self.items(self.store.status(first['request_id']))[1], expected)
+        self.assertEqual(second['source_snapshot_id'], first['source_snapshot_id'])
+
+    def test_new_prefix_reclaims_old_decode_cache_and_keeps_old_projection(self):
+        first, expected = self.items(self.store.query('organized', 'sim:1', self.head()))
+        old_source = self.store._sources[first['source_snapshot_id']]
+        self.assertGreater(old_source['decoded_memory'], 0)
+        self.add_record(kind='event_revision', event=dict(action('new_sleep', ('13094', 'bed_sleep')), revision=1))
+        second, current = self.items(self.store.query('organized', 'sim:1', self.head()))
+        self.assertNotEqual(first['source_snapshot_id'], second['source_snapshot_id'])
+        self.assertNotIn('decoded', old_source)
+        self.assertEqual(len(current), len(expected) + 1)
+        self.assertEqual(self.items(self.store.status(first['request_id']))[1], expected)
+
+    def test_export_fast_and_budget_fallback_are_byte_identical(self):
+        from context_overlay.run_artifacts import export_layers
+        self.shared_people()
+        data = read_prefix(self.path, 'run', len(self.rows), self.path.stat().st_size, lambda: None, 4096 * 1024 ** 2)
+        options = (self.path.parent, 'run', self.head(), {'sim:1': 'One', 'sim:2': 'Two'},
+                   {'capture_complete': None}, '1.126.73.1030', lambda: None)
+        fast = export_layers(*options)
+        slow = export_layers(*options, memory_limit=data['memory_bytes'] + 2 * data['latest_event_bytes'])
+        self.assertEqual(fast['derivation_cache']['mode'], 'decoded_shared')
+        self.assertEqual(slow['derivation_cache']['mode'], 'decode_on_demand')
+        first = self.path.parent / 'views' / fast['directory']
+        second = self.path.parent / 'views' / slow['directory']
+        manifest = json.loads((first / 'manifest.json').read_text(encoding='utf8'))
+        for filename in manifest['files']:
+            self.assertEqual((first / filename).read_bytes(), (second / filename).read_bytes(), filename)
 
     def test_cold_cached_and_exported_organization_have_the_same_order(self):
         from context_overlay.run_artifacts import export_layers

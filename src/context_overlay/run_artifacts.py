@@ -13,7 +13,7 @@ from context_overlay.experience.experience_recap import build_recap, markdown, o
 from context_overlay.experience.experience_quality import quality_report, quality_markdown
 from context_overlay.model import copy_data, new_id, utc_now
 from context_overlay.storage import atomic_json
-from context_overlay.view_source import ViewError, packed, read_prefix
+from context_overlay.view_source import ViewError, packed, read_prefix, derivation_events
 
 
 def export_layers(directory, session_id, head, targets, coverage, game_version, checkpoint,
@@ -53,9 +53,11 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
 
     try:
         events = data["events"]
-        write("events.jsonl", (packed(events[key]) + b"\n" for key in events))
+        shared, cache_bytes = derivation_events(data,
+            memory_limit - data["memory_bytes"] - 2 * data["latest_event_bytes"], checkpoint)
+        write("events.jsonl", (packed(shared[key]) + b"\n" for key in events))
         loaded = {"complete": True, "event_scope": "all", "session_id": session_id,
-                  "sha256": data["sha256"], "events": EventSequence(events, checkpoint=checkpoint)}
+                  "sha256": data["sha256"], "events": EventSequence(shared, checkpoint=checkpoint)}
         people, quality_people = [], []
         for key, name in sorted(targets.items()):
             checkpoint()
@@ -121,6 +123,8 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
         result = {"state": "ready", "session_id": session_id, "source_sequence": data["as_of_sequence"],
                   "source_sha256": data["sha256"], "directory": destination.name,
                   "index": destination.name + "/README.md", "capture_complete": coverage.get("capture_complete"),
+                  "derivation_cache": {"mode": "decoded_shared" if cache_bytes else "decode_on_demand",
+                                       "estimated_bytes": cache_bytes},
                   "people": people, "output_bytes": total[0]}
         atomic_json(root / "latest.json", result)
         # Retain the previous successful snapshot too. Never touch raw logs.

@@ -13,7 +13,7 @@ from collections import Counter
 from context_overlay import SCHEMA_VERSION
 from context_overlay.history import deep_size, MIB
 from context_overlay.model import new_id
-from context_overlay.view_source import ViewError, decode, packed, read_prefix
+from context_overlay.view_source import ViewError, decode, packed, read_prefix, derivation_events
 from context_overlay.experience.event_sequence import EventSequence
 
 VIEWS = ("records", "events", "organized", "recap")
@@ -192,12 +192,29 @@ class ViewStore:
         with self._lock:
             return {"requests": sum(self._live(j) for j in self._jobs.values()), "sources": len(self._sources),
                     "estimated_bytes": self._memory(), "memory_budget_bytes": self.memory_limit,
+                    "decoded_cache_bytes": sum(s.get("decoded_memory", 0) for s in self._sources.values()),
                     "source_budget_bytes": self.source_limit, "ttl_seconds": self.ttl,
                     "max_queries": self.max_queries, "page_budget_bytes": self.page_bytes}
 
     def _memory(self):
         with self._lock:
             return sum(s["memory"] for s in self._sources.values()) + sum(j["memory"] for j in self._jobs.values())
+
+    def _drop_decoded(self):
+        # Worker only: release optional acceleration without discarding sources
+        # or published pages. Destruction happens outside the publication lock.
+        garbage = []
+        with self._lock:
+            for source in self._sources.values():
+                if source.get("decoded") is not None:
+                    garbage.append(source.pop("decoded"))
+                    source["memory"] -= source.pop("decoded_memory")
+        garbage.clear()
+
+    def _room(self, extra):
+        if self._memory() + extra > self.memory_limit:
+            self._drop_decoded()
+        return self._memory() + extra <= self.memory_limit
 
     def _prune(self):
         garbage = []
@@ -236,8 +253,11 @@ class ViewStore:
                 checkpoint()
                 with self._lock:
                     source = self._sources[job["source"]]
-                    available = self.memory_limit - self._memory()
                 if source["data"] is None:
+                    # A new prefix must not be rejected because an older
+                    # prefix still owns an optional decoded cache.
+                    self._drop_decoded()
+                    available = self.memory_limit - self._memory()
                     data = read_prefix(self.path, self.session_id, source["sequence"], source["offset"], checkpoint, available)
                     checkpoint()
                     with self._lock:
@@ -259,11 +279,11 @@ class ViewStore:
                     encoded.append(row if isinstance(row, SourceRow) else raw)
                     used += len(raw)
                     charged += row.memory_bytes() if isinstance(row, SourceRow) else len(raw) + 80
-                    if self._memory() + charged > self.memory_limit:
+                    if not self._room(charged):
                         raise ViewError("view_budget", "View cache memory budget exceeded")
                 boundaries[position] = len(encoded)
                 charged += deep_size(boundaries)
-                if self._memory() + charged > self.memory_limit:
+                if not self._room(charged):
                     raise ViewError("view_budget", "View cache memory budget exceeded")
                 identity = {"source": source["data"]["sha256"], "sequence": source["sequence"],
                             "entity": job["entity"], "view": job["view"], "profile": job["profile"] if job["view"] in ("organized", "recap", "explanation") else None,
@@ -289,15 +309,24 @@ class ViewStore:
         from context_overlay.experience.experience_recap import build_recap
         data = source["data"]
         # Reserve for temporary organization/copies before entering the core.
-        if self._memory() + 2 * data["latest_event_bytes"] > self.memory_limit:
+        reserve = 2 * data["latest_event_bytes"]
+        if not self._room(reserve):
             raise ViewError("view_budget", "Insufficient memory for experience construction")
+        if source.get("decoded") is None:
+            decoded, size = derivation_events(data, self.memory_limit - self._memory() - reserve, checkpoint)
+            if size:
+                with self._lock:
+                    source.update(decoded=decoded, decoded_memory=size)
+                    source["memory"] += size
+            del decoded
         loaded = {"complete": True, "event_scope": "all", "session_id": self.session_id,
-                  "sha256": data["sha256"], "events": EventSequence(data["events"], checkpoint=checkpoint)}
+                  "sha256": data["sha256"], "events": EventSequence(source.get("decoded", data["events"]), checkpoint=checkpoint)}
         bundle = build_recap(loaded, entity, self.game_version)
+        del loaded
         checkpoint()
         cached = packed(bundle)
         size = len(cached) + 128
-        if self._memory() + size > self.memory_limit:
+        if not self._room(size):
             raise ViewError("view_budget", "Experience projection exceeds memory budget")
         with self._lock:
             source["projections"][entity] = cached

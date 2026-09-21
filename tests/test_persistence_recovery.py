@@ -197,7 +197,7 @@ class LayerArtifacts(unittest.TestCase):
                                   {"capture_complete": True}, "1.126.73.1030", lambda: None)
             self.assertEqual((root / "views/latest.json").read_bytes(), prior)
             self.assertFalse(list((root / "views").glob(".pending-*")))
-            exporter = RunArtifacts(root, "layers", "1.126.73.1030", 128 * 1024 * 1024, 512 * 1024 * 1024)
+            exporter = RunArtifacts(root, "layers", "1.126.73.1030", memory_limit=512 * 1024 * 1024)
             final = exporter.finish(writer.status(), {target["key"]: target["name"]}, {"capture_complete": False})
             self.assertEqual(final["state"], "ready")
             self.assertFalse(final["capture_complete"])

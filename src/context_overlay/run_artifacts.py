@@ -17,13 +17,11 @@ from context_overlay.view_source import ViewError, packed, read_prefix, derivati
 
 
 def export_layers(directory, session_id, head, targets, coverage, game_version, checkpoint,
-                  source_limit=128 * 1024 * 1024, memory_limit=4096 * 1024 * 1024,
+                  memory_limit=4096 * 1024 * 1024,
                   output_limit=256 * 1024 * 1024):
     directory = Path(directory)
     root = directory / "views"
     root.mkdir(exist_ok=True)
-    if head.get("durable_byte_offset", 0) > source_limit:
-        raise ViewError("view_budget", "Journal prefix exceeds the export source budget")
     data = read_prefix(directory / "journal.jsonl", session_id, head.get("durable_sequence"),
                        head.get("durable_byte_offset"), checkpoint, memory_limit)
     if data["memory_bytes"] + 2 * data["latest_event_bytes"] > memory_limit:
@@ -140,9 +138,9 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
 
 
 class RunArtifacts:
-    def __init__(self, directory, session_id, game_version, source_limit, memory_limit, seconds=120):
+    def __init__(self, directory, session_id, game_version, memory_limit=4096 * 1024 * 1024, seconds=120):
         self.directory, self.session_id, self.game_version = Path(directory), session_id, game_version
-        self.source_limit, self.memory_limit, self.seconds = source_limit, memory_limit, seconds
+        self.memory_limit, self.seconds = memory_limit, seconds
         self._lock, self._cancel = threading.RLock(), threading.Event()
         self._thread = None
         self._status = {"state": "not_started"}
@@ -169,7 +167,7 @@ class RunArtifacts:
                     yielded[0] = time.monotonic()
             try:
                 result = export_layers(self.directory, self.session_id, head, targets, coverage,
-                                       self.game_version, checkpoint, self.source_limit, self.memory_limit)
+                                       self.game_version, checkpoint, memory_limit=self.memory_limit)
             except Exception as exc:
                 result = {"state": "failed", "source_sequence": head.get("durable_sequence"),
                           "error": {"code": getattr(exc, "code", "export_failed"), "message": str(exc)}}

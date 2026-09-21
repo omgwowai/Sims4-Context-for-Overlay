@@ -43,10 +43,10 @@ class SourceRow:
 
 class ViewStore:
     def __init__(self, path, session_id, game_version=None, max_queries=8,
-                 memory_bytes=4096 * MIB, source_bytes=128 * MIB, ttl=300,
+                 memory_bytes=4096 * MIB, ttl=300,
                  build_seconds=120, page_bytes=512 * 1024):
         self.path, self.session_id, self.game_version = str(path), session_id, game_version
-        self.max_queries, self.memory_limit, self.source_limit = max_queries, memory_bytes, source_bytes
+        self.max_queries, self.memory_limit = max_queries, memory_bytes
         self.ttl, self.build_seconds, self.page_bytes = ttl, build_seconds, page_bytes
         self._lock, self._queue, self._closed = threading.RLock(), queue.Queue(), threading.Event()
         self._jobs, self._sources = {}, {}
@@ -74,8 +74,6 @@ class ViewStore:
                 sequence, offset = head.get("durable_sequence"), head.get("durable_byte_offset")
                 if type(offset) is not int or offset < 1 or type(sequence) is not int or sequence < 1:
                     raise ViewError("source_unavailable", "Wait for the first durable journal record")
-                if offset > self.source_limit:
-                    raise ViewError("view_budget", "Durable source exceeds the configured source byte budget")
                 source = next((s for s in self._sources.values() if s["sequence"] == sequence and s["offset"] == offset), None)
                 if source is None:
                     source = {"id": new_id(), "sequence": sequence, "offset": offset,
@@ -193,7 +191,7 @@ class ViewStore:
             return {"requests": sum(self._live(j) for j in self._jobs.values()), "sources": len(self._sources),
                     "estimated_bytes": self._memory(), "memory_budget_bytes": self.memory_limit,
                     "decoded_cache_bytes": sum(s.get("decoded_memory", 0) for s in self._sources.values()),
-                    "source_budget_bytes": self.source_limit, "ttl_seconds": self.ttl,
+                    "ttl_seconds": self.ttl,
                     "max_queries": self.max_queries, "page_budget_bytes": self.page_bytes}
 
     def _memory(self):

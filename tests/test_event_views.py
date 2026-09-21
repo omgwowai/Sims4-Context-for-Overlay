@@ -14,7 +14,7 @@ from unittest.mock import patch
 from support import ROOT, runtime_fixture
 from test_experience_view import action
 from test_filter_events import event
-from context_overlay import api
+from context_overlay import api, game_runtime
 from context_overlay.event_views import ViewStore
 from context_overlay.recorder import Recorder
 from context_overlay.storage import Journal
@@ -121,6 +121,56 @@ class EventViewTests(unittest.TestCase):
         self.assertEqual(page["items"][0]["event"]["facts"]["test_padding"], "x" * 150000)
         raw = store.page(results["records"][0]["cursor"])["items"]
         self.assertEqual(raw, results["records"][1][:2])
+
+    def test_long_revision_history_over_128_mib_queries_and_exports_by_default(self):
+        from context_overlay.run_artifacts import RunArtifacts
+        # Many large revisions can leave a small latest-event set. Source file
+        # size alone should not prevent reading any of the four layers.
+        latest = self.rows[3]["event"]
+        facts = dict(latest["facts"], test_padding="x" * 300000)
+        for revision in range(4, 464):
+            self.rows.append(dict(session_id="run", sequence=len(self.rows) + 1,
+                kind="event_revision", event=dict(latest, revision=revision, facts=facts)))
+        self.rows.append(dict(session_id="run", sequence=len(self.rows) + 1,
+            kind="event_revision", event=dict(latest, revision=464)))
+        with self.path.open("wb") as stream:
+            for row in self.rows:
+                stream.write(packed(row) + b"\n")
+        self.assertGreater(self.path.stat().st_size, 128 * 1024 ** 2)
+        source, organized = None, None
+        for view, count in (("records", len(self.rows)), ("events", 2), ("organized", 2), ("recap", 1)):
+            status = self.ready(self.store.query(view, "sim:1", self.head(), source))
+            source = status["source_snapshot_id"]
+            cursor, received = status["cursor"], 0
+            while cursor:
+                page = self.store.page(cursor)
+                received += len(page["items"])
+                if view == "organized":
+                    organized = page["items"]
+                cursor = page["next_cursor"]
+            self.assertEqual(received, count)
+            self.assertEqual(status["total_matches"], count)
+        exporter = RunArtifacts(self.path.parent, "run", "1.126.73.1030")
+        result = exporter.finish(self.head(), {"sim:1": "Test"}, {"capture_complete": None})
+        self.assertEqual(result["state"], "ready", result)
+        snapshot = self.path.parent / "views" / result["directory"]
+        manifest = json.loads((snapshot / "manifest.json").read_text(encoding="utf8"))
+        self.assertEqual(manifest["source"]["records"], len(self.rows))
+        self.assertEqual(manifest["source"]["byte_offset"], self.path.stat().st_size)
+        exported = [json.loads(line) for line in (snapshot / "sim-1/organized.jsonl").read_text(encoding="utf8").splitlines()]
+        self.assertEqual(exported, organized)
+
+    def test_retired_source_config_is_ignored_without_ignoring_other_fields(self):
+        root = self.path.parent
+        config = root / "config.json"
+        config.write_text(json.dumps({"event_view_source_mb": 1, "event_view_memory_mb": 512}), encoding="utf8")
+        with patch.object(game_runtime, "data_root", return_value=root):
+            loaded = game_runtime.load_config()
+            self.assertNotIn("event_view_source_mb", loaded)
+            self.assertEqual(loaded["event_view_memory_mb"], 512)
+            config.write_text(json.dumps({"event_view_unknown": 1}), encoding="utf8")
+            with self.assertRaisesRegex(ValueError, "Unknown configuration field"):
+                game_runtime.load_config()
 
     def test_source_backed_items_still_obey_encoded_page_budget(self):
         row = action("wide", ("13094", "bed_sleep"))

@@ -323,7 +323,7 @@ def _views(runtime):
         runtime.event_views = ViewStore(runtime.writer.path, runtime.session_id,
             runtime.provenance.get("build_game_version"),
             max_queries=config["event_view_query_limit"], memory_bytes=config["event_view_memory_mb"] * 1024 * 1024,
-            source_bytes=config["event_view_source_mb"] * 1024 * 1024, ttl=config["event_view_ttl_seconds"],
+            ttl=config["event_view_ttl_seconds"],
             build_seconds=config["event_view_build_seconds"])
     return runtime.event_views
 

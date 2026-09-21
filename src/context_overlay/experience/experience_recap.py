@@ -159,6 +159,24 @@ def snapshot_digest(bundle):
                    **{k: bundle[k] for k in ("units", "routes", "ledger", "audit")}})
 
 
+def ordered_evidence(bundle):
+    """Aliases retain source order even after canonical JSON reorders object keys."""
+    return sorted(bundle["audit"]["evidence"], key=lambda ref: int(ref[1:]))
+
+
+def organized_items(bundle):
+    """The same explicit order for exports, cold queries and cached queries."""
+    for uid in sorted(bundle["units"], key=lambda uid: int(bundle["ledger"][uid]["ref"][1:])):
+        yield {"item_id": uid, "kind": "unit", "lane": bundle["ledger"][uid]["lane"], "unit": bundle["units"][uid]}
+    for ref in ordered_evidence(bundle):
+        evidence = bundle["audit"]["evidence"][ref]
+        if not evidence["units"]:
+            yield {"item_id": "standalone:" + evidence["event_id"], "kind": "standalone",
+                   "event_id": evidence["event_id"], "revision": evidence["revision"],
+                   "category": evidence["semantic_role"], "recap_disposition": evidence["disposition"],
+                   "evidence_ref": ref}
+
+
 def build_recap(loaded, entity_key, game_version=None):
     """Consume a verified read_journal result; CLI entry points use load_source."""
     if not loaded.get("complete") or loaded.get("event_scope") != "all" or not re.fullmatch(r"[0-9a-f]{64}", loaded.get("sha256", "")):

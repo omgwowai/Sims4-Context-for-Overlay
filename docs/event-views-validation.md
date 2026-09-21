@@ -1,6 +1,6 @@
 # 分层接口验收步骤
 
-适用 **MOD 0.10.2 / API、SDK 2.2.0 / schema 2 / event_views_v1**。本页给出可重复执行的验收步骤，实际通过范围和限制见[验证记录](validation.md)。可以由下游 MOD 开发者执行，也可以由测试者手动加载游戏后从终端发送请求，不需要 Computer Use。退出后还应检查[完整结束与自动分层文件](run-output.md)。
+适用 **MOD 0.10.6 / API、SDK 2.2.0 / schema 2 / event_views_v1**。本页给出可重复执行的验收步骤，实际通过范围和限制见[验证记录](validation.md)。可以由下游 MOD 开发者执行，也可以由测试者手动加载游戏后从终端发送请求，不需要 Computer Use。退出后还应检查[完整结束与自动分层文件](run-output.md)。
 
 ## 接口入口
 
@@ -19,7 +19,7 @@
 
 ## 准备手动游戏测试
 
-1. 从当前源码构建并安装 0.10.2，步骤见[开发说明](development.md#检查与构建)。已发布的 0.9.0 ZIP 没有新接口。安装前退出游戏。
+1. 从当前源码构建并安装 0.10.6，步骤见[开发说明](development.md#检查与构建)。已发布的 0.9.0 ZIP 没有新接口。安装前退出游戏。
 2. 使用 MOD 自己的回调验收时不必打开开发驱动。要使用下方终端命令，在游戏用户目录 `ContextOverlay/config.json` 的现有对象中设 `"development_driver": true`，保留其他配置。先备份配置，测试后还原。使用复制存档隔离测试时也可采用[现有测试环境工具](development.md#实机测试环境与请求)。
 3. 手动启动游戏、加载可操控 Sim 的地块，正常运行一小段，确保产生了已落盘记录。以下命令在源码仓库根目录的 PowerShell 运行；SDK/Windows 分发包不包含开发请求脚本。
 
@@ -86,6 +86,8 @@ $coViews.GetEnumerator() | ForEach-Object {
 ```
 
 四个请求的 `source_snapshot_id` 必须相同；对应页面的 `scope.as_of_sequence/source_sha256/source_byte_offset` 也必须相同。不要靠连续发四次不带 source 的请求来假定同源。请求在闲置 300 秒后会过期，做下一步前及时读取；需要长时间停留时由 MOD 回调续读状态。
+
+0.10.6 的回归场景应包含约一游戏日的日志，保留 records 和 events 请求，再构建 organized 和 recap；在来源、内存及时间预算内，四层都应 ready。另开同源 organized 请求，完整读取并按顺序比较 item_id 与内容，再与相同 source_sha256、规则哈希的文件导出比较。不能只将数组转为字典后比较，否则会漏掉缓存顺序变化。实际预算失败仍必须明确报告，不以截断数据通过验收。
 
 完整遍历可用下面的终端循环。页面逐份保存到 `$coEvidence`，只保留当前页在内存中；最终项数必须等于各自 `total_matches`。`next_cursor=null` 表示遍历完成，不代表当前 session 的全部后续事件已经出现。
 

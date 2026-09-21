@@ -15,7 +15,7 @@ from .experience_policy import (CATALOG, RESOURCE_SHA256, USES, additional_socia
 from .experience_digest import digest
 
 
-POLICY_VERSION = "experience_view_v1_5"
+POLICY_VERSION = "experience_view_v1_6"
 
 
 def uid(prefix, event):

@@ -8,7 +8,7 @@ import threading
 import time
 
 from context_overlay.event_views import BOUNDARIES, CheckedList
-from context_overlay.experience.experience_recap import build_recap, markdown
+from context_overlay.experience.experience_recap import build_recap, markdown, organized_items
 from context_overlay.experience.experience_quality import quality_report, quality_markdown
 from context_overlay.model import copy_data, new_id, utc_now
 from context_overlay.storage import atomic_json
@@ -78,16 +78,7 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
             if not set(selected) <= accounted:
                 raise ValueError("Organization omitted an input event from its audit")
 
-            def organized():
-                for uid, unit in bundle["units"].items():
-                    yield packed({"item_id": uid, "kind": "unit", "lane": bundle["ledger"][uid]["lane"], "unit": unit}) + b"\n"
-                for ref, evidence in bundle["audit"]["evidence"].items():
-                    if not evidence["units"]:
-                        yield packed({"item_id": "standalone:" + evidence["event_id"], "kind": "standalone",
-                            "event_id": evidence["event_id"], "revision": evidence["revision"],
-                            "category": evidence["semantic_role"], "recap_disposition": evidence["disposition"],
-                            "evidence_ref": ref}) + b"\n"
-            write(folder + "/organized.jsonl", organized())
+            write(folder + "/organized.jsonl", (packed(item) + b"\n" for item in organized_items(bundle)))
             write(folder + "/recap.json", [packed(bundle["recap"]) + b"\n"])
             write(folder + "/details.bundle.json", [packed(bundle) + b"\n"])
             warning = ("采集正常结束；仅代表已接入事件的观测范围。" if coverage.get("capture_complete") is True else

@@ -43,6 +43,8 @@ organized = client.query_event_view(
 
 每页 1–100 项，默认 20；512 KiB 编码内容上限可使一页少于 page_size。单项超限明确报 view_budget，不截断字段。游标不可自行构造，与旧 history 游标不通用。
 
+0.10.6 起，organized 的单元按阅读引用 r1、r2、… 的数值顺序排列，再按 e1、e2、… 排列独立来源；lineage 也使用证据引用的数值顺序。首次构建、缓存命中和同源文件导出使用相同顺序，不依赖 JSON 对象键的迭代顺序。
+
 ## 同源解释
 
 ```python
@@ -72,6 +74,7 @@ explanation = client.explain_event_view(
 - 首版仅支持 durable_session、完整会话时间范围、recap_v1。其他来源、profile、时间参数明确拒绝。未写入首条日志时报 source_unavailable；无人物事件时报 entity_not_recorded。
 - 默认最多 8 请求、300 秒未访问过期，来源前缀最大 128 MiB / 100,000 条记录、单行最大 4 MiB、内存估算预算 512 MiB、构建时限 120 秒。config 字段：event_view_query_limit/event_view_ttl_seconds/event_view_source_mb/event_view_memory_mb/event_view_build_seconds。超预算明确失败，不回退 FIFO 或截断。
 - 内存预算是受控数据结构的保守估算，不是进程 RSS 硬隔离。后台与游戏共享 GIL 和垃圾回收，大日志冷构建仍可能短时影响调度；需结合实机负载测量。常规 UI 优先请求 recap，跨层共用 source_snapshot_id，避免每个回调创建新截点。
+- 0.10.6 的 records/events 页缓存引用同一来源已冻结的原字节，不再各自保留完整序列化副本；索引、描述符、派生缓存和构建预留仍计入预算。取页返回独立解码的数据，调用者修改页面或日志继续追加都不影响旧快照。页大小仍按完整编码后的内容检查。无需先关闭原始层才能打开派生层，但总来源／内存／请求限制仍然适用。
 - 正常旅行保留 provider；载入期间读取等待 ready，关闭仍可执行。新 session 关闭旧任务。取消在后台检查点停止；全部相关请求关闭或过期后，后台回收来源。
 - records/events 的快照不绑定显示规则，organized/recap 绑定核心和规则资源哈希。规则 JSON 随 ts4script 分发，源码 manifest 校验覆盖资源；离线工具和 MOD 共用 Python 3.7 核心。
 

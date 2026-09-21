@@ -97,6 +97,76 @@ class EventViewTests(unittest.TestCase):
         with self.assertRaisesRegex(ViewError, "does not belong"):
             self.store.explain(recap["snapshot_id"], units[1]["item_id"])
 
+    def test_four_open_layers_share_raw_bytes_without_relaxing_memory_budget(self):
+        self.rows = []
+        self.add_record(kind="observation", category="session_start", data={})
+        for i in range(6):
+            row = action("large_" + str(i), ("13094", "bed_sleep"), 1000 + i, 2000 + i)
+            row["facts"]["test_padding"] = "x" * 150000
+            for revision in (1, 2, 3):
+                self.add_record(kind="event_revision", event=dict(row, revision=revision))
+        store = self.new_store(memory_bytes=6 * 1024 ** 2)
+        source = None
+        results = {}
+        for layer in ("records", "events", "organized", "recap"):
+            req, rows = self.items(store.query(layer, "sim:1", self.head(), source, page_size=2), store)
+            source = req["source_snapshot_id"]
+            results[layer] = (req, rows)
+        self.assertEqual([len(results[layer][1]) for layer in ("records", "events", "organized", "recap")],
+                         [19, 6, 6, 6])
+        self.assertLess(store.metrics()["estimated_bytes"], store.metrics()["memory_budget_bytes"])
+        self.path.unlink()
+        results["events"][1][0]["event"]["facts"]["test_padding"] = "changed"
+        page = store.page(results["events"][0]["cursor"])
+        self.assertEqual(page["items"][0]["event"]["facts"]["test_padding"], "x" * 150000)
+        raw = store.page(results["records"][0]["cursor"])["items"]
+        self.assertEqual(raw, results["records"][1][:2])
+
+    def test_source_backed_items_still_obey_encoded_page_budget(self):
+        row = action("wide", ("13094", "bed_sleep"))
+        row["facts"]["test_padding"] = "x" * 20000
+        self.add_record(kind="event_revision", event=dict(row, revision=1))
+        store = self.new_store(page_bytes=6000)
+        req = store.query("records", "sim:1", self.head())
+        deadline = time.monotonic() + 3
+        while req["state"] == "building" and time.monotonic() < deadline:
+            time.sleep(.005)
+            req = store.status(req["request_id"])
+        self.assertEqual(req["state"], "failed")
+        self.assertEqual(req["error"]["code"], "view_budget")
+        self.assertIn("One item exceeds", req["error"]["message"])
+
+    def test_cold_cached_and_exported_organization_have_the_same_order(self):
+        from context_overlay.run_artifacts import export_layers
+        for i in range(12):
+            row = action("order_" + str(i), ("13094", "bed_sleep"), 3000 + i, 4000 + i)
+            self.add_record(kind="event_revision", event=dict(row, revision=1))
+            unknown = action("unknown_" + str(i), ("unreviewed", "unknown_resource"), 5000 + i, 6000 + i)
+            self.add_record(kind="event_revision", event=dict(unknown, revision=1))
+        cold, first = self.items(self.store.query("organized", "sim:1", self.head(), page_size=3))
+        warm, second = self.items(self.store.query("organized", "sim:1", self.head(), cold["source_snapshot_id"], page_size=3))
+        self.assertEqual(cold["snapshot_id"], warm["snapshot_id"])
+        self.assertEqual(first, second)
+        exported = export_layers(self.path.parent, "run", self.head(), {"sim:1": "Test"},
+                                 {"capture_complete": None}, "1.126.73.1030", lambda: None)
+        path = self.path.parent / "views" / exported["directory"] / "sim-1/organized.jsonl"
+        self.assertEqual(first, [json.loads(line) for line in path.read_text(encoding="utf8").splitlines()])
+
+    def test_cached_activity_lineage_keeps_numeric_evidence_order(self):
+        for i in range(12):
+            row = event("effect_" + str(i), "payment.completed", {"actual_amount": -1})
+            row["cause"] = {"event_id": "run:eat"}
+            self.add_record(kind="event_revision", event=dict(row, revision=1))
+        req, rows = self.items(self.store.query("organized", "sim:1", self.head()))
+        root = next(row["item_id"] for row in rows if row.get("unit", {}).get("action_tuning") == "generic_consume_food")
+        cold, first = self.items(self.store.explain(req["snapshot_id"], root, "lineage"))
+        warm, second = self.items(self.store.explain(req["snapshot_id"], root, "lineage"))
+        self.assertEqual(cold["snapshot_id"], warm["snapshot_id"])
+        self.assertEqual(first, second)
+        aliases = [int(row["evidence_ref"][1:]) for row in first]
+        self.assertEqual(len(aliases), 13)
+        self.assertEqual(aliases, sorted(aliases))
+
     def test_append_and_source_file_removal_do_not_change_ready_pages(self):
         request, before = self.items(self.store.query("events", "sim:1", self.head(), page_size=1))
         cursor = request["cursor"]

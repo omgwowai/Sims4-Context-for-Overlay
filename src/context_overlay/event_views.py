@@ -34,6 +34,24 @@ class CheckedList(list):
             yield item
 
 
+class SourceRow:
+    """One page item backed by the immutable bytes already charged to its source."""
+    __slots__ = ("view", "item_id", "raw")
+
+    def __init__(self, view, item_id, raw):
+        self.view, self.item_id, self.raw = view, item_id, raw
+
+    def value(self):
+        record = decode(self.raw)
+        return ({"item_id": self.item_id, "record": record} if self.view == "records" else
+                {"item_id": self.item_id, "event": record["event"]})
+
+    def memory_bytes(self):
+        # The source owns raw; count this reference/descriptor without charging
+        # its byte body a second time. Page decoding still returns fresh values.
+        return 128 + deep_size((self.view, self.item_id))
+
+
 class ViewStore:
     def __init__(self, path, session_id, game_version=None, max_queries=8,
                  memory_bytes=512 * MIB, source_bytes=128 * MIB, ttl=300,
@@ -144,7 +162,7 @@ class ViewStore:
                     source_snapshot_id=source_id, session_id=self.session_id, offset=offset,
                     total_matches=total, cursor=cursor,
                     next_cursor=request_id + ":" + str(end) if end < total else None,
-                    items=[decode(row) for row in selected])
+                    items=[row.value() if isinstance(row, SourceRow) else decode(row) for row in selected])
 
     def explain(self, snapshot_id, item_id, facet="lineage", page_size=20):
         self._page_size(page_size)
@@ -243,15 +261,15 @@ class ViewStore:
                 encoded, charged, boundaries, position, used = [], deep_size(members) + len(meta), {}, 0, 0
                 for row in rows:
                     checkpoint()
-                    raw = packed(row)
+                    raw = packed(row.value() if isinstance(row, SourceRow) else row)
                     if len(raw) > item_budget:
                         raise ViewError("view_budget", "One item exceeds the page byte budget; narrow fields are not silently substituted")
                     if len(encoded) - position >= job["page_size"] or used + len(raw) > item_budget:
                         boundaries[position] = len(encoded)
                         position, used = len(encoded), 0
-                    encoded.append(raw)
+                    encoded.append(row if isinstance(row, SourceRow) else raw)
                     used += len(raw)
-                    charged += len(raw) + 80
+                    charged += row.memory_bytes() if isinstance(row, SourceRow) else len(raw) + 80
                     if self._memory() + charged > self.memory_limit:
                         raise ViewError("view_budget", "View cache memory budget exceeded")
                 boundaries[position] = len(encoded)
@@ -272,7 +290,7 @@ class ViewStore:
             finally:
                 self._queue.task_done()
                 # Do not keep the last completed/failed job alive during idle time.
-                job = source = data = rows = members = encoded = None
+                job = source = data = rows = row = raw = members = encoded = None
         self._prune()
 
     def _projection(self, source, entity, checkpoint):
@@ -323,11 +341,11 @@ class ViewStore:
                 checkpoint()
                 record = decode(records[seq])
                 members["record:" + str(seq)] = {"events": [record["event"]["event_id"]] if record["kind"] == "event_revision" else [], "units": [], "records": [seq]}
-            rows = ({"item_id": "record:" + str(seq), "record": decode(records[seq])} for seq in sorted(sequences))
+            rows = (SourceRow("records", "record:" + str(seq), records[seq]) for seq in sorted(sequences))
             return rows, members, metadata
         if job["view"] == "events":
             members = {key: {"events": [key], "units": []} for key in selected}
-            return ({"item_id": key, "event": events[key]} for key in selected), members, metadata
+            return (SourceRow("events", key, records[data["revisions"][key][-1]]) for key in selected), members, metadata
         explanation = job["explanation"]
         if explanation and not explanation["members"]["units"] and (
                 not explanation["members"]["events"] or explanation["facet"] in ("events", "revisions", "lineage")):
@@ -343,28 +361,25 @@ class ViewStore:
             metadata["explanation"] = {k: v for k, v in explanation.items() if k != "members"}
             return rows, {}, metadata
         bundle = self._projection(source, entity, checkpoint)
+        from context_overlay.experience.experience_recap import ordered_evidence, organized_items
         audit, units = bundle["audit"]["evidence"], bundle["units"]
+        evidence_order = ordered_evidence(bundle)
         metadata["rules"] = bundle["manifest"]["implementation_sha256"]
         metadata["coverage"].update(supporting_events=sum(r["outside_entity_index"] for r in audit.values()),
                                     source_events_without_units=sum(not r["units"] for r in audit.values()))
 
         def membership(ids):
             refs = {ref for uid in ids for ref in units[uid]["evidence"]}
-            return {"units": list(ids), "events": [r["event_id"] for ref, r in audit.items() if ref in refs]}
+            return {"units": list(ids), "events": [audit[ref]["event_id"] for ref in evidence_order if ref in refs]}
 
         if job["view"] == "organized":
             rows = []
-            for uid, unit in units.items():
+            for row in organized_items(bundle):
                 checkpoint()
-                members[uid] = membership([uid])
-                rows.append({"item_id": uid, "kind": "unit", "lane": bundle["ledger"][uid]["lane"], "unit": unit})
-            for ref, row in audit.items():
-                if not row["units"]:
-                    identifier = "standalone:" + row["event_id"]
-                    members[identifier] = {"units": [], "events": [row["event_id"]]}
-                    rows.append({"item_id": identifier, "kind": "standalone", "event_id": row["event_id"],
-                                 "revision": row["revision"], "category": row["semantic_role"],
-                                 "recap_disposition": row["disposition"], "evidence_ref": ref})
+                identifier = row["item_id"]
+                members[identifier] = (membership([identifier]) if row["kind"] == "unit" else
+                                       {"units": [], "events": [row["event_id"]]})
+                rows.append(row)
             metadata["scope"]["all_input_events_have_membership_or_standalone"] = True
             accounted = {key for value in members.values() for key in value["events"]}
             if not set(selected) <= accounted or accounted != {row["event_id"] for row in audit.values()}:
@@ -398,7 +413,7 @@ class ViewStore:
         ids.update(key for uid in list(ids) for key in units[uid].get("decisions", []))
         event_ids.update(membership(ids)["events"])
         rows, facet = [], explanation["facet"]
-        evidence = {ref: row for ref, row in audit.items() if row["event_id"] in event_ids}
+        evidence = {ref: audit[ref] for ref in evidence_order if audit[ref]["event_id"] in event_ids}
         if facet == "lineage":
             rows = [dict(row, evidence_ref=ref, record_sequences=data["revisions"][row["event_id"]]) for ref, row in evidence.items()]
         elif facet == "policy":

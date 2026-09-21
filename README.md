@@ -2,7 +2,7 @@
 
 给《模拟人生 4》的 Overlay 提供当前状态和事件历史。你可以读取 Sim 最近在做什么、查之前的事件，再把自己生成的旁白、总结或其他 JSON 内容写回同一份历史。
 
-当前源码为 **0.10.9**，API / SDK 为 **2.2.0**，数据 schema 为 **2**。接入方式是游戏内 Python MOD；支持[同源四层事件查询](docs/event-views.md)，正常结束运行时也会[自动生成分层文件与人物阅读版](docs/run-output.md)，并附[事件去向对账与规则比较](docs/event-quality.md)。模型调用和 Overlay 界面由消费者负责。
+当前源码为 **0.10.10**，API / SDK 为 **2.2.0**，数据 schema 为 **2**。接入方式是游戏内 Python MOD；支持[同源四层事件查询](docs/event-views.md)，正常结束运行时也会[自动生成分层文件与人物阅读版](docs/run-output.md)，并附[事件去向对账与规则比较](docs/event-quality.md)。模型调用和 Overlay 界面由消费者负责。
 
 已发布的团队试用包仍为 **0.9.0 / API 2.1.0**，不包含新的分层接口；当前源码构建和安装方法见[开发说明](docs/development.md)。
 

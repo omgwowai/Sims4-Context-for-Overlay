@@ -186,6 +186,62 @@ class EventViewTests(unittest.TestCase):
         self.assertEqual(req["error"]["code"], "view_budget")
         self.assertIn("One item exceeds", req["error"]["message"])
 
+    def test_complete_page_encoding_including_envelope_obeys_budget(self):
+        row = action("sleep", ("13094", "bed_sleep"), 3000, 4000)
+        row["facts"]["test_padding"] = "中文内容" * 200
+        self.add_record(kind="event_revision", event=dict(row, revision=1))
+        for layer in ("records", "events", "organized", "recap", "revisions"):
+            with self.subTest(layer=layer):
+                def request(store):
+                    if layer != "revisions":
+                        return store.query(layer, "sim:1", self.head(), page_size=100)
+                    # Prepare the parent independently of the explanation's budget.
+                    with patch.object(store, "page_bytes", 512 * 1024):
+                        parent = self.ready(store.query("events", "sim:1", self.head()), store)
+                    return store.explain(parent["snapshot_id"], "run:eat", "revisions", page_size=100)
+                baseline = self.new_store()
+                status, expected = self.items(request(baseline), baseline)
+                first = baseline.page(status["cursor"])
+                self.assertGreater(len(first["items"]), 1)
+                budget = len(packed(first)) - 1
+                store = self.new_store(page_bytes=budget)
+                status = self.ready(request(store), store)
+                cursor, actual, pages = status["cursor"], [], 0
+                while cursor:
+                    page = store.page(cursor)
+                    self.assertLessEqual(len(packed(page)), budget)
+                    actual.extend(page["items"])
+                    pages += 1
+                    cursor = page["next_cursor"]
+                self.assertGreater(pages, 1)
+                self.assertEqual(actual, expected)
+
+    def test_empty_and_single_item_pages_count_the_complete_header(self):
+        for empty in (False, True):
+            with self.subTest(empty=empty):
+                def request(store):
+                    if not empty:
+                        return store.query("recap", "sim:1", self.head())
+                    with patch.object(store, "page_bytes", 512 * 1024):
+                        parent = self.ready(store.query("records", "sim:1", self.head()), store)
+                    return store.explain(parent["snapshot_id"], "record:1", "units")
+                baseline = self.new_store()
+                status, expected = self.items(request(baseline), baseline)
+                self.assertEqual(len(expected), 0 if empty else 1)
+                budget = len(packed(baseline.page(status["cursor"])))
+                exact = self.new_store(page_bytes=budget)
+                exact_status, actual = self.items(request(exact), exact)
+                self.assertEqual(actual, expected)
+                self.assertEqual(len(packed(exact.page(exact_status["cursor"]))), budget)
+                small = self.new_store(page_bytes=budget - 1)
+                failed = request(small)
+                deadline = time.monotonic() + 3
+                while failed["state"] == "building" and time.monotonic() < deadline:
+                    time.sleep(.005)
+                    failed = small.status(failed["request_id"])
+                self.assertEqual(failed["state"], "failed")
+                self.assertEqual(failed["error"]["code"], "view_budget")
+
     def shared_people(self):
         for record in self.rows:
             if record['kind'] == 'event_revision':

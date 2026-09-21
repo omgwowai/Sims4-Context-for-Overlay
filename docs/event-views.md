@@ -1,6 +1,6 @@
 # 游戏内分层事件查询
 
-MOD 0.10.0 / API、SDK 2.2.0 新增 `event_views.query`、`event_views.explain`、`event_views.durable_session`。公共方法从游戏线程调用；后台任务只处理日志和普通数据，无需游戏外服务。原 `query_history`、`read_event_changes` 和 `get_context` 保持兼容。
+从 MOD 0.10.0 / API、SDK 2.2.0 起提供 `event_views.query`、`event_views.explain`、`event_views.durable_session`。当前源码为 MOD 0.10.10。公共方法从游戏线程调用；后台任务只处理日志和普通数据，无需游戏外服务。原 `query_history`、`read_event_changes` 和 `get_context` 保持兼容。
 
 实际调用与验收见[分层接口验收步骤](event-views-validation.md)，包含同源四层读取、证据回查和旅行检查。
 
@@ -15,7 +15,7 @@ MOD 0.10.0 / API、SDK 2.2.0 新增 `event_views.query`、`event_views.explain`�
 
 组织层保留背景、技术细节、未知项、外部事件，并用引用压缩字段；完整候选评分、原始名称等从同源 events/revisions 回查。standalone 的 recap_disposition 表示默认阅读策略去向，不表示来源删除。实体索引相关不等于参与或知情。
 
-Eddie 基线：records **3,843 项 = 3,806 条修订 + 37 条辅助记录**；events **1,707 项**；organized **1,166 项 = 469 个单元 + 697 个独立来源**；recap **118 项 = 116 个主内容项 + 2 个待核查动作**。组织器补入 20 个依赖事件，通过组织项的解释接口读取，不悄悄扩大 events/records 的人物索引范围。
+2026-09-18 的 Eddie 历史基线：records **3,843 项 = 3,806 条修订 + 37 条辅助记录**；events **1,707 项**；organized **1,166 项 = 469 个单元 + 697 个独立来源**；recap **118 项 = 116 个主内容项 + 2 个待核查动作**。组织器补入 20 个依赖事件，通过组织项的解释接口读取，不悄悄扩大 events/records 的人物索引范围。计数随来源和规则变化，最新四人物对照见[验证摘要](validation.md)。
 
 ## 请求、状态、分页和关闭
 
@@ -41,7 +41,7 @@ organized = client.query_event_view(
 
 页面包含相同身份、scope、coverage、offset、total_matches、cursor/next_cursor、items。recap 页的 recap 元数据含人物字典、阅读约定、质量提示和详情数量。其中旧离线 snapshot_id 仅用于对应离线产物；公共回查使用页面顶层 snapshot_id。
 
-每页 1–100 项，默认 20；512 KiB 编码内容上限可使一页少于 page_size。单项超限明确报 view_budget，不截断字段。游标不可自行构造，与旧 history 游标不通用。
+每页 1–100 项，默认 20；512 KiB 编码内容上限可使一页少于 page_size。0.10.10 起按整个返回字典的紧凑 UTF-8 JSON 计费，包括元数据、快照身份、游标、items 数组和分隔符；预留足够的偏移数字空间后确定分页边界。单项连同返回字段无法容纳时明确报 view_budget，不截断字段。游标不可自行构造，与旧 history 游标不通用。
 
 0.10.6 起，organized 的单元按阅读引用 r1、r2、… 的数值顺序排列，再按 e1、e2、… 排列独立来源；lineage 也使用证据引用的数值顺序。首次构建、缓存命中和同源文件导出使用相同顺序，不依赖 JSON 对象键的迭代顺序。
 

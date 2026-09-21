@@ -145,11 +145,17 @@ class ViewStore:
             snapshot, source_id, total = job["snapshot"], job["source"], len(job["rows"])
         # Work outside the publication lock; no disk reads, full-session copy,
         # or derivation runs here. A page's encoded bytes have a hard upper bound.
-        return dict(decode(metadata), state="ready", request_id=request_id, snapshot_id=snapshot,
+        result = self._page_header(decode(metadata), request_id, snapshot, source_id,
+                                   offset, total, end if end < total else None)
+        result["items"] = [row.value() if isinstance(row, SourceRow) else decode(row) for row in selected]
+        return result
+
+    def _page_header(self, metadata, request_id, snapshot, source_id, offset, total, next_offset):
+        return dict(metadata, state="ready", request_id=request_id, snapshot_id=snapshot,
                     source_snapshot_id=source_id, session_id=self.session_id, offset=offset,
-                    total_matches=total, cursor=cursor,
-                    next_cursor=request_id + ":" + str(end) if end < total else None,
-                    items=[row.value() if isinstance(row, SourceRow) else decode(row) for row in selected])
+                    total_matches=total, cursor=request_id + ":" + str(offset),
+                    next_cursor=request_id + ":" + str(next_offset) if next_offset is not None else None,
+                    items=[])
 
     def explain(self, snapshot_id, item_id, facet="lineage", page_size=20):
         self._page_size(page_size)
@@ -262,31 +268,45 @@ class ViewStore:
                         source.update(data=data, memory=data["memory_bytes"])
                 rows, members, metadata = self._prepare(job, source, checkpoint)
                 meta = packed(metadata)
-                item_budget = self.page_bytes - len(meta)
-                if item_budget <= 0:
-                    raise ViewError("view_budget", "View metadata exceeds the page byte budget")
-                encoded, charged, boundaries, position, used = [], deep_size(members) + len(meta), {}, 0, 0
-                for row in rows:
-                    checkpoint()
-                    raw = packed(row.value() if isinstance(row, SourceRow) else row)
-                    if len(raw) > item_budget:
-                        raise ViewError("view_budget", "One item exceeds the page byte budget; narrow fields are not silently substituted")
-                    if len(encoded) - position >= job["page_size"] or used + len(raw) > item_budget:
-                        boundaries[position] = len(encoded)
-                        position, used = len(encoded), 0
-                    encoded.append(row if isinstance(row, SourceRow) else raw)
-                    used += len(raw)
-                    charged += row.memory_bytes() if isinstance(row, SourceRow) else len(raw) + 80
-                    if not self._room(charged):
-                        raise ViewError("view_budget", "View cache memory budget exceeded")
-                boundaries[position] = len(encoded)
-                charged += deep_size(boundaries)
-                if not self._room(charged):
-                    raise ViewError("view_budget", "View cache memory budget exceeded")
                 identity = {"source": source["data"]["sha256"], "sequence": source["sequence"],
                             "entity": job["entity"], "view": job["view"], "profile": job["profile"] if job["view"] in ("organized", "recap", "explanation") else None,
                             "rules": metadata.get("rules"), "explanation": job["explanation"], "schema": SCHEMA}
                 snapshot = hashlib.sha256(packed(identity)).hexdigest()
+                encoded, lengths, charged = [], [], deep_size(members) + len(meta)
+                for row in rows:
+                    checkpoint()
+                    raw = packed(row.value() if isinstance(row, SourceRow) else row)
+                    if len(raw) > self.page_bytes:
+                        raise ViewError("view_budget", "One item exceeds the page byte budget; narrow fields are not silently substituted")
+                    encoded.append(row if isinstance(row, SourceRow) else raw)
+                    lengths.append(len(raw))
+                    charged += row.memory_bytes() if isinstance(row, SourceRow) else len(raw) + 80
+                    if not self._room(charged + 40 * len(lengths)):
+                        raise ViewError("view_budget", "View cache memory budget exceeded")
+                # Count the whole returned JSON, including cursors, identities,
+                # the items array and commas. The largest offset gives a safe
+                # envelope for every page, including the final/empty page.
+                total = len(encoded)
+                header = self._page_header(metadata, job["id"], snapshot, source["id"],
+                                           total if total > 1 else 0, total, total if total > 1 else None)
+                item_budget = self.page_bytes - len(packed(header))
+                if item_budget < 0:
+                    raise ViewError("view_budget", "View metadata exceeds the page byte budget")
+                boundaries, position, used = {}, 0, 0
+                for index, size in enumerate(lengths):
+                    checkpoint()
+                    if size > item_budget:
+                        raise ViewError("view_budget", "One item exceeds the page byte budget; narrow fields are not silently substituted")
+                    separator = int(index > position)
+                    if index - position >= job["page_size"] or used + separator + size > item_budget:
+                        boundaries[position] = index
+                        position, used, separator = index, 0, 0
+                    used += separator + size
+                boundaries[position] = len(encoded)
+                lengths = None
+                charged += deep_size(boundaries)
+                if not self._room(charged):
+                    raise ViewError("view_budget", "View cache memory budget exceeded")
                 checkpoint()
                 with self._lock:
                     job.update(state="ready", rows=tuple(encoded), members=members, metadata=meta, page_offsets=boundaries,
@@ -297,7 +317,7 @@ class ViewStore:
             finally:
                 self._queue.task_done()
                 # Do not keep the last completed/failed job alive during idle time.
-                job = source = data = rows = row = raw = members = encoded = None
+                job = source = data = rows = row = raw = members = encoded = lengths = header = None
         self._prune()
 
     def _projection(self, source, entity, checkpoint):

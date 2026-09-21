@@ -1,6 +1,6 @@
 # 分层接口验收步骤
 
-适用 **MOD 0.10.9 / API、SDK 2.2.0 / schema 2 / event_views_v1**。本页给出可重复执行的验收步骤，实际通过范围和限制见[验证记录](validation.md)。可以由下游 MOD 开发者执行，也可以由测试者手动加载游戏后从终端发送请求，不需要 Computer Use。退出后还应检查[完整结束与自动分层文件](run-output.md)。
+适用 **MOD 0.10.10 / API、SDK 2.2.0 / schema 2 / event_views_v1**。本页给出可重复执行的验收步骤，实际通过范围和限制见[验证记录](validation.md)。可以由下游 MOD 开发者执行，也可以由测试者手动加载游戏后从终端发送请求，不需要 Computer Use。退出后还应检查[完整结束与自动分层文件](run-output.md)。
 
 ## 接口入口
 
@@ -94,6 +94,8 @@ $coViews.GetEnumerator() | ForEach-Object {
 0.10.8 增加两条路径的对照：默认预算下 `derivation_cache.mode=decoded_shared`，受限预算下为 `decode_on_demand`。使用同一完整来源和相同 coverage，逐字节比较全部内容文件。查询测试需覆盖多人物共享解码、解码中取消、预算紧张回收、加载新来源时回收、关闭后归零，以及上述情况下旧页面仍可读且不受调用者修改影响。不要把解码缓存排除在估算用量之外，也不要为启用缓存而减少原有构建预留。
 
 0.10.9 增加超过 128 MiB 来源的默认配置回归：四层必须完成分页，导出必须覆盖同一来源序号／字节截点，不能再因旧来源大小上限失败。旧配置文件含 `event_view_source_mb` 时仍能加载，且该字段不会恢复上限。低内存、取消、超时、记录／单行校验、页面及输出预算仍按原契约验收。
+
+0.10.10 补充完整页预算检查：对 get_event_view_page 返回的整个字典执行 `json.dumps(page, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")).encode("utf-8")`，长度不得超过 512 KiB；元数据、身份、游标及分隔符也计入。四层及解释接口均检查全部页面，内容应与相同来源的大页查询一致；专项回归另覆盖空页、单项页和恰好／不足 1 字节的预算。
 
 完整遍历可用下面的终端循环。页面逐份保存到 `$coEvidence`，只保留当前页在内存中；最终项数必须等于各自 `total_matches`。`next_cursor=null` 表示遍历完成，不代表当前 session 的全部后续事件已经出现。
 

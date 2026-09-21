@@ -17,7 +17,7 @@ from .experience_view import build_experiences
 from .filter_events import tick
 
 
-VERSION = "experience_recap_v1_2"
+VERSION = "experience_recap_v1_3"
 REVIEW_REASONS = {"classification_missing": "分类待补充", "name_unresolved": "名称或参数未解析",
                   "association_missing": "所属活动未关联", "protected_detail": "因关联后果保留的执行细节",
                   "unsupported_observation_shape": "观测结构待核查"}
@@ -194,6 +194,16 @@ def build_recap(loaded, entity_key, game_version=None):
         return [[row["role"], person(row["entity_key"])] for row in unit.get("roles", [])
                 if row["entity_key"].startswith("sim:")]
 
+    def object_name(key):
+        entry = names.get(key, {})
+        evidence = entry.get("name_evidence") or [{"key": key, "name": n} for n in entry.get("names_observed", [])]
+        rendered = []
+        for value in evidence:
+            text = labels(value, "object")
+            if text not in rendered:
+                rendered.append(text)
+        return " / ".join(rendered) or key
+
     def shown(unit, reason="conservative_preservation"):
         ledger[unit["id"]].update(placement="recap", reason=reason)
 
@@ -214,7 +224,7 @@ def build_recap(loaded, entity_key, game_version=None):
             row["importance"] = unit["importance"]
         targets = [r["entity_key"] for r in unit["roles"] if r["role"] == "target" and not r["entity_key"].startswith("sim:")]
         if targets:
-            row["target"] = [" / ".join(names.get(k, {}).get("names_observed", [])) or k for k in targets]
+            row["target"] = [object_name(k) for k in targets]
         if entity_key not in [r["entity_key"] for r in unit["roles"]]:
             row["context"] = "关联上下文，未确认主角参与"
         if row["roles"] == [["actor", focus]]:

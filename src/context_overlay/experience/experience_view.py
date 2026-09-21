@@ -15,7 +15,7 @@ from .experience_policy import (CATALOG, RESOURCE_SHA256, USES, classify, compac
 from .experience_digest import digest
 
 
-POLICY_VERSION = "experience_view_v1_3"
+POLICY_VERSION = "experience_view_v1_4"
 
 
 def uid(prefix, event):
@@ -221,6 +221,39 @@ class Builder:
                     break
                 self.association_issues[identifier].add("not_a_compatible_activity_phase")
 
+        # A reviewed posture provider is concurrent infrastructure, not another
+        # action or a continuation. It may lack parent/provider instance links.
+        # Require the complete same execution on one uniquely identified object;
+        # nearby/overlapping intervals and open executions remain separate details.
+        executions = defaultdict(list)
+        for event in self.interactions.values():
+            facts = event.get("facts", {})
+            key = self.support_execution_key(event)
+            if (key is not None and self.semantic[event["event_id"]] == "action"
+                    and facts.get("visible") is True and event["event_id"] not in self.omitted):
+                executions[key].append(event)
+        for event in self.interactions.values():
+            identifier, facts = event["event_id"], event.get("facts", {})
+            if self.semantic[identifier] != "activity_support":
+                continue
+            key = self.support_execution_key(event)
+            if (key is None or facts.get("visible") is not False or facts.get("is_super") is not True
+                    or (facts.get("trigger") or {}).get("name") != "POSTURE_GRAPH" or event.get("tier") != "internal"):
+                self.association_issues[identifier].add("posture_support_execution_unverified")
+                continue
+            candidates = executions[key]
+            if len(candidates) != 1:
+                self.association_issues[identifier].add("posture_support_root_not_unique")
+                continue
+            parent = candidates[0]
+            if (facts.get("parent_event_id") not in (None, parent["event_id"])
+                    or providers.get(identifier) not in (None, parent["event_id"])):
+                self.association_issues[identifier].add("posture_support_link_conflict")
+                continue
+            merge_to[identifier] = parent["event_id"]
+            self.link_audit.append({"child": self.evidence(event), "parent": self.evidence(parent),
+                                   "basis": "reviewed_posture_provider_same_execution", "merged": True})
+
         seeds = {identifier for identifier in self.interactions
                  if self.semantic[identifier] in ("action", "social_content", "conversation")}
         for identifier in seeds:
@@ -268,6 +301,13 @@ class Builder:
                 cursor = self.parent[cursor]
                 if self.semantic[cursor] == "router":
                     self.routes[cursor].add(root)
+
+    def support_execution_key(self, event):
+        key = (event.get("zone_visit"), actor(event), target(event), family(event, self.game_version),
+               tick(event.get("started_time")), tick(event.get("ended_time")))
+        if None in key or not str(key[2]).startswith("object:") or key[-1] <= key[-2]:
+            return None
+        return key
 
     def attach(self, unit, event, slot):
         root = self.cause(event)
@@ -605,9 +645,13 @@ class Builder:
             for candidate in candidates:
                 if isinstance(candidate, dict) and candidate.get("key") in wanted:
                     name = label(candidate.get("name"))
-                    names = entities.setdefault(candidate["key"], {"names_observed": []})["names_observed"]
+                    entry = entities.setdefault(candidate["key"], {"names_observed": [], "name_evidence": []})
+                    names = entry["names_observed"]
                     if name and name not in names:
                         names.append(name)
+                    name_evidence = compact(candidate)
+                    if name and name_evidence not in entry["name_evidence"]:
+                        entry["name_evidence"].append(name_evidence)
         consumer["entities"] = entities
         metrics["organized_json_bytes"] = compact_size(packet)
         metrics["consumer_packet_json_bytes"] = compact_size(consumer)

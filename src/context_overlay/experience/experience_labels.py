@@ -44,7 +44,7 @@ def resolve_label(value, kind=None, tuning=None, game_version=None):
                     source=reviewed["source"])
     if valid:
         return dict(row, text=str(observed), basis="observed_name")
-    noun = {"interaction": "活动", "statistic": "数值", "relbit": "关系标记",
+    noun = {"interaction": "活动", "object": "物件", "statistic": "数值", "relbit": "关系标记",
             "buff": "状态", "objective": "目标"}.get(kind, "资源")
     return dict(row, text="{}名称未解析{}".format(noun, "（{}）".format(identifier) if identifier else ""),
                 basis="unresolved")

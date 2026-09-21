@@ -4743,7 +4743,6 @@
     {
       "id": "13427",
       "tuning_name": "generic_Bath",
-      "role": "action",
       "class_name": "SuperInteraction",
       "module": "interactions.base.super_interaction",
       "source": {
@@ -4751,8 +4750,10 @@
         "tgi": "62E94D38:00000000:F1352E740C4710BA",
         "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
         "xml_sha256": "61a44b64a255da010889909e8febf7cb4c2027141719d473460c09c79ce99b7a",
-        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome",
+        "review": "Posture provider 15515; autonomous and user-directed selection disabled. Runtime POSTURE_GRAPH execution must be verified separately."
       },
+      "role": "activity_support",
       "family": "bath"
     },
     {
@@ -4949,6 +4950,704 @@
         "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
       },
       "family": "cooking"
+    },
+    {
+      "id": "13136",
+      "tuning_name": "chair_Nap",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1f6b27d5175ff1c8f43e4a7c5ca33f3f1cf9d1077973caf114492a9df845e570",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "nap"
+    },
+    {
+      "id": "13187",
+      "tuning_name": "computer_Browse_Web",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5bce81fcdcf0e468c0a2ccc69ee9bf9babefa692c2a31478677638e6d3bef3fa",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "computer"
+    },
+    {
+      "id": "31741",
+      "tuning_name": "computer_PlayGame_IncredibleSports",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7949df1d7e44cb92edaebce93368828fb3f9ea31e22b341262583be47da44344",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "computer"
+    },
+    {
+      "id": "13230",
+      "tuning_name": "computer_PlayGame_Blicblock",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "119657929e099de39bbecf174af9f06eb02e661f62640c47cb8f64b43b04b5f3",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "computer"
+    },
+    {
+      "id": "225567",
+      "tuning_name": "Computer_UseFromInventory",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6470d66103a7043fb99e7c5cea3457e01575037634794d6647cee6d314474078",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "computer"
+    },
+    {
+      "id": "9111",
+      "tuning_name": "tv_WatchNews",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6c5bbaff7f64e0667b23130f758b0f70ca12fb23182c414192836ac127f00769",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "128725",
+      "tuning_name": "movie_Watch_Comedy2",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "2b904115d589f50d0b42fd98cf8099e12f1e15620ef6f6eae602f446408f4277",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "128721",
+      "tuning_name": "movie_Watch_TheAdventuresOfSpaceshipSimulation",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "a1f72b645f28e9541aec279832042adecf6d0f207527f6c4b993bff603da1ba3",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "128720",
+      "tuning_name": "movie_Watch_DiamondsAreForSims",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "25db2d28f53241a4d5427e6d10c14d94bc0cd89c320e87289039aeaa1b72120b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "133558",
+      "tuning_name": "tv_watch_PublicAccess",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/EP03/SimulationPreload.package",
+        "tgi": "62E94D38:00000018:E23BB17404760CF8",
+        "source_sha256": "58a18ec0aa4ec1c0f4934b54bd89e67de1a050a940a35618f2b8861c9a55fa4e",
+        "xml_sha256": "1cc1203f26965cc7a6877f44525e043cfc310a9b2ae1d87b7bdca9e1448ac4e5",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "30304",
+      "tuning_name": "mixer_TV_WatchNewsAndCooking",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "cc066a5b9311cb504567a8afd7d2b8f8a16e108d9570675e07600eb77e45f95e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "television"
+    },
+    {
+      "id": "13161",
+      "tuning_name": "cleanup_Dishes_Aggregate",
+      "class_name": "AggregateSuperInteraction",
+      "module": "objects.base_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ef6d338e91f452fab70a88f8c33fc725ef57b15b62b6922da28ba4d9bc8eadde",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "dishes"
+    },
+    {
+      "id": "14240",
+      "tuning_name": "sink_washDishes",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "283662ca8a09105b57a226f1919d90f7046842e506e2c60854dbe7d5dde37852",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "dishes"
+    },
+    {
+      "id": "13172",
+      "tuning_name": "Collect_Dish_Continuation",
+      "class_name": "CollectManyInteraction",
+      "module": "carry.put_down_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "31cdea328850f57db8b3162eebb64221890eafc7240dab5c24c6087eb3eb7cc1",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "dishes"
+    },
+    {
+      "id": "13835",
+      "tuning_name": "Puddle_Mop",
+      "class_name": "ClearSpaceSuperInteraction",
+      "module": "interactions.utils.clear_space_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5834bac6b99c3765a9f917138eebb512e2a28279f7190eca541e6ad401b3377d",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "cleaning"
+    },
+    {
+      "id": "27285",
+      "tuning_name": "Puddle_Mop_Large",
+      "class_name": "ClearSpaceSuperInteraction",
+      "module": "interactions.utils.clear_space_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "f285632241a8e97b632ed628ca7fab067dc87961cae219f0a8d11d37e24a9be8",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "cleaning"
+    },
+    {
+      "id": "29829",
+      "tuning_name": "counter_Clean",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6513ccd49608279b012ec790c779c9d7d7643185caf0ef959441e574e748108f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "cleaning"
+    },
+    {
+      "id": "180061",
+      "tuning_name": "snowDrift_Shovel",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "fd178ab95b67030315b652d1d130e53e360fd8681e2a4a35f22a0bc01b0e7114",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "snow_shovel"
+    },
+    {
+      "id": "13826",
+      "tuning_name": "Play_In_Trash_Pile",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7a6ded1af6c74c1732e7a7aa3900af138034e8f671b0c5855131af3fac4db04d",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action"
+    },
+    {
+      "id": "13852",
+      "tuning_name": "Put_Away_Item",
+      "class_name": "PutAwayInteraction",
+      "module": "carry.put_down_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "909b926871d31a38fc3d1f70ac5159fd4cc46ed42fa774882d3c0ea22c0da1a0",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action"
+    },
+    {
+      "id": "183944",
+      "tuning_name": "weather_Outside_Interaction_RunInside_Blizzard",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "c827b5fd171ad43b859b597693d4fb90572c5137fd95b654ab9567eee6396b38",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action"
+    },
+    {
+      "id": "263924",
+      "tuning_name": "GroupCooking_Mentor",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7325b36f9f8d47c52ef3dc18afd5a6f741becce8b8421e507e8172d4cf145bfa",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "cooking_mentor"
+    },
+    {
+      "id": "264064",
+      "tuning_name": "mentor_Mixer_Food_Child",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bc4fa6e12ea7cf0d48a7d619ad91133189f893f2d02d16cd8ebbc09a21858ab2",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "cooking_mentor"
+    },
+    {
+      "id": "13284",
+      "tuning_name": "Counter_MixingBowl_Mix_Basic",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2468892832a7a3a8575d0eab552029de5be9bbfab05689db5acf657c7d8e941a",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "cooking"
+    },
+    {
+      "id": "13257",
+      "tuning_name": "Cooking_Shared_AddCombo_Basic",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "08455e6c35099a609fe90a478ccddf95c06d509048a51b0278e266d6de798b67",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "cooking"
+    },
+    {
+      "id": "13260",
+      "tuning_name": "Cooking_Shared_AddLiquid_Basic",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "14d0ff651e579d4acbb247f9fbe728f716c75c3611977b013e953a97536d9d9c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "cooking"
+    },
+    {
+      "id": "97734",
+      "tuning_name": "Cooking_Shared_Passive_FireChance",
+      "class_name": "CraftingStepInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "49754da7ce0d4ec6dde186a1c35af91d5df1fc7a56002dd788e9b77626a77c20",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "cooking"
+    },
+    {
+      "id": "13177",
+      "tuning_name": "Collect_Trash_Continuation",
+      "class_name": "CollectManyInteraction",
+      "module": "carry.put_down_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1672e53631c1eee52ae6a33728d54a6cc1992716faed60a1535344625fbcb16c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "trash"
+    },
+    {
+      "id": "13153",
+      "tuning_name": "chess_practice_restart",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5680eef76dc8d46dceefa8b8a934e91f23870a74f82406f9b4e261a90922c6f2",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "chess"
+    },
+    {
+      "id": "380365",
+      "tuning_name": "mixer_Social_Tattooing_ShowOff_Targeted_Friendly_AlwaysOn",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/EP18/SimulationPreload.package",
+        "tgi": "62E94D38:0000003B:E23BB07404760B20",
+        "source_sha256": "79e4466179883cfcc8aa06068b8fb4ba07814e1632b558a5ab27c5d6d896012f",
+        "xml_sha256": "6984aaa5f21ce84a84cfd37576deec5da4d5566d46a6aff7a267185a6434b663",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "314192",
+      "tuning_name": "socials_Friendly_CrossAge_Interactions_ReminisceOnGoodTimes",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/EP13/SimulationPreload.package",
+        "tgi": "62E94D38:00000036:E23BB07404760B2B",
+        "source_sha256": "2e07817f1d2986de0aef26332212b22b12f18dbe047462a497222fbf87c637db",
+        "xml_sha256": "33af8b261782d59eeb5f5471496efdf03ae1d3a588c549abe5537635511ea1fe",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "182515",
+      "tuning_name": "mixer_social_WeatherTemperatureSocials_ComplainAboutSnow",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "7900feb602ce8c45b6aec2d80d815be4eb44d1c0c5c4a4749443985cc43e79f7",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "26650",
+      "tuning_name": "mixer_social_ClaimCriminalMastermind_targeted_mischief_skills",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "adce52f6110f52745f662d0780df400b3492ca6ab568221567de0a58f7e21fc6",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "182639",
+      "tuning_name": "mixer_social_WeatherTemperatureSocials_ComplainAboutFreezingTemperature",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "e90385e06ff7e85902efe33de77b77698083c316d903513ed06ecdf097d8457a",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "166742",
+      "tuning_name": "socials_Targeted_Mean_AlwaysOn_STC_SwearAt",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/GP05/SimulationPreload.package",
+        "tgi": "62E94D38:00000012:F10287740C1C4EB4",
+        "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+        "xml_sha256": "bf1b5009e6fc96c7e3262985d5003cde1cbc118f4eb292ca58793c760b85c358",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "26543",
+      "tuning_name": "mixer_social_MockOutfit_targeted_Mean_middleScore",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7a543b19ae9ae042e2271add6d16d89efd638b1578fcab27788e8fe886d98dba",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "160006",
+      "tuning_name": "mixer_Argument_Start_Careers",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/GP05/SimulationPreload.package",
+        "tgi": "62E94D38:00000012:F10287740C1C4EB4",
+        "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+        "xml_sha256": "a2cbb02b6edfc31f3147d9877e9adc061eb77e4ee98fd63f4d5d0e4d285385f6",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "183710",
+      "tuning_name": "idle_Buff_Temperature_Cold",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "9b2174ed149e8a6f33ed93313edc9b0d4e7d6301417f591846250808bc8b9498",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "187264",
+      "tuning_name": "idle_Buff_SnowEffects_SnowIdle",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "eba99eb6a77fe340875e38859c5951c903b18b8dae442e542e95300e2aa8e7fb",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "13486",
+      "tuning_name": "idle_Hunger",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "3c8b8bb8150ed480a7ee5cd924e136c9fa61b9c82abdb883ea764e0139959c79",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "13487",
+      "tuning_name": "idle_Hygiene",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c91acbbeecc337559d314dffc221c91fa80d9e36134e27cca671321103e4a011",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "74257",
+      "tuning_name": "reaction_SmellBad",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "8c71e8df7ec8f9c2b049575697be0ad17ec1e4101d266bf8f8bce884f47d1b08",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "74258",
+      "tuning_name": "reaction_SmellGood",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "25c5ef5c382a4fe4719cd9dccda74954a27980dda943894e9b40c1928d8806db",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "129260",
+      "tuning_name": "reactions_Movie_Fallback_ComedicMoment",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "64c6a566a416910a65b204d72b4df759bec8fec300cef1391e712fee0da1b72d",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "189318",
+      "tuning_name": "autonomous_ObjectPicker_SnowDrift_Shovel_Adult",
+      "class_name": "AutonomousObjectTaggedPickerInteraction",
+      "module": "interactions.base.picker_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ae89d0707129bd1deb078976cac3aa73905eccba9c8b6f7ff24eab17cd28a3da",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router"
+    },
+    {
+      "id": "14261",
+      "tuning_name": "si_moveAwayCircle",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c0e4ae7389bc43d2f5fe26e440a8ce7474e118a71f1cb2ab1b67221fd9f24337",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router"
+    },
+    {
+      "id": "74855",
+      "tuning_name": "cancel_replacement_eat_to_clean",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2256b0fd5f254675ea3c9cc106db5c950a456eaff195a3014338b4b46fef1849",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router"
+    },
+    {
+      "id": "130745",
+      "tuning_name": "put_down_anywhere_while_standing",
+      "class_name": "PutDownAnywhereInteraction",
+      "module": "carry.put_down_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "4d03cccb2de89d32f999122ce1d92025c40cd63f6b5a02e7aa4ebbb38e4b2e6e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "micro"
     }
   ]
 }

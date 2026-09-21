@@ -1,7 +1,8 @@
-"""Validated durable journal prefixes. Worker-only; no runtime/game references."""
+"""Shared journal validation and durable prefixes; no runtime/game references."""
 
 import hashlib
 import json
+import math
 import sys
 from collections import defaultdict
 from collections.abc import Mapping
@@ -23,8 +24,61 @@ def reject_constant(value):
     raise ValueError("Non-finite JSON number: " + value)
 
 
+def finite_float(value):
+    number = float(value)
+    if not math.isfinite(number):
+        reject_constant(value)
+    return number
+
+
 def decode(raw):
-    return json.loads(raw.decode("utf-8"), parse_constant=reject_constant)
+    return json.loads(raw.decode("utf-8"), parse_constant=reject_constant, parse_float=finite_float)
+
+
+LINE_LIMIT = 4 * 1024 * 1024
+
+
+def record_digest(record):
+    """Compare retry content independently of JSON whitespace/key ordering."""
+    return hashlib.sha256(packed(record)).digest()
+
+
+def validate_record(raw, session_id, next_sequence, prior_digest, prior_revision, line_limit=LINE_LIMIT):
+    """Return a new validated record, or None for an identical sequence retry.
+
+    Lookups only contain previously accepted records. Callers own storage and
+    advance their sequence/revision indexes only after validation succeeds.
+    """
+    if not raw.endswith(b"\n") or len(raw) > line_limit:
+        raise ValueError("Truncated or oversized journal record")
+    record = decode(raw)
+    if not isinstance(record, dict):
+        raise ValueError("Invalid journal record")
+    seq, session = record["sequence"], record["session_id"]
+    if type(seq) is not int or seq < 1 or not isinstance(session, str) or not session:
+        raise ValueError("Invalid sequence or journal session")
+    if session_id is not None and session != session_id:
+        raise ValueError("Mixed journal sessions")
+    if seq < next_sequence:
+        if prior_digest(seq) != record_digest(record):
+            raise ValueError("Conflicting sequence retry")
+        return None
+    if seq != next_sequence:
+        raise ValueError("Missing or reordered sequence")
+    if record["kind"] == "event_revision":
+        event = record["event"]
+        if not isinstance(event, dict):
+            raise ValueError("Invalid event revision")
+        identifier, revision = event["event_id"], event["revision"]
+        if not isinstance(identifier, str) or not identifier.startswith(session + ":"):
+            raise ValueError("Event belongs to another session")
+        if type(revision) is not int or revision != (prior_revision(identifier) or 0) + 1:
+            raise ValueError("Missing or conflicting event revision")
+        if not isinstance(event.get("entities"), list):
+            raise ValueError("Invalid event entities")
+    elif record["kind"] != "observation":
+        raise ValueError("Unsupported journal record kind")
+    return record
 
 
 class LatestEvents(Mapping):
@@ -45,7 +99,7 @@ class LatestEvents(Mapping):
         return [key for key, (_, _, entities) in self.index.items() if entity in entities]
 
 
-def read_prefix(path, session_id, sequence, byte_offset, checkpoint, memory_limit, line_limit=4 * 1024 * 1024, record_limit=100000):
+def read_prefix(path, session_id, sequence, byte_offset, checkpoint, memory_limit, line_limit=LINE_LIMIT, record_limit=100000):
     """Validate every record before publishing, retaining raw bytes and latest events.
 
     No FIFO eviction is applied. Equal sequence retries must be identical; gaps,
@@ -57,25 +111,27 @@ def read_prefix(path, session_id, sequence, byte_offset, checkpoint, memory_limi
     observations, first_seen = [], {}
     total, position, next_sequence = 0, 0, 1
     source_hash = hashlib.sha256()
+
+    def prior_digest(seq):
+        return record_digest(decode(records[seq])) if seq in records else None
+
+    def prior_revision(identifier):
+        previous = events.get(identifier)
+        return previous[1] if previous else 0
+
     try:
         with open(str(path), "rb") as stream:
             while position < byte_offset:
                 checkpoint()
                 raw = stream.readline(min(line_limit + 1, byte_offset - position))
-                if not raw or not raw.endswith(b"\n") or len(raw) > line_limit:
-                    raise ValueError("Truncated or oversized journal record")
                 position += len(raw)
                 source_hash.update(raw)
-                record = decode(raw)
-                seq = record["sequence"]
-                if type(seq) is not int or record["session_id"] != session_id:
-                    raise ValueError("Invalid sequence or mixed journal sessions")
-                if seq < next_sequence:
-                    if seq not in records or packed(decode(records[seq])) != packed(record):
-                        raise ValueError("Conflicting sequence retry")
+                record = validate_record(raw, session_id, next_sequence, prior_digest, prior_revision, line_limit)
+                if record is None:
                     continue
-                if seq != next_sequence or seq > sequence:
-                    raise ValueError("Missing, reordered or out-of-prefix sequence")
+                seq = record["sequence"]
+                if seq > sequence:
+                    raise ValueError("Out-of-prefix sequence")
                 if len(records) >= record_limit:
                     raise ViewError("view_budget", "Durable source exceeds the record-count budget")
                 next_sequence += 1
@@ -84,13 +140,7 @@ def read_prefix(path, session_id, sequence, byte_offset, checkpoint, memory_limi
                 if record["kind"] == "event_revision":
                     event = record["event"]
                     identifier, revision = event["event_id"], event["revision"]
-                    if not isinstance(identifier, str) or not identifier.startswith(session_id + ":"):
-                        raise ValueError("Event belongs to another session")
                     previous = events.get(identifier)
-                    if type(revision) is not int or revision != (previous[1] + 1 if previous else 1):
-                        raise ValueError("Missing or conflicting event revision")
-                    if not isinstance(event.get("entities"), list):
-                        raise ValueError("Invalid event entities")
                     size = deep_size(event)
                     sizes[identifier] = size
                     if previous is None:
@@ -112,8 +162,6 @@ def read_prefix(path, session_id, sequence, byte_offset, checkpoint, memory_limi
                             keys.add(item)
                     observations.append((seq, record.get("category"), keys))
                     total += deep_size(keys) + 128
-                else:
-                    raise ValueError("Unsupported journal record kind")
                 if total > memory_limit:
                     raise ViewError("view_budget", "Durable source exceeds the view memory budget")
         if position != byte_offset or next_sequence != sequence + 1:

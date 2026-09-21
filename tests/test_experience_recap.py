@@ -251,7 +251,7 @@ class RecapTests(unittest.TestCase):
     def test_load_rejects_mixed_sessions_and_changed_source(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "journal.jsonl"
-            rows = [{"sequence": 1, "session_id": "run", "kind": "event_revision", "event": action("a")},
+            rows = [{"sequence": 1, "session_id": "run", "kind": "event_revision", "event": dict(action("a"), revision=1)},
                     {"sequence": 2, "session_id": "another", "kind": "status"}]
             path.write_text("\n".join(packed(r) for r in rows) + "\n", encoding="utf-8")
             with self.assertRaises(ValueError):
@@ -265,7 +265,7 @@ class RecapTests(unittest.TestCase):
     def test_cli_build_query_and_output_collision(self):
         with tempfile.TemporaryDirectory() as temp:
             path, bundle_path, md = [Path(temp) / n for n in ("journal.jsonl", "bundle.json", "recap.md")]
-            path.write_text(packed({"sequence": 1, "session_id": "run", "kind": "event_revision", "event": action("a")}) + "\n", encoding="utf-8")
+            path.write_text(packed({"sequence": 1, "session_id": "run", "kind": "event_revision", "event": dict(action("a"), revision=1)}) + "\n", encoding="utf-8")
             command = PYTHON + [str(ROOT / "scripts/experience_recap.py")]
             args = ["build", str(path), "--entity", "sim:1", "--output", str(bundle_path), "--markdown", str(md)]
             result = subprocess.run(command + args, capture_output=True)

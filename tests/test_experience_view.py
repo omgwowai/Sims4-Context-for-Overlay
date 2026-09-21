@@ -381,7 +381,7 @@ class ExperienceViewTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / "journal.jsonl"
             output = Path(directory) / "view.json"
-            source.write_text(json.dumps({"sequence": 1, "session_id": "run", "kind": "event_revision", "event": action("a")}) + "\n", encoding="utf-8")
+            source.write_text(json.dumps({"sequence": 1, "session_id": "run", "kind": "event_revision", "event": dict(action("a"), revision=1)}) + "\n", encoding="utf-8")
             original = source.read_bytes()
             command = PYTHON + [str(ROOT / "scripts/experience_view.py"), str(source)]
             run = subprocess.run(command, capture_output=True)

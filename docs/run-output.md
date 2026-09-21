@@ -60,7 +60,7 @@ co.status
 python -B -X utf8 scripts/validate_run.py "游戏用户目录/ContextOverlay/runs/SESSION" --require-closed
 ```
 
-返回分别列出 `integrity_passed`（已保存前缀是否可读）和 `capture`（整局结束证据）。严格模式下缺少已验证的完整结束就返回失败。旧日志如果没有新 run-status，会说明缺少最终状态，不冒充完整验收。
+返回分别列出 `integrity_passed`（已保存来源是否通过完整性校验）和 `capture`（整局结束证据）。0.10.3 起与 MOD 读取共用序号、会话、修订链、重复记录内容及完整行校验；修订缺失、冲突重试等错误会使 `integrity_passed=false`，即使文件大小与最终状态匹配，也不会判为完整关闭。相同内容的合法重试保持兼容。严格模式下缺少已验证的完整结束就返回失败。旧日志如果没有新 run-status，会说明缺少最终状态，不冒充完整验收。
 
 ## 积压和失败时的行为
 

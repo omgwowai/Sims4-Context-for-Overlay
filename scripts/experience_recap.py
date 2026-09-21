@@ -1,11 +1,10 @@
 """Offline compatibility entry point for the shared experience core."""
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
-from tool_support import ROOT, report, write_text
+from tool_support import ROOT, report, write_text, sha256
 from tool_support import report as emit_report
 from offline import read_journal
 from context_overlay.experience.experience_recap import *
@@ -18,18 +17,8 @@ def load_source(path):
     loaded = read_journal(path, "all", include_observations=False)
     if not loaded["complete"]:
         raise ValueError("Invalid journal: " + str(loaded["errors"]))
-    # read_journal tolerates retried records; additionally reject mixed sessions and
-    # writes during replay. The second pass hashes exactly the records it checks.
-    sha = hashlib.sha256()
-    with path.open("rb") as stream:
-        for line in stream:
-            sha.update(line)
-            record = json.loads(line.decode("utf-8"))
-            if record["session_id"] != loaded["session_id"]:
-                raise ValueError("Mixed journal sessions")
-            if record.get("kind") == "event_revision" and not record["event"]["event_id"].startswith(loaded["session_id"] + ":"):
-                raise ValueError("Event belongs to another session")
-    if sha.hexdigest() != loaded["sha256"]:
+    # The shared reader validates the source. Recheck stability before deriving.
+    if sha256(path) != loaded["sha256"]:
         raise ValueError("Journal changed while reading; freeze a copy first")
     return loaded
 

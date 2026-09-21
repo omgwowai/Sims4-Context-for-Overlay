@@ -255,8 +255,8 @@ class FilterEventsTests(unittest.TestCase):
     def test_cli_replays_revisions_keeps_inputs_and_does_not_write_without_output(self):
         with tempfile.TemporaryDirectory() as directory:
             source, output = Path(directory) / "journal.jsonl", Path(directory) / "view.json"
-            initial = interaction("a")
-            latest = dict(copy.deepcopy(initial), revision=4, outcome="cancelled")
+            initial = dict(interaction("a"), revision=1)
+            latest = dict(copy.deepcopy(initial), revision=2, outcome="cancelled")
             rows = [dict(sequence=i, session_id="run", kind="event_revision", event=e) for i, e in enumerate([initial, latest], 1)]
             source.write_text("\n".join(json.dumps(row) for row in rows) + "\n", encoding="utf-8")
             original = source.read_bytes()

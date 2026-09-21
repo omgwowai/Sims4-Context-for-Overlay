@@ -8,6 +8,7 @@ from context_overlay.localization import Localizer
 from context_overlay.model import copy_data
 from context_overlay.profiles import resource_name
 from context_overlay.semanticizer import render
+from context_overlay.view_source import LINE_LIMIT, record_digest, validate_record
 
 
 def read_json(path):
@@ -16,29 +17,29 @@ def read_json(path):
 
 
 def read_journal(path, event_scope="retained", include_observations=True):
-    """Replay runtime records; retained applies FIFO, errors report interrupted logs."""
+    """Strictly replay records; retained applies FIFO only after source validation."""
     events, metadata = {}, {}
+    digests, revisions = {}, {}
     observations, errors = [], []
     session_id, next_sequence = None, 1
     digest = hashlib.sha256()
     with path.open("rb") as stream:
-        for line_number, line in enumerate(stream, 1):
+        for line_number, line in enumerate(iter(lambda: stream.readline(LINE_LIMIT + 1), b""), 1):
             digest.update(line)
             try:
-                record = json.loads(line.decode("utf-8"))
-                sequence = record["sequence"]
-                if session_id is None:
-                    session_id = record["session_id"]
-                if sequence < next_sequence:
-                    continue  # The writer can retry an already written record.
-                if sequence != next_sequence:
-                    raise ValueError("Missing or reordered sequence")
+                record = validate_record(line, session_id, next_sequence, digests.get, revisions.get)
+                if record is None:
+                    continue
+                digests[next_sequence] = record_digest(record)
+                session_id = record["session_id"]
                 next_sequence += 1
                 for key in ("module_version", "schema_version", "recorded_at"):
                     if key in record and key not in metadata:
                         metadata[key] = record[key]
                 if record["kind"] == "event_revision":
                     event = record["event"]
+                    # Validate every revision even after the visible FIFO evicts it.
+                    revisions[event["event_id"]] = event["revision"]
                     if event_scope == "retained":
                         for removed in record.get("evicted_event_ids", []):
                             events.pop(removed, None)
@@ -51,7 +52,7 @@ def read_journal(path, event_scope="retained", include_observations=True):
         # Hash the complete input even when a damaged record ends validation.
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
-    if session_id is None:
+    if session_id is None and not errors:
         errors.append({"error": "Empty journal"})
     return {"session_id": session_id, "events": list(events.values()), "observations": observations,
             "errors": errors, "complete": not errors, "event_scope": event_scope,

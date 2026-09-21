@@ -1,6 +1,6 @@
 # ContextOverlay Python SDK
 
-SDK 版本 **2.2.0**，适配 API 2.x / schema 2。当前源码对应 ContextOverlay **0.10.2**，支持游戏内四层事件查询及结束时的分层文件；分层接口要求提供者声明 `event_views.query`。
+SDK 版本 **2.2.0**，适配 API 2.x / schema 2。当前源码对应 ContextOverlay **0.10.3**，支持游戏内四层事件查询及结束时的分层文件；分层接口要求提供者声明 `event_views.query`。
 
 把 [context_overlay_client.py](context_overlay_client.py) 放进自己 MOD 的包里，再把示例中的 `my_overlay_mod` 换成你的包名。SDK 不单独放进 Mods 文件夹，也不会帮你调模型或创建界面。[快速接入](../docs/quickstart.md)有完整的读写过程。
 

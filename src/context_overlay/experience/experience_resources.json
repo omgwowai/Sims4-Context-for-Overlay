@@ -4593,7 +4593,6 @@
     {
       "id": "128723",
       "tuning_name": "movie_Watch_MoonlightMassacre",
-      "role": "action",
       "class_name": "WatchSuperInteraction",
       "module": "objects.electronics.television",
       "source": {
@@ -4603,12 +4602,12 @@
         "xml_sha256": "3b0d5fe96e8ab96c928abfbbad52d8c52a6246f3b820289cddfd613ed1205d77",
         "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
       },
+      "role": "action",
       "family": "television"
     },
     {
       "id": "128729",
       "tuning_name": "movie_Watch_SuperHeroes",
-      "role": "action",
       "class_name": "WatchSuperInteraction",
       "module": "objects.electronics.television",
       "source": {
@@ -4618,6 +4617,7 @@
         "xml_sha256": "78a6b663a82ab5aed49d59fa1997130d45f9fe18caffea803870995924cf9ca6",
         "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
       },
+      "role": "action",
       "family": "television"
     },
     {
@@ -5648,6 +5648,291 @@
         "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
       },
       "role": "micro"
+    },
+    {
+      "id": "128722",
+      "tuning_name": "movie_Watch_SimsOfTheDead",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "3094eee185c6bf00d7a621d4e636d8ce996cb359baf8c6dd6e45de21d760a4bd",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "128724",
+      "tuning_name": "movie_Watch_TheKhlumzeeSisters",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "5413f232688d2e68fa0733df0519f3e305ca8f67bc121c2c67ee7505f6d848c3",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "128726",
+      "tuning_name": "movie_Watch_RoaringHeights",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "37e2415f7ba157bd79ac2c3ce89fe60d4e2905352b46ccf41e66f69fa755615c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "128727",
+      "tuning_name": "movie_Watch_TheSpiral",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "4ebeb290f00c9b85ba940f30605e2d8b3eb3202fff4f10850ec23cee83ed70c1",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "128728",
+      "tuning_name": "movie_Watch_LostDogsJourneyHome",
+      "class_name": "WatchSuperInteraction",
+      "module": "objects.electronics.television",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "995c84ea3b5896ffddfaf23ed258330ff6a06482cfe6fe0adcf89f883097ec42",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "action",
+      "family": "television"
+    },
+    {
+      "id": "37780",
+      "tuning_name": "counter_MakeFood_Staging_Gourmet",
+      "class_name": "CraftingPhaseStagingSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "07076fe46b6f473c60631964f4c2c3ec54d9fcdc5409d7606d42646fa981c07f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "activity_phase",
+      "family": "cooking"
+    },
+    {
+      "id": "13389",
+      "tuning_name": "fridge_CookGourmet",
+      "class_name": "StartCraftingSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "58e01201d8887754a1c45de505772dfaaba90d79da69a278e19611f33962bb32",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router",
+      "family": "cooking",
+      "decision_role": "action"
+    },
+    {
+      "id": "13390",
+      "tuning_name": "fridge_CookGourmetAutonomously",
+      "class_name": "StartCraftingAutonomouslySuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "9a3bec2d9adb8416611b46b53b7f297bbb4e362bfb3d9de22c9515b560d974c0",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router",
+      "family": "cooking",
+      "decision_role": "action"
+    },
+    {
+      "id": "152489",
+      "tuning_name": "fridge_CookGourmetAutonomously_Vegetarian",
+      "class_name": "StartCraftingAutonomouslySuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "8bee40c209553dd3ab9578b26d609e6a281ea8f6d8d826282dbe4d498e170c8c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router",
+      "family": "cooking",
+      "decision_role": "action"
+    },
+    {
+      "id": "261824",
+      "tuning_name": "fridge_CookGourmet_RequiredIngredients",
+      "class_name": "StartCraftingSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Delta/EP11/SimulationPreload.package",
+        "tgi": "62E94D38:00000034:E23BB07404760B29",
+        "source_sha256": "d888831af09d96b51c486344d068d526b264c4102dcad16fcf5894c2c6f3723f",
+        "xml_sha256": "473f368a5b40675efe2a97b1e6368c510d5e6658f0b16d7ff22a60af8ad2883c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router",
+      "family": "cooking",
+      "decision_role": "action"
+    },
+    {
+      "id": "278191",
+      "tuning_name": "fridge_CookGourmet_WeddingCake",
+      "class_name": "StartCraftingSuperInteraction",
+      "module": "crafting.crafting_interactions",
+      "source": {
+        "package": "Delta/GP11/SimulationPreload.package",
+        "tgi": "62E94D38:0000003E:F10286740C1C4CFF",
+        "source_sha256": "dcb5527204d10529432cfa065be0b5f44d607b52fb95a70a6e6ef49d1bd3a4a6",
+        "xml_sha256": "6a9eced11071165be8517acf621404fe86f0910e93dc06ebddba96bf4590cd69",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "router",
+      "family": "cooking",
+      "decision_role": "action"
+    },
+    {
+      "id": "181932",
+      "tuning_name": "socials_Targeted_Friendly_HolidaySocials_BellyLaugh",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "3eb4b371091779bf55c1b1c6f2713a937dee75d78da62db41051d6905b851da6",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "182188",
+      "tuning_name": "mixer_social_WeatherTemperatureSocials_TalkAboutTemperature",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "04395608ce508861a0d963844b4b100c0287f8cd4c9c8d4c0456093a3344aaf3",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "182519",
+      "tuning_name": "mixer_social_WeatherTemperatureSocials_ComplainAboutSunnyWeather",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "1d0ef4334b71ab0ac57470101e9853dac611b2b3c7c79817142635277eb5c9e1",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "25887",
+      "tuning_name": "mixer_social_ThrowDrink_targeted_mean_emotionSpecific",
+      "class_name": "SocialMixerInteraction",
+      "module": "interactions.social.social_mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6a10b42a39acf7ebc02bf67457e4c6d4fa8c44a8289493510975798f28a8cf2d",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "social_content"
+    },
+    {
+      "id": "189891",
+      "tuning_name": "reactions_HolidaySocials_BellyLaugh",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "e151ffc098eaa26b432ce6a9a0769ed4021af0ae763615df8c63937f4d63e55c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "gesture"
+    },
+    {
+      "id": "13991",
+      "tuning_name": "sim_BeAffectionate",
+      "class_name": "SocialSuperInteraction",
+      "module": "interactions.social.social_super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ad2b46f65ffd9017df54401ad61f90f412fc9bb8c929f83376ecde4e68f0e7f0",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome",
+        "mechanism": {
+          "path": "EA/simulation/interactions/social/social_super_interaction.py",
+          "method": "SocialSuperInteraction.run_additional_social_affordance_gen",
+          "reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+          "sha256": "6f0a2482c43fdf45fcc2e541f62d3e75da54ecbb8ea8db474e9e45cfcb22f9c8",
+          "review": "The tuned additional social runs directly on both Sims; runtime pairing still requires a unique complete matching execution per actor and target.",
+          "direct_execution": {
+            "path": "EA/simulation/interactions/base/super_interaction.py",
+            "method": "SuperInteraction.run_direct_gen",
+            "sha256": "9c83d74ac78156e3e7dbf07535ed389be4174489ca195762c4320d0807c8b08e",
+            "review": "Direct execution calls set_as_added_to_queue first. A queue observation at the execution start is expected; an earlier, later or untimed queue is not accepted as evidence of this pairing."
+          }
+        }
+      },
+      "role": "conversation",
+      "additional_social": {
+        "id": "13998",
+        "tuning_name": "sim_Chat"
+      }
+    },
+    {
+      "id": "13998",
+      "tuning_name": "sim_Chat",
+      "class_name": "SocialSuperInteraction",
+      "module": "interactions.social.social_super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "84d35729120c048de09e19992c17d86381a938e8290aecbfc7ecf99aa076b432",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      },
+      "role": "conversation"
     }
   ]
 }

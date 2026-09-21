@@ -111,6 +111,10 @@ def classify(event, game_version=None):
         return "reaction_callback"  # Suppression additionally requires a valid cause in the assembler.
     role = resource_role("interaction" if category == "autonomy.decision" else category,
                          resource(event), game_version)
+    if category == "autonomy.decision" and role != "unknown":
+        decision_role = ACTIVITY_RULES.get(identity(resource(event)), {}).get("decision_role")
+        if decision_role is not None:
+            return decision_role
     if category == "autonomy.decision" and role == "activity_phase" and identity(resource(event))[0] in ("13388", "100082"):
         return "action"  # These selectors choose cooking/sleeping as an activity direction.
     return role
@@ -122,6 +126,16 @@ def family(event, game_version=None):
         return None
     rule = ACTIVITY_RULES.get(identity(value), {})
     return rule.get("family") or FAMILIES.get(identity(value)[0])
+
+
+def additional_social(event, game_version=None):
+    """Exact reviewed tuning relation, never an inference from displayed names."""
+    if resource_role("interaction", resource(event), game_version) != "conversation":
+        return None
+    value = ACTIVITY_RULES.get(identity(resource(event)), {}).get("additional_social")
+    if value and resource_role("interaction", value, game_version) == "conversation":
+        return identity(value)
+    return None
 
 
 def importance(event, game_version=None):

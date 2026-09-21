@@ -10,12 +10,12 @@ import hashlib
 import json
 
 from .filter_events import actor, compact_size, filter_events, identity, ref, target, tick
-from .experience_policy import (CATALOG, RESOURCE_SHA256, USES, classify, compact, family,
+from .experience_policy import (CATALOG, RESOURCE_SHA256, USES, additional_social, classify, compact, family,
                                game_event, importance, kind, label, resource)
 from .experience_digest import digest
 
 
-POLICY_VERSION = "experience_view_v1_4"
+POLICY_VERSION = "experience_view_v1_5"
 
 
 def uid(prefix, event):
@@ -254,6 +254,8 @@ class Builder:
             self.link_audit.append({"child": self.evidence(event), "parent": self.evidence(parent),
                                    "basis": "reviewed_posture_provider_same_execution", "merged": True})
 
+        self.assemble_additional_socials(merge_to, providers)
+
         seeds = {identifier for identifier in self.interactions
                  if self.semantic[identifier] in ("action", "social_content", "conversation")}
         for identifier in seeds:
@@ -308,6 +310,66 @@ class Builder:
         if None in key or not str(key[2]).startswith("object:") or key[-1] <= key[-2]:
             return None
         return key
+
+    def social_execution_key(self, event):
+        facts = event.get("facts", {})
+        key = (event.get("zone_visit"), actor(event), target(event),
+               tick(event.get("started_time")), tick(event.get("ended_time")),
+               facts.get("finishing_type"), (facts.get("trigger") or {}).get("name"))
+        if (None in key or not str(key[1]).startswith("sim:") or not str(key[2]).startswith("sim:")
+                or key[1] == key[2] or key[4] <= key[3] or facts.get("visible") is not True
+                or facts.get("is_super") is not True or event["event_id"] in self.omitted
+                or event.get("stage") != "ended"
+                or self.semantic[event["event_id"]] != "conversation"):
+            return None
+        instance = (event.get("zone_visit"), actor(event), facts.get("interaction_id"))
+        if facts.get("interaction_id") is None or len(self.instances[instance]) != 1:
+            return None
+        return key
+
+    def assemble_additional_socials(self, merge_to, providers):
+        # Some social tunings directly run another social on both Sims. Keep one
+        # root per direction, preserving its queue and outcome. An ordinary chat
+        # remains independent unless the exact reviewed pair and runtime shape
+        # match uniquely; overlapping/open executions are deliberately not folded.
+        executions = defaultdict(list)
+        for event in self.interactions.values():
+            key = self.social_execution_key(event)
+            if key is not None:
+                executions[(identity(event["facts"]), key)].append(event)
+        for parent in self.interactions.values():
+            expected = additional_social(parent, self.game_version)
+            key = self.social_execution_key(parent)
+            if expected is None or key is None:
+                continue
+            candidates = executions[(expected, key)]
+            if len(candidates) != 1 or len(executions[(identity(parent["facts"]), key)]) != 1:
+                continue
+            child = candidates[0]
+            identifier, parent_id = child["event_id"], parent["event_id"]
+            if identifier in merge_to or parent_id in merge_to:
+                continue
+            facts = child["facts"]
+            # run_direct_gen calls set_as_added_to_queue before direct execution.
+            # That queue observation must share the start tick; an earlier queue
+            # or one with an unknown time does not establish an additional SI.
+            if (tick(child.get("first_observed_time")) != key[3]
+                    or any(tick(row.get("game_time")) != key[3] for row in child.get("observations", [])
+                           if row.get("phase") == "queued")
+                    or facts.get("decision_event_id") is not None
+                    or sorted((r["role"], r["entity_key"]) for r in roles(child))
+                       != sorted((r["role"], r["entity_key"]) for r in roles(parent))
+                    or child.get("outcome") != parent.get("outcome")
+                    or facts.get("outcome_result") != parent["facts"].get("outcome_result")
+                    or facts.get("parent_event_id") not in (None, parent_id)
+                    or facts.get("parent_interaction_id") not in (None, parent["facts"]["interaction_id"])
+                    or facts.get("parent_actor_id") not in (None, actor(parent)[4:])
+                    or providers.get(identifier) not in (None, parent_id)
+                    or providers.get(parent_id) is not None):
+                continue
+            merge_to[identifier] = parent_id
+            self.link_audit.append({"child": self.evidence(child), "parent": self.evidence(parent),
+                                   "basis": "reviewed_additional_social_same_execution", "merged": True})
 
     def attach(self, unit, event, slot):
         root = self.cause(event)

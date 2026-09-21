@@ -31,7 +31,7 @@ DEFAULTS = {"recorder_enabled": True, "collector_enabled": True, "semanticizer_e
 DEFAULTS.update(external_rate_per_second=20, external_burst=40)
 DEFAULTS.update(autonomy_enabled=True, autonomy_top_n=5, autonomy_pending_capacity=256,
                 autonomy_pending_memory_mb=8, autonomy_pending_ttl_seconds=600)
-DEFAULTS.update(event_view_memory_mb=512, event_view_source_mb=128,
+DEFAULTS.update(event_view_memory_mb=4096, event_view_source_mb=128,
                 event_view_query_limit=8, event_view_ttl_seconds=300, event_view_build_seconds=120)
 DEFAULTS.update(export_views_on_stop=True)
 _runtime = None

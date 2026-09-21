@@ -8,6 +8,8 @@ from collections import Counter, defaultdict
 import copy
 import json
 
+from .event_sequence import EventSequence, event_index, ordered_events, select_events
+
 
 
 POLICY_VERSION = "diary_detail_v1"
@@ -94,7 +96,7 @@ def same_actor_visit(left, right):
 def compact_size(events):
     # Per-event encoding avoids one long C-encoder section holding the GIL over
     # an entire journal. Exact byte count is unchanged.
-    if isinstance(events, list):
+    if isinstance(events, (list, EventSequence)):
         return 2 + max(0, len(events) - 1) + sum(compact_size(event) for event in events)
     return len(json.dumps(events, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode("utf-8"))
 
@@ -193,8 +195,8 @@ def lazy_topup_key(event, by_id):
     return (event["zone_visit"], subjects[0], parent["event_id"], before, after)
 
 
-def filter_events(events, session_id, entity_key=None, copy_result=True):
-    """Filter flat latest revisions; all source events remain available for links."""
+def filter_rules(events, session_id):
+    """Validate and classify flat revisions, keeping all events available for links."""
     by_id, instances, children, protected = {}, defaultdict(list), defaultdict(list), set()
     for event in events:
         identifier = event.get("event_id")
@@ -202,7 +204,7 @@ def filter_events(events, session_id, entity_key=None, copy_result=True):
                 or identifier in by_id or type(event.get("revision")) is not int or event["revision"] < 1
                 or "effects" in event):
             raise ValueError("Expected unique flat latest revisions from one session")
-        by_id[identifier] = event
+        by_id[identifier] = None
         # External payloads are opaque, even if they resemble game data.
         if event.get("origin") != "game" or event.get("event_type") == "external_event":
             continue
@@ -212,6 +214,7 @@ def filter_events(events, session_id, entity_key=None, copy_result=True):
         if event.get("category") != "autonomy.decision":
             protected.add((event.get("cause") or {}).get("event_id"))
 
+    by_id = event_index(events)
     omitted, folds = {}, {}
 
     def omit(event, rule, related=(), **details):
@@ -253,7 +256,8 @@ def filter_events(events, session_id, entity_key=None, copy_result=True):
                  link_basis="recorded_mixer_provider_instance_not_parent_event_id")
 
     first_provider_decision = {}
-    for event in sorted(events, key=lambda e: (tick(e.get("first_observed_time")) or 0, e["event_id"])):
+    ordered = ordered_events(events, key=lambda e: (tick(e.get("first_observed_time")) or 0, e["event_id"]))
+    for event in ordered:
         if event.get("origin") != "game" or event.get("event_type") != "game_event":
             continue
         if event.get("category") == "autonomy.decision" and event["event_id"] not in protected:
@@ -262,15 +266,15 @@ def filter_events(events, session_id, entity_key=None, copy_result=True):
             if (detail.get("rule") == "micro_action_with_recorded_provider"
                     and by_id[interaction_id]["facts"].get("decision_event_id") == event["event_id"]):
                 provider_id = detail["related"][0]["event_id"]
-                representative = first_provider_decision.setdefault(provider_id, event)
-                if representative is not event and routine_decision(event):
+                representative = first_provider_decision.setdefault(provider_id, ref(event))
+                if representative["event_id"] != event["event_id"] and routine_decision(event):
                     omit(event, "routine_micro_decision", [by_id[interaction_id], representative],
                          scope="routine_mixer_choice_only_provider_scores_remain_in_source")
 
     # Only identical small refills within one actual nap are folded. The large
     # initial transition and the first small refill remain separate raw events.
     previous = {}
-    for event in sorted(events, key=lambda e: (tick(e.get("first_observed_time")) or 0, e["event_id"])):
+    for event in ordered:
         if (event.get("origin") != "game" or event.get("event_type") != "game_event"
                 or event.get("category") != "statistic.direct"
                 or str((event.get("payload", {}).get("statistic") or {}).get("id")) != "29111"):
@@ -298,16 +302,22 @@ def filter_events(events, session_id, entity_key=None, copy_result=True):
             previous[series] = {"representative": event, "key": key}
         previous[series]["last_tick"] = at
 
-    selected = [e for e in events if entity_key is None or entity_key in e.get("entities", [])]
+    return omitted, folds
+
+
+def filter_events(events, session_id, entity_key=None, copy_result=True):
+    """Public filter output, including retained history and exact byte metrics."""
+    omitted, folds = filter_rules(events, session_id)
+    selected = select_events(events, lambda e: entity_key is None or entity_key in e.get("entities", []))
     selected_ids = {e["event_id"] for e in selected}
-    kept = [e for e in selected if e["event_id"] not in omitted]
+    kept = select_events(selected, lambda e: e["event_id"] not in omitted)
     audit = [omitted[e["event_id"]] for e in selected if e["event_id"] in omitted]
     counts = dict(sorted(Counter(row["rule"] for row in audit).items()))
     metrics = {"source_latest_events": len(events), "selected_latest_events": len(selected),
                "retained_events": len(kept), "omitted_events": len(audit), "omitted_by_rule": counts,
                "selected_events_json_bytes": compact_size(selected), "retained_events_json_bytes": compact_size(kept)}
     result = {"kind": "history", "session_id": session_id,
-        "history": {"events": kept, "scope": "experimental_filtered_latest_revisions"},
+        "history": {"events": list(kept) if copy_result else kept, "scope": "experimental_filtered_latest_revisions"},
         "filtering": {"policy_version": POLICY_VERSION, "experimental": True, "entity_key": entity_key,
             "rules": RULES, "metrics": metrics, "omitted": audit,
             "folds": [f for key, f in folds.items() if key in selected_ids],

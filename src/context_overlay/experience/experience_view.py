@@ -9,10 +9,11 @@ import copy
 import hashlib
 import json
 
-from .filter_events import actor, compact_size, filter_events, identity, ref, target, tick
+from .filter_events import actor, compact_size, filter_rules, identity, ref, target, tick
 from .experience_policy import (CATALOG, RESOURCE_SHA256, USES, additional_social, classify, compact, family,
                                game_event, importance, kind, label, resource)
 from .experience_digest import digest
+from .event_sequence import event_index, ordered_events, select_events
 
 
 POLICY_VERSION = "experience_view_v1_6"
@@ -91,22 +92,31 @@ def choice_excerpt(stage, alternatives=2):
 class Builder:
     def __init__(self, events, session_id, entity_key, game_version):
         self.events, self.session_id, self.entity_key, self.game_version = events, session_id, entity_key, game_version
-        filtered = filter_events(events, session_id, copy_result=False)
-        self.omitted = {row["event_id"]: row for row in filtered["filtering"]["omitted"]}
-        self.folds = filtered["filtering"]["folds"]
+        self.omitted, folds = filter_rules(events, session_id)
+        self.folds = list(folds.values())
         if game_version is not None and game_version != CATALOG["game_version"]:
             self.omitted, self.folds = {}, []
-        self.by_id = {e["event_id"]: e for e in events}
-        self.alias = {e["event_id"]: "e" + str(i + 1) for i, e in enumerate(events)}
-        self.semantic = {e["event_id"]: classify(e, game_version) for e in events}
-        self.important = {e["event_id"]: importance(e, game_version) for e in events if importance(e, game_version)}
+        self.by_id = event_index(events)
+        self.alias, self.semantic, self.important = {}, {}, {}
+        self.selected, self.interactions, self.protected = set(), {}, set()
+        # One decoding pass populates the global indexes shared by later stages.
+        for i, event in enumerate(events):
+            identifier = event["event_id"]
+            self.alias[identifier] = "e" + str(i + 1)
+            self.semantic[identifier] = classify(event, game_version)
+            priority = importance(event, game_version)
+            if priority:
+                self.important[identifier] = priority
+            if entity_key is None or entity_key in event.get("entities", []):
+                self.selected.add(identifier)
+            if game_event(event):
+                self.protected.add((event.get("cause") or {}).get("event_id"))
+                if kind(event) == "interaction":
+                    self.interactions[identifier] = event
         for identifier in self.important:
             self.omitted.pop(identifier, None)
-        self.selected = {e["event_id"] for e in events if entity_key is None or entity_key in e.get("entities", [])}
         self.units, self.sources, self.routes = {}, defaultdict(set), defaultdict(set)
         self.dispositions, self.link_audit = {}, []
-        self.interactions = {e["event_id"]: e for e in events if game_event(e) and kind(e) == "interaction"}
-        self.protected = {(e.get("cause") or {}).get("event_id") for e in events if game_event(e)}
         self.instances = defaultdict(list)
         for event in self.interactions.values():
             self.instances[(event.get("zone_visit"), actor(event), event.get("facts", {}).get("interaction_id"))].append(event)
@@ -381,7 +391,7 @@ class Builder:
 
     def assemble_states(self):
         active = {}
-        ordered = sorted(self.events, key=lambda e: tick(e.get("first_observed_time")) or 0)
+        ordered = ordered_events(self.events, key=lambda e: tick(e.get("first_observed_time")) or 0)
         for event in ordered:
             if not game_event(event) or kind(event) != "buffs" or event["event_id"] in self.omitted:
                 continue
@@ -494,7 +504,9 @@ class Builder:
                 root = self.membership.get(parent["event_id"]) if parent is not None else None
                 excerpt = choice_excerpt(stage)
                 if root is not None and excerpt is not None:
-                    self.provider_choices[root].append({"event": event, "time": payload.get("selection_time"), "choice": excerpt})
+                    # Evidence needs identity/visit, not the full decision pool.
+                    source = {"event_id": event["event_id"], "zone_visit": event.get("zone_visit")}
+                    self.provider_choices[root].append({"event": source, "time": payload.get("selection_time"), "choice": excerpt})
 
             if semantic in ("micro", "activity_phase", "posture", "gesture", "conversation") and event["event_id"] not in self.protected:
                 self.dispositions[event["event_id"]] = "execution_choice_details"
@@ -668,7 +680,7 @@ class Builder:
             if kind(event) == "interaction" and game_event(event):
                 row["occurrence"] = occurrence(event)
             evidence[self.evidence(event)] = row
-        source_selected = [e for e in self.events if e["event_id"] in self.selected]
+        source_selected = select_events(self.events, lambda e: e["event_id"] in self.selected)
         # The consumer packet excludes audit and review, with omissions disclosed explicitly.
         packet = {lane: view[lane] for lane in lanes if lane not in ("review", "external", "details")}
         packet_ids = {unit["id"] for units in packet.values() for unit in units}
@@ -741,4 +753,7 @@ def build_experiences(events, session_id, entity_key=None, game_version=None):
     builder.assemble_decisions()
     builder.assemble_facts()
     builder.link_products()
-    return copy.deepcopy(builder.result())
+    result = builder.result()
+    # Release global indexes and unselected units before detaching the result.
+    del builder
+    return copy.deepcopy(result)

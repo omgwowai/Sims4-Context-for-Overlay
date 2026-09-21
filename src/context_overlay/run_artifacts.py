@@ -7,7 +7,8 @@ import shutil
 import threading
 import time
 
-from context_overlay.event_views import BOUNDARIES, CheckedList
+from context_overlay.event_views import BOUNDARIES
+from context_overlay.experience.event_sequence import EventSequence
 from context_overlay.experience.experience_recap import build_recap, markdown, organized_items
 from context_overlay.experience.experience_quality import quality_report, quality_markdown
 from context_overlay.model import copy_data, new_id, utc_now
@@ -16,7 +17,7 @@ from context_overlay.view_source import ViewError, packed, read_prefix
 
 
 def export_layers(directory, session_id, head, targets, coverage, game_version, checkpoint,
-                  source_limit=128 * 1024 * 1024, memory_limit=512 * 1024 * 1024,
+                  source_limit=128 * 1024 * 1024, memory_limit=4096 * 1024 * 1024,
                   output_limit=256 * 1024 * 1024):
     directory = Path(directory)
     root = directory / "views"
@@ -54,7 +55,7 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
         events = data["events"]
         write("events.jsonl", (packed(events[key]) + b"\n" for key in events))
         loaded = {"complete": True, "event_scope": "all", "session_id": session_id,
-                  "sha256": data["sha256"], "events": CheckedList(events.values(), checkpoint)}
+                  "sha256": data["sha256"], "events": EventSequence(events, checkpoint=checkpoint)}
         people, quality_people = [], []
         for key, name in sorted(targets.items()):
             checkpoint()
@@ -92,6 +93,8 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
                        recap=sum(len(bundle["recap"][section]) for section in
                            ("activities", "results", "relationship_observations", "states", "review_actions")),
                        snapshot_id=bundle["snapshot_id"])
+            # Do not keep the previous person's graph alive during the next build.
+            del bundle, quality
         manifest = {"format": "run_event_layers_v1", "session_id": session_id, "created_at": utc_now(),
                     "source": {"path": "../../journal.jsonl", "sha256": data["sha256"],
                                "sequence": data["as_of_sequence"], "byte_offset": data["byte_offset"],

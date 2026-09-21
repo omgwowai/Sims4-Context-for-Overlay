@@ -14,24 +14,13 @@ from context_overlay import SCHEMA_VERSION
 from context_overlay.history import deep_size, MIB
 from context_overlay.model import new_id
 from context_overlay.view_source import ViewError, decode, packed, read_prefix
+from context_overlay.experience.event_sequence import EventSequence
 
 VIEWS = ("records", "events", "organized", "recap")
 FACETS = ("lineage", "policy", "labels", "revisions", "events", "units")
 PROFILE = "recap_v1"
 SCHEMA = "event_views_v1"
 BOUNDARIES = {"session_start", "session_end", "zone_entry", "zone_exit"}
-
-
-class CheckedList(list):
-    def __init__(self, values, checkpoint):
-        super().__init__(values)
-        self.checkpoint = checkpoint
-
-    def __iter__(self):
-        for i, item in enumerate(super().__iter__()):
-            if i % 32 == 0:
-                self.checkpoint()
-            yield item
 
 
 class SourceRow:
@@ -54,7 +43,7 @@ class SourceRow:
 
 class ViewStore:
     def __init__(self, path, session_id, game_version=None, max_queries=8,
-                 memory_bytes=512 * MIB, source_bytes=128 * MIB, ttl=300,
+                 memory_bytes=4096 * MIB, source_bytes=128 * MIB, ttl=300,
                  build_seconds=120, page_bytes=512 * 1024):
         self.path, self.session_id, self.game_version = str(path), session_id, game_version
         self.max_queries, self.memory_limit, self.source_limit = max_queries, memory_bytes, source_bytes
@@ -303,7 +292,7 @@ class ViewStore:
         if self._memory() + 2 * data["latest_event_bytes"] > self.memory_limit:
             raise ViewError("view_budget", "Insufficient memory for experience construction")
         loaded = {"complete": True, "event_scope": "all", "session_id": self.session_id,
-                  "sha256": data["sha256"], "events": CheckedList(data["events"].values(), checkpoint)}
+                  "sha256": data["sha256"], "events": EventSequence(data["events"], checkpoint=checkpoint)}
         bundle = build_recap(loaded, entity, self.game_version)
         checkpoint()
         cached = packed(bundle)

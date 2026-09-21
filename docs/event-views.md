@@ -72,9 +72,11 @@ explanation = client.explain_event_view(
 - 固定当前 session 已持久化日志的 durable_sequence 与 durable_byte_offset；尚未写盘的通知不包含在内。scope 报告 as_of_sequence/source_sha256/source_byte_offset；coverage 附带截点时记录器与持久化状态。
 - 严格核验连续序号、修订链、会话和完整行，相同 sequence 重试必须内容相同。后续追加不改变旧页；快照持有原字节，不用后来的来源替换旧修订。
 - 首版仅支持 durable_session、完整会话时间范围、recap_v1。其他来源、profile、时间参数明确拒绝。未写入首条日志时报 source_unavailable；无人物事件时报 entity_not_recorded。
-- 默认最多 8 请求、300 秒未访问过期，来源前缀最大 128 MiB / 100,000 条记录、单行最大 4 MiB、内存估算预算 512 MiB、构建时限 120 秒。config 字段：event_view_query_limit/event_view_ttl_seconds/event_view_source_mb/event_view_memory_mb/event_view_build_seconds。超预算明确失败，不回退 FIFO 或截断。
+- 默认最多 8 请求、300 秒未访问过期，来源前缀最大 128 MiB / 100,000 条记录、单行最大 4 MiB、内存估算预算 4 GiB（`event_view_memory_mb=4096`）、构建时限 120 秒。config 字段：event_view_query_limit/event_view_ttl_seconds/event_view_source_mb/event_view_memory_mb/event_view_build_seconds。超预算明确失败，不回退 FIFO 或截断。
 - 内存预算是受控数据结构的保守估算，不是进程 RSS 硬隔离。后台与游戏共享 GIL 和垃圾回收，大日志冷构建仍可能短时影响调度；需结合实机负载测量。常规 UI 优先请求 recap，跨层共用 source_snapshot_id，避免每个回调创建新截点。
 - 0.10.6 的 records/events 页缓存引用同一来源已冻结的原字节，不再各自保留完整序列化副本；索引、描述符、派生缓存和构建预留仍计入预算。取页返回独立解码的数据，调用者修改页面或日志继续追加都不影响旧快照。页大小仍按完整编码后的内容检查。无需先关闭原始层才能打开派生层，但总来源／内存／请求限制仍然适用。
+- 0.10.7 的 organized/recap 构建使用可重复遍历的事件 ID 序列，按需从同一原字节解码；全局排序保存键和 ID，避免整局决策候选池长驻。跨人物依赖、全局证据编号和完整来源校验仍参与处理。构建器只计算所需的筛选规则，不生成未使用的完整历史和字节指标；生成独立结果前释放全局构建索引。通过增加解码次数换取更低峰值内存，取消检查和时间限制继续生效。
+- 4 GiB 是每个查询 store 或导出任务的受控缓存与保守构建估算上限，按需增长，不预分配，也不是游戏进程的 RSS 硬限制。查询与导出可以同时存在，预算不能理解为整个 MOD 合计最多 4 GiB。原始采集缓存、历史查询及游戏自身使用另计。来源 128 MiB、记录数、单页和磁盘输出限制独立存在；提高内存不等于无限会话。已有 config 显式设置值优先于默认值，修改配置需下次启动加载。
 - 正常旅行保留 provider；载入期间读取等待 ready，关闭仍可执行。新 session 关闭旧任务。取消在后台检查点停止；全部相关请求关闭或过期后，后台回收来源。
 - records/events 的快照不绑定显示规则，organized/recap 绑定核心和规则资源哈希。规则 JSON 随 ts4script 分发，源码 manifest 校验覆盖资源；离线工具和 MOD 共用 Python 3.7 核心。
 

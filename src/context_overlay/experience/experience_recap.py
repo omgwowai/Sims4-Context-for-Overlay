@@ -15,6 +15,7 @@ from .experience_labels import LabelRenderer
 from .experience_policy import compact
 from .experience_view import build_experiences
 from .filter_events import tick
+from .event_sequence import EventSequence
 
 
 VERSION = "experience_recap_v1_3"
@@ -45,7 +46,7 @@ def packed(value, canonical=False):
 
 
 def digest(value):
-    if isinstance(value, list):
+    if isinstance(value, (list, EventSequence)):
         result = hashlib.sha256(b"[")
         for i, item in enumerate(value):
             if i:
@@ -331,9 +332,15 @@ def build_recap(loaded, entity_key, game_version=None):
         "reviewed": [ref for uid, ref in refs.items() if any(r["unit"] == uid and r["basis"].startswith("reviewed") for r in labels.audit)],
         "unresolved": [ref for uid, ref in refs.items() if any(r["unit"] == uid and r["basis"] in ("unresolved", "reviewed_partial") for r in labels.audit)],
         "note": "中文释义不等于游戏显示名；名称参数缺失不补猜。使用 labels facet 回查原名、状态和释义来源"}
-    times = [v for e in loaded["events"] for k in ("first_observed_time", "last_observed_time", "started_time", "ended_time")
-             for v in [e.get(k)] if tick(v) is not None]
-    bounds = [min(times, key=tick), max(times, key=tick)] if times else [None, None]
+    bounds = [None, None]
+    for event in loaded["events"]:
+        for key in ("first_observed_time", "last_observed_time", "started_time", "ended_time"):
+            value = event.get(key)
+            if tick(value) is not None:
+                if bounds[0] is None or tick(value) < tick(bounds[0]):
+                    bounds[0] = value
+                if bounds[1] is None or tick(value) > tick(bounds[1]):
+                    bounds[1] = value
     packet["scope"]["observed_event_bounds"] = [at(t) for t in bounds]
     from .resources import implementation_hashes
     implementation = implementation_hashes()

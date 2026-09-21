@@ -41,7 +41,9 @@ co.status
 
 第一条只启动后台任务，第二条的 `view_exports` 查看进度。开发驱动也支持 `export_views` 请求。进行中生成的是固定截点片段，README／阅读版明确标注尚未完整结束；后续采集不改变已有快照。后台仅处理普通数据，公开的游戏内查询接口仍见[分层 API](event-views.md)。
 
-默认 `export_views_on_stop=true`。可在现有 config.json 中设为 false 关闭结束时的自动生成，手动命令仍可调用。导出沿用 `event_view_source_mb`（128 MiB）、`event_view_memory_mb`（512 MiB 估算）和 `event_view_build_seconds`（120 秒）；单份输出另限 256 MiB。超限明确失败，不截短后伪装成完整结果。内存是估算预算，不是 RSS 硬隔离。
+默认 `export_views_on_stop=true`。可在现有 config.json 中设为 false 关闭结束时的自动生成，手动命令仍可调用。导出沿用 `event_view_source_mb`（128 MiB）、`event_view_memory_mb`（0.10.7 起为 4096 MiB，即 4 GiB 估算）和 `event_view_build_seconds`（120 秒）；单份输出另限 256 MiB。超限明确失败，不截短后伪装成完整结果。内存是每个导出任务的估算预算，按需增长，不是游戏总 RSS 的硬隔离；查询 store 有自己的同值预算。
+
+0.10.7 在同一冻结来源上按需解码事件，逐人物生成 organized、recap 和审计，写完一个人物后释放其结果，再生成下一人。不会先把整局最新事件展开为常驻 Python 列表。输出仍经临时目录、完整校验和原子发布，失败不覆盖此前成功的快照。较低内存以更多解码换取，实际耗时与峰值对照见[验证记录](validation.md)。
 
 ## 怎样判断这一局是否写完整
 

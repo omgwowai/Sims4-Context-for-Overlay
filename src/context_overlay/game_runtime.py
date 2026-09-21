@@ -16,7 +16,7 @@ from context_overlay.hooks import Hooks
 from context_overlay.history import DEFAULT_EVENT_CAPACITY, MIB
 from context_overlay.model import new_id, utc_now
 from context_overlay.recorder import Recorder
-from context_overlay.storage import Journal
+from context_overlay.storage import Journal, atomic_json
 
 
 DEFAULTS = {"recorder_enabled": True, "collector_enabled": True, "semanticizer_enabled": True,
@@ -31,6 +31,9 @@ DEFAULTS = {"recorder_enabled": True, "collector_enabled": True, "semanticizer_e
 DEFAULTS.update(external_rate_per_second=20, external_burst=40)
 DEFAULTS.update(autonomy_enabled=True, autonomy_top_n=5, autonomy_pending_capacity=256,
                 autonomy_pending_memory_mb=8, autonomy_pending_ttl_seconds=600)
+DEFAULTS.update(event_view_memory_mb=4096,
+                event_view_query_limit=8, event_view_ttl_seconds=300, event_view_build_seconds=120)
+DEFAULTS.update(export_views_on_stop=True)
 _runtime = None
 _lifecycle_hooks = None
 _retired = []
@@ -71,6 +74,10 @@ def load_config():
         with path.open("r", encoding="utf-8-sig") as stream:
             configured = json.load(stream)
         for name, value in configured.items():
+            # Removed in 0.10.9. Existing config files must keep loading without
+            # restoring the obsolete source-file size gate.
+            if name == "event_view_source_mb":
+                continue
             if name not in DEFAULTS:
                 raise ValueError("Unknown configuration field: " + name)
             default = DEFAULTS[name]
@@ -96,6 +103,12 @@ class Runtime:
         self.game_service_manager = game_services.service_manager
         self.history_suspended = False
         self.resumed = previous is not None
+        self.event_views = getattr(previous, "event_views", None)
+        self.view_targets = dict(getattr(previous, "view_targets", {}))
+        self.view_exports = getattr(previous, "view_exports", None)
+        self._reported_recording_error = getattr(previous, "_reported_recording_error", None)
+        self._target_error_reported = False
+        self.session_end_sequence = None
         self.adapter = EAAdapter(self.config)
         self.initial_scope = self.adapter.scope()
         self.manager = services.get_event_manager()
@@ -135,10 +148,68 @@ class Runtime:
         self.inspector_error = None
 
     def fail(self, message):
-        first = not self.recorder.paused
         self.recorder.fail(message)
-        if first:
-            log("RECORDING FAILED: " + str(message))
+        self._report_recording_failure()
+
+    def _run_report(self, phase, reason=None, errors=()):
+        state = self.recorder.status()
+        persistence = state["persistence"]
+        end = getattr(self, "session_end_sequence", None)
+        drained = persistence.get("accepted_sequence") == persistence.get("durable_sequence") and not persistence.get("pending_bytes", 0)
+        complete = (state["state"] == "recording" and not errors and bool(end) and drained
+                    and persistence.get("durable_sequence", 0) >= end) if phase == "closed" else None
+        return {"format": "run_status_v1", "session_id": self.session_id, "updated_at": utc_now(),
+                "phase": phase, "reason": reason, "capture_complete": complete,
+                "game_time": getattr(self, "boundary_time", None), "session_end_sequence": end,
+                "journal_drained": drained, "recorder": state, "cleanup_errors": list(errors)}
+
+    def _save_run_report(self, report):
+        try:
+            directory = getattr(self, "directory", None) or self.writer.directory
+            atomic_json(directory / "run-status.json", report)
+        except Exception as exc:
+            log("RUN STATUS WRITE FAILED: {}: {}".format(type(exc).__name__, exc))
+
+    def _report_recording_failure(self):
+        state = self.recorder.status()
+        if state["state"] == "failed" and state["error"] != getattr(self, "_reported_recording_error", None):
+            self._reported_recording_error = state["error"]
+            log("RECORDING FAILED: " + str(state["error"]))
+            self._save_run_report(self._run_report("failed", state["error"]))
+
+    def _remember_view_targets(self, force=False):
+        if not force and not getattr(self, "config", {}).get("export_views_on_stop", False):
+            return
+        try:
+            for reference in self.adapter.household_members():
+                self.view_targets[reference["key"]] = reference.get("name")
+        except Exception as exc:
+            if not getattr(self, "_target_error_reported", False):
+                self._target_error_reported = True
+                log("VIEW TARGETS UNAVAILABLE: {}: {}".format(type(exc).__name__, exc))
+
+    def _exports(self):
+        if self.view_exports is None:
+            from context_overlay.run_artifacts import RunArtifacts
+            self.view_exports = RunArtifacts(self.directory, self.session_id, self.provenance.get("build_game_version"),
+                memory_limit=self.config["event_view_memory_mb"] * MIB,
+                seconds=self.config["event_view_build_seconds"])
+        return self.view_exports
+
+    def export_views(self):
+        self._remember_view_targets(force=True)
+        return self._exports().start(self.writer.status(), self.view_targets, self._run_report("active"))
+
+    def _finish_outputs(self, reason, errors):
+        self._report_recording_failure()
+        report = self._run_report("closed", reason, errors)
+        self._save_run_report(report)
+        if getattr(self, "config", {}).get("export_views_on_stop", False):
+            try:
+                result = self._exports().finish(self.writer.status(), self.view_targets, report)
+                log("VIEW EXPORT {}: {}".format(result["state"], json.dumps(result, ensure_ascii=False)))
+            except Exception as exc:
+                log("VIEW EXPORT FAILED: {}: {}".format(type(exc).__name__, exc))
 
     def install(self):
         import alarms
@@ -165,6 +236,8 @@ class Runtime:
                                              "event_coverage": self.sources.status(), "event_diagnostics": self.sources.diagnostics(),
                                              "autonomy": self.autonomy.status(),
                                              "python": sys.version, "module_version": VERSION}, self.adapter.clock())
+        self._remember_view_targets()
+        self._save_run_report(self._run_report("active"))
         if self.config["development_driver"]:
             from context_overlay.test_driver import Driver
             self.driver = Driver(self)
@@ -284,7 +357,9 @@ class Runtime:
             if self.closed:
                 return
             if self.recorder.status()["state"] != "recording":
+                self._report_recording_failure()
                 return
+            self._remember_view_targets()
             now = self.adapter.clock()
             self.autonomy.poll()
             objects = self.adapter.live_objects()
@@ -322,6 +397,8 @@ class Runtime:
                 "event_diagnostics": self.sources.diagnostics(),
                 "autonomy": self.autonomy.status(),
                 "poll_max_ms": self.poll_max_ms, "config": self.config,
+                "view_targets": getattr(self, "view_targets", {}),
+                "view_exports": self.view_exports.status() if getattr(self, "view_exports", None) is not None else {"state": "not_started"},
                 "inspector": ({"state": "failed", "error": self.inspector_error} if self.inspector_error else
                               self.inspector.status() if self.inspector is not None else {"state": "disabled"})}
 
@@ -375,6 +452,8 @@ class Runtime:
 
     def finish_history(self):
         self.history_suspended = False
+        if getattr(self, "event_views", None) is not None:
+            self.event_views.shutdown()
         try:
             self.recorder.close_queries()
         finally:
@@ -388,9 +467,10 @@ class Runtime:
         if self.closed:
             if self.history_suspended and not preserve_history:
                 try:
-                    self.recorder.note("session_end", {"reason": reason}, self.boundary_time)
+                    self.session_end_sequence = self.recorder.note("session_end", {"reason": reason}, self.boundary_time)
                 finally:
                     self.finish_history()
+                self._finish_outputs(reason, [])
                 log("RUN STOPPED {}: {}".format(self.session_id, reason))
             return
         self.api_ready = False
@@ -409,13 +489,18 @@ class Runtime:
             self.boundary_time = self.adapter.clock()
             self.recorder.end_zone(self.boundary_time)
         attempt("leave_zone", leave_zone)
-        attempt("session_boundary", lambda: self.recorder.note(
-            "zone_exit" if preserve_history else "session_end", {
+        def session_boundary():
+            sequence = self.recorder.note("zone_exit" if preserve_history else "session_end", {
                             "reason": reason, "status": self.recorder.status(),
                             "event_coverage": self.sources.status(), "autonomy": self.autonomy.status(),
-                            "event_diagnostics": self.sources.diagnostics()}, self.boundary_time))
+                            "event_diagnostics": self.sources.diagnostics()}, self.boundary_time)
+            if not preserve_history:
+                self.session_end_sequence = sequence
+        attempt("session_boundary", session_boundary)
         if self.inspector is not None:
             attempt("close_inspector", self.inspector.close)
+        if getattr(self, "driver", None) is not None:
+            attempt("close_driver", self.driver.close)
         if self.alarm is not None:
             def cancel_alarm():
                 import alarms
@@ -441,6 +526,11 @@ class Runtime:
                 errors.append(writer_error)
         if errors:
             self.fail("Run cleanup failed: " + "; ".join(errors))
+            log("RUN CLEANUP FAILED: " + "; ".join(errors))
+        if self.history_suspended:
+            self._save_run_report(self._run_report("travel", reason, errors))
+        else:
+            self._finish_outputs(reason, errors)
         log("RUN {} {}: {}".format("SUSPENDED" if self.history_suspended else "STOPPED", self.session_id, reason))
 
 
@@ -523,6 +613,10 @@ def initialize():
                        representation: str="both", history: bool=True, fields: str="all", _connection=None):
         selected = None if fields == "all" else fields.split(",")
         respond(_connection, "export", kind, identifier, limit, internal, selected, representation, history)
+
+    @sims4.commands.Command("co.export_views", command_type=sims4.commands.CommandType.Live)
+    def export_views_command(_connection=None):
+        respond(_connection, "export_views")
 
     @sims4.commands.Command("co.api_test", command_type=sims4.commands.CommandType.Live)
     def api_test_command(_connection=None):

@@ -33,8 +33,9 @@ class Recorder:
         self.external = ExternalWriter(self, external_rate, external_burst)
 
     def fail(self, message):
+        if not self.paused:
+            self.error = str(message)
         self.paused = True
-        self.error = str(message)
 
     def status(self):
         persistence = self.journal.status()

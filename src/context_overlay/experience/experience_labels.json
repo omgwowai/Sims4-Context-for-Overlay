@@ -1,0 +1,1546 @@
+{
+  "version": "experience_labels_v1",
+  "game_version": "1.126.73.1030",
+  "scope": "Offline editorial descriptions of exact resource identities; not inferred outcomes or official localized strings. Missing name parameters are not filled from participant order.",
+  "labels": [
+    {
+      "kind": "interaction",
+      "id": "190163",
+      "tuning_name": "Sim_RainStart_Reaction",
+      "text": "对开始下雨作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "4e3d7f6ced8d6b288b8a223a223fa6ceeffd025470f66049860e5df6caa5ca6a",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "130523",
+      "tuning_name": "socialMixer_Greetings_Wave",
+      "text": "挥手打招呼",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "04ad11cb929bdc50681eaf1577670f74a86cff8c2119411fff685384afab946f",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "130519",
+      "tuning_name": "socialMixer_Greetings_AnnoyedSigh",
+      "text": "不耐烦地叹气打招呼",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "91ee5903a7bdf72a600f13e26e987cfde1485adfdf577501290938aab3b3a3d3",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "127770",
+      "tuning_name": "si_nonTouching_Greetings_Glare",
+      "text": "瞪视打招呼",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c3811a6a6c0c5d5ed17f352642477133993e68563f88631b8c9bd5edbfaf1149",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "27173",
+      "tuning_name": "Idle_Chatting_STC",
+      "text": "闲聊",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c91cf954fe2f9b359a996b7c27289793ac149d04c57cd257f0bc4046b3abcd74",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "303686",
+      "tuning_name": "idle_Chatting_ListenWithPhone_STC",
+      "text": "闲聊聆听（持手机）",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "aafcc0eb1ea875fcc5c6ea2de0cb71771c75d5241a531d9b98b382a1034cf741",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "381007",
+      "tuning_name": "computer_Research_Thanatology",
+      "text": "研究死亡学",
+      "override": true,
+      "source": {
+        "package": "Delta/EP17/SimulationPreload.package",
+        "tgi": "62E94D38:0000003A:E23BB07404760B2F",
+        "source_sha256": "f58287ac7c671eb2420996b74b9448abe150eb2b465a33a8a950afe7997490c4",
+        "xml_sha256": "295c5d5094cbc348a81e57764a83616368eb0ac891d9184f8769370a463dd57e",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13471",
+      "tuning_name": "guitar_Practice",
+      "text": "练习吉他",
+      "override": true,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "4184d81085ee5e27e2a44e09693f5e85b8d70c230a6cb58bdb8dd905fce9fb9a",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "relbit",
+      "id": "99712",
+      "tuning_name": "ShortTerm_RecentNegativeSocial",
+      "text": "近期负面社交（短期标记）",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "169d1799219ab8038641863a3e44828dcf2164d6f3ed741302c10bec78d71204",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "192283",
+      "tuning_name": "rankedStatistic_Reputation",
+      "text": "声誉值",
+      "override": false,
+      "source": {
+        "package": "Delta/EP06/SimulationPreload.package",
+        "tgi": "62E94D38:0000001B:E23BB17404760CFD",
+        "source_sha256": "9d720beb401c3b9e4c22ffa1917cab596919e99600aa969575e8c14f47aabfac",
+        "xml_sha256": "ee651a6ea14fe9bb3324e5bfc6c05bbc4bf30692c103314b06abf2a4e018211d",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "358555",
+      "tuning_name": "URT_Attraction_Main",
+      "text": "单向吸引力值",
+      "override": false,
+      "source": {
+        "package": "Delta/EP16/SimulationPreload.package",
+        "tgi": "62E94D38:00000039:E23BB07404760B2E",
+        "source_sha256": "69ea3acf395b79adedb9aa6eea577a954642e4ea42e3249381672c98eee2abba",
+        "xml_sha256": "89c1ce1a9af01269eb3759e3c1ae711ccbe7836520356f3affc7e156261eb893",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "16650",
+      "tuning_name": "LTR_Friendship_Main",
+      "text": "友谊值",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "510ec9b1c305e2bbc43d5e6c9a407604a53b5c38960b0c5576067541ac706d59",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "statistic",
+      "id": "16651",
+      "tuning_name": "LTR_Romance_Main",
+      "text": "浪漫关系值",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c51ecb28c47c9fa4963d27e9b71518a3c3cef87d91c1466c8fac557eb823f037",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "75076",
+      "tuning_name": "fire_reacting_to_fire",
+      "text": "对火灾作出反应",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5a7743ce237246fe2ef5a224360f8b3a7685ecb41815fa1f3ae48417d3089e05",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "39466",
+      "tuning_name": "fire_Panic",
+      "text": "因火灾惊慌",
+      "override": true,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "463a6af89b06918dcbaf36e9797b6ba3b0f36c69bb77e61d9050953d3636fb0c",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "75247",
+      "tuning_name": "sim_Fire_RouteToSafety",
+      "text": "因火灾前往安全处",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "b9ca0226a8f687756b2ab5750d367d8046bf09ed7d2ad96e9b667f6e9974141f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "40111",
+      "tuning_name": "fire_Extinguish",
+      "text": "灭火",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "648b50aa988f0641485521ebd657f4c6c72d722b1f0d61386aa3deb1170ca3e9",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "40870",
+      "tuning_name": "fire_OnFire",
+      "text": "身上着火",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "4472d1a0f456c37c69abdf5d8a154b278f7b209b7a43a1adfa76cc24b1d52a8b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "77464",
+      "tuning_name": "Fire_OnFire_PassiveMixer",
+      "text": "身上着火时的持续动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "d00a35532b1cb5b2c2e66e7b2d25afd9b41f1dd35eb6561195d974cfbeaed177",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "26138",
+      "tuning_name": "mixer_social_Fight_targeted_mean",
+      "text": "打架",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "659928ff37978f17e6a799e08ccf152870dbcc382f18a5b7f8de8b8e76e62749",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13117",
+      "tuning_name": "book_read",
+      "text": "阅读书籍",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "88db94a9338205ccf0b75382005ac65a76bc69ed8a10365b3abf8c8bb9c34d77",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "76988",
+      "tuning_name": "book_read_browse",
+      "text": "翻阅书籍",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "36dde51ba1c53f1dc95d4ec945c5562583dc53423c70924fc4f50fef9c2a92b3",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "77329",
+      "tuning_name": "autonomous_bookshelf_read_picker",
+      "text": "从书架选择要读的书",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "029cde6cf04360a5069d3116a3ebcb51305bfd393e08209bc69a23bfddc05c89",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "77412",
+      "tuning_name": "autonomous_Bookshelf_Browse_Picker",
+      "text": "从书架选择要翻阅的书",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "e4decf9e359edf7adf81baac33cd66670801e1f826b237b18dafd71264af2582",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13120",
+      "tuning_name": "Book_Read_Active",
+      "text": "阅读中的动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "cae4c7b80fddbc67c8e4eeddd044e6067e03e12c01026fb6517f8015ca0fb87b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13121",
+      "tuning_name": "Book_Read_Passive",
+      "text": "持续阅读",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bef0eec69e5f4d649ce3fe8b2904b200259dbc673cdff69ff7d57348c49ba166",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "122714",
+      "tuning_name": "cancelReplacements_ReadtoCarry",
+      "text": "结束阅读后处理手持书籍",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0ed000e25c496643f9c2932f7421d3d3b1362b024e41d8457ae528326b7b4ec2",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128723",
+      "tuning_name": "movie_Watch_MoonlightMassacre",
+      "text": "观看电影（资源 128723）",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "3b0d5fe96e8ab96c928abfbbad52d8c52a6246f3b820289cddfd613ed1205d77",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128729",
+      "tuning_name": "movie_Watch_SuperHeroes",
+      "text": "观看超级英雄电影",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "78a6b663a82ab5aed49d59fa1997130d45f9fe18caffea803870995924cf9ca6",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "14489",
+      "tuning_name": "tv-watch-sports",
+      "text": "观看体育节目",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0d0324650ce92bc55a71af498bb2038dc4671b7a6690c3ebd1a4d154d7141d6b",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "153443",
+      "tuning_name": "tv_watch_Politics",
+      "text": "观看政治节目",
+      "override": false,
+      "source": {
+        "package": "Delta/EP03/SimulationPreload.package",
+        "tgi": "62E94D38:00000018:E23BB17404760CF8",
+        "source_sha256": "58a18ec0aa4ec1c0f4934b54bd89e67de1a050a940a35618f2b8861c9a55fa4e",
+        "xml_sha256": "13de90f93e9dbb6801b60ff76d1b36267f80ae5c6b4e51f7bbfefa2ce9ec4e44",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128843",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_JumpScare",
+      "text": "对电影的惊吓片段作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "d64a529d3f76df23205fe8a0c8c71376a5d8c8a3bfcbbe915d93083a82b2e9e0",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128844",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_Suspense",
+      "text": "对电影的悬疑片段作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "f3b634a8a1450f691ff4db36139da9ed1b468ba26f1e59eaf227b3479b4cfb97",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128845",
+      "tuning_name": "reaction_Mixers_Movie_Reactions_ComedicMoment",
+      "text": "对电影的喜剧片段作出反应",
+      "override": false,
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "1345d3290f9f4ad907c49cbbb5d99d124180b5649e03e6501c9ae6fe3f9abeeb",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "14547",
+      "tuning_name": "watch_Mixer_Listen",
+      "text": "观看表演时聆听",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1190da00074b3985e9905b8b372f2b0bb5a02f22e681edd879c9491e59da67dc",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13084",
+      "tuning_name": "bathtub_TakeBath",
+      "text": "洗澡",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "15ddd416493294ab53134054a198d31b5f8c6f62aa20b7012f54ae04c7c077fd",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13085",
+      "tuning_name": "bathtub_TakeBath_Loop",
+      "text": "持续洗澡",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6869e7e5e3350f3072fd4a41dd8a23e35bd915fef94f99cfda3c41660eff7d42",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13427",
+      "tuning_name": "generic_Bath",
+      "text": "洗浴姿态",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "61a44b64a255da010889909e8febf7cb4c2027141719d473460c09c79ce99b7a",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13087",
+      "tuning_name": "bathtub_TakeBubbleBath",
+      "text": "泡泡浴",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6e999c06790626e34b226396f1b4b8656d27f3f5e1b03884e2a7e14a7e33e3ad",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "35352",
+      "tuning_name": "generic_Bubblebath",
+      "text": "泡泡浴",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "f2f34ea9e6d9d15ea51804e999bf737a564d93c38f5409c930eb92c4a3691f9e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13152",
+      "tuning_name": "chess_practice",
+      "text": "练习国际象棋的动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bbe60bb34643b0235f59e317ec2c9d89fa9f7a1a7f2b0cd40960136b1fd96800",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13155",
+      "tuning_name": "Chess_Social",
+      "text": "下国际象棋",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "784cfbd2d761187ff566a82a49fcfb3245293a81a2fb518399e4af56d58c9424",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13154",
+      "tuning_name": "chess_setup",
+      "text": "布置棋盘",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "3d51d6038ca2a8ef1e96a2b64dacb1eea021a2314f0a822ebb2856a594917ea7",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "101269",
+      "tuning_name": "chess_idle_solo",
+      "text": "独自下棋时的等待动作",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ae960a4db4afa14935967a70295bb3276d9060fcbb6290673e7d3e0791e0b4ce",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13470",
+      "tuning_name": "guitar_Play_Song",
+      "text": "用吉他演奏歌曲",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "47ec7ca0bb894690b791016db623945ebcefd80f89d87f7076aa48d2ddb51a0f",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "37544",
+      "tuning_name": "guitar_Jam_Inventory",
+      "text": "用随身吉他即兴演奏",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "a3aca1dccefde9a7fa12d237c43b8a7b2fc67ab64294e9b60c68d8fbdb53e11e",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "110733",
+      "tuning_name": "guitar_Sing_Song",
+      "text": "用吉他弹唱",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "9d057f6947c62b12e2b2cbbbeb896b824d3bdf2f67bf6b5390f9620884e8c38a",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13506",
+      "tuning_name": "guitar_Watch",
+      "text": "观看吉他表演",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7ad3fbac0745902b944d74b3143ac1720060f828b7a48d5bb30b96975f5f5cbc",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "201424",
+      "tuning_name": "microphone_LoungeEvent_OpenMic_Watch",
+      "text": "观看开放麦表演",
+      "override": false,
+      "source": {
+        "package": "Delta/EP06/SimulationPreload.package",
+        "tgi": "62E94D38:0000001B:E23BB17404760CFD",
+        "source_sha256": "9d720beb401c3b9e4c22ffa1917cab596919e99600aa969575e8c14f47aabfac",
+        "xml_sha256": "e826e3595d1ce21ff47d821ad4b09db347829d003cf80c7f7c1bfae1ac5dca29",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "14343",
+      "tuning_name": "Stove_SaucePot_Stir_Basic",
+      "text": "搅拌锅中的食物",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "498bf57ef12ddf252d3a5936e85c55c0028b40eabd685a248314bbdd334d9eaf",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "32043",
+      "tuning_name": "stove_MakeFood_Pot_Staging_Basic",
+      "text": "用锅制作食物的阶段",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2481cd547006d809fe41498b0625a8e8db0ca876ea431b7cbd1658bd5c7bd695",
+        "basis": "reviewed_tuning_identity_content_and_continuations_not_inferred_outcome"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "183710",
+      "tuning_name": "idle_Buff_Temperature_Cold",
+      "text": "寒冷时的反应",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "9b2174ed149e8a6f33ed93313edc9b0d4e7d6301417f591846250808bc8b9498",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "187264",
+      "tuning_name": "idle_Buff_SnowEffects_SnowIdle",
+      "text": "雪天反应",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "eba99eb6a77fe340875e38859c5951c903b18b8dae442e542e95300e2aa8e7fb",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "30304",
+      "tuning_name": "mixer_TV_WatchNewsAndCooking",
+      "text": "观看新闻或烹饪节目的细节",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "cc066a5b9311cb504567a8afd7d2b8f8a16e108d9570675e07600eb77e45f95e",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13284",
+      "tuning_name": "Counter_MixingBowl_Mix_Basic",
+      "text": "搅拌碗中食材",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2468892832a7a3a8575d0eab552029de5be9bbfab05689db5acf657c7d8e941a",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "264064",
+      "tuning_name": "mentor_Mixer_Food_Child",
+      "text": "参与烹饪指导的细节",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bc4fa6e12ea7cf0d48a7d619ad91133189f893f2d02d16cd8ebbc09a21858ab2",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "189318",
+      "tuning_name": "autonomous_ObjectPicker_SnowDrift_Shovel_Adult",
+      "text": "选择铲雪位置",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ae89d0707129bd1deb078976cac3aa73905eccba9c8b6f7ff24eab17cd28a3da",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "97734",
+      "tuning_name": "Cooking_Shared_Passive_FireChance",
+      "text": "烹饪过程的内部步骤",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "49754da7ce0d4ec6dde186a1c35af91d5df1fc7a56002dd788e9b77626a77c20",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "74855",
+      "tuning_name": "cancel_replacement_eat_to_clean",
+      "text": "进食结束后的收拾衔接",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2256b0fd5f254675ea3c9cc106db5c950a456eaff195a3014338b4b46fef1849",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13486",
+      "tuning_name": "idle_Hunger",
+      "text": "饥饿时的反应",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "3c8b8bb8150ed480a7ee5cd924e136c9fa61b9c82abdb883ea764e0139959c79",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13260",
+      "tuning_name": "Cooking_Shared_AddLiquid_Basic",
+      "text": "烹饪中添加液体",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "14d0ff651e579d4acbb247f9fbe728f716c75c3611977b013e953a97536d9d9c",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13153",
+      "tuning_name": "chess_practice_restart",
+      "text": "重新摆放棋子",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5680eef76dc8d46dceefa8b8a934e91f23870a74f82406f9b4e261a90922c6f2",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13487",
+      "tuning_name": "idle_Hygiene",
+      "text": "卫生需求低时的反应",
+      "override": false,
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c91acbbeecc337559d314dffc221c91fa80d9e36134e27cca671321103e4a011",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "465880",
+      "tuning_name": "immediate_Dynasty_MarketFund_ReportAll",
+      "text": "家族市场基金报告步骤",
+      "override": false,
+      "source": {
+        "package": "Delta/EP21/SimulationPreload.package",
+        "tgi": "62E94D38:0000008D:E23BB37404761000",
+        "source_sha256": "085d88a52ca83963d128e1bbf5665b8fca0b1d4b2786910c681c58d8aadd25f5",
+        "xml_sha256": "e3ae8bbd5376ae04bac1417254620a3290dd226e65a9e0d13a6b2e3d6daa4f38",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "133558",
+      "tuning_name": "tv_watch_PublicAccess",
+      "text": "观看公共频道",
+      "override": true,
+      "source": {
+        "package": "Delta/EP03/SimulationPreload.package",
+        "tgi": "62E94D38:00000018:E23BB17404760CF8",
+        "source_sha256": "58a18ec0aa4ec1c0f4934b54bd89e67de1a050a940a35618f2b8861c9a55fa4e",
+        "xml_sha256": "1cc1203f26965cc7a6877f44525e043cfc310a9b2ae1d87b7bdca9e1448ac4e5",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "35079",
+      "tuning_name": "grill_CreateFood",
+      "text": "烧烤制作食物",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "6a8057a5f3fb8f095e6725039da04889b4eded5308b67451fae8c00390207992",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "35027",
+      "tuning_name": "grill_MakeRecipe_Staging",
+      "text": "烧烤加工阶段",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "92f6a9b68949c629fb704f1dad89ea0547aec04627f63145953a26bf4c08e3f3",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "35278",
+      "tuning_name": "grill_CreateFinalFood",
+      "text": "烧烤成品取出步骤",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c95e323d18d4fbf4545a636622cc3657692a464a3e727d2a87c4e9e95a4086e9",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "35238",
+      "tuning_name": "Grill_Flip_Bottom_Left",
+      "text": "烧烤翻面步骤",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "42d63f06af08dc1c4a70d82cef11dee302a02bbe3335298c496dcf5531f42f74",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "36110",
+      "tuning_name": "Grill_Flip_Bottom_Right",
+      "text": "烧烤翻面步骤",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "80ca7adef964c2c53a3fed5f9e3e8b400d0b264a906f73dca2332c8b45c0ac58",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "36116",
+      "tuning_name": "Grill_Flip_Top_Left",
+      "text": "烧烤翻面步骤",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "60b317a53fcd595ae701c3e70ed0158fa3f19b2902ff1432c3f606fe78733fed",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "36117",
+      "tuning_name": "Grill_Flip_Top_Middle",
+      "text": "烧烤翻面步骤",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5a25f33134d2ceaa82d23d82147c2ff049e897463e370df67b4fb838c26fae49",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "102361",
+      "tuning_name": "Grill_Stir_Pot",
+      "text": "搅拌烤炉上的锅",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "560b19a8375925b73b0137a0e70910ad852f4293a1c33acf0efc05e8d7144837",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "102689",
+      "tuning_name": "grill_MakeRecipe_Pot_Staging_Basic",
+      "text": "烤炉锅具烹饪阶段",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "a0289ce5eccab2d94cb5a4abd54604a067c3358acb8409228716496b19987aa6",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13258",
+      "tuning_name": "Cooking_Shared_AddIngredient_Onion",
+      "text": "烹饪中添加洋葱",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "88f405b33b7f10b349c4f374f2abf866bae73c8b588959a133efeac0a8083462",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "38875",
+      "tuning_name": "grill_StartCraftingAutonomously",
+      "text": "选择自主烧烤",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "f3324998a6a1ea0acc2c6d214585b5ca71acefc30d03290f048922000491b94b",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "35025",
+      "tuning_name": "generic_grill",
+      "text": "烧烤姿态",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "90f6a9e1c920040f9fbb849c18b98b8415244af52c64f18cfd707eaaa0f148fd",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "105715",
+      "tuning_name": "pool-swim_Autonomous",
+      "text": "自主游泳",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "169b2a14a172e25ee741d75d5cf06fc8387c730a4b761efaa7ec9fb5eeb37e82",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "389838",
+      "tuning_name": "pool-swim_Autonomous_Start",
+      "text": "选择自主游泳",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "3b72cd8bdba2a29bfbcab0d72973f5e9d8437f53bf5fdc375394ac0ff2b6b87e",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "102325",
+      "tuning_name": "sim-swim",
+      "text": "游泳姿态",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0a6251719b2282ff18fda1cbfc488a47ed60b23d1152df4fa7f19cca781128c4",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "206834",
+      "tuning_name": "suntan_LoungeChair",
+      "text": "在躺椅上晒太阳",
+      "source": {
+        "package": "Delta/EP07/SimulationPreload.package",
+        "tgi": "62E94D38:0000001C:E23BB17404760CFC",
+        "source_sha256": "7dc9150eab8bf994c5ca059cae65a31ccacb789be50a21300b25619b3f3114e1",
+        "xml_sha256": "628d4f5ee0365eb2d81a4b338d6297311300e04f1391dd4687ac9e1ef11b5fa2",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "209423",
+      "tuning_name": "suntan_LoungeChair_Swimwear",
+      "text": "穿泳装晒太阳",
+      "source": {
+        "package": "Delta/EP07/SimulationPreload.package",
+        "tgi": "62E94D38:0000001C:E23BB17404760CFC",
+        "source_sha256": "7dc9150eab8bf994c5ca059cae65a31ccacb789be50a21300b25619b3f3114e1",
+        "xml_sha256": "fe46bb6d36fad9c40f9aeb3dbc11d10fb8aed8017a047065234d3e57c530eb98",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "207637",
+      "tuning_name": "generic_LoungeChair",
+      "text": "躺椅姿态",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "179915d4407e2f3ff76a6130dc1b891bd2a58d5924df2bdb4953fd4dcfc2a6b3",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "208975",
+      "tuning_name": "suntanMixers_Sunbathe_LoungeChair",
+      "text": "躺椅日光浴细节",
+      "source": {
+        "package": "Delta/EP07/SimulationPreload.package",
+        "tgi": "62E94D38:0000001C:E23BB17404760CFC",
+        "source_sha256": "7dc9150eab8bf994c5ca059cae65a31ccacb789be50a21300b25619b3f3114e1",
+        "xml_sha256": "4311b833708ae4c60b468b8b205088623f2a6e408f7faa70e96326b345458638",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "212143",
+      "tuning_name": "suntanMixers_Sunbathe_LegUp_LoungeChair",
+      "text": "日光浴调整腿部姿势",
+      "source": {
+        "package": "Delta/EP07/SimulationPreload.package",
+        "tgi": "62E94D38:0000001C:E23BB17404760CFC",
+        "source_sha256": "7dc9150eab8bf994c5ca059cae65a31ccacb789be50a21300b25619b3f3114e1",
+        "xml_sha256": "5f3a60d8818cd01692bf587a80fa7317d47897276301704a4cc903f493d08986",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13091",
+      "tuning_name": "bed_Nap",
+      "text": "在床上午睡",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "dcbfb3666ebedd6de40ec9a2795b0206a08014a25cb4d1adfd5e100423e6a3da",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "100071",
+      "tuning_name": "bed_Autonomous_DoubleBed_Nap",
+      "text": "选择双人床午睡",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "c007ecf8eb670d880304e07fdd3def5e8e666329d0ec5324790bd1fe11b42b2f",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "100080",
+      "tuning_name": "bed_Autonomous_SingleBed_Nap",
+      "text": "选择单人床午睡",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "eebeeba1d7a6c7375be8deded8eb84540736d3f98e202bb026455a1d56256956",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "122028",
+      "tuning_name": "dishwasher_LoadDishes",
+      "text": "把餐具放入洗碗机",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "5a428d43a7981c687ac07941d51ff0acbb4cec62a5c8dae40cf9692f6b96ca83",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "126860",
+      "tuning_name": "dishwasher_LoadDishes_AfterEating",
+      "text": "餐后把餐具放入洗碗机",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "cd002807b18fe8c9e8a4a9e22bc78fe6d46856799a0c8eae36eed67d961ff1e3",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "74885",
+      "tuning_name": "sink_washDish_After_Eat",
+      "text": "餐后在水槽洗碗",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "2439a678eb7193f5a90b36c892ad89d085fae05fcb864be948919bf71985f1b5",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "74920",
+      "tuning_name": "Collect_Dish_After_Eating_Continuation",
+      "text": "餐后收集餐具",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "586020f91fdf5d370b7528a1ea4c26e6130bc9cf66eed2689fae1f6c29741011",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "76740",
+      "tuning_name": "Throw_Away_Indoor_DumpInto",
+      "text": "倒入室内垃圾桶",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "49481ff89ecf72ae6b2534c5ab188faa108af712f19470760dff97072cfe77a9",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13435",
+      "tuning_name": "generic_food_Grab",
+      "text": "拿取一份食物",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "444b9a52d6831d069881fbd20722ce6a4dc0901af3c191d05a18d309878bb8dd",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "290256",
+      "tuning_name": "generic_food_Grab_Desserts_Hidden",
+      "text": "拿取一份甜点",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1678a90144c98fb5982ed0a829b5087ad9b030851703ffab5768adf416ced98b",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "183184",
+      "tuning_name": "si_ExitMobilePosture",
+      "text": "退出移动姿态",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "b59fd2163531b5e3fba969fe8b91762861f4438ad8465f8254d29d729ab04160",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13550",
+      "tuning_name": "mentor_Mixer_Food",
+      "text": "烹饪指导细节",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "ca9d178ac5920d5e38047a535457535657bdade8df4d937f84d117e8248837b2",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "263924",
+      "tuning_name": "GroupCooking_Mentor",
+      "text": "参与烹饪指导",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7325b36f9f8d47c52ef3dc18afd5a6f741becce8b8421e507e8172d4cf145bfa",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "159289",
+      "tuning_name": "argument_Mixers_AngryYell",
+      "text": "争吵中的大声斥责",
+      "source": {
+        "package": "Delta/GP05/SimulationPreload.package",
+        "tgi": "62E94D38:00000012:F10287740C1C4EB4",
+        "source_sha256": "90ec43bd400568d25d977a1ab0b053a607fc288fec42862a11f33fefc159c3b7",
+        "xml_sha256": "afaaf1772ac1bef020078e6c6b23b696b208c4ffcc4ea2509e75d5812c157866",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "129258",
+      "tuning_name": "reactions_Movie_Fallback_ActionSequence",
+      "text": "电影动作场景反应",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "d3a17e5b01892c6ab4ed935bdba64ac29811fbc2f5153e10e943159010f17782",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "129259",
+      "tuning_name": "reactions_Movie_Fallback_BreathtakingScene",
+      "text": "电影惊险场景反应",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "0c7aaafc17b4d60267f231a2a85295ad8321c43440fd2ea30febb0e1f8ccfcc8",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "129263",
+      "tuning_name": "reactions_Movie_Fallback_PlotTwist",
+      "text": "电影剧情转折反应",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "dee40fd46c10c54a6f037f786335749c4dac52d39fc6ea0c1456fccc9b35087e",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "129265",
+      "tuning_name": "reactions_Movie_Fallback_Suspence",
+      "text": "电影悬念场景反应",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "7c14be2e772905e1a08e742b54475c65a8a47d31f66a27a31c4513b6a8c5d8eb",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "189897",
+      "tuning_name": "reactions_HolidaySocials_Sing",
+      "text": "对节日歌唱的反应",
+      "source": {
+        "package": "Delta/EP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000001A:E23BB17404760CFE",
+        "source_sha256": "8db3492a3cf59ad37dc3d4fd540c9113dc913b3cae7ca8d227666fd2c14ea1a5",
+        "xml_sha256": "a77a13948b80a0aec4aafd4c1c0591983ee83fe4b333d48803de67cd95ad90ee",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "13481",
+      "tuning_name": "idle_Bladder",
+      "text": "膀胱需求低时的反应",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "06795731c549c7fbcb3615b71123a11529b6fdf9f1312958882918f3b9e79665",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "252183",
+      "tuning_name": "idle_Buff_Fatigue",
+      "text": "疲劳反应",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bc8f426ab41367f3bb9306805c65e94adeda2263a309a9ae56a46ef2f84a5205",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "102559",
+      "tuning_name": "Idle_Buff_FranksAndBeans",
+      "text": "食用豆类后的反应",
+      "source": {
+        "package": "Delta/GP01/SimulationPreload.package",
+        "tgi": "62E94D38:00000002:F10287740C1C4EB0",
+        "source_sha256": "3c66bb71f880422d69634e1bde0d8ff421df998eb6c684aa4995a1c8be22cd25",
+        "xml_sha256": "2057e64c0563c7ae14f803eb5112ffa7b2ecb634ba9d447de63424f001cddba3",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "265469",
+      "tuning_name": "idle_Buff_SimPreference_Likes_Activities_Cooking",
+      "text": "喜爱烹饪时的小动作",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "16224e48c165f4e40145d7ce223e45b23112b837c5044d195a9ef46cc8276a1e",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "128878",
+      "tuning_name": "watch-movie_Bored",
+      "text": "观影无聊反应",
+      "source": {
+        "package": "Delta/SP05/SimulationPreload.package",
+        "tgi": "62E94D38:0000000B:9E3FC3746E3B9088",
+        "source_sha256": "dbddac2b18a5d1704dc82284b9dec6b3f3c831b8743f7582b269955fdb121e2b",
+        "xml_sha256": "3eead933edb3d2944e06088abe0c999685536662136df6e65104f982513d0899",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "30308",
+      "tuning_name": "mixer_TV_WatchAction",
+      "text": "观看动作频道的细节",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "8ce6afbfbceb13aa87464004e4f7c7cf2d386b33805237c73e6bec8125ecae43",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "9107",
+      "tuning_name": "tv_WatchAction",
+      "text": "观看动作频道",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1bafa44f8147d260446c3f8d9adefbcf45c25d2c04362912b66d5112e78526bc",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "503029",
+      "tuning_name": "autonomousSimPicker_SocialObservation_StrangerChat",
+      "text": "选择陌生聊天对象",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "623142504566717d4bbb71ad61c372dd8373be3ecea71315cbc23559c18b610b",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation"
+      }
+    },
+    {
+      "kind": "interaction",
+      "id": "263924",
+      "tuning_name": "[Join]GroupCooking_Mentor",
+      "text": "加入烹饪指导",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "7325b36f9f8d47c52ef3dc18afd5a6f741becce8b8421e507e8172d4cf145bfa",
+        "basis": "reviewed_tuning_identity_and_structure_not_official_translation",
+        "mechanism": {
+          "path": "EA/simulation/objects/base_interactions.py",
+          "method": "ProxyInteraction.generate and JoinInteraction.proxy_name",
+          "reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+          "sha256": "7cf85e10939ae2e1842ce6de1d2a63f4cdad108d9deceb9403e29e55182c398a",
+          "review": "Generated class inherits the proxied affordance; class name is [Join] plus its exact name. This is a separate actor execution, not proof of shared cooking ownership."
+        }
+      }
+    }
+  ]
+}

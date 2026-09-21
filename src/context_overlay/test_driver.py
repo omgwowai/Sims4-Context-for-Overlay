@@ -6,6 +6,7 @@ Actions are explicitly labelled in the observation journal.
 
 import json
 import os
+import time
 import traceback
 
 from context_overlay.model import utc_now
@@ -18,6 +19,43 @@ class Driver:
         self.directory.mkdir(exist_ok=True)
         consumed = self.directory / "consumed.json"
         self.last_request = json.loads(consumed.read_text(encoding="utf-8"))["request_id"] if consumed.exists() else None
+        self.probe = None
+
+    def close(self):
+        if self.probe and self.probe["hooks"] is not None:
+            self.probe["hooks"].remove()
+            self.probe["hooks"] = None
+
+    def frame_probe(self, seconds=None):
+        """Opt-in bounded simulation-update timing; no claim about render FPS."""
+        if seconds is not None:
+            if type(seconds) is not int or not 1 <= seconds <= 60:
+                raise ValueError("Probe seconds must be 1 through 60")
+            self.close()
+            import zone
+            from context_overlay.hooks import Hooks
+            probe = {"until": time.perf_counter() + seconds, "previous": None, "samples": [], "error": None}
+            hooks = Hooks(lambda message: probe.update(error=message))
+            probe["hooks"] = hooks
+            def updated(args, kwargs, result):
+                now = time.perf_counter()
+                if now > probe["until"] or len(probe["samples"]) >= 10000:
+                    return
+                if probe["previous"] is not None:
+                    probe["samples"].append((now - probe["previous"]) * 1000)
+                probe["previous"] = now
+            hooks.after(zone.Zone, "update", updated)
+            self.probe = probe
+        if self.probe is None:
+            return {"state": "not_started"}
+        rows = sorted(self.probe["samples"])
+        complete = time.perf_counter() >= self.probe["until"]
+        if complete:
+            self.close()
+        return {"state": "complete" if complete else "measuring", "samples": len(rows), "error": self.probe["error"],
+                "basis": "Zone.update wall-clock intervals, not render FPS",
+                "interval_ms": {key: round(rows[min(len(rows) - 1, int(len(rows) * q))], 3) if rows else None
+                                for key, q in (("p50", .5), ("p95", .95), ("p99", .99), ("max", 1))}}
 
     def write(self, name, payload):
         destination = self.directory / name
@@ -26,6 +64,8 @@ class Driver:
         os.replace(str(pending), str(destination))
 
     def poll(self):
+        if self.probe and self.probe["hooks"] is not None and time.perf_counter() >= self.probe["until"]:
+            self.close()
         path = self.directory / "request.json"
         if not path.exists():
             return
@@ -38,12 +78,14 @@ class Driver:
         # own restart command or repeat a previous state-changing operation.
         self.write("consumed.json", {"request_id": request_id})
         response = {"request_id": request_id, "recorded_at": utc_now(), "session_id": self.runtime.session_id}
+        started = time.perf_counter()
         try:
             response["result"] = self.execute(request)
             response["ok"] = True
         except Exception:
             response["ok"] = False
             response["error"] = traceback.format_exc()
+        response["execution_ms"] = round((time.perf_counter() - started) * 1000, 3)
         self.write("response.json", response)
 
     def execute(self, request):
@@ -51,13 +93,21 @@ class Driver:
         adapter = runtime.adapter
         services = adapter.services
         operation = request["operation"]
+        if operation == "frame_probe":
+            return self.frame_probe(request.get("seconds"))
         if operation == "status":
             return runtime.status()
-        if operation in ("api_info", "api_context", "api_history", "api_append", "api_changes", "api_page", "api_close"):
+        if operation == "export_views":
+            return runtime.export_views()
+        if operation in ("api_info", "api_context", "api_history", "api_append", "api_changes", "api_page", "api_close",
+                         "api_view", "api_view_status", "api_view_page", "api_view_explain", "api_view_close"):
             from context_overlay import api
             methods = {"api_info": "get_api_info", "api_context": "get_context", "api_history": "query_history",
                        "api_append": "append_event", "api_changes": "read_event_changes",
-                       "api_page": "get_history_page", "api_close": "close_history"}
+                       "api_page": "get_history_page", "api_close": "close_history",
+                       "api_view": "query_event_view", "api_view_status": "get_event_view_status",
+                       "api_view_page": "get_event_view_page", "api_view_explain": "explain_event_view",
+                       "api_view_close": "close_event_view"}
             return getattr(api, methods[operation])(**request.get("params", {}))
         if operation == "entities":
             results = []

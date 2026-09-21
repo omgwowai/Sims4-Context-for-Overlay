@@ -52,7 +52,7 @@ class RetentionChecks(unittest.TestCase):
         newest = recorder.interaction("started", facts(3), 3, "native")
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "journal.jsonl"
-            path.write_text("\n".join(json.dumps(dict(record, sequence=i + 1)) for i, record in enumerate(journal.records)), encoding="utf-8")
+            path.write_text("\n".join(json.dumps(dict(record, sequence=i + 1)) for i, record in enumerate(journal.records)) + "\n", encoding="utf-8")
             result = read_journal(path)
         self.assertTrue(result["complete"])
         self.assertEqual([e["event_id"] for e in result["events"]], [newest["event_id"]])

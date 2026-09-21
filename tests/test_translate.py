@@ -18,7 +18,7 @@ spec.loader.exec_module(report)
 def event(identifier, tier="main"):
     return {"event_id": identifier, "revision": 1, "event_type": "state_change", "tier": tier,
             "field": "buffs", "before": None, "after": {"name": "状态 <details> *原文*"},
-            "participants": [{"key": "sim:1", "name": "甲"}],
+            "entities": ["sim:1"], "participants": [{"key": "sim:1", "name": "甲"}],
             "last_observed_time": {"ticks": "100", "display": "第 1 天 12:00"}}
 
 

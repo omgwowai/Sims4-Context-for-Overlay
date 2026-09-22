@@ -58,10 +58,10 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 | 字段 | 含义 |
 | --- | --- |
-| `api_version` | 当前公共契约版本 `2.1.0` |
+| `api_version` | 当前公共契约版本 `2.2.0` |
 | `module_version` | 提供方 MOD 版本，以本次返回值为准 |
 | `schema_version` | 数据协议版本 `2` |
-| `capabilities` | `context.read`、`history.query`、`history.page`、`history.close`、`text.zh-CN` |
+| `capabilities` | 能力列表，例如 `context.read`、`history.query`、`events.append`、`history.changes`、`event_views.query`；按所用接口检查相应能力 |
 | `context_fields`、`default_fields` | 支持的字段与 Sim／Object 的默认选择 |
 | `nearby` | 附近查询类型、指标、单位、返回数、扫描预算和半径限制；能力为 `context.nearby_entities` |
 | `resource_text` | 可选 name／description／tooltip 文本证据，能力为 `text.resource_details`；官方中文词表与 MOD 覆盖边界见[资源语义目录](architecture.md) |

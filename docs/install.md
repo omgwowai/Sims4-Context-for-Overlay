@@ -16,7 +16,7 @@
     & $coPython -B -X utf8 scripts/build.py --game "D:\Games\The Sims 4"
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\install.ps1 -UserData "D:\Documents\Electronic Arts\The Sims 4" -NonInteractive
 
-如果需要更新官方简体中文文本资源，先按[开发与调试](development.md#资源与构建)生成 .local/resource-semantics/，再把 --strings 和 --string-sources 传给 scripts/build.py。日常只改文档时不需要重建或安装。
+如果需要更新官方简体中文文本资源，先按[开发与调试](development.md#检查与构建)生成 .local/resource-semantics/，再把 --strings 和 --string-sources 传给 scripts/build.py。日常只改文档时不需要重建或安装。
 
 安装器会依次检查：
 

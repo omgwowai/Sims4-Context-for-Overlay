@@ -1,6 +1,6 @@
 # 写盘状态与自动分层文件
 
-从 ContextOverlay **0.10.1** 开始，正常结束一次运行时，MOD 在排空日志写入后生成分层文件。无需另外安装演示 MOD。API／SDK 仍为 2.2.0，原始日志和已有接口保持兼容。
+正常结束一次运行时，MOD 在排空日志写入后自动生成分层文件。先打开人物回顾，再按需查详情和质量对账；各层内容可对照 [Nova 实例](event-layers-example.md)。本页适用版本见[文档入口](index.md)。
 
 ## 去哪里查看
 
@@ -19,14 +19,14 @@
 | `views/snapshot-…/sim-<ID>/organized.jsonl` | 人物组织单元及未归入单元的 standalone 来源 |
 | `views/snapshot-…/sim-<ID>/recap.md`、`recap.json` | 同一份短版回顾的可读形式与结构化形式 |
 | `views/snapshot-…/sim-<ID>/details.bundle.json` | 组织详情、名称依据、阅读去向和引用回查 |
-| `views/snapshot-…/quality.json` | 全局记录数量、来源和每位人物的对账摘要（0.10.2 起） |
-| `views/snapshot-…/sim-<ID>/quality.md`、`quality.json` | 各层计数、每个源事件的去向、问题原因和重要事件保留检查（0.10.2 起） |
+| `views/snapshot-…/quality.json` | 全局记录数量、来源和每位人物的对账摘要 |
+| `views/snapshot-…/sim-<ID>/quality.md`、`quality.json` | 各层计数、每个源事件的去向、问题原因和重要事件保留检查 |
 
 先查看 `view-export-status.json`，成功时按 `views/latest.json` 的 index 打开 README。latest 只在整份快照写完后更新；新一轮生成失败时仍保留上一次成功结果，不能仅凭旧 latest 文件推断本次生成成功。保留最近两份成功快照，原始 journal 不受清理影响。
 
 默认人物范围是本次运行中观察过的当前家庭成员；全局 events 文件仍包含全场已记录事件。没有被记录的家庭成员在 manifest 中标为 `entity_not_recorded`。角色关联不等于参与或知情。
 
-0.10.2 新增的对账文件参与同一次原子发布和文件哈希校验；旧版快照不会自动改写。待核查动作按原因分组阅读，原始单条引用保持独立。规则与同源版本比较命令见[事件整理对账](event-quality.md)。
+对账文件参与同一次发布和文件哈希校验；旧快照不会自动改写。待核查动作按原因分组阅读，原始单条引用保持独立。规则与同源版本比较命令见[事件整理对账](event-quality.md)。
 
 ## 何时生成
 
@@ -41,11 +41,9 @@ co.status
 
 第一条只启动后台任务，第二条的 `view_exports` 查看进度。开发驱动也支持 `export_views` 请求。进行中生成的是固定截点片段，README／阅读版明确标注尚未完整结束；后续采集不改变已有快照。后台仅处理普通数据，公开的游戏内查询接口仍见[分层 API](event-views.md)。
 
-默认 `export_views_on_stop=true`。可在现有 config.json 中设为 false 关闭结束时的自动生成，手动命令仍可调用。导出沿用 `event_view_memory_mb`（0.10.7 起为 4096 MiB，即 4 GiB 估算）和 `event_view_build_seconds`（120 秒）；单份输出另限 256 MiB。0.10.9 移除来源日志的独立字节上限，旧 `event_view_source_mb` 配置被忽略。来源读取仍逐条校验并计入内存预算，100,000 条记录及单行 4 MiB 的限制继续生效。超限明确失败，不截短后伪装成完整结果。内存是每个导出任务的估算预算，按需增长，不是游戏总 RSS 的硬隔离；查询 store 有自己的同值预算。
+默认 `export_views_on_stop=true`，可在 config.json 中关闭；手动命令仍可调用。每个导出任务默认使用 4 GiB 估算内存预算、120 秒构建时限，并限制来源 100,000 条记录、单行 4 MiB、单份输出 256 MiB。有效配置为 `event_view_memory_mb` 和 `event_view_build_seconds`；旧 `event_view_source_mb` 已被忽略。超限明确失败，不截短结果。查询和导出的预算分别计算，都不是游戏总 RSS 的硬上限，详见[来源与预算](event-views.md#来源与预算)。
 
-0.10.8 先扣除完整来源和保守构建预留，再判断剩余预算是否足以容纳最新事件的解码对象及索引。足够时解码一次，写 events 文件和生成各人物结果共用这份内部数据；不足时使用 0.10.7 的按需解码。两条路径的事件、总结和审计相同。每个人物写完后仍释放其结果，公共返回值与原始数据隔离。导出任务结束后释放解码缓存；输出仍经临时目录、完整校验和原子发布，失败不覆盖此前成功的快照。
-
-导出状态及 views/latest.json 的 `derivation_cache` 给出 `mode`（`decoded_shared` 或 `decode_on_demand`）及 `estimated_bytes`，便于区分实际选择的路径。选择依据是配置预算剩余空间，不读取系统空闲物理内存。实际耗时与峰值对照见[验证记录](validation.md)。
+预算充足时共用最新事件的解码缓存，否则按需解码，两条路径的事件、顺序和审计相同。导出状态及 latest 的 `derivation_cache.mode` 显示 `decoded_shared` 或 `decode_on_demand`，`estimated_bytes` 显示缓存估算。每个人物完成后释放其结果，任务结束后释放缓存；选择依据是配置余额，实际耗时对照见[验证摘要](validation.md)。
 
 ## 怎样判断这一局是否写完整
 
@@ -64,7 +62,7 @@ co.status
 python -B -X utf8 scripts/validate_run.py "游戏用户目录/ContextOverlay/runs/SESSION" --require-closed
 ```
 
-返回分别列出 `integrity_passed`（已保存来源是否通过完整性校验）和 `capture`（整局结束证据）。0.10.3 起与 MOD 读取共用序号、会话、修订链、重复记录内容及完整行校验；修订缺失、冲突重试等错误会使 `integrity_passed=false`，即使文件大小与最终状态匹配，也不会判为完整关闭。相同内容的合法重试保持兼容。严格模式下缺少已验证的完整结束就返回失败。旧日志如果没有新 run-status，会说明缺少最终状态，不冒充完整验收。
+返回分别列出 `integrity_passed`（序号、会话、修订链、重复内容及完整行校验）和 `capture`（整局结束证据）。修订缺失或冲突重试会使校验失败，文件大小匹配仍不算完整；相同内容的合法重试兼容。严格模式下缺少完整结束证据就失败，旧日志缺少最终状态时也会明确说明。
 
 ## 积压和失败时的行为
 

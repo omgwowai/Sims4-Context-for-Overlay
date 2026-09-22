@@ -2,12 +2,13 @@
 
 ContextOverlay 是一个给《模拟人生 4》游戏内 Overlay 使用的 Python MOD：它记录可观察到的游戏事件，读取 Sim / 物件当前状态，接收下游 Overlay 写回的外部事件，并把结果整理成可查询的 JSON。模型调用和界面由下游 MOD 自己负责。
 
-当前源码为 **ContextOverlay 0.10.10**，公共 API / SDK 为 **2.2.0**，数据 schema 为 **2**。当前版本支持历史查询、增量读取、附近实体查询、外部事件写入，以及同一持久化来源上的 records、events、organized、recap 四层查询；正常结束运行时还可以生成分层文件和质量对账文件。
+当前源码为 **ContextOverlay 0.10.10**，公共 API / SDK 为 **2.2.0**，数据 schema 为 **2**。正常结束运行时可自动生成分层文件和质量对账文件。
 
 ## 从哪里开始
 
 - 使用项目或接入自己的 Overlay：先看[文档入口](docs/index.md)。
 - 不确定 Context、历史 Events 或四层视图怎么选：看[读取指南与能力矩阵](docs/reading-guide.md)。
+- 想用真实游戏结果理解四层：看 [Nova 的一局游戏](docs/event-layers-example.md)。
 - 第一次接入：按[快速接入](docs/quickstart.md)完成“读状态 → 写事件 → 读回来”。
 - 只使用 SDK：看 [SDK 说明](sdk/README.md) 和 sdk/examples/。
 - 修改本体：看[开发与调试](docs/development.md)，构建后再按[安装与使用](docs/install.md)部署。

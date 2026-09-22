@@ -121,8 +121,11 @@ class TrialPackage(unittest.TestCase):
                 self.assertEqual(hashlib.sha256(content).hexdigest(), manifest["files"][name])
             self.assertIn("README.md", contents)
             self.assertIn("docs/quickstart.md", contents)
+            self.assertIn("docs/reading-guide.md", contents)
+            self.assertIn("docs/event-layers-example.md", contents)
             self.assertIn("sdk/examples/quickstart.py", contents)
-            self.assertIn("Windows 构建包", contents["README.txt"].decode("utf-8-sig"))
+            title = contents["README.txt"].decode("utf-8-sig").splitlines()[0]
+            self.assertEqual(title, {"windows": "ContextOverlay Windows 构建包", "sdk": "ContextOverlay SDK 包"}[kind])
             self.assertEqual("Install.cmd" in contents, kind == "windows")
             self.assertEqual("dist/ContextOverlay.ts4script" in contents, kind == "windows")
             self.assertFalse(any(name.startswith(("src/", ".local/", "ContextOverlay/runs/")) for name in contents))

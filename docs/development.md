@@ -4,7 +4,7 @@
 
 ## 环境与来源
 
-事件分层的共享核心位于 `src/context_overlay/experience/`，`scripts/experience_*.py` 和 `scripts/filter_events.py` 保留离线命令入口。规则 JSON 通过包资源读取；构建和安装 manifest 同时校验 Python 源码与规则资源。新 API 使用 `event_views.py` 的后台任务和 `view_source.py` 的固定日志前缀，契约与预算见[分层查询文档](event-views.md)。
+事件分层的共享核心位于 `src/context_overlay/experience/`，`scripts/experience_*.py` 和 `scripts/filter_events.py` 保留离线命令入口。规则 JSON 通过包资源读取；构建和安装 manifest 同时校验 Python 源码与规则资源。分层 API 使用 `event_views.py` 的后台任务和 `view_source.py` 的固定日志前缀，契约与预算见[分层查询文档](event-views.md)。
 
 开发驱动开启时，可用 `api_view/api_view_status/api_view_page/api_view_explain/api_view_close` 转发对应公共方法，参数放在请求的 `params`。响应的 `execution_ms` 只测该次游戏线程 API 调用。`frame_probe seconds=20` 采样有界的 `Zone.update` 间隔，再用不带 seconds 的 `frame_probe` 读取分位数；它不是渲染 FPS，不能代替完整性能分析，采样到期或退出运行时移除 Hook。
 
@@ -12,13 +12,13 @@
 
 游戏基线为 `1.126.73.1030`，嵌入式 Python 3.7，字节码魔数 `420d0d0a`。本机游戏在 `D:/Games/The Sims 4`，参考仓库在 `C:/sources/sims4-python`，主要源码为 `ea-source/EA/`；参考提交由 `src/context_overlay/__init__.py` 的 `EA_REFERENCE_COMMIT` 指定。
 
-2026-09-21 确认：当前阶段固定使用上述游戏版本开发与验收，暂不实现运行时游戏版本自动识别。MOD 的资源规则继续使用构建参考版本；实际升级游戏前，需要重新核对资源、分类规则与验收结果。
+当前固定使用上述游戏版本开发与验收，尚不自动识别运行时游戏版本。MOD 的资源规则继续使用构建参考版本；实际升级游戏前，需要重新核对资源、分类规则与验收结果。
 
 先核对实际发送点、参数、返回、默认值、加载时机及反编译来源，必要时对照游戏字节码。Atlas 只用于定位，旧 Experience 只用于必要的实现经验；自研 MOD 示例不能当作游戏内置接口。是否可用最终由目标游戏版本中的行为验证。
 
 ## 检查与构建
 
-0.10.1 的批量写盘、独立诊断和自动分层文件见[运行输出说明](run-output.md)。关闭一局的严格验收使用 `validate_run.py --require-closed`，不能把前缀完整性通过当作整局采集完整。
+批量写盘、独立诊断和自动分层文件见[运行输出说明](run-output.md)。关闭一局的严格验收使用 `validate_run.py --require-closed`，不能把前缀完整性通过当作整局采集完整。
 
 普通测试不需要运行游戏：
 
@@ -64,7 +64,7 @@ python -B -X utf8 scripts/translate.py "某次运行/journal.jsonl" "完整数�
 
 Markdown 默认展示主层事件与全部 Autonomy 决策；内部非决策事件通过 `--include-internal` 加入。时间、主体、行为及结果逐条显示，Autonomy 候选和评分置于 `<details>`；查看器不支持折叠时仍可读取正文。
 
-JSONL 通过共用离线读取层扫描并计算整个输入文件的哈希，按日志顺序保留每个事件最终修订，包含曾被内存 FIFO 淘汰的事件。自 0.10.3 起，离线工具与 MOD 的固定前缀读取共用逐条校验：序号连续、同一会话、修订从 1 连续增长、记录类型及完整行合法；重复序号仅在 JSON 内容相同时跳过，允许空白和键顺序不同。即使选择 retained，FIFO 淘汰也不会重置来源修订校验。错误返回有效前缀与首个错误行，生成工具拒绝据此覆盖已有结果；诊断 observation 不转成生活事件。
+JSONL 通过共用离线读取层扫描并计算整个输入文件的哈希，按日志顺序保留每个事件最终修订，包含曾被内存 FIFO 淘汰的事件。离线工具与 MOD 的固定前缀读取共用逐条校验：序号连续、同一会话、修订从 1 连续增长、记录类型及完整行合法；重复序号仅在 JSON 内容相同时跳过，允许空白和键顺序不同。即使选择 retained，FIFO 淘汰也不会重置来源修订校验。错误返回有效前缀与首个错误行，生成工具拒绝据此覆盖已有结果；诊断 observation 不转成生活事件。
 
 输入约定为已完成日志或稳定副本，recap 生成额外重读哈希检查读取期间的变化。旧版仅有 hash、未记录 localization 证据的名称请使用 Git 中对应版本的工具处理。当前快照只有输入 Context 自身提供时才展示，不能从日志恢复完整历史时刻状态。
 
@@ -78,9 +78,9 @@ python -B -X utf8 scripts/translate.py "输入.json" "报告.md" --strings .loca
 
 未提供资源参数时使用日志内已有证据。提供目录时不会改原始事实；Markdown 直接渲染筛选后的内容，目标、事件和关联效果使用同一份重解释结果，区分静态参考、实测文本及缺失状态。只有完整 JSON 才组装 `semantic_view` 并计算规范化资源摘要。丢失的历史动态参数不靠当前游戏对象补全。
 
-### 试验中的事件筛选
+### 离线规则筛选
 
-`scripts/filter_events.py` 在最终修订之上再做一层规则筛选，用来研究哪些细节不需要单独出现在人物经历里。它保留离线命令入口，核心已由新分层 API 的 organized/recap 共用；旧游戏历史及 Context 接口不应用这些规则。
+`scripts/filter_events.py` 在最终修订之上再做一层规则筛选，用来研究哪些细节不需要单独出现在人物经历里。它保留离线命令入口，核心由分层 API 的 organized/recap 共用；旧游戏历史及 Context 接口不应用这些规则。
 
 输入目前只接受当前版本的一次运行 `journal.jsonl`，使用已结束运行的日志或稳定副本。包含全日志中已被内存淘汰的事件，以及内部层事件；按人物筛选采用实体关联索引，不等于该人物看见了这些事。
 
@@ -102,11 +102,11 @@ python -B -X utf8 scripts/filter_events.py "某次运行/journal.jsonl" --entity
 | Buff handles 维护 | 前后状态除 handles 外完全一致，不带其他新增 payload 字段 |
 | 午睡期间重复补值 | 已知 Lazy 数值在同一次真实午睡内重复微量补到 100，间隔不超过 2 游戏分钟；每段保留首条相同补值，初始大幅变化另保留 |
 
-资源规则来自游戏 `1.126.73.1030` 的样本，没有覆盖所有游戏行为。15 分钟与 2 分钟是本轮试验的保守阈值，不是游戏契约。只要记录里有其他事件把动作作为直接原因，就保留动作。外部 payload 不解释；未知资源、长时间技术交互、未结束动作、失败尝试与具体社交不因 `internal`、不可见或取消标签被统一丢弃。
+资源规则来自游戏 `1.126.73.1030` 的样本，没有覆盖所有游戏行为。15 分钟与 2 分钟是当前规则的保守阈值，不是游戏契约。只要记录里有其他事件把动作作为直接原因，就保留动作。外部 payload 不解释；未知资源、长时间技术交互、未结束动作、失败尝试与具体社交不因 `internal`、不可见或取消标签被统一丢弃。
 
 筛选输出不是无损备份：详细执行证据和被省略的决策评分需要原日志回查。保留事件可能引用已省略或人物范围外的事件，不能假设输出里的引用全部闭合；省略审计可帮助定位原记录。日志不能证明用户实际看见了哪些事，规则筛选也不能替代经历归并。
 
-### 试验中的离线经历视图
+### 离线经历视图
 
 `scripts/experience_view.py` 在完整运行日志上建立活动关联、状态区间和决策补充，再按实体生成派生视图。它复用上面的基础筛选，但会在省略小动作决策前提取上层活动评分。该命令和游戏内分层 API 共用 `src/context_overlay/experience/` 核心，旧游戏历史接口的默认行为保持不变。
 
@@ -133,11 +133,11 @@ Buff 按实际主体、资源和地块访问配对；缺失、重复或不连续
 
 决策摘要保留每层赢家和最多两个备选、赢家/备选的前三项非零 commodity 贡献；provider 按同一活动保留首末评分样本。原生评分文本最多摘取 1,200 字符，并报告省略与截断；已有结构化贡献时，默认摘要指向详情中的原生文本，缺少结构化贡献时才直接携带文本摘录。它不是人物想法，也不代表首末样本之间评分不变。完整候选、评分字段和被省略记录需回查原日志。
 
-资源角色表 `src/context_overlay/experience/experience_resources.json` 来自游戏 `1.126.73.1030` 的单局四人物研究，按资源类型、ID、tuning 名精确匹配。当前有 447 条映射；本轮新增的 188 条在 `cross_sim_tuning_evidence` 中附有安装资源及展开 XML 哈希。内部频道计数、大学提示标记按已核实的具体资源归入内部用途，不把所有 `FULL_ASPIRATION` 或所有隐藏 trait 一概处理。Buff handles 维护只有前后非空且其余字段完全一致时才省略。
+资源角色表 `src/context_overlay/experience/experience_resources.json` 依据游戏 `1.126.73.1030` 的资源核验和多局样本维护，按资源类型、ID、tuning 名精确匹配。基础映射、活动规则和审阅来源以该文件为准；`cross_sim_tuning_evidence` 等字段保留安装资源与展开 XML 哈希。内部频道计数、大学提示标记按已核实的具体资源归入内部用途，不把所有 `FULL_ASPIRATION` 或所有隐藏 trait 一概处理。Buff handles 维护只有前后非空且其余字段完全一致时才省略。
 
-未识别内容保留待核查；不凭 hidden、显示名称或取消标签删除。传入不同 `--game-version` 会停用这批资源规则及基础省略规则；未传版本仍使用试验规则，**不代表自动验证了游戏版本或第三方覆盖**。目前待核查较多的新人物／玩法不能用摘要缺项推断“没有发生”。活动输出带 `action_tuning`，用于区分过于笼统或错误的本地化文本。经精确身份核实的“练习吉他”“研究死亡学”使用明确名称，并在 `observed_action_name` 中保留原记录名称；没有改写游戏原始日志。
+未识别内容保留待核查；不凭 hidden、显示名称或取消标签删除。传入不同 `--game-version` 会停用这批资源规则及基础省略规则；未传版本仍使用参考版本规则，**不代表自动验证了游戏版本或第三方覆盖**。目前待核查较多的新人物／玩法不能用摘要缺项推断“没有发生”。活动输出带 `action_tuning`，用于区分过于笼统或错误的本地化文本。经精确身份核实的“练习吉他”“研究死亡学”使用明确名称，并在 `observed_action_name` 中保留原记录名称；没有改写游戏原始日志。
 
-体积指标比较相同紧凑 UTF-8 JSON 口径。可选 `--token-encoding o200k_base` 使用开发环境已安装的 `tiktoken` 实测 token；未安装时不估算。该计数不含提示词包装、审计、详情和待核查内容，也不绑定某个下游模型。事件数、活动单元数、摘要分组数不能互相等同。四人物原日志对照与隔离存档的实机观察见[验证摘要](validation.md#离线经历视图试验)。离散画面只能证明观察时的情形，精确起止由日志提供；不能据此宣称整天经历召回率。
+体积指标比较相同紧凑 UTF-8 JSON 口径。可选 `--token-encoding o200k_base` 使用开发环境已安装的 `tiktoken` 实测 token；未安装时不估算。该计数不含提示词包装、审计、详情和待核查内容，也不绑定某个下游模型。事件数、活动单元数、摘要分组数不能互相等同。代表性来源与验证边界见[验证摘要](validation.md)。离散画面只能证明观察时的情形，精确起止由日志提供；不能据此宣称整天经历召回率。
 
 ## 游戏调试
 
@@ -230,9 +230,9 @@ python -B -X utf8 scripts/experience_recap.py query tmp/recap-bundle.json --snap
 python -B -X utf8 scripts/experience_recap.py query tmp/recap-bundle.json --snapshot SNAPSHOT_ID --ref r1 --facet raw --journal tmp/journal.jsonl
 ```
 
-将 `SNAPSHOT_ID` 替换为生成结果的 `snapshot_id`。`recap.json` 是默认输入；bundle 保存来源 manifest、完整组织单元、去向表和审计引用，不应整包作为默认模型输入。可选 `--token-encoding o200k_base` 使用已安装的 tiktoken 实测默认 JSON 与 Markdown，不从字节估算 token。3–8 千 token 是样例试验目标，不会触发截断。
+将 `SNAPSHOT_ID` 替换为生成结果的 `snapshot_id`。`recap.json` 是默认输入；bundle 保存来源 manifest、完整组织单元、去向表和审计引用，不应整包作为默认模型输入。可选 `--token-encoding o200k_base` 使用已安装的 tiktoken 实测默认 JSON 与 Markdown，不从字节估算 token。输出大小随数据和规则变化，不按 token 目标截断。
 
-查询支持短引用 `r1`、完整 unit ID、证据短编号 `e123` 和 `@activities/@facts/@states/@decisions/@background/@details/@review/@external` 分组。`@audit --facet evidence` 可分页查询全部证据，包含没有组织单元的筛选记录。facet 为 `units`、`decisions`、`evidence`、`raw` 或 `links`；`evidence/raw/links` 查询活动时包含已关联的结果、状态和决策。`units` 返回该条目的组织单元，其中关联 ID 也可直接查询。
+查询支持短引用 `r1`、完整 unit ID、证据短编号 `e123` 和 `@activities/@facts/@states/@decisions/@background/@details/@review/@external` 分组。`@audit --facet evidence` 可分页查询全部证据，包含没有组织单元的筛选记录。facet 为 `units`、`decisions`、`evidence`、`raw`、`links` 或 `labels`；`evidence/raw/links/labels` 查询活动时包含已关联的结果、状态和决策。`units` 返回该条目的组织单元，其中关联 ID 也可直接查询。
 
 每页最多 100 项，响应包含 `total`、`offset`、`next_offset`。按 `next_offset` 继续，直到为 null；内容不静默截断。原生评分保留在原日志，`decisions` 返回组织器摘取的评分样本，完整内容通过 `raw` 获取。原事件只返回指定日志的最终修订，不冒充中间修订历史。
 
@@ -242,9 +242,9 @@ python -B -X utf8 scripts/experience_recap.py query tmp/recap-bundle.json --snap
 
 对应测试为 `tests/test_experience_recap.py`。CLI 包装保留在 scripts，共享核心及规则资源进入游戏脚本包，供分层 API 使用；当前实现与限制见[分层查询文档](event-views.md)，接口验收按[操作步骤](event-views-validation.md)执行。
 
-0.10.2 增加 `build --quality/--quality-markdown`、`quality` 和同源 `compare` 命令，覆盖重要事件保留、活动阶段归并和问题原因对账。运行时自动导出也生成相同核心的质量报告；完整命令及计数口径见[事件整理对账](event-quality.md)，回归测试为 `tests/test_experience_quality.py`。
+`build --quality/--quality-markdown`、`quality` 和同源 `compare` 命令覆盖重要事件保留、活动阶段归并和问题原因对账。运行时自动导出也生成相同核心的质量报告；完整命令及计数口径见[事件整理对账](event-quality.md)，回归测试为 `tests/test_experience_quality.py`。
 
-`experience_recap_v1_1` 将执行 `time` 与 `queued_at`／`observed_at` 分开：未见开始时 `time[0]` 为 null，不再拿首次观测代替开始。入队使用原交互的 queued observation，无此证据时仅说明首次观测。阅读表将行动者独立显示，同名同时间的不同实例继续保留。
+执行 `time` 与 `queued_at`／`observed_at` 分开：未见开始时 `time[0]` 为 null，不再拿首次观测代替开始。入队使用原交互的 queued observation，无此证据时仅说明首次观测。阅读表将行动者独立显示，同名同时间的不同实例继续保留。
 
 名称经过 `scripts/experience_labels.py` 统一处理，压缩保留 `tuning_name`、`name_status` 和参数缺口；精确释义在 `src/context_overlay/experience/experience_labels.json`，原名、状态和来源在 `audit.labels`。使用 `--facet labels` 查询某条目的名称依据，或 `--ref @labels --facet labels` 分页读取名称质量记录。未解析／部分解析在 `recap.name_quality` 公开，名称规则文件哈希纳入 snapshot。原始结果与退出原因仍可用 `raw` 或 `units` 查询。当前案例、边界与对照见[事件整理与对账](event-quality.md)和[验证摘要](validation.md)。
 
@@ -261,4 +261,4 @@ python -B scripts/package.py sdk
 
 Windows 包包含脚本、manifest、无需 Python 的安装器、SDK、读写示例和文档；SDK 包包含客户端源码、示例及相同文档，不含游戏脚本。解压后先看根目录 README。源码开发命令仍需在仓库里运行；包内不带本机日志、存档或资源提取缓存。SDK 中没有游戏资源字典；Windows 脚本包含构建时已选的游戏文本。
 
-日常验证不生成 ZIP，也不恢复旧中间产物。生成的历史日志、审计结果和分发包只保留在本机忽略目录中；需要长期追踪的代码、契约和结论进入 Git。
+日常验证不生成项目分发 ZIP；分发内容测试仅在自动清理的临时目录使用夹具包。生成的历史日志、审计结果和分发包只保留在本机忽略目录中；需要长期追踪的代码、契约和结论进入 Git。

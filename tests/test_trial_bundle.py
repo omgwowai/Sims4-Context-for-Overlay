@@ -122,7 +122,7 @@ class TrialPackage(unittest.TestCase):
             self.assertIn("README.md", contents)
             self.assertIn("docs/quickstart.md", contents)
             self.assertIn("sdk/examples/quickstart.py", contents)
-            self.assertIn("团队试用版", contents["README.txt"].decode("utf-8-sig"))
+            self.assertIn("Windows 构建包", contents["README.txt"].decode("utf-8-sig"))
             self.assertEqual("Install.cmd" in contents, kind == "windows")
             self.assertEqual("dist/ContextOverlay.ts4script" in contents, kind == "windows")
             self.assertFalse(any(name.startswith(("src/", ".local/", "ContextOverlay/runs/")) for name in contents))

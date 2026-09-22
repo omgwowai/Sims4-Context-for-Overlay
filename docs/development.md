@@ -1,6 +1,6 @@
 # 开发与调试
 
-这一页给修改 ContextOverlay 本身的人看，命令在源码仓库根目录运行。试用 ZIP 只带安装器、SDK 和文档；接自己的 Overlay 不需要准备下面这些开发工具，先看[快速接入](quickstart.md)。
+这一页给修改 ContextOverlay 本身的人看，命令在源码仓库根目录运行。接自己的 Overlay 不需要准备下面这些开发工具，先看[快速接入](quickstart.md)；源码构建和本地部署看[安装与使用](install.md)。
 
 ## 环境与来源
 
@@ -86,7 +86,7 @@ python -B -X utf8 scripts/translate.py "输入.json" "报告.md" --strings .loca
 
 ```powershell
 python -B -X utf8 scripts/filter_events.py "某次运行/journal.jsonl" --entity sim:123
-python -B -X utf8 scripts/filter_events.py "某次运行/journal.jsonl" --entity sim:123 --output .local/analysis/filtered.json
+python -B -X utf8 scripts/filter_events.py "某次运行/journal.jsonl" --entity sim:123 --output tmp/filtered.json
 ```
 
 不传 `--entity` 分析整个会话；不传 `--output` 只打印数量和体积摘要。输出 JSON 的 `history.events` 是保留的原始事件，ID、修订、时间、角色和 payload 不改。`filtering.omitted` 保存每条省略记录的 ID、修订、规则与关联证据；`filtering.folds` 保存重复补值的代表记录、次数和时间范围，不能把这些补值加总成净变化。`source` 提供输入路径与 SHA-256，`policy_version` 标记规则版本。
@@ -111,7 +111,7 @@ python -B -X utf8 scripts/filter_events.py "某次运行/journal.jsonl" --entity
 `scripts/experience_view.py` 在完整运行日志上建立活动关联、状态区间和决策补充，再按实体生成派生视图。它复用上面的基础筛选，但会在省略小动作决策前提取上层活动评分。该命令和游戏内分层 API 共用 `src/context_overlay/experience/` 核心，旧游戏历史接口的默认行为保持不变。
 
 ```powershell
-python -B -X utf8 scripts/experience_view.py "某次运行/journal.jsonl" --entity sim:123 --game-version 1.126.73.1030 --output .local/analysis/experience.json --markdown .local/analysis/experience.md
+python -B -X utf8 scripts/experience_view.py "某次运行/journal.jsonl" --entity sim:123 --game-version 1.126.73.1030 --output tmp/experience.json --markdown tmp/experience.md
 ```
 
 输入必须是完整、稳定的单次运行日志；先读取全场记录，再筛选人物，才能使用不在人物索引里的 Buff 移除或关联原因。省略 `--entity` 可处理全场；省略输出参数只打印指标。输入、JSON、Markdown 必须使用不同路径，解析失败不会覆盖已有输出。
@@ -143,7 +143,7 @@ Buff 按实际主体、资源和地块访问配对；缺失、重复或不连续
 
 常用命令见[安装与使用](install.md)。`co.export` 选择字段时用逗号分隔；`co.status` 核对当前 session、队列、记录器错误、窗口、事件源和 Autonomy 状态。`co.restart` 重读配置并开始新运行，旧查询失效。
 
-Overlay 手动自检使用 `co.api_test` → `co.api_verify` → `co.api_inspect`。普通旅行后只执行 `co.api_verify` 与 `co.api_inspect`，核对历史续接；不要先重跑自检覆盖基准。`tests/test_travel_history.py` 使用真实 Runtime／Journal 和 EA 服务替身覆盖旅行、往返、读档隔离、清理失败及查询连续性，实机复测按[验收步骤](install.md#overlay-接口手动验收)。
+Overlay 手动自检使用 `co.api_test` → `co.api_verify` → `co.api_inspect`。普通旅行后只执行 `co.api_verify` 与 `co.api_inspect`，核对历史续接；不要先重跑自检覆盖基准。`tests/test_travel_history.py` 使用真实 Runtime／Journal 和 EA 服务替身覆盖旅行、往返、读档隔离、清理失败及查询连续性，实机复测按[安装说明的游戏内自检](install.md#游戏内自检)。
 
 ### 分页历史查询
 
@@ -240,17 +240,17 @@ python -B -X utf8 scripts/experience_recap.py query tmp/recap-bundle.json --snap
 
 时间为游戏周／日的分钟展示，精确 ticks 在详情中；观察到的最早／最晚事件不代表完整日历日或连续采集。默认活动角色和自然退出、状态已配对边界的省略语义在 `scope` 中说明。仅为依赖关联引入的其他人物活动会标明上下文，不能据此推断主角参与或知情。未知行为仍显示待核查，未知数值和背景可从对应分组展开。
 
-对应测试为 `tests/test_experience_recap.py`。CLI 包装保留在 scripts，共享核心及规则资源进入游戏脚本包，供新分层 API 使用；实施依据见[计划](experience-recap-plan.md)，当前接口验收按[操作步骤](event-views-validation.md)执行。
+对应测试为 `tests/test_experience_recap.py`。CLI 包装保留在 scripts，共享核心及规则资源进入游戏脚本包，供分层 API 使用；当前实现与限制见[分层查询文档](event-views.md)，接口验收按[操作步骤](event-views-validation.md)执行。
 
 0.10.2 增加 `build --quality/--quality-markdown`、`quality` 和同源 `compare` 命令，覆盖重要事件保留、活动阶段归并和问题原因对账。运行时自动导出也生成相同核心的质量报告；完整命令及计数口径见[事件整理对账](event-quality.md)，回归测试为 `tests/test_experience_quality.py`。
 
 `experience_recap_v1_1` 将执行 `time` 与 `queued_at`／`observed_at` 分开：未见开始时 `time[0]` 为 null，不再拿首次观测代替开始。入队使用原交互的 queued observation，无此证据时仅说明首次观测。阅读表将行动者独立显示，同名同时间的不同实例继续保留。
 
-名称经过 `scripts/experience_labels.py` 统一处理，压缩保留 `tuning_name`、`name_status` 和参数缺口；精确释义在 `src/context_overlay/experience/experience_labels.json`，原名、状态和来源在 `audit.labels`。使用 `--facet labels` 查询某条目的名称依据，或 `--ref @labels --facet labels` 分页读取名称质量记录。未解析／部分解析在 `recap.name_quality` 公开，名称规则文件哈希纳入 snapshot。原始结果与退出原因仍可用 `raw` 或 `units` 查询。案例、边界与对照见[debug 记录](experience-recap-debug.md)。
+名称经过 `scripts/experience_labels.py` 统一处理，压缩保留 `tuning_name`、`name_status` 和参数缺口；精确释义在 `src/context_overlay/experience/experience_labels.json`，原名、状态和来源在 `audit.labels`。使用 `--facet labels` 查询某条目的名称依据，或 `--ref @labels --facet labels` 分页读取名称质量记录。未解析／部分解析在 `recap.name_quality` 公开，名称规则文件哈希纳入 snapshot。原始结果与退出原因仍可用 `raw` 或 `units` 查询。当前案例、边界与对照见[事件整理与对账](event-quality.md)和[验证摘要](validation.md)。
 
 ## 按需分发
 
-普通玩家可用 `co.api_test` 和 `co.api_verify` 手动验收读写，见[操作步骤](install.md#overlay-接口手动验收)。开发驱动增加限定入口 `api_info/api_context/api_history/api_append/api_changes/api_page/api_close`，对应参数放入请求的 `params` 对象；仍须开启 development_driver 并在加载地块后使用，不提供任意函数调用。
+普通玩家可用 `co.api_test` 和 `co.api_verify` 手动验收读写，见[安装说明的游戏内自检](install.md#游戏内自检)。开发驱动增加限定入口 `api_info/api_context/api_history/api_append/api_changes/api_page/api_close`，对应参数放入请求的 `params` 对象；仍须开启 development_driver 并在加载地块后使用，不提供任意函数调用。
 
 只有明确需要分发时运行：
 
@@ -261,4 +261,4 @@ python -B scripts/package.py sdk
 
 Windows 包包含脚本、manifest、无需 Python 的安装器、SDK、读写示例和文档；SDK 包包含客户端源码、示例及相同文档，不含游戏脚本。解压后先看根目录 README。源码开发命令仍需在仓库里运行；包内不带本机日志、存档或资源提取缓存。SDK 中没有游戏资源字典；Windows 脚本包含构建时已选的游戏文本。
 
-日常验证不生成 ZIP，也不恢复旧中间产物。历史日志、审计结果和分发包按需保留，代码与当前文档进入 Git。
+日常验证不生成 ZIP，也不恢复旧中间产物。生成的历史日志、审计结果和分发包只保留在本机忽略目录中；需要长期追踪的代码、契约和结论进入 Git。

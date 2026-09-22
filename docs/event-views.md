@@ -1,6 +1,6 @@
 # 游戏内分层事件查询
 
-从 MOD 0.10.0 / API、SDK 2.2.0 起提供 `event_views.query`、`event_views.explain`、`event_views.durable_session`。当前源码为 MOD 0.10.10。公共方法从游戏线程调用；后台任务只处理日志和普通数据，无需游戏外服务。原 `query_history`、`read_event_changes` 和 `get_context` 保持兼容。
+当前源码为 MOD 0.10.10，API / SDK 为 2.2.0。提供 `event_views.query`、`event_views.explain` 和 `event_views.durable_session`；公共方法从游戏线程调用，后台任务只处理日志和普通数据，无需游戏外服务。原 `query_history`、`read_event_changes` 和 `get_context` 保持兼容。
 
 实际调用与验收见[分层接口验收步骤](event-views-validation.md)，包含同源四层读取、证据回查和旅行检查。
 

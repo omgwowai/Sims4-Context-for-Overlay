@@ -39,11 +39,11 @@ $source = Join-Path $PackageDirectory 'ContextOverlay.ts4script'
 $manifestPath = Join-Path $PackageDirectory 'build-manifest.json'
 if (-not (Test-Path -LiteralPath $source -PathType Leaf) -or
     -not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) {
-    throw 'Package missing. Extract the complete internal trial ZIP first; a source checkout needs a build in dist/.'
+    throw 'Package missing. Build the current source into dist/ first, including ContextOverlay.ts4script and build-manifest.json.'
 }
 $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 if ((Get-Sha256 $source) -ne $manifest.package_sha256) {
-    throw 'Package checksum mismatch. Download and extract the trial ZIP again.'
+    throw 'Package checksum mismatch. Rebuild the current source or provide a package with a matching build-manifest.json.'
 }
 if ($manifest.game_bytecode_magic -ne '420d0d0a') {
     throw 'Unsupported bytecode format; this installer expects the validated Python 3.7 package.'

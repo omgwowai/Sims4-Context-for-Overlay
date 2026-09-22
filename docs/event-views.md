@@ -1,8 +1,8 @@
 # 游戏内分层事件查询
 
-从 MOD 0.10.0 / API、SDK 2.2.0 起提供 `event_views.query`、`event_views.explain`、`event_views.durable_session`。当前源码为 MOD 0.10.10。公共方法从游戏线程调用；后台任务只处理日志和普通数据，无需游戏外服务。原 `query_history`、`read_event_changes` 和 `get_context` 保持兼容。
+当前源码为 MOD 0.10.10，API / SDK 为 2.2.0。提供 `event_views.query`、`event_views.explain` 和 `event_views.durable_session`；公共方法从游戏线程调用，后台任务只处理日志和普通数据，无需游戏外服务。原 `query_history`、`read_event_changes` 和 `get_context` 保持兼容。
 
-实际调用与验收见[分层接口验收步骤](event-views-validation.md)，包含同源四层读取、证据回查和旅行检查。
+先用 [Nova 的真实实例](event-layers-example.md)理解每层的条数、分类和来源关系。本页给出准确接口契约；实际调用与验收见[分层接口验收步骤](event-views-validation.md)。
 
 ## 四个视图
 
@@ -15,7 +15,7 @@
 
 组织层保留背景、技术细节、未知项、外部事件，并用引用压缩字段；完整候选评分、原始名称等从同源 events/revisions 回查。standalone 的 recap_disposition 表示默认阅读策略去向，不表示来源删除。实体索引相关不等于参与或知情。
 
-2026-09-18 的 Eddie 历史基线：records **3,843 项 = 3,806 条修订 + 37 条辅助记录**；events **1,707 项**；organized **1,166 项 = 469 个单元 + 697 个独立来源**；recap **118 项 = 116 个主内容项 + 2 个待核查动作**。组织器补入 20 个依赖事件，通过组织项的解释接口读取，不悄悄扩大 events/records 的人物索引范围。计数随来源和规则变化，最新四人物对照见[验证摘要](validation.md)。
+组织器可补入人物索引外的依赖事件，通过组织项的解释接口读取，不扩大 events/records 的人物索引范围。计数口径与实例见[Nova 案例](event-layers-example.md)，历史验收对照见[验证摘要](validation.md)。
 
 ## 请求、状态、分页和关闭
 
@@ -41,9 +41,9 @@ organized = client.query_event_view(
 
 页面包含相同身份、scope、coverage、offset、total_matches、cursor/next_cursor、items。recap 页的 recap 元数据含人物字典、阅读约定、质量提示和详情数量。其中旧离线 snapshot_id 仅用于对应离线产物；公共回查使用页面顶层 snapshot_id。
 
-每页 1–100 项，默认 20；512 KiB 编码内容上限可使一页少于 page_size。0.10.10 起按整个返回字典的紧凑 UTF-8 JSON 计费，包括元数据、快照身份、游标、items 数组和分隔符；预留足够的偏移数字空间后确定分页边界。单项连同返回字段无法容纳时明确报 view_budget，不截断字段。游标不可自行构造，与旧 history 游标不通用。
+每页 1–100 项，默认 20；512 KiB 编码内容上限可使一页少于 page_size。按整个返回字典的紧凑 UTF-8 JSON 计费，包括元数据、快照身份、游标、items 数组和分隔符；预留足够的偏移数字空间后确定分页边界。单项连同返回字段无法容纳时明确报 view_budget，不截断字段。游标不可自行构造，与旧 history 游标不通用。
 
-0.10.6 起，organized 的单元按阅读引用 r1、r2、… 的数值顺序排列，再按 e1、e2、… 排列独立来源；lineage 也使用证据引用的数值顺序。首次构建、缓存命中和同源文件导出使用相同顺序，不依赖 JSON 对象键的迭代顺序。
+organized 的单元按阅读引用 r1、r2、… 的数值顺序排列，再按 e1、e2、… 排列独立来源；lineage 也使用证据引用的数值顺序。首次构建、缓存命中和同源文件导出使用相同顺序，不依赖 JSON 对象键的迭代顺序。
 
 ## 同源解释
 
@@ -69,16 +69,23 @@ explanation = client.explain_event_view(
 
 ## 来源与预算
 
-- 固定当前 session 已持久化日志的 durable_sequence 与 durable_byte_offset；尚未写盘的通知不包含在内。scope 报告 as_of_sequence/source_sha256/source_byte_offset；coverage 附带截点时记录器与持久化状态。
-- 严格核验连续序号、修订链、会话和完整行，相同 sequence 重试必须内容相同。后续追加不改变旧页；快照持有原字节，不用后来的来源替换旧修订。
-- 首版仅支持 durable_session、完整会话时间范围、recap_v1。其他来源、profile、时间参数明确拒绝。未写入首条日志时报 source_unavailable；无人物事件时报 entity_not_recorded。
-- 默认最多 8 请求、300 秒未访问过期，来源前缀最大 100,000 条记录、单行最大 4 MiB、内存估算预算 4 GiB（`event_view_memory_mb=4096`）、构建时限 120 秒。config 字段：event_view_query_limit/event_view_ttl_seconds/event_view_memory_mb/event_view_build_seconds。0.10.9 移除来源日志的独立字节上限；旧配置 `event_view_source_mb` 被忽略，不必先手动删除才能升级。超出仍有效的预算时明确失败，不回退 FIFO 或截断。
-- 内存预算是受控数据结构的保守估算，不是进程 RSS 硬隔离。后台与游戏共享 GIL 和垃圾回收，大日志冷构建仍可能短时影响调度；需结合实机负载测量。常规 UI 优先请求 recap，跨层共用 source_snapshot_id，避免每个回调创建新截点。
-- 0.10.6 的 records/events 页缓存引用同一来源已冻结的原字节，不再各自保留完整序列化副本；索引、描述符、派生缓存和构建预留仍计入预算。取页返回独立解码的数据，调用者修改页面或日志继续追加都不影响旧快照。页大小仍按完整编码后的内容检查。无需先关闭原始层才能打开派生层，但总来源／内存／请求限制仍然适用。
-- 0.10.7 的 organized/recap 构建使用可重复遍历的事件 ID 序列，按需从同一原字节解码；全局排序保存键和 ID，避免整局决策候选池长驻。跨人物依赖、全局证据编号和完整来源校验仍参与处理。构建器只计算所需的筛选规则，不生成未使用的完整历史和字节指标；生成独立结果前释放全局构建索引。通过增加解码次数换取更低峰值内存，取消检查和时间限制继续生效。
-- 0.10.8 在上述序列上增加可回收的解码缓存：扣除现有缓存与 `2 × latest_event_bytes` 构建预留后，剩余预算足够才一次解码全部最新事件。同一来源的各阶段、不同人物请求复用该内部映射；它的深层对象估算和索引计入 `estimated_bytes`，并单列在 metrics 的 `decoded_cache_bytes`。新来源加载或预算紧张时先释放解码缓存，已发布的页面和原始来源不失效；空间仍不足才按原有规则失败。来源关闭／过期时一并释放。预算不足以缓存时沿用按需解码，内容、顺序与快照身份相同；页面继续返回独立数据。
-- 4 GiB 是每个查询 store 或导出任务的受控缓存与保守构建估算上限，按需增长，不预分配，也不是游戏进程的 RSS 硬限制。查询与导出可以同时存在，预算不能理解为整个 MOD 合计最多 4 GiB。原始采集缓存、历史查询及游戏自身使用另计。读入的来源字节及索引仍计入内存预算，记录数、单页和磁盘输出限制继续独立存在；取消文件大小门槛不等于无限会话。有效 config 字段的显式设置优先于默认值，修改配置需下次启动加载。metrics 不再返回已移除的 `source_budget_bytes`。
-- 正常旅行保留 provider；载入期间读取等待 ready，关闭仍可执行。新 session 关闭旧任务。取消在后台检查点停止；全部相关请求关闭或过期后，后台回收来源。
-- records/events 的快照不绑定显示规则，organized/recap 绑定核心和规则资源哈希。规则 JSON 随 ts4script 分发，源码 manifest 校验覆盖资源；离线工具和 MOD 共用 Python 3.7 核心。
+来源固定在当前 session 已落盘的 `durable_sequence/durable_byte_offset`；尚未落盘的通知不包含在内。`scope` 给出 `as_of_sequence/source_sha256/source_byte_offset`，`coverage` 给出截点时记录器和持久化状态。连续序号、修订链、会话和完整行均须通过校验，相同 sequence 的重试内容必须相同；后续追加不会改变旧页。
 
-没有模型调用，也不把游戏评分解释为人物心理。派生视图增量替换／删除协议和跨 session 查询尚未开放。
+首版仅支持 `source="durable_session"`、完整会话时间范围和 `profile="recap_v1"`。其他来源、profile 或时间参数明确拒绝；没有已落盘记录时报 `source_unavailable`，无人物事件时报 `entity_not_recorded`。派生视图增量替换／删除协议和跨 session 查询尚未开放。
+
+| 限制 | 默认值 | 配置 |
+| --- | --- | --- |
+| 同时打开的请求 | 8 个 | `event_view_query_limit` |
+| 请求未访问过期 | 300 秒 | `event_view_ttl_seconds` |
+| 构建时限 | 120 秒 | `event_view_build_seconds` |
+| 每个查询 store 的估算内存 | 4 GiB，按需增长 | `event_view_memory_mb=4096` |
+| 来源记录数／单行 | 100,000 条／4 MiB | 固定 |
+| 每页 | 1–100 项、完整编码后最多 512 KiB | `page_size`；字节限制固定 |
+
+来源日志没有独立的总字节上限；旧 `event_view_source_mb` 被忽略，metrics 不再返回 `source_budget_bytes`。来源字节、索引、缓存和构建预留仍计入内存预算；超限报错，不回退 FIFO 或截断结果。有效配置的显式值优先于默认值，下次启动加载。
+
+同源 records/events 共用冻结原字节；organized/recap 按预算共用已解码事件或按需解码，内容、顺序和身份一致。缓存计入 `estimated_bytes`，其中 `decoded_cache_bytes` 单列解码缓存。新来源或预算紧张时可释放解码缓存，已发布快照仍有效。取页返回独立数据，调用方修改它不会改变来源；无需先关闭原始层才能打开派生层。
+
+内存预算是受控数据结构的估算，不是游戏进程 RSS 的硬限制；查询 store 与每个导出任务分别计费，可以同时存在，游戏及其他采集缓存另计。后台与游戏共享 GIL 和垃圾回收，大日志冷构建可能影响调度。常规 UI 优先读 recap，跨层复用 `source_snapshot_id`，避免每个回调创建新截点；实测见[验证摘要](validation.md)。
+
+普通旅行保留 provider，载入期间等待 ready，关闭请求仍可执行；新 session 关闭旧任务。取消在后台检查点生效，全部相关请求关闭或过期后回收来源。records/events 的快照不绑定显示规则，organized/recap 绑定核心和规则资源哈希；离线工具与 MOD 共用 Python 3.7 核心，规则资源随脚本包和 manifest 校验。

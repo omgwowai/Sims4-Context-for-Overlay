@@ -18,9 +18,10 @@ from context_overlay import SCHEMA_VERSION, VERSION
 from context_overlay.api import API_VERSION
 
 
-DOCS = ("docs/quickstart.md", "docs/install.md", "docs/public-api-v2.md", "docs/public-api-v1.md",
+DOCS = ("docs/index.md", "docs/reading-guide.md", "docs/event-layers-example.md",
+        "docs/quickstart.md", "docs/install.md", "docs/public-api-v2.md",
         "docs/architecture.md", "docs/validation.md", "docs/development.md", "docs/future.md",
-        "docs/experience-recap-plan.md", "docs/experience-recap-debug.md", "docs/event-views.md",
+        "docs/event-views.md",
         "docs/event-views-validation.md", "docs/run-output.md", "docs/event-quality.md")
 
 
@@ -64,13 +65,14 @@ def build_bundle(kind, root=ROOT):
     contents = {path.relative_to(root).as_posix(): path.read_bytes() for path in files}
     if kind == "sdk":
         contents["README.md"] = (
-            "# ContextOverlay SDK {}\n\n这份只带 SDK、示例和文档，游戏脚本请另取 Windows 试用包。\n\n"
+            "# ContextOverlay SDK {}\n\n这份只带 SDK、示例和文档；游戏脚本请按 docs/install.md 从源码构建，或使用与 manifest 匹配的 Windows 构建包。\n\n"
             "从[快速接入](docs/quickstart.md)开始，或直接看 [SDK 示例](sdk/README.md)。\n"
         ).format(SDK_VERSION).encode("utf-8")
     intro = ("完整解压这个 ZIP，退出游戏，再双击 Install.cmd。安装不用额外装 Python。\r\n"
              "请保留 dist 和 scripts 文件夹，不要解压里面的 .ts4script 文件。\r\n" if kind == "windows" else
-             "这份只有 SDK、示例和文档；游戏脚本需要另外安装 Windows 试用包。\r\n")
-    contents["README.txt"] = ("ContextOverlay 团队试用版\r\n\r\n" + intro +
+             "这份只有 SDK、示例和文档；游戏脚本需要另外构建或安装匹配的 Windows 构建包。\r\n")
+    label = "Windows 构建包" if kind == "windows" else "SDK 包"
+    contents["README.txt"] = ("ContextOverlay " + label + "\r\n\r\n" + intro +
         "\r\n先看 README.md，再跟着 docs/quickstart.md 接入自己的 Overlay。\r\n"
         "安装和游戏自检：docs/install.md\r\n完整接口参数：docs/public-api-v2.md\r\n"
         "示例不会自己启动，改好导入路径后从自己的游戏线程回调调用。\r\n"

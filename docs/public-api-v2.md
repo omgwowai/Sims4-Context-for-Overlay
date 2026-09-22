@@ -1,6 +1,6 @@
 # API 参考：读状态、查历史、写事件
 
-第一次接入先看[快速接入](quickstart.md)，需要查准确参数时再回到这页。当前 API / SDK 是 **2.2.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.10.10**。
+第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.2.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.10.10**。
 
 新增的 records/events/organized/recap 查询使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。以下现有历史接口仍保持原语义。
 
@@ -9,9 +9,9 @@
 Context、历史、增量与附近实体查询同步返回普通 JSON 数据；游戏对象读取在模拟线程进行。SDK 不调用模型、不创建窗口、不发网络请求，也不自动跨线程调度或重试。默认历史同时包含游戏事件和外部事件。
 
 
-## 从 v1 迁移
+## 版本与迁移边界
 
-更新 SDK 到 2.1.0；保留旧读取语义的调用显式传 `origins=["game"]`。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段，因此 API／schema 均升级主版本。旧 API 契约见 [v1 文档](public-api-v1.md)，离线工具继续支持 schema 1 的游戏日志。无需模型服务即可验证全部读写能力。
+当前 SDK 为 2.2.0，适配 API 2.2.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
 
 `get_context`、`query_history` 的 `origins=None` 表示全部来源，`["game"]`／`["external"]` 表示只查一类；`producers=["example.overlay"]` 仅匹配对应外部生产者，与其余条件取交集。数组不能为空，最多 64 项且不重复。类型／结果等游戏专用筛选自然排除不具备对应字段的外部记录。
 
@@ -19,7 +19,7 @@ Context、历史、增量与附近实体查询同步返回普通 JSON 数据；�
 
 ## 安装和最小接入
 
-试用时安装包里的 **ContextOverlay 0.9.0**。SDK 接受 API 2.x；0.8.0 也提供基础读写，但没有 0.9.0 的跨地块历史能力。旧 SDK 1.x 需要更新。把 `sdk/context_overlay_client.py` 复制进自己的包，例如 `my_overlay_mod/vendor/`，并按 Python 3.7 打包；各级目录需要自己的 `__init__.py`。
+先按[安装与使用](install.md)安装与当前源码匹配的 ContextOverlay，再把 `sdk/context_overlay_client.py` 复制进自己的包，例如 `my_overlay_mod/vendor/`，并按 Python 3.7 打包；各级目录需要自己的 `__init__.py`。SDK 与提供方应通过 `get_api_info()` 的版本和能力字段确认兼容，不要依赖旧版分发包名称。
 
 ```python
 from my_overlay_mod.vendor.context_overlay_client import Client, ContextOverlayError
@@ -58,10 +58,10 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 | 字段 | 含义 |
 | --- | --- |
-| `api_version` | 当前公共契约版本 `2.1.0` |
+| `api_version` | 当前公共契约版本 `2.2.0` |
 | `module_version` | 提供方 MOD 版本，以本次返回值为准 |
 | `schema_version` | 数据协议版本 `2` |
-| `capabilities` | `context.read`、`history.query`、`history.page`、`history.close`、`text.zh-CN` |
+| `capabilities` | 能力列表，例如 `context.read`、`history.query`、`events.append`、`history.changes`、`event_views.query`；按所用接口检查相应能力 |
 | `context_fields`、`default_fields` | 支持的字段与 Sim／Object 的默认选择 |
 | `nearby` | 附近查询类型、指标、单位、返回数、扫描预算和半径限制；能力为 `context.nearby_entities` |
 | `resource_text` | 可选 name／description／tooltip 文本证据，能力为 `text.resource_details`；官方中文词表与 MOD 覆盖边界见[资源语义目录](architecture.md) |

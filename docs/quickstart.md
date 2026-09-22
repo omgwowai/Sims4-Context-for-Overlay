@@ -118,8 +118,8 @@ SDK 抛出的 `ContextOverlayError` 有 `code` 和 `details`，`to_dict()` 可�
 
 ## 帮我们试什么、怎么反馈
 
-这轮先看三件事：能否顺利装上、自己的 MOD 能否读写、旅行或重试时会不会丢记录或重复。记录筛选和经历总结后面再做，现在先按人物、来源、时间和页数控制输入量。
+接入时先确认安装、读写闭环，以及旅行或重试时的记录连续性。需要选择状态字段、历史筛选或经历总结时，看[读取指南](reading-guide.md)；四层结果的实际条数和样例见 [Nova 实例](event-layers-example.md)。
 
 有问题直接说“刚才做了什么、预期是什么、实际是什么”。方便的话附上游戏和 MOD 版本、错误码，以及相关的 `runtime.log` 片段。自检问题再带上 `ContextOverlay/api-self-test.json`；需要核对某条记录时给 session / event ID。日志里可能有角色名和你写入的内容，先挑相关部分即可，不用发整个存档。
 
-安装包的 `manifest.json` 记录这份试用包的版本和文件哈希；游戏用户目录下的 `ContextOverlay/install-receipt.json` 记录实际装了哪个脚本。当前已测范围见[验证摘要](validation.md)。
+构建目录的 `build-manifest.json` 记录源码、规则资源、版本和包哈希；游戏用户目录下的 `ContextOverlay/install-receipt.json` 记录实际装了哪个脚本。当前已测范围见[验证摘要](validation.md)。

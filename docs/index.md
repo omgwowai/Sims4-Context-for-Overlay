@@ -16,6 +16,7 @@
 
 | 目标 | 文档 |
 | --- | --- |
+| 不确定该选哪个读取接口或筛选条件 | [读取指南与能力矩阵](reading-guide.md) |
 | 完整参数、返回结构和错误码 | [API 参考](public-api-v2.md) |
 | records / events / organized / recap 四层查询 | [分层事件查询](event-views.md) |
 | 手动验收分层接口、分页和证据回查 | [分层接口验收](event-views-validation.md) |

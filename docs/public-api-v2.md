@@ -1,6 +1,6 @@
 # API 参考：读状态、查历史、写事件
 
-第一次接入先看[快速接入](quickstart.md)，需要查准确参数时再回到这页。当前 API / SDK 是 **2.2.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.10.10**。
+第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.2.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.10.10**。
 
 新增的 records/events/organized/recap 查询使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。以下现有历史接口仍保持原语义。
 

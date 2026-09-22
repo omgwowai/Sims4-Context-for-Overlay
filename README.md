@@ -7,6 +7,7 @@ ContextOverlay 是一个给《模拟人生 4》游戏内 Overlay 使用的 Pytho
 ## 从哪里开始
 
 - 使用项目或接入自己的 Overlay：先看[文档入口](docs/index.md)。
+- 不确定 Context、历史 Events 或四层视图怎么选：看[读取指南与能力矩阵](docs/reading-guide.md)。
 - 第一次接入：按[快速接入](docs/quickstart.md)完成“读状态 → 写事件 → 读回来”。
 - 只使用 SDK：看 [SDK 说明](sdk/README.md) 和 sdk/examples/。
 - 修改本体：看[开发与调试](docs/development.md)，构建后再按[安装与使用](docs/install.md)部署。

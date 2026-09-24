@@ -2,7 +2,7 @@
 
 ContextOverlay 是一个给《模拟人生 4》游戏内 Overlay 使用的 Python MOD：它记录可观察到的游戏事件，读取 Sim / 物件当前状态，接收下游 Overlay 写回的外部事件，并把结果整理成可查询的 JSON。模型调用和界面由下游 MOD 自己负责。
 
-当前源码为 **ContextOverlay 0.10.10**，公共 API / SDK 为 **2.2.0**，数据 schema 为 **2**。正常结束运行时可自动生成分层文件和质量对账文件。
+当前源码为 **ContextOverlay 0.11.0**，公共 API / SDK 为 **2.3.0**，数据 schema 为 **2**。正常结束运行时可自动生成分层文件和质量对账文件。
 
 ## 从哪里开始
 
@@ -23,6 +23,7 @@ ContextOverlay 是一个给《模拟人生 4》游戏内 Overlay 使用的 Pytho
 | 读取新增或更新的事件 | read_event_changes，SDK 使用 changes |
 | 查询原始修订、最新事件、组织层和短版回顾 | query_event_view 及相关状态/分页/解释方法 |
 | 查询附近的 Sim / 物件 | get_nearby_entities |
+| 查询当前相机近似视锥内的全部实体摘要 | [get_camera_view](docs/camera-view.md) |
 | 检查版本、能力和运行状态 | get_api_info / get_status |
 
 API 在游戏模拟线程调用；返回的普通字典可以交给后台模型或网络逻辑，结果回来后必须由下游 MOD 回到游戏线程，并重新确认 session、目标身份和请求是否仍然有效。历史是当前会话中实际观察到的内容，受到 FIFO、写盘和查询预算限制；没有记录不等于游戏中什么都没有发生。

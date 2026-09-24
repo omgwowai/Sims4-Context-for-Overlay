@@ -1,6 +1,6 @@
 # API 参考：读状态、查历史、写事件
 
-第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.2.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.10.10**。
+第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.3.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.11.0**。
 
 新增的 records/events/organized/recap 查询使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。以下现有历史接口仍保持原语义。
 
@@ -11,7 +11,7 @@ Context、历史、增量与附近实体查询同步返回普通 JSON 数据；�
 
 ## 版本与迁移边界
 
-当前 SDK 为 2.2.0，适配 API 2.2.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
+当前 SDK 为 2.3.0，适配 API 2.3.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
 
 `get_context`、`query_history` 的 `origins=None` 表示全部来源，`["game"]`／`["external"]` 表示只查一类；`producers=["example.overlay"]` 仅匹配对应外部生产者，与其余条件取交集。数组不能为空，最多 64 项且不重复。类型／结果等游戏专用筛选自然排除不具备对应字段的外部记录。
 
@@ -58,7 +58,7 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 | 字段 | 含义 |
 | --- | --- |
-| `api_version` | 当前公共契约版本 `2.2.0` |
+| `api_version` | 当前公共契约版本 `2.3.0` |
 | `module_version` | 提供方 MOD 版本，以本次返回值为准 |
 | `schema_version` | 数据协议版本 `2` |
 | `capabilities` | 能力列表，例如 `context.read`、`history.query`、`events.append`、`history.changes`、`event_views.query`；按所用接口检查相应能力 |
@@ -321,6 +321,8 @@ Runtime 记录初始化它的线程身份；有活动 Runtime 时，公共运行
 
 
 ## 附近实体查询
+
+API 2.3 另提供 [`get_camera_view`](camera-view.md)：按需返回当前区域近似视锥内的全部实体摘要，包括地块外及不同楼层。通过 `context.camera_view` 发现能力，完整参数、时效与覆盖语义见链接文档；此接口的范围不改变 `get_context` 的当前地块限制。
 
 先通过能力标识 `context.nearby_entities` 判断支持情况。查询返回候选实体，再按需调用 `get_context`；不连续追踪位置。
 

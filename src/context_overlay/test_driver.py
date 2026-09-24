@@ -100,14 +100,14 @@ class Driver:
         if operation == "export_views":
             return runtime.export_views()
         if operation in ("api_info", "api_context", "api_history", "api_append", "api_changes", "api_page", "api_close",
-                         "api_view", "api_view_status", "api_view_page", "api_view_explain", "api_view_close"):
+                         "api_view", "api_view_status", "api_view_page", "api_view_explain", "api_view_close", "api_camera_view"):
             from context_overlay import api
             methods = {"api_info": "get_api_info", "api_context": "get_context", "api_history": "query_history",
                        "api_append": "append_event", "api_changes": "read_event_changes",
                        "api_page": "get_history_page", "api_close": "close_history",
                        "api_view": "query_event_view", "api_view_status": "get_event_view_status",
                        "api_view_page": "get_event_view_page", "api_view_explain": "explain_event_view",
-                       "api_view_close": "close_event_view"}
+                       "api_view_close": "close_event_view", "api_camera_view": "get_camera_view"}
             return getattr(api, methods[operation])(**request.get("params", {}))
         if operation == "entities":
             results = []

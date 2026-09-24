@@ -75,6 +75,10 @@ class EAAdapter:
     def nearby_eligible(self, obj):
         if not self.in_scope(obj):
             return False
+        return self._outside_inventory(obj)
+
+    @staticmethod
+    def _outside_inventory(obj):
         # A child of an inventory object is not a separately placed world item.
         current, seen = obj, set()
         while current is not None:
@@ -86,6 +90,86 @@ class EAAdapter:
                 return False
             current = getattr(current, "parent", None)
         return True
+
+    def camera_scope(self):
+        from context_overlay.camera_view import CameraViewError
+        zone = self.services.current_zone()
+        if zone is None or not zone.is_zone_running:
+            raise CameraViewError("not_ready", "Wait for a running zone before querying its camera")
+        return {"kind": "zone_instantiated", "zone_id": str(zone.id),
+                "lot_id": str(zone.lot.lot_id), "off_lot": "included", "levels": "all",
+                "inventory": "excluded", "hidden": "excluded"}
+
+    def camera_snapshot(self, zone_id):
+        def read_vector(value):
+            return {axis: float(getattr(value, axis)) for axis in ("x", "y", "z")}
+        from context_overlay.camera_state import SYNC
+        from context_overlay.camera_view import CameraViewError, vector
+        try:
+            import camera
+            if camera._zone_id is None:
+                raise ValueError("Camera zone is missing")
+            if str(camera._zone_id) != zone_id:
+                raise CameraViewError("camera_zone_mismatch", "Camera state belongs to a different zone",
+                                      {"camera_zone_id": str(camera._zone_id), "zone_id": zone_id})
+            position, target = read_vector(camera._camera_position), read_vector(camera._target_position)
+            vector(position)
+            vector(target)
+            return {"position": position, "target": target, "zone_id": zone_id,
+                    "follow_mode": camera._follow_mode if isinstance(camera._follow_mode, bool) else None,
+                    "source": "EA camera._camera_position / _target_position / _zone_id",
+                    "freshness": SYNC.freshness(camera), "render_frame_synchronized": False}
+        except CameraViewError:
+            raise
+        except Exception as exc:
+            raise CameraViewError("camera_unavailable", "No valid camera state is available",
+                                  {"reason": str(exc)}) from None
+
+    def camera_eligible(self, obj, zone_id):
+        if obj is None or not getattr(obj, "id", 0) or getattr(obj, "_hidden_flags", 0):
+            return False
+        if str(obj.zone_id) != zone_id:
+            return False
+        if getattr(obj, "is_sim", False) and obj.sim_info.get_sim_instance() is not obj:
+            return False
+        return self._outside_inventory(obj)
+
+    @staticmethod
+    def camera_bounds(obj):
+        from context_overlay.camera_view import length
+        reasons = []
+        try:
+            # EA's misspelling is the actual component API. Bounds are local;
+            # distance from the origin includes offset footprints and rotation.
+            lower, upper = obj.get_fooptrint_polygon_bounds()
+            if lower is None or upper is None:
+                raise ValueError("No placement footprint")
+            a = tuple(float(getattr(lower, axis)) for axis in ("x", "y", "z"))
+            b = tuple(float(getattr(upper, axis)) for axis in ("x", "y", "z"))
+            scale = float(obj.scale)
+            if (not all(math.isfinite(value) for value in a + b + (scale,)) or scale <= 0
+                    or any(lo > hi for lo, hi in zip(a, b))):
+                raise ValueError("Invalid footprint bounds/scale")
+            radius = length(tuple(max(abs(lo), abs(hi)) for lo, hi in zip(a, b))) * scale
+            if not math.isfinite(radius) or radius <= 0:
+                raise ValueError("Invalid footprint radius")
+            return {"method": "footprint_proxy_sphere", "radius": radius,
+                    "source": "get_fooptrint_polygon_bounds + GameObject.scale", "render_bounds": False}
+        except Exception:
+            reasons.append("footprint_unavailable")
+        try:
+            # A generic default routing radius is not an object's measured size.
+            if not getattr(obj, "is_sim", False) and getattr(obj, "_routing_context", None) is None:
+                raise ValueError("No object-specific routing context")
+            radius = float(obj.object_radius)
+            if not math.isfinite(radius) or radius <= 0:
+                raise ValueError("Invalid routing radius")
+            return {"method": "routing_proxy_sphere", "radius": radius,
+                    "source": "GameObject.object_radius", "render_bounds": False, "fallback_reasons": reasons}
+        except Exception:
+            reasons.append("routing_radius_unavailable")
+        return {"method": "position", "radius": 0.0, "source": "GameObject.position",
+                "render_bounds": False, "fallback_reasons": reasons}
 
     @staticmethod
     def nearby_spatial(obj):

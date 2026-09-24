@@ -1,6 +1,6 @@
 # 安装与使用
 
-当前源码包为 **ContextOverlay 0.10.10 / API 2.2.0 / schema 2**，SDK 为 **2.2.0**。本页覆盖源码构建包的本地安装和游戏内基础自检；下游 MOD 接入请继续看[快速接入](quickstart.md)。
+当前源码包为 **ContextOverlay 0.11.0 / API 2.3.0 / schema 2**，SDK 为 **2.3.0**。本页覆盖源码构建包的本地安装和游戏内基础自检；下游 MOD 接入请继续看[快速接入](quickstart.md)。
 
 ## 安装前确认
 

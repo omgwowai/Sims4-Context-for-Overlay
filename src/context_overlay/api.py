@@ -16,13 +16,14 @@ from context_overlay.model import copy_data
 from context_overlay.localization import FORMAT_PROFILE
 from context_overlay.nearby import MAX_RESULTS, MAX_SCANNED, NearbyError, validate as validate_nearby
 from context_overlay.view_source import ViewError
+from context_overlay import camera_view
 
 
-API_VERSION = "2.2.0"
+API_VERSION = "2.3.0"
 __all__ = ["API_VERSION", "APIError", "get_api_info", "get_status", "get_context",
            "query_history", "get_history_page", "close_history", "get_nearby_entities",
            "append_event", "read_event_changes", "query_event_view", "get_event_view_status",
-           "get_event_view_page", "explain_event_view", "close_event_view"]
+           "get_event_view_page", "explain_event_view", "close_event_view", "get_camera_view"]
 
 
 class APIError(RuntimeError):
@@ -49,7 +50,7 @@ def _endpoint(function):
             return function(*args, **kwargs)
         except APIError:
             raise
-        except NearbyError as exc:
+        except (NearbyError, camera_view.CameraViewError) as exc:
             raise APIError(exc.code, str(exc), exc.details) from None
         except ExternalError as exc:
             raise APIError(exc.code, str(exc), exc.details) from None
@@ -135,7 +136,7 @@ def get_api_info():
     return {"api_version": API_VERSION, "module_version": VERSION, "schema_version": SCHEMA_VERSION,
             "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
                              "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
-                             "context.nearby_entities", "text.resource_details", "events.autonomy_decision",
+                             "context.nearby_entities", "context.camera_view", "text.resource_details", "events.autonomy_decision",
                              "events.append", "history.sources", "history.global", "history.changes", "history.travel",
                              "event_views.query", "event_views.explain", "event_views.durable_session"],
             "event_views": {"schema_version": "event_views_v1", "views": ["records", "events", "organized", "recap"],
@@ -159,6 +160,13 @@ def get_api_info():
             "nearby": {"kinds": ["sim", "object"], "metrics": ["horizontal", "euclidean"],
                        "max_results": MAX_RESULTS, "max_scanned": MAX_SCANNED,
                        "max_radius": 1000000, "unit": "game_world_units", "room_filter": True},
+            "camera_view": {"kinds": ["sim", "object"], "scope": "zone_instantiated",
+                            "default_vertical_fov": camera_view.DEFAULT_VERTICAL_FOV,
+                            "default_aspect_ratio": camera_view.DEFAULT_ASPECT_RATIO,
+                            "default_far": None, "max_scanned": camera_view.MAX_SCANNED,
+                            "max_results": None, "selection": "proxy_sphere_or_position",
+                            "approximate": True, "occlusion_checked": False,
+                            "supported_mode": "ordinary_live", "refresh": "on_request"},
             "event_types": ["interaction", "state_change", "game_event", "external_event"], "event_categories": list(LABELS),
             "retention_policy": "fifo_first_accepted",
             "context_fields": list(FIELDS), "default_fields": copy_data(PRESETS),
@@ -231,6 +239,19 @@ def get_nearby_entities(identifier="active", *, kinds=("sim",), radius=None,
         raise APIError("collector_disabled", "Context collection is disabled")
     target = _resolve(runtime, "sim", identifier)
     packet = runtime.collector.nearby(target, query)
+    packet["api_version"] = API_VERSION
+    return packet
+
+
+@_endpoint
+def get_camera_view(*, kinds=("sim", "object"), vertical_fov=None, aspect_ratio=None,
+                    far=None, expected_session_id=None):
+    """Return all known frustum matches as summaries, without recording or paging."""
+    query = camera_view.validate(kinds, vertical_fov, aspect_ratio, far)
+    runtime = _current(expected_session_id)
+    if not runtime.collector.enabled:
+        raise APIError("collector_disabled", "Context collection is disabled")
+    packet = camera_view.collect(runtime.adapter, runtime.session_id, runtime.provenance, query)
     packet["api_version"] = API_VERSION
     return packet
 

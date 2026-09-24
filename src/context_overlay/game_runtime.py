@@ -591,6 +591,14 @@ def initialize():
     _lifecycle_hooks.after(Zone, "on_loading_screen_animation_finished", lambda args, kwargs, result: start(resume_travel=True))
     _lifecycle_hooks.before(Zone, "on_teardown", lambda args, kwargs: stop())
     _lifecycle_hooks.before(game_services, "stop_services", lambda args, kwargs: stop_game_services())
+    try:
+        import camera
+        from context_overlay.camera_state import SYNC, install as install_camera_observer
+        install_camera_observer(_lifecycle_hooks, camera, Zone)
+        _lifecycle_hooks.before(game_services, "stop_services", lambda args, kwargs: SYNC.reset())
+    except Exception:
+        # Queries can still expose valid EA state with explicitly unknown timing.
+        log("Camera synchronization observation unavailable: " + traceback.format_exc())
 
     def respond(connection, operation, *args, **kwargs):
         output = sims4.commands.CheatOutput(connection)

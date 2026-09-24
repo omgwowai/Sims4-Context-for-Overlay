@@ -32,7 +32,8 @@ class CameraChecks(unittest.TestCase):
         self.objects = []
         self.zone = SimpleNamespace(id=42, lot=SimpleNamespace(lot_id=84), is_zone_running=True)
         self.adapter = EAAdapter.__new__(EAAdapter)
-        self.manager = SimpleNamespace(get_valid_objects_gen=lambda: iter(self.objects))
+        self.manager = SimpleNamespace(values=lambda: iter(self.objects),
+            get_valid_objects_gen=lambda: (obj for obj in self.objects if not obj._hidden_flags))
         self.adapter.services = SimpleNamespace(current_zone=lambda: self.zone,
             object_manager=lambda: self.manager,
             time_service=lambda: SimpleNamespace(sim_now=SimpleNamespace(absolute_ticks=lambda: 100)))
@@ -227,10 +228,26 @@ class CameraChecks(unittest.TestCase):
         def broken():
             yield self.objects[0]
             raise RuntimeError("iterator fault")
-        self.manager.get_valid_objects_gen = broken
+        self.manager.values = broken
         packet = self.query()
         self.assertEqual(packet["count"], 1)
         self.assertEqual(packet["coverage"]["reasons"], {"enumeration_failed":1})
+
+    def test_hidden_objects_count_toward_scan_budget(self):
+        self.add(1)._hidden_flags = 1
+        self.add(2)._hidden_flags = 1
+        self.add(3)
+        with patch.object(camera_view, "MAX_SCANNED", 2):
+            packet = self.query()
+        self.assertEqual(packet["count"], 0)
+        self.assertEqual(packet["coverage"]["scanned_count"], 2)
+        self.assertFalse(packet["coverage"]["complete"])
+        self.assertEqual(packet["coverage"]["reasons"], {"scan_limit": 1})
+        with patch.object(camera_view, "MAX_SCANNED", 3):
+            packet = self.query()
+        self.assertEqual([row["entity"]["id"] for row in packet["results"]], ["3"])
+        self.assertEqual(packet["coverage"]["scanned_count"], 3)
+        self.assertTrue(packet["coverage"]["complete"])
 
     def test_optional_fields_and_name_failures_do_not_erase_geometric_matches(self):
         self.add(1).level = None

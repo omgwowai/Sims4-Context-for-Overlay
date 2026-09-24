@@ -138,7 +138,7 @@ def collect(adapter, session_id, provenance, query):
         coverage["reasons"][reason] = coverage["reasons"].get(reason, 0) + 1
 
     try:
-        for obj in adapter.nearby_objects():
+        for obj in adapter.camera_objects():
             if coverage["scanned_count"] >= MAX_SCANNED:
                 coverage["enumeration_complete"] = False
                 coverage["reasons"]["scan_limit"] = 1

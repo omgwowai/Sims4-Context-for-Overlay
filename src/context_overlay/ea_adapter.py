@@ -100,6 +100,11 @@ class EAAdapter:
                 "lot_id": str(zone.lot.lot_id), "off_lot": "included", "levels": "all",
                 "inventory": "excluded", "hidden": "excluded"}
 
+    def camera_objects(self):
+        # Count hidden entries too; get_valid_objects_gen filters them before yielding.
+        # IndexedManager.values exposes a lazy dict view, without copying the zone.
+        return self.services.object_manager().values()
+
     def camera_snapshot(self, zone_id):
         def read_vector(value):
             return {axis: float(getattr(value, axis)) for axis in ("x", "y", "z")}

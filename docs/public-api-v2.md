@@ -1,17 +1,17 @@
 # API 参考：读状态、查历史、写事件
 
-第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.2.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.10.10**。
+第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.3.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.11.0**。
 
 新增的 records/events/organized/recap 查询使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。以下现有历史接口仍保持原语义。
 
 直接调用用 `context_overlay.api`；希望统一处理“没安装、版本不匹配、分页关闭”等情况，可以用 `sdk/context_overlay_client.py`。两者提供同一套读写能力。
 
-Context、历史、增量与附近实体查询同步返回普通 JSON 数据；游戏对象读取在模拟线程进行。SDK 不调用模型、不创建窗口、不发网络请求，也不自动跨线程调度或重试。默认历史同时包含游戏事件和外部事件。
+Context、历史、增量、附近实体与视锥查询同步返回普通 JSON 数据；游戏对象读取在模拟线程进行。SDK 不调用模型、不创建窗口、不发网络请求，也不自动跨线程调度或重试。默认历史同时包含游戏事件和外部事件。
 
 
 ## 版本与迁移边界
 
-当前 SDK 为 2.2.0，适配 API 2.2.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
+当前 SDK 为 2.3.0，适配 API 2.3.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
 
 `get_context`、`query_history` 的 `origins=None` 表示全部来源，`["game"]`／`["external"]` 表示只查一类；`producers=["example.overlay"]` 仅匹配对应外部生产者，与其余条件取交集。数组不能为空，最多 64 项且不重复。类型／结果等游戏专用筛选自然排除不具备对应字段的外部记录。
 
@@ -58,7 +58,7 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 | 字段 | 含义 |
 | --- | --- |
-| `api_version` | 当前公共契约版本 `2.2.0` |
+| `api_version` | 当前公共契约版本 `2.3.0` |
 | `module_version` | 提供方 MOD 版本，以本次返回值为准 |
 | `schema_version` | 数据协议版本 `2` |
 | `capabilities` | 能力列表，例如 `context.read`、`history.query`、`events.append`、`history.changes`、`event_views.query`；按所用接口检查相应能力 |
@@ -319,6 +319,10 @@ Runtime 记录初始化它的线程身份；有活动 Runtime 时，公共运行
 
 将返回的普通字典交给后台模型或网络逻辑；不要把游戏对象、SDK 查询句柄或 `_runtime` 交给后台。模型结果返回后，通过下游自己的游戏线程回调检查当前 session_id、目标身份和最近 request_id，再展示或丢弃。session_id 相同并不能证明同一次运行内的较旧请求仍然适合展示。
 
+
+## 摄像机视锥查询
+
+API 2.3 提供 [`get_camera_view`](camera-view.md)：按需返回当前区域近似视锥内的全部实体摘要，包括地块外及不同楼层，忽略遮挡。通过 `context.camera_view` 发现能力；可覆盖垂直 FOV、宽高比及最远深度。完整参数、相机时效、扫描覆盖和错误见[接口约定](camera-view.md)，已有证据与复测步骤见[验收记录](camera-view-validation.md)。此接口不改变 `get_context` 的当前地块限制。
 
 ## 附近实体查询
 

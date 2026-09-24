@@ -10,6 +10,8 @@
 
 可复制的请求命令、同源四层对账及旅行／负载判据集中在[分层接口验收](event-views-validation.md)，由测试者手动加载游戏后执行。
 
+视锥查询使用 `api_camera_view` 驱动操作，参数同样放在 `params`。几何、扫描预算与相机时效的回归入口，以及普通生活模式的实机复测步骤见[视锥查询验收](camera-view-validation.md)。
+
 游戏基线为 `1.126.73.1030`，嵌入式 Python 3.7，字节码魔数 `420d0d0a`。本机游戏在 `D:/Games/The Sims 4`，参考仓库在 `C:/sources/sims4-python`，主要源码为 `ea-source/EA/`；参考提交由 `src/context_overlay/__init__.py` 的 `EA_REFERENCE_COMMIT` 指定。
 
 当前固定使用上述游戏版本开发与验收，尚不自动识别运行时游戏版本。MOD 的资源规则继续使用构建参考版本；实际升级游戏前，需要重新核对资源、分类规则与验收结果。

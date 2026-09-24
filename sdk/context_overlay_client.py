@@ -1,4 +1,4 @@
-"""ContextOverlay Python 3.7 SDK 2.2.0; vendor under your own MOD namespace.
+"""ContextOverlay Python 3.7 SDK 2.3.0; vendor under your own MOD namespace.
 
 No game/provider imports occur until a method is called. The SDK negotiates
 API v2, not an exact MOD version. It never starts a game, thread, or network job.
@@ -7,7 +7,7 @@ API v2, not an exact MOD version. It never starts a game, thread, or network job
 import importlib
 
 
-SDK_VERSION = "2.2.0"
+SDK_VERSION = "2.3.0"
 __all__ = ["SDK_VERSION", "ContextOverlayError", "Client", "HistoryQuery"]
 
 
@@ -57,7 +57,8 @@ class Client:
 
     def _call(self, method, *args, **kwargs):
         provider, info = self._api()
-        required = {"get_nearby_entities": "context.nearby_entities", "append_event": "events.append",
+        required = {"get_nearby_entities": "context.nearby_entities", "get_camera_view": "context.camera_view",
+                    "append_event": "events.append",
                     "read_event_changes": "history.changes"}.get(method)
         if method in ("query_event_view", "get_event_view_status", "get_event_view_page", "close_event_view", "explain_event_view"):
             required = "event_views.explain" if method == "explain_event_view" else "event_views.query"
@@ -99,6 +100,10 @@ class Client:
     def get_nearby_entities(self, identifier="active", **options):
         """Read nearby entities when the provider advertises that capability."""
         return self._call("get_nearby_entities", identifier, **options)
+
+    def get_camera_view(self, **options):
+        """Read approximate camera-view summaries; inspect coverage and camera freshness."""
+        return self._call("get_camera_view", **options)
 
     def query_history(self, kind="sim", identifier="active", **options):
         """Low-level first page; caller owns explicit close_history cleanup."""

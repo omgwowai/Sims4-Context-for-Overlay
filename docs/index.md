@@ -1,6 +1,6 @@
 # 文档入口
 
-当前源码版本为 **ContextOverlay 0.10.10**，公共 API / SDK 版本为 **2.2.0**，数据 schema 为 **2**。版本的唯一来源是 src/context_overlay/__init__.py、src/context_overlay/api.py 和 sdk/context_overlay_client.py；文档中的版本号只用于说明适用范围。
+当前源码版本为 **ContextOverlay 0.11.0**，公共 API / SDK 版本为 **2.3.0**，数据 schema 为 **2**。版本的唯一来源是 src/context_overlay/__init__.py、src/context_overlay/api.py 和 sdk/context_overlay_client.py；文档中的版本号只用于说明适用范围。
 
 初次阅读：[读取指南](reading-guide.md)选择能力 → [Nova 实例](event-layers-example.md)理解四层 → [快速接入](quickstart.md)动手调用。查精确契约再进入 API 参考；运行、维护和验收材料按需阅读。
 
@@ -21,6 +21,8 @@
 | 不确定该选哪个读取接口或筛选条件 | [读取指南与能力矩阵](reading-guide.md) |
 | 用真实条数、分类和证据追踪理解四层 | [四层事件实例：Nova 的一局游戏](event-layers-example.md) |
 | 完整参数、返回结构和错误码 | [API 参考](public-api-v2.md) |
+| 摄像机位置、近似视锥与全部实体摘要 | [视锥查询](camera-view.md) |
+| 视锥查询复测、实机样本和未验证场景 | [视锥查询验收](camera-view-validation.md) |
 | records / events / organized / recap 四层查询 | [分层事件查询](event-views.md) |
 | 手动验收分层接口、分页和证据回查 | [分层接口验收](event-views-validation.md) |
 | 正常结束后的 journal、快照和质量文件 | [写盘与自动分层文件](run-output.md) |

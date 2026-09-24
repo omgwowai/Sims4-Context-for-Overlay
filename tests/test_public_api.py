@@ -75,7 +75,7 @@ class ContractChecks(unittest.TestCase):
     def test_worker_rejected_before_game_reads_and_query_mutations(self):
         result = []
         def worker():
-            self.assertEqual(api.get_api_info()["api_version"], "2.2.0")
+            self.assertEqual(api.get_api_info()["api_version"], api.API_VERSION)
             for function in (api.get_status, api.get_context, api.query_history):
                 try:
                     function()
@@ -92,7 +92,7 @@ class ContractChecks(unittest.TestCase):
     def test_context_defaults_active_pin_detachment_and_no_file_write(self):
         self.add_events()
         packet = api.get_context()
-        self.assertEqual(packet["api_version"], "2.2.0")
+        self.assertEqual(packet["api_version"], api.API_VERSION)
         self.assertEqual(len(packet["history"]["events"]), 3)
         self.assertEqual(self.adapter.resolutions, [("sim", "active")])
         self.assertEqual(packet["target"]["id"], "18446744073709550001")

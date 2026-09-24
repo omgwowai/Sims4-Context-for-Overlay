@@ -2,6 +2,10 @@
 
 ContextOverlay 0.11.0 / API、SDK 2.3.0 新增 `context.camera_view`。调用方在游戏模拟线程按需调用 `get_camera_view`，取得当前区域中位于近似视锥内的实体摘要。查询本身不写历史、不创建分页快照、不启动轮询。
 
+接入前通过 `client.get_api_info()["capabilities"]` 检查 `context.camera_view`；SDK 会自动拒绝不支持此能力的提供者。完整示例见 [camera_view.py](../sdk/examples/camera_view.py)，复测步骤和已有证据见[视锥查询验收](camera-view-validation.md)。
+
+## 调用与参数
+
 ```python
 view = client.get_camera_view(
     kinds=("sim", "object"),
@@ -10,6 +14,8 @@ view = client.get_camera_view(
     far=None,
     expected_session_id=None,
 )
+entities = view["results"]
+complete = view["coverage"]["complete"]
 ```
 
 | 参数 | 约定 |
@@ -63,14 +69,16 @@ coverage / status
 
 ## 完整性和错误
 
-扫描预算为 10,000 个管理器条目（包含随后排除的对象），不是返回条数上限。正常完成时返回全部命中；异常或预算耗尽时返回已确认结果并明确标记缺口。
+扫描预算为 10,000 个原始管理器条目（包含隐藏、库存及随后排除的对象），不是返回条数上限。先计入预算再筛选，不使用 EA 预先跳过隐藏对象的枚举器。正常完成时返回全部命中；异常或预算耗尽时返回已确认结果并明确标记缺口。
 
 - `coverage.complete`：枚举已结束，且没有候选因必需数据缺失而无法判断。
 - `coverage.enumeration_complete / scanned_count / candidate_count / unresolved_count / reasons`：枚举与判定覆盖情况。
 - `coverage.selection_counts / bounds_fallback_reasons`：所有已做几何判定候选使用的近似方式；尺寸退回坐标点属于约定内近似，不单独构成枚举缺口。
 - `matched_count_exact=False`：已知数量只是已确认命中数，不代表全部区域。
 - `truncated=False`：接口不按返回数量截断；仍必须检查 coverage，不能据此推断扫描完整。
-- `status=partial`：存在扫描缺口或摘要可选字段／名称不可用；可与 `coverage.complete=True` 同时出现。
+- `status=partial`：存在扫描缺口、摘要可选空间字段不可用或实体引用读取抛异常；可与 `coverage.complete=True` 同时出现。
+
+`identity_status` 表示实体引用是否读取成功，名称解析状态仍在 `entity.name` 内。物件名称可能是带 `status/text/reason` 的结构，Sim 名称通常为字符串；`unmapped`、`unresolved_tokens`、`no_display_name` 等名称状态不会单独令包变为 partial。与 Context 一样，`status=complete` 不保证名称已经完整解析。
 
 相机不可用不会伪装成正常空结果：
 
@@ -84,27 +92,4 @@ coverage / status
 
 能力发现仍可在游戏外导入并读取，API 调用只能从模拟线程进行。示例见 [camera_view.py](../sdk/examples/camera_view.py)。开发驱动支持 `api_camera_view`，调用参数置于请求 `params`。
 
-## 验证
-
-离线回归：`python -B -X utf8 -m unittest discover -s tests -p test_camera_view.py -v`。覆盖各视锥平面、相交半径、镜头方向、全量结果、区域与库存过滤、时效重置、覆盖缺口、线程／会话守卫、SDK 兼容性和不写历史。
-
-实机验证应通过正常客户端镜头操作或 EA 发往客户端的相机指令触发，再从脚本侧回读；不能直接给 `camera.update` 填入测试坐标冒充真实客户端同步。实际验证结果另行记录。
-
-### 2026-09-24 本机验证
-
-游戏 `1.126.73.1030`，已安装 MOD `0.11.0`，session `cda62f7fc0264cb28fccb6210b08e105`。运行时 `source_sha256` 与本次构建 manifest 一致；查询前后记录器接收序号均为 395，没有查询引起的历史写入。
-
-| 同一暂停场景 | 命中数 | 完整调用耗时（单次样本） |
-| --- | --- | --- |
-| 默认 45°、16/9 | 78，其中地块外 50 | 16.7 ms |
-| 垂直 FOV 120° | 192 | 29.0 ms |
-| 仅 Sim | 1 | 1.8 ms |
-| far=1 | 2 | 8.1 ms |
-
-每次枚举 479 个对象且 `coverage.complete=True`：338 个使用占地代理球、135 个使用寻路代理球、6 个使用坐标点。宽视角包含默认集合、距离上限缩小集合、类型筛选及大于 64 条的全量返回均经实测。耗时包括该次 API 返回数据的组装和复制，仅为此场景的样本，不是性能上限承诺。
-
-通过原生 `FocusCamera` 发往客户端的旋转、拉远和跟随指令验证：客户端重新同步相机位置／目标点，查询分别得到 60、83、82 个命中，均完整；跟随步骤实测 `follow_mode=True`。客户端可以约束或调整请求的镜头位置，接口采用实际同步值。正常速度 `1` 下的查询也成功，随后已回读确认恢复暂停 `0`，镜头位置和目标点恢复为测试前值。没有保存存档。
-
-时效限制也得到实测：只发跟随请求、没有新的相机同步时，`follow_mode` 仍保留上一条同步的值，`age_seconds` 持续增长。因此不能用“请求已发送”或 `freshness.status=observed` 证明客户端此刻的跟随开关状态；测试收尾的跟随开关回读未立即匹配原值，保留为未确认状态。默认 FOV 的画面边缘精度、移动中跟随的持续表现仍未做视觉校准，不以这些抽测宣称渲染器精确可见性。
-
-本机证据位于忽略目录 `tmp/camera-view-20260924/`，包括 `report.json`、`checks.json`、各场景返回包、截图及实际发送到开发桥的脚本。为完成进档临时校准的 4K 菜单规则也保存在该目录，安装的 s4dev 规则已恢复原文件。
+接口的离线回归、实机复测步骤、2026-09-24 样本与未验证范围集中在[视锥查询验收](camera-view-validation.md)。性能数字只用于说明对应场景，不构成上限承诺。

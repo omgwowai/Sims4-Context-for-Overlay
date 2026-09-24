@@ -10,6 +10,7 @@
 | 某段时间发生过哪些事件 | `query_history` / SDK `history` | 实体、时间、类型、结果、来源 |
 | 从上次读取后新增或修订了什么 | `read_event_changes` / SDK `changes` | 来源筛选、checkpoint |
 | 附近有哪些 Sim / 物件 | `get_nearby_entities` → `get_context` | 距离、楼层、房间、类型 |
+| 当前镜头的近似视锥里有哪些实体 | [`get_camera_view`](camera-view.md) | 类型、FOV、宽高比、可选最远深度；检查 coverage 和相机时效 |
 | 同一批事件的原始过程、活动结构或简短回顾 | `query_event_view` | `records` / `events` / `organized` / `recap` |
 
 `query_history` 适合按条件查仍保留的历史；四层视图适合阅读当前 session 已写盘的固定截点，不受历史 FIFO 淘汰影响。**四层首版只支持完整会话时间范围**；按时间筛选历史用 `query_history`，或由下游从取得的 recap 中选择条目。
@@ -83,9 +84,11 @@ with client.history(
 
 这些数量的单位不同，也不是固定压缩比例。组织层保留全部来源的去向；recap 把细节留待按需展开。`recap` 当前仅支持 Sim，各层通过 `source_snapshot_id` 共用截点。用 `explain_event_view` 的 `units/events/revisions` 回查内容，`lineage/policy/labels` 回查来源、阅读去向和名称依据。请求、异步分页和关闭见[分层事件查询](event-views.md)。
 
-## 附近实体与外部事件
+## 空间查询与外部事件
 
 `get_nearby_entities` 按 `kinds/radius/metric/same_level/same_room/include_self/limit` 返回空间候选，再对选中的实体读 Context。它不判断视线、寻路、目睹、听见或人物知情。
+
+`get_camera_view` 以最近一次有效相机同步值计算近似视锥，按需返回当前区域全部已确认命中摘要，包括地块外和各楼层，忽略遮挡。默认角度与宽高比可覆盖；`far` 是相机前向深度。实体选中后可按 ID 读取 Context，但其当前字段仍受活动地块范围限制。`coverage.complete` 说明扫描完整性，`camera.freshness` 说明同步时效，两者都不代表渲染器精确可见性或 Sim 知情。
 
 下游用 `append_event` 追加自己的 JSON，指定 `producer`、`entities`、`idempotency_key` 和 `expected_session_id`；用上表的来源条件读回来。外部事件不会覆盖游戏记录，实体关联也不证明该 Sim 实际参与。完整闭环见[快速接入](quickstart.md)。
 

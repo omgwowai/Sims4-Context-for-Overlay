@@ -135,9 +135,9 @@ history = {status, events, coverage?, target_observation?, limit?, truncated?, .
 rendered? = {language, rules_version, current, history} 或 {status:"disabled", reason}
 ```
 
-`complete` 表示所请求的当前字段可用、请求的普通历史处于 recording 状态，且所查气泡窗口没有已报告的分页或保留缺口；不保证名称全部翻译成功、普通近期历史完整或全部事件已写盘。中文说明是否启用另看 `rendered` 状态。字段状态包括 `available`、`not_present`、`not_applicable`、`unsupported`、`out_of_scope`、`disabled`、`error`；名称的 `unresolved_tokens/no_display_name` 等是另一层状态。
+`complete` 表示所请求的当前字段可用、请求的普通历史处于 recording 状态，且所查气泡窗口没有已报告的分页或保留缺口；请求 `text/both` 时还要求语义化已启用。它不保证名称全部翻译成功、普通近期历史完整或全部事件已写盘。字段状态包括 `available`、`not_present`、`not_applicable`、`unsupported`、`out_of_scope`、`disabled`、`error`；名称的 `unresolved_tokens/no_display_name` 等是另一层状态。
 
-关闭记录器或记录失败时，Context 仍可读取当前状态，所附历史明确标记 `disabled/failed`，包为 partial。关闭语义化时原始数据仍返回，rendered 标记 disabled。关闭 Collector 时 `get_context` 抛 `collector_disabled`，历史接口仍可调用。范围外实体的当前字段标为 out_of_scope，历史是否曾观测由 `target_observation` 说明。
+关闭记录器或记录失败时，Context 仍可读取当前状态，所附历史明确标记 `disabled/failed`，包为 partial。关闭语义化时，`text/both` 请求仍返回原始数据，rendered 标记 disabled，包为 partial；`raw` 请求不受该开关影响。关闭 Collector 时 `get_context` 抛 `collector_disabled`，历史接口仍可调用。范围外实体的当前字段标为 out_of_scope，历史是否曾观测由 `target_observation` 说明。
 
 返回值已复制为 JSON 数据，下游修改字典不会更改记录器。所有 ID 和 ticks 输出使用字符串以保留精度；数值需求是游戏内部单位，不是百分比。
 

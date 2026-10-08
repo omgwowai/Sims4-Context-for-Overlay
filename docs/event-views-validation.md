@@ -162,7 +162,7 @@ try {
 | --- | --- |
 | 时间、人物与访问 | 使用 `[from_ticks, to_ticks)` 和 `subject` 角色，只匹配该人物在指定 `zone_visit` 的发送；暂停不推进游戏时间窗口 |
 | 单次上限与完整性 | 超过 2 条时 `has_more=true`，Context 为 partial；分页后的匹配数与冻结查询的 total_matches 一致。上限不删除事件 |
-| 空窗口 | 已在来源中记录过的人物可正常返回 0 项；来源从未记录该人物时明确报 entity_not_recorded |
+| 空窗口 | 人物在来源截点已有事件、筛选后无匹配时返回 0 项；没有任何事件时 Events 报 entity_not_recorded，仅有状态观察也不例外 |
 | 错层筛选 | 将时间／字段／角色／访问筛选用于 organized／recap／records，必须拒绝，不能静默裁掉依赖 |
 | 内存缺口 | Context 的 retention_gap 是保守提示；从落盘 Events 核对已持久化内容。淘汰故障使用离线夹具，不修改真实日志 |
 | 回查 | recap 的 balloons 条目均可解释到原事件／修订；来源已知但活动未关联时仍保留来源动作 |

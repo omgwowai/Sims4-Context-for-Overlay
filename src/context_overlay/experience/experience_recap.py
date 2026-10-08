@@ -11,6 +11,7 @@ import json
 import re
 
 from .experience_digest import name
+from .balloon_text import describe as describe_balloon
 from .experience_labels import LabelRenderer
 from .experience_policy import compact
 from .experience_view import build_experiences
@@ -18,7 +19,7 @@ from .filter_events import tick
 from .event_sequence import EventSequence
 
 
-VERSION = "experience_recap_v1_3"
+VERSION = "experience_recap_v1_5"
 REVIEW_REASONS = {"classification_missing": "分类待补充", "name_unresolved": "名称或参数未解析",
                   "association_missing": "所属活动未关联", "protected_detail": "因关联后果保留的执行细节",
                   "unsupported_observation_shape": "观测结构待核查"}
@@ -85,6 +86,10 @@ def fact_text(unit, labels=None):
     p = payload if isinstance(payload, dict) else {}
     used = set()
     text = TYPE_NAMES.get(kind, kind)
+    if kind == "balloon.sent":
+        # The full payload remains in the unit/raw facets; the recap states
+        # what was sent without interpreting an image as a motive or dialogue.
+        return describe_balloon(p)
     if kind == "payment.completed":
         amount = p.get("actual_amount")
         if type(amount) in (int, float):
@@ -233,7 +238,7 @@ def build_recap(loaded, entity_key, game_version=None):
         "basis": "采集时段内的记录；角色不等于目睹或知情；退出不等于玩法成功或全程专注",
         "details": "以 snapshot_id 和 ref 回查；@lane 可分页查询该类全部单元",
         "numeric": "局部数值观测保留在详情，不推算全天净变化"},
-        "activities": [], "results": [], "relationship_observations": [], "states": [], "review_actions": []}
+        "activities": [], "results": [], "relationship_observations": [], "states": [], "review_actions": [], "balloons": []}
     for unit in view["organized"]["activities"]:
         labels.unit = unit["id"]
         row = dict(activity_timing(unit), ref=refs[unit["id"]],
@@ -283,6 +288,19 @@ def build_recap(loaded, entity_key, game_version=None):
             row["activity"] = refs[unit["activity"]]
         if unit.get("unresolved_cause_event_id"):
             row["association"] = "原因未关联"
+        if unit["type"] == "balloon.sent":
+            state = unit.get("association_state", "source_unrecorded")
+            row["association_state"] = state
+            if unit.get("source_interaction"):
+                source = unit["source_interaction"]
+                row["source_action"] = labels(source["action"], "interaction")
+                row["source_event_id"] = source["event_id"]
+            if state != "activity_linked":
+                row["association"] = {"source_recorded_activity_unresolved": "来源已记录，所属活动未关联",
+                    "source_unavailable": "来源事件缺失或不匹配", "source_unrecorded": "未记录交互来源"}[state]
+            packet["balloons"].append(row)
+            shown(unit, "observed_balloon_send_not_thought_or_visibility")
+            continue
         packet["results"].append(row)
         shown(unit, "protected_result_or_social_fact")
     packet["relationship_observations"] = list(relationship_groups.values())
@@ -470,6 +488,16 @@ def markdown(bundle):
     if independent:
         lines += ["", "## 独立结果与关系记录", ""]
         lines += ["- [{}] {} · {} · {}".format(f["ref"], f["time"], esc(roles(f)), esc(f["text"])) for f in independent]
+    if packet.get("balloons"):
+        lines += ["", "## 气泡请求", "", "记录发送请求；不确认实际显示，也不据此还原想法或谈话内容。", ""]
+        for item in packet["balloons"]:
+            activity = "；关联活动 " + item["activity"] if item.get("activity") else ""
+            if not activity:
+                if item.get("source_action"):
+                    activity = "；来源动作：" + esc(item["source_action"])
+                if item.get("association"):
+                    activity += "；" + esc(item["association"])
+            lines.append("- [{}] {} · {} · {}{}".format(item["ref"], item["time"], esc(roles(item)), esc(item["text"]), activity))
     if packet["relationship_observations"]:
         lines += ["", "## 关系数值的局部观测", "", "以下仅计数日志中的直接数值变化，不推断全天净变化。", ""]
         for group in packet["relationship_observations"]:

@@ -15,8 +15,8 @@ def observe_scene(vertical_fov=None, aspect_ratio=None, far=None):
 def read_selected(view, entity_key):
     selected = next(row for row in view["results"] if row["entity"]["key"] == entity_key)
     reference = selected["entity"]
-    # Scope of get_context is still the active lot, and this read occurs later.
-    # Off-lot entities can have out_of_scope fields; the view is not a detail cache.
+    # API 2.5 includes off-lot world instances in the current zone in get_context.
+    # This later read can still be out_of_scope after despawn, hiding or travel.
     return client.get_context(reference["kind"], reference["id"], include_history=False,
                               expected_session_id=view["session_id"])
 

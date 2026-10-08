@@ -17,6 +17,13 @@ from context_overlay.history import HistoryError
 
 
 class TravelHistoryChecks(unittest.TestCase):
+    def test_balloon_provenance_cleanup_runs_when_recorder_disabled(self):
+        runtime = game_runtime._runtime
+        runtime.recorder.enabled = False
+        with patch.object(runtime.balloons, "prune_pending") as prune:
+            runtime.poll(None)
+        prune.assert_called_once_with()
+
     def test_clean_shutdown_exports_household_layers_and_complete_capture_status(self):
         from validate_run import audit
         runtime = game_runtime._runtime
@@ -46,7 +53,7 @@ class TravelHistoryChecks(unittest.TestCase):
         self.game_services.service_manager = self.manager
         self.events = SimpleNamespace(register_single_event=Mock(), unregister=Mock())
         adapter = Adapter()
-        adapter.scope = lambda: {"kind": "active_lot_instantiated", "zone_id": self.zone, "lot_id": self.zone, "off_lot": "excluded"}
+        adapter.scope = lambda: {"kind": "zone_instantiated", "zone_id": self.zone, "lot_id": self.zone, "off_lot": "included"}
         adapter.clock = lambda: {"ticks": str(self.now), "display": "test time"}
         adapter.live_objects = lambda: []
         adapter.in_scope = lambda obj: False

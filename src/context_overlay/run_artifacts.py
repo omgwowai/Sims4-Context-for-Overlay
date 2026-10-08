@@ -91,7 +91,7 @@ def export_layers(directory, session_id, head, targets, coverage, game_version, 
                                    "totals": quality["totals"], "checks": quality["checks"]})
             row.update(state="ready", folder=folder, organized=len(bundle["units"]) + sum(not r["units"] for r in bundle["audit"]["evidence"].values()),
                        recap=sum(len(bundle["recap"][section]) for section in
-                           ("activities", "results", "relationship_observations", "states", "review_actions")),
+                           ("activities", "results", "relationship_observations", "states", "review_actions", "balloons")),
                        snapshot_id=bundle["snapshot_id"])
             # Do not keep the previous person's graph alive during the next build.
             del bundle, quality

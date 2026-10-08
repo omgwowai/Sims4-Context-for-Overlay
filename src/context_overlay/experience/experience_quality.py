@@ -4,7 +4,7 @@ from collections import Counter
 
 from .experience_recap import REVIEW_REASONS, digest, snapshot_digest, review_groups
 
-SECTIONS = ("activities", "results", "relationship_observations", "states", "review_actions")
+SECTIONS = ("activities", "results", "relationship_observations", "states", "review_actions", "balloons")
 
 
 def validate_bundle(bundle):
@@ -88,7 +88,7 @@ def quality_report(bundle):
         "units_by_lane": dict(sorted(lane_counts.items())),
         "event_destinations": {key: counts[key] for key in ("recap", "review", "detail", "external", "not_expanded")},
         "semantic_roles": dict(sorted(Counter(row["semantic_role"] for row in selected.values()).items())),
-        "recap_sections": {section: len(packet[section]) for section in SECTIONS},
+        "recap_sections": {section: len(packet.get(section, [])) for section in SECTIONS},
         "review_reason_units": dict(sorted(reasons.items())), "review_display_groups": len(review_groups(packet)),
         "name_issue_units": len(packet.get("name_quality", {}).get("unresolved", [])),
         "merged_links": sum(bool(link["merged"]) for link in bundle["audit"]["links"]),
@@ -117,7 +117,7 @@ def quality_markdown(report):
         "| 为解释关联而引入的其他事件 | {} |".format(total["supporting_events"]),
         "| 组织单元 | {} |".format(total["organized_units"]),
         "| 组织层独立保留的事件 | {} |".format(total["organized_standalone"]),
-        "| 正文阅读项（活动／结果／关系观察／状态组） | {} |".format(sum(n for key, n in total["recap_sections"].items() if key != "review_actions")),
+        "| 正文阅读项（活动／结果／关系观察／状态组／气泡） | {} |".format(sum(n for key, n in total["recap_sections"].items() if key != "review_actions")),
         "| 待核查动作 | {} |".format(total["recap_sections"]["review_actions"]),
         "| 待核查动作的阅读分组 | {} |".format(total["review_display_groups"]),
         "| 全部待核查单元（含非动作） | {} |".format(total["units_by_lane"].get("review", 0)), "",
@@ -170,7 +170,7 @@ def compare_bundles(before, after):
                 if field == "who":
                     return people[value]
             return value
-        return normalize(bundle["recap"][section])
+        return normalize(bundle["recap"].get(section, []))
     changed_sections = [section for section in SECTIONS if rendered(before, section) != rendered(after, section)]
     return {"format": "experience_quality_comparison_v1", "source": left["source"],
         "before_snapshot": before["snapshot_id"], "after_snapshot": after["snapshot_id"],

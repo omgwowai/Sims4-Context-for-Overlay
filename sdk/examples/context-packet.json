@@ -1,7 +1,7 @@
 {
-  "api_version": "2.1.0",
+  "api_version": "2.6.0",
   "schema_version": "2",
-  "module_version": "0.9.0",
+  "module_version": "0.14.1",
   "kind": "context",
   "session_id": "synthetic-example-run",
   "request_id": "synthetic-example-request",
@@ -10,7 +10,7 @@
   "representation": "both",
   "provenance": {"status": "synthetic_example_not_game_evidence"},
   "target": {"kind": "sim", "id": "12345678901234567", "key": "sim:12345678901234567", "name": "示例角色"},
-  "scope": {"kind": "active_lot_instantiated", "zone_id": "123", "lot_id": "456", "off_lot": "excluded"},
+  "scope": {"kind": "zone_instantiated", "zone_id": "123", "lot_id": "456", "off_lot": "included", "hidden": "excluded", "inventory": "excluded"},
   "read_started": {"ticks": "100000", "display": "示例时间"},
   "read_finished": {"ticks": "100000", "display": "示例时间"},
   "requested_fields": ["identity", "needs"],

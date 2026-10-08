@@ -188,6 +188,19 @@ class InspectorSession:
         if result["status"] != "available":
             self.text_page(title, display(result), self.categories)
             return
+        if name == "balloons":
+            value = result["value"]
+            from context_overlay.experience.balloon_text import describe
+            window = value.get("window", {})
+            text = "本次区域访问中，最近 {} 个游戏分钟发送的气泡事件，不代表此刻仍在显示。\n\n".format(window.get("past_sim_minutes", 5))
+            lines = [game_time(item["first_observed_time"]) + " · " + describe(item["payload"]) for item in value["events"]]
+            text += "\n\n".join(lines) if lines else "所查窗口内的保留事件中没有匹配项。"
+            if value.get("has_more"):
+                text += "\n\n还有匹配事件，可使用时间窗口查询接口分页读取。"
+            if value.get("retention_gap"):
+                text += "\n\n历史内存发生过淘汰；需从落盘事件核对完整窗口。"
+            self.text_page(title, text, self.categories)
+            return
         value = result["value"]
         if isinstance(value, list):
             entries = [(str(i + 1), item) for i, item in enumerate(value)]

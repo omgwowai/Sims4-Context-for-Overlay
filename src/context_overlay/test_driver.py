@@ -165,7 +165,7 @@ class Driver:
         target = adapter.resolve(request.get("kind", "sim"), request.get("id", "active"))
         obj = adapter.object_for(target)
         if not adapter.in_scope(obj):
-            raise ValueError("Validation target outside active lot")
+            raise ValueError("Validation target outside current observation scope")
         import sims4.resources
         if operation == "push":
             from interactions.context import InteractionContext
@@ -173,7 +173,7 @@ class Driver:
             affordance = services.get_instance_manager(sims4.resources.Types.INTERACTION).get(int(request["affordance_id"]))
             destination = adapter.object_for(adapter.resolve(request.get("target_kind", "object"), request["target_id"]))
             if not adapter.in_scope(destination):
-                raise ValueError("Interaction target outside active lot")
+                raise ValueError("Interaction target outside current observation scope")
             context = InteractionContext(obj, InteractionContext.SOURCE_SCRIPT, Priority.High)
             if request.get("recipe_id"):
                 raise ValueError("Select the recipe through the game's picker; recipe_id is not a push argument")
@@ -207,7 +207,7 @@ class Driver:
             from context_overlay.ea_adapter import RELATIONSHIP_TRACKS
             other = adapter.object_for(adapter.resolve("sim", request["target_id"]))
             if not adapter.in_scope(other):
-                raise ValueError("Relationship target outside active lot")
+                raise ValueError("Relationship target outside current observation scope")
             track = adapter.statistics[RELATIONSHIP_TRACKS[request.get("track", "friendship")]]
             obj.sim_info.relationship_tracker.set_relationship_score(other.sim_info.sim_id, float(request["value"]), track=track)
             return {"value": obj.sim_info.relationship_tracker.get_relationship_score(other.sim_info.sim_id, track=track)}

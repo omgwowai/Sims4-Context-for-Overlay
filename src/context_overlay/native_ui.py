@@ -1,6 +1,7 @@
 """EA-native picker windows and a script-only, immediate inspection interaction."""
 
 import functools
+import sys
 
 import date_and_time
 import services
@@ -79,10 +80,46 @@ class InspectorTextDialog(UiDialogOkCancel):
 
 
 class NativeView:
-    def __init__(self):
+    def __init__(self, on_error=lambda message: None, log=lambda message: None):
         self.current = None
+        self.responding = []
+        self.on_error, self.log = on_error, log
+        self.compatibility_hooks = Hooks(on_error)
+        self.dialog_compatibility = "not_needed"
         self.factory = UiRecipePicker.TunableFactory().default
         self.text_dialog_factory = InspectorTextDialog.TunableFactory().default
+
+    def _protect_manual_dialog(self):
+        # DevBridge comfort closes NO_RING modals immediately after registration.
+        # Exempt this view's current dialog and its in-flight response callback.
+        # EA removes an old dialog only AFTER navigation opens its replacement.
+        # Do not import/enable DevBridge or change its global comfort settings.
+        comfort = sys.modules.get("dev_bridge.comfort")
+        if comfort is None or self.compatibility_hooks.entries:
+            return
+        original = getattr(comfort, "_quiet_choice", None)
+        if not callable(original):
+            self.dialog_compatibility = "devbridge_unsupported"
+            return
+        state = {"active": True}
+
+        @functools.wraps(original)
+        def quiet_choice(dialog):
+            if state["active"] and (dialog is self.current or
+                                    any(dialog is value for value in self.responding)):
+                return False
+            return original(dialog)
+
+        self.compatibility_hooks._install(comfort, "_quiet_choice", quiet_choice, state)
+        self.dialog_compatibility = "devbridge_current_inspector_exempt"
+        self.log("INSPECTOR COMPAT: DevBridge quiet dialogs exempts the current Inspector")
+
+    def close(self):
+        try:
+            self.cancel()
+        finally:
+            self.compatibility_hooks.remove()
+            self.dialog_compatibility = "closed"
 
     def cancel(self):
         dialog, self.current = self.current, None
@@ -146,20 +183,32 @@ class NativeView:
         self._present(dialog, lambda response: response_map.get(response.response), callback)
 
     def _present(self, dialog, result, callback):
+        presenting = [True]
+
         def responded(response):
             if self.current is not response:
                 return
+            if presenting[0]:
+                self.on_error("Dialog responded during show: response={}, compatibility={}".format(
+                    response.response, self.dialog_compatibility))
             # EA cancels this dialog AFTER invoking listeners. Do not cancel it
             # again when the callback opens a replacement window or closes us.
             self.current = None
-            callback(result(response))
+            self.responding.append(response)
+            try:
+                callback(result(response))
+            finally:
+                self.responding.pop()
 
         self.current = dialog
         try:
+            self._protect_manual_dialog()
             dialog.show_dialog(on_response=responded)
         except Exception:
             self.cancel()
             raise
+        finally:
+            presenting[0] = False
 
 
 class NativeInspector:
@@ -168,7 +217,7 @@ class NativeInspector:
         self.log = log
         self.last_error = None
         self.session = None
-        self.view = NativeView()
+        self.view = NativeView(self.error, self.log)
         self.hooks = Hooks(self.error)
         self.active = True
         self.ticks_per_hour = date_and_time.create_time_span(hours=1).in_ticks()
@@ -217,7 +266,7 @@ class NativeInspector:
 
     def open_object(self, obj):
         if not self.active or self.runtime.closed or not self.runtime.adapter.in_scope(obj):
-            raise ValueError("Only instantiated entities on the current lot can be inspected")
+            raise ValueError("Only nonhidden world entities instantiated in the current zone can be inspected")
         self.open_target(self.runtime.adapter.reference(obj))
 
     def open_target(self, target, external_history=False):
@@ -232,7 +281,8 @@ class NativeInspector:
             self.session.invoke(self.session.new_history)
         else:
             self.session.invoke(self.session.refresh)
-        self.log("INSPECTOR OPEN " + target["key"])
+        opened = not self.session.closed and self.view.current is not None
+        self.log(("INSPECTOR OPEN " if opened else "INSPECTOR NOT OPEN ") + target["key"])
 
     def open(self, kind="sim", identifier="active"):
         target = self.runtime.collector.resolve_history(kind, identifier)
@@ -244,10 +294,14 @@ class NativeInspector:
             if self.session is not None:
                 self.session.close()
         finally:
-            self.hooks.remove()
+            try:
+                self.view.close()
+            finally:
+                self.hooks.remove()
 
     def status(self):
         opened = self.session is not None and not self.session.closed
         return {"state": "ready" if self.active else "closed", "menu_hooks": len(self.hooks.entries),
                 "window_open": opened, "target": self.session.target if opened else None,
+                "dialog_compatibility": self.view.dialog_compatibility,
                 "last_error": self.last_error}

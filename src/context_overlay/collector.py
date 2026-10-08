@@ -5,8 +5,8 @@ from context_overlay.semanticizer import render
 
 
 FIELDS = ("identity", "location", "time", "interactions", "needs", "buffs",
-          "relationships", "object_states")
-PRESETS = {"sim": ("identity", "time", "location", "needs", "buffs", "relationships", "interactions"),
+          "relationships", "object_states", "balloons")
+PRESETS = {"sim": ("identity", "time", "location", "needs", "buffs", "relationships", "interactions", "balloons"),
            "object": ("identity", "time", "location", "object_states")}
 
 
@@ -54,7 +54,8 @@ class Collector:
             raise
 
     def collect(self, target, fields=None, history_limit=50,
-                include_history=True, include_internal=False, representation="both", origins=None, producers=None):
+                include_history=True, include_internal=False, representation="both", origins=None, producers=None,
+                balloon_window=None):
         selected = PRESETS[target["kind"]] if fields is None else fields
         packet = envelope("context", self.recorder.session_id)
         packet.update({"request_id": new_id(), "target": target,
@@ -62,12 +63,16 @@ class Collector:
                        "requested_fields": list(selected), "snapshot": {},
                        "scope": self.adapter.scope(), "read_started": self.adapter.clock()})
         for name in selected:
-            packet["snapshot"][name] = self.adapter.read(target, name)
+            packet["snapshot"][name] = (self.adapter.read(target, name, options=balloon_window)
+                                       if name == "balloons" and balloon_window is not None else self.adapter.read(target, name))
         packet["read_finished"] = self.adapter.clock()
         packet["history"] = self.recorder.history(target["key"], history_limit, include_internal,
             origins=origins, producers=producers) if include_history else {
             "status": "not_requested", "events": []}
         packet["status"] = "partial" if has_unavailable(packet["snapshot"]) else "complete"
+        balloon_value = packet["snapshot"].get("balloons", {}).get("value")
+        if isinstance(balloon_value, dict) and balloon_value.get("complete") is False:
+            packet["status"] = "partial"
         if include_history and packet["history"]["status"] != "recording":
             packet["status"] = "partial"
         return self.render_packet(packet, representation)

@@ -131,7 +131,7 @@ class NearbyChecks(unittest.TestCase):
         self.assertEqual([row["entity"]["id"] for row in packet["results"]], ["2"])
         self.assertEqual(self.query(radius=8, same_room=True)["count"], 0)
 
-    def test_inventory_hidden_offlot_and_uninstantiated_excluded(self):
+    def test_offlot_included_inventory_hidden_and_uninstantiated_excluded(self):
         self.add(2, x=1, kind="object", inventory=True)
         child = self.add(3, x=2, kind="object")
         child.parent = self.objects[1]
@@ -141,8 +141,26 @@ class NearbyChecks(unittest.TestCase):
         absent.sim_info.get_sim_instance = lambda: None
         self.add(7, x=6, kind="object")
         packet = self.query(kinds=["sim", "object"])
-        self.assertEqual([row["entity"]["id"] for row in packet["results"]], ["7"])
+        self.assertEqual([row["entity"]["id"] for row in packet["results"]], ["4", "7"])
+        self.assertFalse(packet["results"][0]["relative"]["same_lot"]["value"])
+        self.assertTrue(packet["results"][1]["relative"]["same_lot"]["value"])
         self.assertTrue(packet["coverage"]["complete"])
+
+    def test_offlot_center_and_both_offlot_do_not_claim_same_lot(self):
+        self.origin.is_on_active_lot = lambda: False
+        self.add(2, x=1, on_lot=False)
+        self.add(3, x=2, kind="object")
+        packet = self.query(kinds=["sim", "object"])
+        self.assertEqual(packet["count"], 2)
+        self.assertEqual(packet["scope"]["kind"], "zone_instantiated")
+        self.assertEqual(packet["scope"]["off_lot"], "included")
+        unknown = packet["results"][0]["relative"]["same_lot"]
+        self.assertEqual(unknown["status"], "unsupported")
+        self.assertIsNone(unknown["value"])
+        self.assertFalse(packet["results"][1]["relative"]["same_lot"]["value"])
+        self.assertEqual(packet["status"], "partial")
+        self.assertTrue(packet["coverage"]["complete"])
+        self.assertTrue(packet["matched_count_exact"])
 
     def test_room_unknown_is_not_false_and_never_silently_drops_filter(self):
         self.add(2, x=2, room=0)
@@ -217,9 +235,9 @@ class NearbyChecks(unittest.TestCase):
 
     def test_center_scope_existence_and_active_resolved_once(self):
         self.error("target_unavailable", identifier="999")
-        self.origin.is_on_active_lot = lambda: False
+        self.origin._hidden_flags = 1
         self.error("target_out_of_scope")
-        self.origin.is_on_active_lot = lambda: True
+        self.origin._hidden_flags = 0
         self.active_calls = 0
         self.query()
         self.assertEqual(self.active_calls, 1)

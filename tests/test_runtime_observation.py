@@ -37,7 +37,7 @@ class RuntimeObservationChecks(unittest.TestCase):
         adapter.config = dict(game_runtime.DEFAULTS)
         adapter.statistics = {name: name for name in self.values}
         adapter.clock = lambda: {"ticks": str(self.now)}
-        adapter.scope = lambda: {"kind": "active_lot_instantiated"}
+        adapter.scope = lambda: {"kind": "zone_instantiated"}
         adapter.live_objects = lambda: self.sims
         adapter.in_scope = lambda obj: obj is not None
         adapter.object_for = lambda target: next(sim for sim in self.sims if str(sim.id) == target["id"])

@@ -32,6 +32,11 @@ AUTONOMY_SYMBOLS = [
     ("core.zip", "sims4/gsi/archive.pyc", "BaseArchiver.archive_enable_fn"),
 ]
 
+BALLOON_SYMBOLS = [
+    ("simulation.zip", "balloon/balloon_request.pyc", "BalloonRequest.distribute"),
+    ("simulation.zip", "balloon/tunable_balloon.pyc", "TunableBalloon.build_balloon_requests"),
+]
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -52,6 +57,7 @@ def main():
     symbols = [("simulation.zip", module.replace(".", "/") + ".pyc", cls + "." + method, kind)
                for module, cls, method, kind in entries]
     symbols += [(*symbol, "autonomy") for symbol in AUTONOMY_SYMBOLS]
+    symbols += [(*symbol, "balloon") for symbol in BALLOON_SYMBOLS]
     for archive, member, suffix, kind in symbols:
         row = {"archive": archive, "member": member, "function": suffix, "kind": kind}
         try:

@@ -16,7 +16,7 @@ from .experience_digest import digest
 from .event_sequence import event_index, ordered_events, select_events
 
 
-POLICY_VERSION = "experience_view_v1_6"
+POLICY_VERSION = "experience_view_v1_8"
 
 
 def uid(prefix, event):
@@ -139,7 +139,7 @@ class Builder:
         self.record(unit, event)
         return unit
 
-    def cause(self, event):
+    def cause_source(self, event):
         cause = event.get("cause") or {}
         source = self.interactions.get(cause.get("event_id"))
         if source is None or not same_visit(event, source):
@@ -147,7 +147,11 @@ class Builder:
         cause_actor = (cause.get("actor") or {}).get("key")
         if cause_actor is not None and cause_actor != actor(source):
             return None
-        return self.membership.get(source["event_id"])
+        return source
+
+    def cause(self, event):
+        source = self.cause_source(event)
+        return self.membership.get(source["event_id"]) if source is not None else None
 
     def provider(self, decision, stage):
         candidates = [c for c in stage.get("candidates", []) if c.get("selected") is True]
@@ -603,6 +607,15 @@ class Builder:
                 unit = self.add("f", event, lane, category=semantic, type=kind(event), time=event.get("first_observed_time"),
                     roles=role_keys(event), payload=compact(payload), before=compact(event.get("before")), after=compact(event.get("after")))
             self.attach(unit, event, "effects")
+            if kind(event) == "balloon.sent":
+                # A known sending interaction may lack an activity classification.
+                # Preserve that distinction without inferring a nearby activity.
+                source = self.cause_source(event)
+                if source is not None:
+                    unit["source_interaction"] = {"event_id": source["event_id"], "action": compact(source["facts"])}
+                    unit["association_state"] = "activity_linked" if root is not None else "source_recorded_activity_unresolved"
+                else:
+                    unit["association_state"] = "source_unavailable" if (event.get("cause") or {}).get("event_id") else "source_unrecorded"
             if root is None and (event.get("cause") or {}).get("event_id"):
                 unit["unresolved_cause_event_id"] = event["cause"]["event_id"]
                 unit.setdefault("review_reasons", []).append("association_missing")
@@ -691,6 +704,7 @@ class Builder:
             "detail_units_available": len(view["details"]),
             "external_events_excluded": len(view["external"]), "not_player_knowledge": True,
             "intervals": "paired_observations_within_one_visit_not_continuous_state_reconstruction",
+            "balloons": "observed_send_requests_not_client_visibility_or_private_thought",
             "evidence_lookup": "audit.evidence; source journal required for full detail"}
         counts = {lane: len(view[lane]) for lane in lanes}
         metrics = {"source_events": len(self.events), "selected_events": len(self.selected), "units_by_lane": counts,

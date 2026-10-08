@@ -97,6 +97,52 @@ class EventViewTests(unittest.TestCase):
         with self.assertRaisesRegex(ViewError, "does not belong"):
             self.store.explain(recap["snapshot_id"], units[1]["item_id"])
 
+    def test_balloon_recap_section_round_trips_to_original_record(self):
+        from test_balloons import balloon
+        self.add_record(kind="event_revision", event=balloon())
+        recap, rows = self.items(self.store.query("recap", "sim:1", self.head()))
+        row, = [row for row in rows if row["section"] == "balloons"]
+        _, revisions = self.items(self.store.explain(recap["snapshot_id"], row["item_id"], "revisions"))
+        self.assertEqual([record["event"]["event_id"] for record in revisions], ["run:balloon"])
+
+    def test_durable_event_windows_keep_fifo_evicted_sends_and_exact_membership(self):
+        from test_balloons import balloon
+        for identifier, at, visit, role in (("old", 100, 1, "subject"), ("lower", 200, 2, "subject"),
+                ("other_subject", 220, 2, "initiator"), ("middle", 250, 2, "subject"), ("upper", 300, 2, "subject")):
+            item = balloon(identifier)
+            item["field"] = "balloon.sent"
+            item.update(first_observed_time={"ticks": str(at)}, zone_visit=visit,
+                        roles=[{"entity_key": "sim:1", "role": role}])
+            self.add_record(kind="event_revision", event=item)
+        self.add_record(kind="observation", category="test", data={}, evicted_event_ids=["run:lower"])
+        options = dict(from_ticks="200", to_ticks="300", fields=["balloon.sent"],
+                       entity_role="subject", zone_visit=2, order="desc", page_size=1)
+        request, rows = self.items(self.store.query("events", "sim:1", self.head(), **options))
+        self.assertEqual([r["event"]["event_id"] for r in rows], ["run:middle", "run:lower"])
+        page = self.store.page(request["cursor"])
+        self.assertFalse(page["coverage"]["fifo_applied"])
+        self.assertEqual(page["scope"]["filters"]["from_ticks"], "200")
+        rows[0]["event"]["payload"] = {}
+        self.assertIn("balloon_type", self.store.page(request["cursor"])["items"][0]["event"]["payload"])
+        _, revisions = self.items(self.store.explain(request["snapshot_id"], "run:lower", "revisions"))
+        self.assertEqual(revisions[0]["event"]["event_id"], "run:lower")
+        # Same prefix, different filters have distinct identities, even if empty.
+        empty, items = self.items(self.store.query("events", "sim:1", self.head(),
+            source_snapshot_id=request["source_snapshot_id"], from_ticks=301, to_ticks=400, fields=["balloon.sent"]))
+        self.assertEqual(items, [])
+        self.assertNotEqual(empty["snapshot_id"], request["snapshot_id"])
+        with self.assertRaisesRegex(ViewError, "does not belong"):
+            self.store.explain(empty["snapshot_id"], "run:lower")
+
+    def test_event_filter_validation_does_not_create_jobs_or_trim_other_layers(self):
+        from context_overlay.history import HistoryError
+        for view, options in (("recap", {"from_ticks": 1}), ("organized", {"fields": ["balloon.sent"]}),
+                ("events", {"from_ticks": 2, "to_ticks": 1}), ("events", {"entity_role": ""}),
+                ("events", {"zone_visit": True}), ("events", {"fields": []}), ("events", {"order": "other"})):
+            with self.subTest(view=view, options=options), self.assertRaises((ViewError, HistoryError)):
+                self.store.query(view, "sim:1", self.head(), **options)
+        self.assertEqual(self.store.metrics()["requests"], 0)
+
     def test_four_open_layers_share_raw_bytes_without_relaxing_memory_budget(self):
         self.rows = []
         self.add_record(kind="observation", category="session_start", data={})
@@ -495,7 +541,7 @@ class EventViewTests(unittest.TestCase):
         spec.loader.exec_module(sdk)
         client = sdk.Client()
         with patch.object(runtime.adapter, "resolve", side_effect=AssertionError("No live lookup for historical IDs")):
-            request = client.query_event_view("events", identifier="1", expected_session_id="run")
+            request = client.query_event_view("events", identifier="1", expected_session_id="run", from_ticks="0", to_ticks="100000")
         while request["state"] == "building":
             time.sleep(0.005)
             request = client.get_event_view_status(request["request_id"], expected_session_id="run")

@@ -8,7 +8,7 @@ import pkgutil
 PACKAGE = "context_overlay.experience"
 FILES = ("filter_events.py", "event_sequence.py", "experience_policy.py", "experience_labels.py",
          "experience_digest.py", "experience_view.py", "experience_recap.py", "experience_quality.py",
-         "resources.py", "experience_resources.json", "experience_labels.json")
+         "resources.py", "balloon_text.py", "experience_resources.json", "experience_labels.json")
 
 
 @lru_cache(maxsize=1)

@@ -50,7 +50,8 @@ class InspectorChecks(unittest.TestCase):
         self.recorder = Recorder(self.journal, "ui-run", clock=lambda: self.real_time[0])
         self.recorder.enter(self.target, self.now)
         self.reads = []
-        self.values = {"needs": {"hunger": field(25)}, "buffs": [], "interactions": [], "relationships": []}
+        self.values = {"needs": {"hunger": field(25)}, "buffs": [], "interactions": [], "relationships": [],
+                       "balloons": {"events": [], "complete": True}}
 
         def read(target, name):
             self.reads.append((target["id"], name))
@@ -239,6 +240,7 @@ def native_modules():
 
     class Dialog:
         sequence = 0
+        DIALOG_MSG_TYPE = 1
         DialogDescriptionDisplay = SimpleNamespace(FULL_DESCRIPTION=2)
         @classmethod
         def TunableFactory(cls):
@@ -253,6 +255,8 @@ def native_modules():
             self.rows.append(value)
         def show_dialog(self, on_response):
             self.callback = on_response
+        def get_phone_ring_type(self):
+            return 0
         def set_responses(self, responses):
             self.extra_responses = responses
         def set_picker_columns_override(self, columns):
@@ -287,7 +291,8 @@ def native_modules():
     module("sims4.utils", flexmethod=Flex)
     module("singletons", DEFAULT=object())
     module("ui.ui_dialog", ButtonType=SimpleNamespace(DIALOG_RESPONSE_OK=10001,
-        DIALOG_RESPONSE_CANCEL=10002, DIALOG_RESPONSE_CUSTOM_1=10004, DIALOG_RESPONSE_CUSTOM_2=10005),
+        DIALOG_RESPONSE_CANCEL=10002, DIALOG_RESPONSE_CLOSED=-1,
+        DIALOG_RESPONSE_CUSTOM_1=10004, DIALOG_RESPONSE_CUSTOM_2=10005),
         UiDialogOkCancel=Dialog, UiDialogResponse=SimpleNamespace)
     class Column(SimpleNamespace):
         ColumnType = SimpleNamespace(TEXT=1)
@@ -366,6 +371,138 @@ class NativeBridgeChecks(unittest.TestCase):
         self.assertEqual(selected, [])
         self.assertEqual(self.cancelled, [old.dialog_id])
 
+    def quiet_service(self, comfort=None):
+        """EA listener-before-removal order + DevBridge's post-show quiet sweep.
+
+        An optional module lets the local reproduction use installed comfort
+        functions directly; CI uses the same observable cancellation contract.
+        """
+        native = self.native
+
+        class Service:
+            def __init__(self):
+                self._active_dialogs = {}
+                self.closed = []
+
+            @property
+            def auto_respond(self):
+                return False  # No setter: attempts to change this fail.
+
+            def dialog_show(self, dialog):
+                self._active_dialogs[dialog.dialog_id] = dialog
+
+            def dialog_cancel(self, dialog_id):
+                self._active_dialogs.pop(dialog_id, None)
+                self.closed.append(dialog_id)
+
+            def dialog_respond(self, dialog_id, response):
+                dialog = self._active_dialogs[dialog_id]
+                dialog.response = response
+                dialog.callback(dialog)
+                self.dialog_cancel(dialog_id)
+                return True
+
+        service = Service()
+        if comfort is None:
+            comfort = ModuleType("dev_bridge.comfort")
+            comfort._quiet_choice = lambda dialog: (dialog.DIALOG_MSG_TYPE != 2 and
+                                                    dialog.get_phone_ring_type() == 0)
+
+            def sweep(uds, quiet):
+                for identifier, dialog in tuple(uds._active_dialogs.items()):
+                    if quiet["enabled"] and comfort._quiet_choice(dialog):
+                        uds.dialog_respond(identifier, -1)
+                        quiet["cancelled"] += 1
+
+            def enable(uds):
+                original = uds.dialog_show
+                uds._devbridge_quiet_dialogs = {"enabled": True, "cancelled": 0}
+
+                def show(dialog):
+                    original(dialog)
+                    sweep(uds, uds._devbridge_quiet_dialogs)
+
+                uds.dialog_show = show
+
+            comfort._cancel_quiet_dialogs, comfort._enable_quiet_dialogs = sweep, enable
+        sys.modules["dev_bridge.comfort"] = comfort
+        self.original_quiet_choice = comfort._quiet_choice
+        comfort._enable_quiet_dialogs(service)
+
+        def show_dialog(dialog, on_response):
+            dialog.callback = on_response
+            service.dialog_show(dialog)
+
+        for context in (patch.object(native.services, "ui_dialog_service", return_value=service),
+                        patch.object(native.UiDialogOkCancel, "show_dialog", show_dialog)):
+            context.start()
+            self.addCleanup(context.stop)
+        return comfort, service
+
+    def test_devbridge_quiet_mode_preserves_only_current_inspector_and_navigation(self):
+        comfort, service = self.quiet_service()
+        native, responses, errors = self.native, [], []
+        ordinary = native.UiDialogOkCancel(None)
+        ordinary.show_dialog(on_response=lambda dialog: responses.append(dialog.response))
+        self.assertEqual(responses, [-1])  # Reproduces the original immediate close.
+        view = native.NativeView(errors.append)
+        self.addCleanup(view.close)
+
+        def navigate(index):
+            self.assertEqual(index, 0)
+            view.show("历史", "", [{"label": "事件", "detail": ""}], responses.append)
+
+        view.show_text("概览", "", [{"label": "历史"}], navigate)
+        overview = view.current
+        self.assertIn(overview.dialog_id, service._active_dialogs)
+        self.assertFalse(comfort._quiet_choice(overview))
+        other = native.UiDialogOkCancel(None)
+        other.show_dialog(on_response=lambda dialog: responses.append(dialog.response))
+        self.assertEqual(responses, [-1, -1])
+        service.dialog_respond(overview.dialog_id, 10001)
+        picker = view.current
+        self.assertEqual(list(service._active_dialogs), [picker.dialog_id])
+        comfort._cancel_quiet_dialogs(service, service._devbridge_quiet_dialogs)
+        self.assertIs(view.current, picker)
+        service.dialog_respond(picker.dialog_id, 10002)
+        self.assertIsNone(view.current)
+        self.assertEqual(responses, [-1, -1, None])
+        self.assertEqual(errors, [])
+        self.assertEqual(service._devbridge_quiet_dialogs["cancelled"], 2)
+        self.assertTrue(service._devbridge_quiet_dialogs["enabled"])
+        self.assertFalse(service.auto_respond)
+        self.assertEqual(service.closed.count(overview.dialog_id), 1)
+        view.close()
+        self.assertIs(comfort._quiet_choice, self.original_quiet_choice)
+
+    def test_quiet_compatibility_uninstall_preserves_later_mod_wrapper(self):
+        comfort, service = self.quiet_service()
+        view = self.native.NativeView()
+        view.show_text("概览", "", [{"label": "历史"}], lambda index: None)
+        dialog, ours = view.current, comfort._quiet_choice
+        outer = lambda value: ours(value)
+        comfort._quiet_choice = outer
+        view.close()
+        self.assertIs(comfort._quiet_choice, outer)
+        self.assertTrue(comfort._quiet_choice(dialog))
+        self.assertEqual(service._active_dialogs, {})
+
+    def test_immediate_external_dialog_close_is_diagnosed(self):
+        errors = []
+        view = self.native.NativeView(errors.append)
+        dialog = self.native.UiDialogOkCancel(None)
+
+        def close_now(on_response):
+            dialog.response = -1
+            on_response(dialog)
+
+        dialog.show_dialog = close_now
+        selected = []
+        view._present(dialog, lambda response: None, selected.append)
+        self.assertEqual(selected, [None])
+        self.assertIsNone(view.current)
+        self.assertIn("responded during show", errors[0])
+
     def test_menu_injection_preserves_original_avoids_duplicates_and_uninstalls(self):
         native = self.native
         runtime = SimpleNamespace(closed=False, adapter=SimpleNamespace(in_scope=lambda target: target is not None))
@@ -404,6 +541,27 @@ class NativeBridgeChecks(unittest.TestCase):
                 next(interaction._run_interaction_gen(None))
             self.assertFalse(stopped.exception.value)
             self.assertEqual(calls, ["local"])
+
+    def test_offlot_chatting_sim_gets_menu_before_any_scope_poll(self):
+        native = self.native
+        target = native.Sim()
+        target.id, target.is_sim, target.zone_id, target._hidden_flags = 1, True, 42, 0
+        target.parent = None
+        target.is_in_inventory = lambda: False
+        target.is_on_active_lot = lambda: False
+        target.sim_info = SimpleNamespace(get_sim_instance=lambda: target)
+        target.si_state = ["chatting"]
+        adapter = EAAdapter.__new__(EAAdapter)
+        adapter.services = SimpleNamespace(current_zone=lambda: SimpleNamespace(id=42, is_zone_running=True),
+            object_manager=lambda: SimpleNamespace(get=lambda key: target if key == 1 else None))
+        inspector = native.NativeInspector(SimpleNamespace(closed=False, adapter=adapter), lambda message: None)
+        inspector.install()
+        self.addCleanup(inspector.close)
+        context = SimpleNamespace(sim=target, source=1, shift_held=False)
+        aops = list(target.potential_interactions(context))
+        self.assertEqual(sum(a.affordance is native.InspectInteraction for a in aops), 1)
+        target._hidden_flags = 1
+        self.assertFalse(any(a.affordance is native.InspectInteraction for a in target.potential_interactions(context)))
 
     def test_external_shortcut_opens_recorded_target_even_when_not_instantiated(self):
         target = entity("sim", 226, "Nyssa")

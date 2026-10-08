@@ -1,6 +1,12 @@
 # 游戏内分层事件查询
 
-当前源码为 MOD 0.10.10，API / SDK 为 2.2.0。提供 `event_views.query`、`event_views.explain` 和 `event_views.durable_session`；公共方法从游戏线程调用，后台任务只处理日志和普通数据，无需游戏外服务。原 `query_history`、`read_event_changes` 和 `get_context` 保持兼容。
+当前源码为 MOD 0.14.1，API / SDK 为 2.6.0。提供 `event_views.query`、`event_views.explain` 和 `event_views.durable_session`；公共方法从游戏线程调用，后台任务只处理日志和普通数据，无需游戏外服务。2.6.0 新增 `event_views.event_filters`，支持 Events 时间／字段／角色／访问筛选；Context 气泡改为事件窗口，新字段迁移见[气泡采集](balloons.md)。
+
+0.13.0 / API、SDK 2.5.0 起，原生采集范围扩至当前已加载区域内的非隐藏世界实例，包含地块外的人行道和公共空间；这些事件沿用 Records、Events、organized 和 recap 的整理路径。未加载区域的行为不会因此补录，旧日志的范围也不改写。
+
+0.13.1 补充观看运动比赛、听音乐、跳舞、电脑浏览、淋浴等活动及动画步骤规则，使用已记录的 mixer provider 身份归并气泡；未取得有效关系时保持独立。recap 气泡条目区分来源已知但活动未关联、来源事件不可用和未记录来源，具体字段见[气泡采集](balloons.md)。
+
+0.12.0 / API、SDK 2.4.0 增加[气泡采集](balloons.md)，0.12.1 修复原生请求的延迟来源关联：Records/Events 保存 `balloon.sent`，organized 将其列为 `balloon_signal` 事实，recap 增加 `balloons` 分区。气泡可以沿明确 cause 关联活动，分区条目及活动引用都能回查原事件修订；仅记录发送请求，不声称已显示或代表人物想法。
 
 先用 [Nova 的真实实例](event-layers-example.md)理解每层的条数、分类和来源关系。本页给出准确接口契约；实际调用与验收见[分层接口验收步骤](event-views-validation.md)。
 
@@ -35,7 +41,9 @@ organized = client.query_event_view(
 
 上述代码只创建请求。后续游戏回调中先调用 `get_event_view_status`，只有 `state=ready` 才取首个 cursor，再由后续回调使用 `get_event_view_page` 和 next_cursor 逐页读取；failed 时展示 error 并关闭请求。用完两层后分别 `close_event_view`。可直接采用[逐回调示例](../sdk/examples/event_views.py)，其 `tick()` 每次仅轮询状态或处理一页，同步 SDK 异常由调用方捕获。消费者处理并释放页面，避免把数千条完整记录同时保存在 UI 内存。
 
-签名：`query_event_view(view="recap", kind="sim", identifier="active", *, source="durable_session", source_snapshot_id=None, profile="recap_v1", page_size=20, expected_session_id)`。支持 Sim/Object 的实例 ID，recap 首版仅支持 Sim。明确的历史 ID 不要求实例仍在地块或 FIFO；active 在请求开始时解析。
+签名：`query_event_view(view="recap", kind="sim", identifier="active", *, source="durable_session", source_snapshot_id=None, profile="recap_v1", page_size=20, expected_session_id, from_ticks=None, to_ticks=None, fields=None, entity_role=None, zone_visit=None, order="asc")`。支持 Sim/Object 的实例 ID，recap 首版仅支持 Sim。明确的历史 ID 不要求实例仍在地块或 FIFO；active 在请求开始时解析。
+
+新增筛选仅用于 `view="events"`：`from_ticks/to_ticks` 按 `first_observed_time` 的游戏 ticks 筛选，范围 `[from, to)`；`fields` 为非空且不重复的字段列表；`entity_role` 同时匹配目标 ID 与角色；`zone_visit` 限定一次区域访问；`order` 为 asc/desc。未指定的条件不筛选，事件缺少被要求的时间／角色／访问不匹配。气泡示例为 `fields=["balloon.sent"], entity_role="subject"`。条件写入页面 scope 和快照身份，空窗口正常返回 0 项，来源中根本没有目标人物则仍报 entity_not_recorded。组织层使用完整来源，不能在组织之前裁掉依赖事件，因此其他视图暂不接受这些筛选。
 
 状态包含 schema_version（2）、view_schema_version（event_views_v1）、session_id、request_id、source_snapshot_id、view、state。ready 提供 snapshot_id、total_matches、首个 cursor、build_ms；failed 提供 error.code/message，失败不会返回空数据成功。关闭 building 请求即取消构建，也可释放 ready/failed 请求。
 
@@ -71,7 +79,7 @@ explanation = client.explain_event_view(
 
 来源固定在当前 session 已落盘的 `durable_sequence/durable_byte_offset`；尚未落盘的通知不包含在内。`scope` 给出 `as_of_sequence/source_sha256/source_byte_offset`，`coverage` 给出截点时记录器和持久化状态。连续序号、修订链、会话和完整行均须通过校验，相同 sequence 的重试内容必须相同；后续追加不会改变旧页。
 
-首版仅支持 `source="durable_session"`、完整会话时间范围和 `profile="recap_v1"`。其他来源、profile 或时间参数明确拒绝；没有已落盘记录时报 `source_unavailable`，无人物事件时报 `entity_not_recorded`。派生视图增量替换／删除协议和跨 session 查询尚未开放。
+支持 `source="durable_session"` 和 `profile="recap_v1"`；Events 可按上述条件筛选，其他视图仍使用完整会话。其他来源／profile 明确拒绝；没有已落盘记录时报 `source_unavailable`，无人物事件时报 `entity_not_recorded`。落盘截点可能落后于当前已接收序号，需检查 coverage 中的记录状态；本接口不等待未来写盘、不混入内存事件。派生视图增量替换／删除协议和跨 session 查询尚未开放。
 
 | 限制 | 默认值 | 配置 |
 | --- | --- | --- |

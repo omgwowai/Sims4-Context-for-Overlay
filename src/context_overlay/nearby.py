@@ -69,7 +69,7 @@ def collect(adapter, target, session_id, provenance, query):
     if origin is None:
         raise NearbyError("target_unavailable", "The center Sim has no current instance")
     if not adapter.in_scope(origin):
-        raise NearbyError("target_out_of_scope", "The center Sim must be on the active lot")
+        raise NearbyError("target_out_of_scope", "The center Sim must be a nonhidden world instance in the current zone")
     center = adapter.nearby_spatial(origin)
     center["room"] = adapter.nearby_room(origin, center)
     required = ["position"] + (["level"] if query["same_level"] or query["same_room"] else [])
@@ -162,10 +162,11 @@ def collect(adapter, target, session_id, provenance, query):
         except Exception:
             reference = entity(rank[1], rank[2])
             identity_status = field(status="error", reason="identity_label_read_failed")
-        partial = partial or _partial(spatial) or identity_status["status"] != "available"
+        same_lot = adapter.same_lot(origin, obj)
+        partial = partial or _partial(spatial) or identity_status["status"] != "available" or same_lot["status"] != "available"
         results.append({"entity": reference, "identity_status": identity_status, "distance": distance,
                         "spatial": spatial, "relative": {
-                            "same_lot": field(True, source="active_lot_scope"),
+                            "same_lot": same_lot,
                             "same_level": same_level, "same_room": _same_room(center, spatial),
                             "same_routing_surface": _comparison(center, spatial, "routing_surface")}})
     coverage["complete"] = coverage["enumeration_complete"] and coverage["unresolved_count"] == 0

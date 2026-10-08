@@ -8,7 +8,7 @@ import functools
 import inspect
 import threading
 
-from context_overlay import SCHEMA_VERSION, VERSION
+from context_overlay import OBSERVATION_SCOPE, SCHEMA_VERSION, VERSION
 from context_overlay.collector import FIELDS, PRESETS
 from context_overlay.history import HistoryError
 from context_overlay.external import ExternalError, LIMITS
@@ -19,7 +19,7 @@ from context_overlay.view_source import ViewError
 from context_overlay import camera_view
 
 
-API_VERSION = "2.3.0"
+API_VERSION = "2.6.0"
 __all__ = ["API_VERSION", "APIError", "get_api_info", "get_status", "get_context",
            "query_history", "get_history_page", "close_history", "get_nearby_entities",
            "append_event", "read_event_changes", "query_event_view", "get_event_view_status",
@@ -137,11 +137,13 @@ def get_api_info():
             "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
                              "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
                              "context.nearby_entities", "context.camera_view", "text.resource_details", "events.autonomy_decision",
+                             "context.balloons", "context.balloon_window", "events.balloons", "context.zone_scope", "events.zone_scope",
+                             "event_views.event_filters", "history.membership",
                              "events.append", "history.sources", "history.global", "history.changes", "history.travel",
                              "event_views.query", "event_views.explain", "event_views.durable_session"],
             "event_views": {"schema_version": "event_views_v1", "views": ["records", "events", "organized", "recap"],
                             "sources": ["durable_session"], "profiles": ["recap_v1"], "max_page_size": 100,
-                            "construction": "asynchronous_in_process_worker", "time_windows": "whole_durable_session",
+                            "construction": "asynchronous_in_process_worker", "time_windows": "events_first_observed_range_other_views_whole_session",
                             "facets": ["lineage", "policy", "labels", "revisions", "events", "units"]},
             "session_lifecycle": {"travel": "preserved", "reload": "new_session", "restart": "new_session",
                                   "loading": "temporarily_unavailable", "query_ttl": "wall_clock"},
@@ -152,6 +154,12 @@ def get_api_info():
             "autonomy": {"category": "autonomy.decision", "default_top_n_per_stage": 5,
                          "retention_gates": ["queue_success", "immediate_entered"],
                          "probabilities": "original_complete_stage_pool", "runtime_status": "autonomy"},
+            "balloons": {"category": "balloon.sent", "context_field": "balloons", "context_storage": "canonical_events",
+                         "context_default_sim_minutes": 5, "context_default_result_limit": 50,
+                         "context_scope": "current_zone_visit_event_window", "context_order": "send_desc",
+                         "context_format": "balloon_event_window_v1", "current_visibility_query": "unsupported",
+                         "retention_gate": "distribute_returned_true", "client_visibility": "unverified",
+                         "icon_semantics": "unmapped", "runtime_status": "balloons"},
             "resource_text": {"roles": ["name", "description", "tooltip"],
                               "details": "optional_per_resource", "evidence": "hash_and_observed_tokens",
                               "rendered_details": "rendered.resource_details", "max_rendered_details": 128,
@@ -172,7 +180,7 @@ def get_api_info():
             "context_fields": list(FIELDS), "default_fields": copy_data(PRESETS),
             "max_history_page_size": 500, "max_context_history_limit": 500,
             "thread_policy": "simulation_thread", "transport": "in_process_python",
-            "scope": "active_lot_instantiated", "history_scope": "current_session"}
+            "scope": OBSERVATION_SCOPE, "history_scope": "current_session"}
 
 
 @_endpoint
@@ -195,13 +203,14 @@ def get_status():
         result["event_diagnostics"] = runtime.sources.diagnostics()
         result["event_views"] = runtime.event_views.metrics() if getattr(runtime, "event_views", None) is not None else {"state": "not_started"}
         result["autonomy"] = runtime.autonomy.status()
+        result["balloons"] = runtime.balloons.status() if getattr(runtime, "balloons", None) is not None else {"state": "not_installed"}
     return copy_data(result)
 
 
 @_endpoint
 def get_context(kind="sim", identifier="active", *, fields=None, include_history=True,
                 history_limit=15, include_internal=False, representation="both", expected_session_id=None,
-                origins=None, producers=None):
+                origins=None, producers=None, balloon_window=None):
     """Read selected fields and bounded recent history without writing a file."""
     identifier = _identifier(kind, identifier)
     _boolean(include_history, "include_history")
@@ -216,13 +225,19 @@ def get_context(kind="sim", identifier="active", *, fields=None, include_history
             or any(not isinstance(name, str) or name not in FIELDS for name in selected)
             or len(set(selected)) != len(selected)):
         raise APIError("invalid_request", "fields must select distinct supported context fields")
+    if balloon_window is not None:
+        if kind != "sim" or "balloons" not in selected:
+            raise APIError("invalid_request", "balloon_window requires the Sim balloons field")
+        from context_overlay.balloon_query import validate_window
+        balloon_window = validate_window(balloon_window)
     runtime = _current(expected_session_id)
     if not runtime.collector.enabled:
         raise APIError("collector_disabled", "Context collection is disabled")
     target = _resolve(runtime, kind, identifier)
     packet = runtime.collector.collect(target, fields=selected, history_limit=history_limit,
                                        include_history=include_history, include_internal=include_internal,
-                                       representation=representation, origins=origins, producers=producers)
+                                       representation=representation, origins=origins, producers=producers,
+                                       balloon_window=balloon_window)
     packet["api_version"] = API_VERSION
     return copy_data(packet)
 
@@ -260,7 +275,8 @@ def get_camera_view(*, kinds=("sim", "object"), vertical_fov=None, aspect_ratio=
 def query_history(kind="sim", identifier="active", *, page_size=15, include_internal=False,
                   time_field="first_observed", from_ticks=None, to_ticks=None, event_types=None,
                   fields=None, outcomes=None, tuning_ids=None, order="desc", representation="both",
-                  expected_session_id=None, group_effects=False, origins=None, producers=None):
+                  expected_session_id=None, group_effects=False, origins=None, producers=None,
+                  entity_role=None, zone_visit=None):
     """Create a bounded snapshot; its cursors must be closed or allowed to expire."""
     if kind is not None or identifier is not None:
         identifier = _identifier(kind, identifier)
@@ -270,7 +286,7 @@ def query_history(kind="sim", identifier="active", *, page_size=15, include_inte
     packet = runtime.collector.query_history(target, representation, page_size=page_size,
         include_internal=include_internal, time_field=time_field, from_ticks=from_ticks, to_ticks=to_ticks,
         event_types=event_types, fields=fields, outcomes=outcomes, tuning_ids=tuning_ids, order=order,
-        group_effects=group_effects, origins=origins, producers=producers)
+        group_effects=group_effects, origins=origins, producers=producers, entity_role=entity_role, zone_visit=zone_visit)
     return dict(packet, api_version=API_VERSION)
 
 
@@ -351,7 +367,8 @@ def _views(runtime):
 
 @_endpoint
 def query_event_view(view="recap", kind="sim", identifier="active", *, source="durable_session",
-                     source_snapshot_id=None, profile="recap_v1", page_size=20, expected_session_id):
+                     source_snapshot_id=None, profile="recap_v1", page_size=20, expected_session_id,
+                     from_ticks=None, to_ticks=None, fields=None, entity_role=None, zone_visit=None, order="asc"):
     """Start a bounded durable view; poll status, then request its first cursor."""
     _session(expected_session_id, required=True)
     identifier = _identifier(kind, identifier)
@@ -364,8 +381,10 @@ def query_event_view(view="recap", kind="sim", identifier="active", *, source="d
     key = _resolve(runtime, kind, identifier)["key"] if identifier == "active" else kind + ":" + identifier
     head = runtime.recorder.status()
     head = dict(head.get("persistence", {}), recorder_state=head.get("state"),
-                capture_scope="active_lot_instantiated")
-    return dict(_views(runtime).query(view, key, head, source_snapshot_id, profile, page_size), api_version=API_VERSION)
+                capture_scope=OBSERVATION_SCOPE)
+    return dict(_views(runtime).query(view, key, head, source_snapshot_id, profile, page_size,
+        from_ticks=from_ticks, to_ticks=to_ticks, fields=fields, entity_role=entity_role,
+        zone_visit=zone_visit, order=order), api_version=API_VERSION)
 
 
 @_endpoint

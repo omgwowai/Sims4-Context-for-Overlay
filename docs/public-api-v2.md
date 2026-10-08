@@ -1,6 +1,6 @@
 # API 参考：读状态、查历史、写事件
 
-第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.3.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.11.0**。
+第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.6.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.14.1**。
 
 新增的 records/events/organized/recap 查询使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。以下现有历史接口仍保持原语义。
 
@@ -11,7 +11,7 @@ Context、历史、增量、附近实体与视锥查询同步返回普通 JSON �
 
 ## 版本与迁移边界
 
-当前 SDK 为 2.3.0，适配 API 2.3.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
+当前 SDK 为 2.6.0，适配 API 2.6.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
 
 `get_context`、`query_history` 的 `origins=None` 表示全部来源，`["game"]`／`["external"]` 表示只查一类；`producers=["example.overlay"]` 仅匹配对应外部生产者，与其余条件取交集。数组不能为空，最多 64 项且不重复。类型／结果等游戏专用筛选自然排除不具备对应字段的外部记录。
 
@@ -58,7 +58,7 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 
 | 字段 | 含义 |
 | --- | --- |
-| `api_version` | 当前公共契约版本 `2.3.0` |
+| `api_version` | 当前公共契约版本 `2.6.0` |
 | `module_version` | 提供方 MOD 版本，以本次返回值为准 |
 | `schema_version` | 数据协议版本 `2` |
 | `capabilities` | 能力列表，例如 `context.read`、`history.query`、`events.append`、`history.changes`、`event_views.query`；按所用接口检查相应能力 |
@@ -67,7 +67,9 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 | `resource_text` | 可选 name／description／tooltip 文本证据，能力为 `text.resource_details`；官方中文词表与 MOD 覆盖边界见[资源语义目录](architecture.md) |
 | `max_history_page_size`、`max_context_history_limit` | 请求单页／近期条数上限，各为 500 |
 | `thread_policy`、`transport` | `simulation_thread`、`in_process_python` |
-| `scope`、`history_scope` | 当前地块已实例化实体、本次运行历史 |
+| `scope`、`history_scope` | `zone_instantiated`：当前已加载区域内世界实例；`current_session`：本次运行历史 |
+
+API 2.5 增加 `context.zone_scope` 和 `events.zone_scope`：Context、附近查询、Inspector 与原生事件采集覆盖当前已加载区域内的非隐藏世界实例，包括人行道等活动地块外区域。`scope.kind=zone_instantiated`、`off_lot=included`；库存内容和未实例化实体仍排除。旧提供者可能仍声明 `active_lot_instantiated`，需要地块外能力的客户端应检查能力和范围字段。
 
 能力存在不表示配置已启用。`get_status()` 返回 `ready`、`state`、`session_id`；状态可为 `waiting_for_zone`、`starting`、`startup_failed`、`closed`、`ready`。只有 ready 时附带 `modules`、`recorder` 和 `query_limits`。
 
@@ -81,9 +83,9 @@ SDK 检查 API 主版本为 2、schema 为 2，接受兼容的 2.x 小版本；�
 
 卸载到加载完成期间 `ready=false`，读写调用可能得到 `session_closed/not_ready`。等待 ready，再比较 session：相同则续读，不同则丢弃旧会话引用。`close_history` 仍可在模拟线程释放旅行中保留的查询。冻结查询仍受 120 秒现实时间 TTL 限制，过期后释放旧 batch，从最后已提交的 checkpoint 重读；已经处理的事件可能重复，消费者须按 `(event_id, revision)` 去重。FIFO 缺口仍返回 `history_gap`，不会因旅行跳过检查。
 
-`get_status().recorder` 增加 `zone_visit`（本会话第几次地块加载）和 `observation_scope`（当前采集范围）。新事件附带同名字段，保留它在被记录时的 zone/lot；外部事件表示**接收位置**，不代表 payload 内容实际发生在此处。交互 ID 在不同 visit 之间独立，消费者须将 `event_id` 当作不透明标识。旅行前没有观测到结束的交互不补写推测结果。
+`get_status().recorder` 增加 `zone_visit`（本会话第几次地块加载）和 `observation_scope`（当前采集范围）。新事件附带同名字段，保留采集时的 zone 和活动 lot；其中 `lot_id` 不表示每位参与者实际在该地块内。外部事件表示**接收位置**，不代表 payload 内容实际发生在此处。交互 ID 在不同 visit 之间独立，消费者须将 `event_id` 当作不透明标识。旅行前没有观测到结束的交互不补写推测结果。
 
-当前 Context 和附近查询仍只读取当前地块实例；历史可按已知实体 ID 查询此前地块的保留事件。所有记录、查询、去重和输出容量贯穿整个会话，不因旅行重置。配置更新用 `co.restart` 生效。
+当前 Context 和附近查询读取当前已加载区域内的有效世界实例，包含活动地块外；历史可按已知实体 ID 查询此前地块的保留事件。所有记录、查询、去重和输出容量贯穿整个会话，不因旅行重置。配置更新用 `co.restart` 生效。
 
 `expected_session_id` 防止写入错误存档进度；旅行保持该值，不能代替模型结果的地点／时效检查。若结果只适用于请求时的地点，下游提交前应自行核对原 Context 的 `scope.zone_id` 与时间，并决定是否仍需写入。
 
@@ -94,7 +96,8 @@ SDK 检查 API 主版本为 2、schema 为 2，接受兼容的 2.x 小版本；�
 ```python
 get_context(kind="sim", identifier="active", *, fields=None,
             include_history=True, history_limit=15, include_internal=False,
-            representation="both", expected_session_id=None, origins=None, producers=None)
+            representation="both", expected_session_id=None, origins=None, producers=None,
+            balloon_window=None)
 ```
 
 | 参数 | 约定 |
@@ -108,7 +111,9 @@ get_context(kind="sim", identifier="active", *, fields=None,
 | `representation` | `raw`、`text`、`both`；text/both 均附带原始证据及 rendered，并非返回单个字符串 |
 | `expected_session_id` | 可选运行约束；与当前运行不同则拒绝，不自动改用新存档的数据 |
 
-全部字段为 `identity`、`location`、`time`、`interactions`、`needs`、`buffs`、`relationships`、`object_states`。默认 Sim 请求前七项，Object 请求 `identity/time/location/object_states`。显式请求不适用的字段会得到 `not_applicable`，不会替换成 0。
+全部字段为 `identity`、`location`、`time`、`interactions`、`needs`、`buffs`、`relationships`、`object_states`、`balloons`。默认 Sim 请求前七项及 `balloons`，Object 请求 `identity/time/location/object_states`。显式请求不适用的字段会得到 `not_applicable`，不会替换成 0。
+
+`balloons` 自 API 2.6.0 起直接查询事件系统，默认本次区域访问最近 5 个游戏分钟、目标为 `subject` 的发送事件，返回 `value.events`。`balloon_window` 指定 `past_sim_minutes` 或同时指定 `from_ticks/to_ticks`，以及单次返回 `limit`（默认 50，1–500）；不再保存最近 20 条独立缓存。`has_more` 表示可继续分页，`retention_gap` 表示需从落盘事件核对，`history_query/durable_query` 提供对应参数；两种不完整情况令 Context 为 partial。字段不受 `include_history/origins/producers` 影响，但 Recorder 停用／失败时明确不可用。能力标识 `context.balloon_window` 区分新形状；原 `value.recent`、`game_time` 需迁移到 `value.events`、`first_observed_time`。全部字段和示例见[气泡采集](balloons.md)。
 
 `active` 在请求开始时解析为固定 Sim ID。请求随后读取该实体，返回 `read_started/read_finished`；这是同步读取区间，不承诺游戏世界的事务快照。历史按最近更新顺序取最多 N 条，不创建游标；更复杂的时间／类型查询使用下一节接口。
 
@@ -137,7 +142,8 @@ query_history(kind="sim", identifier="active", *, page_size=15,
               include_internal=False, time_field="first_observed",
               from_ticks=None, to_ticks=None, event_types=None, fields=None,
               outcomes=None, tuning_ids=None, order="desc", group_effects=False,
-              representation="both", expected_session_id=None, origins=None, producers=None)
+              representation="both", expected_session_id=None, origins=None, producers=None,
+              entity_role=None, zone_visit=None)
 
 get_history_page(cursor, *, expected_session_id, representation="both")
 close_history(cursor, *, expected_session_id)
@@ -156,6 +162,8 @@ close_history(cursor, *, expected_session_id)
 | `tuning_ids` | 交互定义 ID 的字符串列表，不是交互实例 ID |
 | `order` | `asc` 或 `desc`，默认倒序 |
 | `group_effects` | 默认 false；true 将与同一结果集内动作明确关联的事实放入其 `effects`，未匹配的效果仍单独显示 |
+| `entity_role` | API 2.6.0；仅有固定目标时可用，要求事件 roles 同时匹配目标与角色，例如气泡 `subject`；非空字符串、最长 64 字符 |
+| `zone_visit` | API 2.6.0；非负整数，筛选指定区域访问；None 不筛选，旧事件缺失此字段不匹配指定访问 |
 
 列表筛选最多 64 个不重复的非空字符串；None 表示不筛选。不同条件取交集。没有开始／结束时间的事件不匹配对应时间筛选，状态变化按通知观测时间筛选。
 
@@ -322,7 +330,7 @@ Runtime 记录初始化它的线程身份；有活动 Runtime 时，公共运行
 
 ## 摄像机视锥查询
 
-API 2.3 提供 [`get_camera_view`](camera-view.md)：按需返回当前区域近似视锥内的全部实体摘要，包括地块外及不同楼层，忽略遮挡。通过 `context.camera_view` 发现能力；可覆盖垂直 FOV、宽高比及最远深度。完整参数、相机时效、扫描覆盖和错误见[接口约定](camera-view.md)，已有证据与复测步骤见[验收记录](camera-view-validation.md)。此接口不改变 `get_context` 的当前地块限制。
+API 2.3 提供 [`get_camera_view`](camera-view.md)：按需返回当前区域近似视锥内的全部实体摘要，包括地块外及不同楼层，忽略遮挡。通过 `context.camera_view` 发现能力；可覆盖垂直 FOV、宽高比及最远深度。完整参数、相机时效、扫描覆盖和错误见[接口约定](camera-view.md)，已有证据与复测步骤见[验收记录](camera-view-validation.md)。0.13.0 / API 2.5 起 `get_context` 和原生事件采集也覆盖当前已加载区域内的非隐藏世界实例。
 
 ## 附近实体查询
 
@@ -369,7 +377,7 @@ kind = "nearby_entities"
 api_version / module_version / schema_version
 session_id / request_id / recorded_at / provenance
 target                  固定的中心 Sim 身份
-scope                   active_lot_instantiated，场外排除
+scope                   zone_instantiated，off_lot=included，库存／隐藏实例排除
 query                   实际执行参数、单位、distance_basis、排序规则
 read_started / read_finished
 origin                  中心的 position、level、routing_surface、room
@@ -384,6 +392,8 @@ coverage / status
 ```
 
 空间字段与相对关系使用 `{status, value, source, reason?}`。ID 和时钟 ticks 为字符串，楼层和距离为数值。vertical 是非负高度差。距离未四舍五入后再筛选，不承诺等于米、可行走路程或到家具外轮廓的距离。
+
+`scope.lot_id` 及 Context `location.lot_id` 表示当前区域的活动地块，不能当作每个返回实体实际所属地块。附近查询的 `relative.same_lot` 比较两者的原生活动地块成员标记：两者都在活动地块内为 `true`，只有一者在内为 `false`；两者均在外时无法确认是否同属另一地块，返回 `unsupported`、`value=null`、`reason=both_outside_active_lot`。
 
 位置使用实体的世界坐标点。routing_surface 保留 primary_id、secondary_id 和 type；与 level 分开。room.value 为 `{zone_id, id}`；同房间比较 zone、游戏房间 ID 和 level。房间名称／用途不在此接口范围内。
 
@@ -401,15 +411,15 @@ coverage / status
 | coverage.unresolved_count / reasons | 无法判定的候选数量，以及有限的原因计数 |
 | status | `complete` 或 `partial`；可选空间信息不可用也会令整个包为 partial |
 
-`truncated=False` 不保证查询完整，还要检查 coverage。`coverage.complete=True` 表示当前限定范围内的查询完整，不表示场外、库存或隐藏实体也被查询。
+`truncated=False` 不保证查询完整，还要检查 coverage。`coverage.complete=True` 表示当前限定范围内的查询完整，不表示未加载区域、库存或隐藏实体也被查询。
 
-可出现 `status=partial` 且 `coverage.complete=True`：例如已确认所有半径和楼层条件，但室外房间信息未知。可选房间信息不足不改变已经核实的几何邻近结果。
+可出现 `status=partial` 且 `coverage.complete=True`：例如已确认所有半径和楼层条件，但室外房间信息或地块外实体间的 `same_lot` 未知。可选信息不足不改变已经核实的几何邻近结果。
 
 中心必需空间信息不可用返回错误，不输出“正常但没有邻居”。个别候选不可判定时跳过该候选，返回已确认结果并标记 coverage 缺口。覆盖不完整时，最近 N 个仅指已成功判定的候选。
 
 ### 房间、库存与采集范围
 
-使用当前对象管理器的非隐藏实例，复用当前地块范围检查。Sim 必须有活动实例；场外 Sim、未实例化 Sim 排除。非 Sim 对象包括可枚举的家具、食物和装饰等，不保证存在玩家可点击的交互。墙体、地板和纯客户端视觉元素不保证作为独立 GameObject 枚举。
+使用当前区域对象管理器中的非隐藏世界实例，并验证实例身份和 zone 一致；活动地块外的实例也纳入。Sim 必须是其 SimInfo 当前有效实例；未实例化、已卸载、旧 ID 对象或其他区域的实体排除。非 Sim 对象包括可枚举的家具、食物和装饰等，不保证存在玩家可点击的交互。墙体、地板和纯客户端视觉元素不保证作为独立 GameObject 枚举。
 
 另外检查实体及父对象是否处于库存；背包、冰箱等容器里的内容不算摆放在附近。桌面插槽物件、携带物件若仍是范围内非隐藏世界实例，可以按其世界坐标进入结果。父链异常会形成缺口。
 

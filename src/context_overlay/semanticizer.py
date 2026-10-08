@@ -6,6 +6,7 @@ from context_overlay.profiles import OBJECT_STATES
 
 
 LABELS = {
+    "balloon.sent": "气泡发送",
     "autonomy.decision": "Autonomy 决策",
     "mood.changed": "情绪变化", "skill.level": "技能等级变化", "trait.added": "特征添加",
     "trait.removed": "特征移除", "relationship.spouse": "配偶变化",
@@ -32,7 +33,7 @@ FIELD_NAMES = {"needs.hunger": "饥饿需求值", "needs.energy": "精力需求�
                "relationships": "关系", "relationships.friendship": "友谊值",
                "relationships.romance": "浪漫关系值", "object_states": "物件状态",
                "identity": "身份", "location": "位置", "time": "游戏时间",
-               "needs": "需求", "interactions": "当前交互"}
+               "needs": "需求", "interactions": "当前交互", "balloons": "时间窗口内的气泡事件"}
 FIELD_NAMES.update({"hunger": "饥饿", "energy": "精力", "fun": "娱乐", "social": "社交",
                     "hygiene": "卫生", "bladder": "膀胱", "friendship": "友谊", "romance": "浪漫关系"})
 FIELD_NAMES.update({"object_states." + identifier: entry[1] for identifier, entry in OBJECT_STATES.items()})
@@ -231,6 +232,9 @@ def explain_event(event):
             text += "请求来源：{}{}。入队或进入执行不代表行为完成。".format(
                 SOURCES.get(payload.get("context_source"), str(payload.get("context_source"))),
                 "，脚本请求" if payload.get("is_script_request") else "")
+        elif category == "balloon.sent":
+            from context_overlay.experience.balloon_text import describe
+            text = "{}：{}。".format(actors, describe(payload))
         elif category == "statistic.direct":
             statistic = payload.get("statistic") or {}
             label = {"LTR_Friendship_Main": "友谊值", "LTR_Romance_Main": "浪漫关系值"}.get(statistic.get("tuning_name"), display(statistic))
@@ -356,7 +360,27 @@ def render(packet):
     for name, result in packet.get("snapshot", {}).items():
         label = FIELD_NAMES.get(name, name)
         if result["status"] == "available":
-            text = label + "：" + display(result["value"])
+            if name == "balloons":
+                from context_overlay.experience.balloon_text import describe
+                value = result["value"]
+                # Old exported Context packets keep their original cache semantics.
+                legacy = "events" not in value and "recent" in value
+                rows = value["recent"] if legacy else value["events"]
+                time_key = "game_time" if legacy else "first_observed_time"
+                lines = ["{} · {}".format(game_time(row[time_key]), describe(row["payload"])) for row in rows]
+                if legacy:
+                    text = "旧版气泡缓存快照：" + ("；".join(lines) if lines else "快照中没有缓存条目")
+                    text += "；只反映导出时的最近缓存，不代表完整时间窗口"
+                    if value.get("truncated"):
+                        text += "；旧版缓存曾发生淘汰，请从原始事件核对"
+                else:
+                    text = label + "：" + ("；".join(lines) if lines else "所查窗口内的保留事件中没有匹配项")
+                    if value.get("has_more"):
+                        text += "；还有匹配事件，可用相同条件分页查询"
+                    if value.get("retention_gap"):
+                        text += "；历史内存发生过淘汰，请从落盘事件核对完整窗口"
+            else:
+                text = label + "：" + display(result["value"])
         else:
             text = "{}：{}（{}）".format(label, STATUS_NAMES.get(result["status"], result["status"]), result.get("reason", "无补充说明"))
         current.append({"field": name, "text": text, "evidence_ref": "snapshot." + name})

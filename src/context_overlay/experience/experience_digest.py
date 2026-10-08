@@ -68,6 +68,10 @@ def fact(unit):
             result.update(before=unit.get("before"), after=unit.get("after"))
     if unit.get("unresolved_cause_event_id"):
         result["cause_unresolved"] = True
+    if unit.get("association_state"):
+        result["association_state"] = unit["association_state"]
+    if unit.get("source_interaction"):
+        result["source_interaction"] = unit["source_interaction"]
     return result
 
 
@@ -110,7 +114,8 @@ def digest(organized, game_version=None):
                 "result_branch": topic["result_branch"], "time": [at(topic["started"]), at(topic["ended"])], "evidence": topic["evidence"]})
         for identifier in unit["effects"]:
             if identifier in facts:
-                row["results"].append(fact(facts[identifier]))
+                slot = "balloons" if facts[identifier]["type"] == "balloon.sent" else "results"
+                row.setdefault(slot, []).append(fact(facts[identifier]))
                 embedded_facts.add(identifier)
         for identifier in unit["decisions"]:
             if identifier in decisions and identifier not in embedded_decisions:

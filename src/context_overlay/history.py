@@ -351,8 +351,9 @@ class HistoryIndex:
     def query(self, entity_key, metadata, page_size=50, include_internal=False,
               time_field="first_observed", from_ticks=None, to_ticks=None,
               event_types=None, fields=None, outcomes=None, tuning_ids=None, order="desc", group_effects=False,
-              origins=None, producers=None):
+              origins=None, producers=None, entity_role=None, zone_visit=None):
         self._validate_page(entity_key, page_size, include_internal)
+        self.validate_membership(entity_key, entity_role, zone_visit)
         if not isinstance(group_effects, bool):
             raise HistoryError("invalid_query", "group_effects must be a boolean")
         if time_field not in ("first_observed", "started", "ended") or order not in ("asc", "desc"):
@@ -396,6 +397,8 @@ class HistoryIndex:
                     continue
                 if tunings and event.get("facts", {}).get("tuning_id") not in tunings:
                     continue
+                if not self.membership_matches(event, entity_key, entity_role, zone_visit):
+                    continue
                 charged += self._charges[event["event_id"]] + 64
                 if len(rows) + 1 + self._snapshot_refs > self.snapshot_ref_limit or charged + self._snapshot_bytes > self.snapshot_byte_limit:
                     raise HistoryError("query_budget", "Narrow the time/type filters or close other queries")
@@ -410,8 +413,23 @@ class HistoryIndex:
                                 "fields": sorted(names) if names else None, "outcomes": sorted(results) if results else None,
                                 "tuning_ids": sorted(tunings) if tunings else None,
                                 "origins": sorted(origins) if origins else None,
-                                "producers": sorted(producers) if producers else None}
+                                "producers": sorted(producers) if producers else None,
+                                "entity_role": entity_role, "zone_visit": zone_visit}
         return self._freeze(rows, metadata, entity_key, filters, page_size, examined, charged, group_effects)
+
+    @staticmethod
+    def validate_membership(entity_key, entity_role, zone_visit):
+        if entity_role is not None and (entity_key is None or not isinstance(entity_role, str) or
+                                        not entity_role or len(entity_role) > 64):
+            raise HistoryError("invalid_query", "entity_role requires a target and a nonempty role string (at most 64 characters)")
+        if zone_visit is not None and (type(zone_visit) is not int or zone_visit < 0):
+            raise HistoryError("invalid_query", "zone_visit must be a nonnegative integer")
+
+    @staticmethod
+    def membership_matches(event, entity_key, entity_role, zone_visit):
+        return ((zone_visit is None or event.get("zone_visit") == zone_visit) and
+                (entity_role is None or any(row.get("entity_key") == entity_key and row.get("role") == entity_role
+                                           for row in event.get("roles", []))))
 
     def _checkpoint(self, sequence, filters):
         data = json.dumps([self.session_id, sequence, filters], separators=(",", ":")).encode("utf-8")

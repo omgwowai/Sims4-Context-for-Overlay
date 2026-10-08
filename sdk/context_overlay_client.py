@@ -1,4 +1,4 @@
-"""ContextOverlay Python 3.7 SDK 2.3.0; vendor under your own MOD namespace.
+"""ContextOverlay Python 3.7 SDK 2.6.0; vendor under your own MOD namespace.
 
 No game/provider imports occur until a method is called. The SDK negotiates
 API v2, not an exact MOD version. It never starts a game, thread, or network job.
@@ -7,7 +7,7 @@ API v2, not an exact MOD version. It never starts a game, thread, or network job
 import importlib
 
 
-SDK_VERSION = "2.3.0"
+SDK_VERSION = "2.6.0"
 __all__ = ["SDK_VERSION", "ContextOverlayError", "Client", "HistoryQuery"]
 
 
@@ -62,6 +62,13 @@ class Client:
                     "read_event_changes": "history.changes"}.get(method)
         if method in ("query_event_view", "get_event_view_status", "get_event_view_page", "close_event_view", "explain_event_view"):
             required = "event_views.explain" if method == "explain_event_view" else "event_views.query"
+        if method == "get_context" and kwargs.get("balloon_window") is not None:
+            required = "context.balloon_window"
+        if method == "query_history" and any(kwargs.get(k) is not None for k in ("entity_role", "zone_visit")):
+            required = "history.membership"
+        if method == "query_event_view" and (any(kwargs.get(k) is not None for k in
+                ("from_ticks", "to_ticks", "fields", "entity_role", "zone_visit")) or kwargs.get("order", "asc") != "asc"):
+            required = "event_views.event_filters"
         if required and required not in info.get("capabilities", []):
             raise ContextOverlayError("capability_unavailable", "Provider does not support " + method,
                                       {"required_capability": required,

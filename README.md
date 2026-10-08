@@ -2,7 +2,17 @@
 
 ContextOverlay 是一个给《模拟人生 4》游戏内 Overlay 使用的 Python MOD：它记录可观察到的游戏事件，读取 Sim / 物件当前状态，接收下游 Overlay 写回的外部事件，并把结果整理成可查询的 JSON。模型调用和界面由下游 MOD 自己负责。
 
-当前源码为 **ContextOverlay 0.11.0**，公共 API / SDK 为 **2.3.0**，数据 schema 为 **2**。正常结束运行时可自动生成分层文件和质量对账文件。
+当前源码为 **ContextOverlay 0.14.1**，公共 API / SDK 为 **2.6.0**，数据 schema 为 **2**。正常结束运行时可自动生成分层文件和质量对账文件。
+
+0.13.0 移除了活动地块边界：当前已加载区域内的门外、人行道和公共空间实体也能使用“查看状态与历史”，并纳入 Context、Records、气泡及后续整理。仍只读取已实例化、未隐藏的世界实体，不加载其他区域。
+
+0.13.1 改善了气泡来源的活动归并与说明。使用同一份实机日志离线重算，家庭成员已关联活动的气泡从 97 条增至 169 条，全部 195 条原始气泡保留；没有来源与有来源但活动未关联分别展示。
+
+0.14.0 将 Context 气泡改为事件时间窗口查询，默认最近 5 个游戏分钟，移除独立的最近 20 条缓存。支持自定义时间、保留历史分页及落盘 Events 筛选；旧消费者需将 `value.recent` 迁移为 `value.events`，见[气泡接口迁移](docs/balloons.md)。
+
+0.14.1 修复旧版 Context 导出的离线翻译兼容。最新 0.14.0 实机会话的 104 条气泡、4,943 条记录和 27 个导出文件核对通过；最新一局未点击 Inspector，界面验收仍保留这一边界，详见[验证摘要](docs/validation.md)。
+
+0.12.0 新增 [Context、Records 与整理层的气泡采集](docs/balloons.md)，0.12.1 修复延迟来源关联和 DevBridge 立即关闭 Inspector 的兼容问题。2026-10-08 的 0.12.1 实机会话已核对 31 条气泡，其中 27 条有明确来源；0.12.2 修正感受气泡空随机延迟的误报。完整证据与边界见[验证摘要](docs/validation.md)。
 
 ## 从哪里开始
 
@@ -18,6 +28,7 @@ ContextOverlay 是一个给《模拟人生 4》游戏内 Overlay 使用的 Pytho
 | 能力 | 入口 |
 | --- | --- |
 | 读取当前 Sim / 物件状态和有限历史 | get_context |
+| 读取最近气泡请求及发送历史 | get_context 的 balloons；历史 fields=["balloon.sent"] |
 | 查询当前会话历史、筛选来源并分页 | query_history，SDK 使用 history |
 | 写入外部 JSON 事件并安全重试 | append_event |
 | 读取新增或更新的事件 | read_event_changes，SDK 使用 changes |

@@ -20,6 +20,7 @@ USES = {
     "action": "core", "social_content": "core", "important_result": "core", "knowledge": "core",
     "feeling": "context", "mood": "context", "motivation_numeric": "context",
     "social_state": "context", "relationship_numeric": "context",
+    "balloon_signal": "context",
     "conversation": "merge", "activity_phase": "merge", "activity_support": "merge", "need_effect": "merge",
     "object_effect": "merge", "skill_progress": "merge", "activity_marker": "merge", "gesture": "merge",
     "environment": "background", "proximity": "background", "relationship_baseline": "background",
@@ -91,6 +92,8 @@ def classify(event, game_version=None):
     if not game_event(event):
         return "external"
     category = kind(event) or ""
+    if category == "balloon.sent":
+        return "balloon_signal"
     if category == "mood.changed":
         return "mood"
     if category == "relationship.knowledge":

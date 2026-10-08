@@ -6,6 +6,7 @@ Game objects are resolved and copied on the simulation thread only.
 import math
 import re
 
+from context_overlay import OBSERVATION_SCOPE
 from context_overlay.model import entity, field, number
 from context_overlay.profiles import OBJECT_STATES, PROFILE_VERSION, resource_name
 from context_overlay.localization import Localizer
@@ -41,23 +42,36 @@ class EAAdapter:
         now = self.services.time_service().sim_now
         return {"ticks": str(now.absolute_ticks()), "display": str(now)}
 
+    def sim_minutes_to_ticks(self, minutes):
+        from date_and_time import create_time_span
+        return create_time_span(minutes=minutes).in_ticks()
+
     def scope(self):
         zone = self.services.current_zone()
-        return {"kind": "active_lot_instantiated", "zone_id": str(zone.id),
-                "lot_id": str(zone.lot.lot_id), "off_lot": "excluded"}
+        return {"kind": OBSERVATION_SCOPE, "zone_id": str(zone.id),
+                "lot_id": str(zone.lot.lot_id), "off_lot": "included",
+                "hidden": "excluded", "inventory": "excluded"}
 
     def in_scope(self, obj):
         if obj is None or not getattr(obj, "id", 0):
             return False
         if getattr(obj, "_hidden_flags", 0):
             return False
-        if not self.services.current_zone().is_zone_running:
+        zone = self.services.current_zone()
+        if zone is None or not zone.is_zone_running:
+            return False
+        # Scope is the live zone object manager, not the active lot polygon.
+        # A Part proxies its owner's ID but is not a separate manager entry.
+        owner = getattr(obj, "part_owner", None) if getattr(obj, "is_part", False) else obj
+        manager = self.services.object_manager()
+        if owner is None or manager is None or manager.get(owner.id) is not owner:
+            return False
+        if getattr(obj, "zone_id", None) != zone.id:
             return False
         if getattr(obj, "is_sim", False):
             if obj.sim_info.get_sim_instance() is not obj:
                 return False
-        checker = getattr(obj, "is_on_active_lot", None)
-        return bool(checker and checker())
+        return self._outside_inventory(obj)
 
     def live_objects(self):
         return list(self.services.object_manager().valid_objects())
@@ -73,9 +87,22 @@ class EAAdapter:
         return self.services.object_manager().get_valid_objects_gen()
 
     def nearby_eligible(self, obj):
-        if not self.in_scope(obj):
-            return False
-        return self._outside_inventory(obj)
+        return self.in_scope(obj)
+
+    @staticmethod
+    def same_lot(first, second):
+        # Two off-lot objects need not share a lot. The native predicate only
+        # answers whether each belongs to the active lot, not its actual lot ID.
+        source = "GameObject.is_on_active_lot"
+        try:
+            a, b = first.is_on_active_lot(), second.is_on_active_lot()
+            if not isinstance(a, bool) or not isinstance(b, bool):
+                raise ValueError("Unknown active-lot membership")
+            if a or b:
+                return field(a and b, source=source)
+            return field(status="unsupported", source=source, reason="both_outside_active_lot")
+        except Exception:
+            return field(status="unsupported", source=source, reason="lot_membership_unavailable")
 
     @staticmethod
     def _outside_inventory(obj):
@@ -96,7 +123,7 @@ class EAAdapter:
         zone = self.services.current_zone()
         if zone is None or not zone.is_zone_running:
             raise CameraViewError("not_ready", "Wait for a running zone before querying its camera")
-        return {"kind": "zone_instantiated", "zone_id": str(zone.id),
+        return {"kind": OBSERVATION_SCOPE, "zone_id": str(zone.id),
                 "lot_id": str(zone.lot.lot_id), "off_lot": "included", "levels": "all",
                 "inventory": "excluded", "hidden": "excluded"}
 
@@ -496,11 +523,13 @@ class EAAdapter:
                 "parent_actor_id": str(parent_actor) if parent_id else None,
                 "parent_basis": "source_interaction_id" if source_id else ("continuation_id" if continuation else None)}
 
-    def read(self, target, name):
+    def read(self, target, name, options=None):
         obj = self.object_for(target)
         if not self.in_scope(obj):
-            return field(status="out_of_scope", reason="Only instantiated entities on the active lot are supported")
+            return field(status="out_of_scope", reason="Only nonhidden world entities instantiated in the current zone are supported")
         try:
+            if name == "balloons":
+                return self.read_balloons(obj, options)
             return getattr(self, "read_" + name)(obj)
         except Exception as exc:
             return field(status="error", source="EAAdapter.read_" + name,
@@ -532,6 +561,14 @@ class EAAdapter:
         if not getattr(obj, "is_sim", False):
             return field(status="not_applicable", reason="Interaction queue belongs to a Sim")
         return field([self.interaction(item) for item in self.interaction_objects(obj)], source="Sim.si_state; InteractionQueue")
+
+    def read_balloons(self, obj, window=None):
+        if not getattr(obj, "is_sim", False):
+            return field(status="not_applicable", reason="Balloon capture belongs to a Sim")
+        capture = getattr(self, "balloon_capture", None)
+        if capture is None:
+            return field(status="unsupported", reason="Balloon capture is not installed")
+        return capture.read(self.reference(obj), window)
 
     def interaction_objects(self, obj):
         found = {}

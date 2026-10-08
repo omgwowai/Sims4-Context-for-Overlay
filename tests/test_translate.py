@@ -92,6 +92,47 @@ class OfflineReportChecks(unittest.TestCase):
             source = ROOT / "sdk/examples" / name
             self.assertIn(expected, report.markdown_report(read_packet(source)[0], source))
 
+    def test_cli_reads_legacy_balloon_context_without_rewriting_cache_semantics(self):
+        payload = {"balloon_type": {"name": "THOUGHT", "value": 0}, "client_visibility": "unverified"}
+        row = {"event_id": "run:balloon", "game_time": {"ticks": "100", "display": "第 1 天 12:00"},
+               "payload": payload, "cause": None}
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "context.json"
+            for recent, truncated in (([row], False), ([row], True), ([], True)):
+                with self.subTest(recent=bool(recent), truncated=truncated):
+                    packet = {"module_version": "0.12.0", "snapshot": {"balloons": {
+                        "status": "available", "value": {"recent": recent, "limit": 20, "truncated": truncated}}}}
+                    source.write_text(json.dumps(packet, ensure_ascii=False), encoding="utf-8")
+                    original = source.read_bytes()
+                    for output_format in ("md", "json"):
+                        result = subprocess.run(PYTHON + [str(ROOT / "scripts/translate.py"), str(source),
+                                                "--format", output_format], capture_output=True)
+                        self.assertEqual(result.returncode, 0, result.stderr)
+                    text = source.with_suffix(".md").read_text(encoding="utf-8")
+                    self.assertIn("旧版气泡缓存快照", text)
+                    self.assertIn("不代表完整时间窗口", text)
+                    self.assertEqual("旧版缓存曾发生淘汰" in text, truncated)
+                    if recent:
+                        self.assertIn("第 1 天 12:00", text)
+                        self.assertIn("已发送思考气泡请求", text)
+                    else:
+                        self.assertIn("快照中没有缓存条目", text)
+                    translated = json.loads(source.with_name("context-translated.json").read_text(encoding="utf-8"))
+                    self.assertEqual(translated["snapshot"], packet["snapshot"])
+                    self.assertEqual(source.read_bytes(), original)
+
+    def test_event_window_balloon_render_keeps_query_and_retention_warnings(self):
+        row = {"first_observed_time": {"ticks": "100", "display": "第 1 天 12:00"},
+               "payload": {"balloon_type": {"name": "SPEECH", "value": 1}}}
+        packet = {"snapshot": {"balloons": {"status": "available", "value": {
+            "format": "balloon_event_window_v1", "events": [row], "has_more": True, "retention_gap": True}}}}
+        original = copy.deepcopy(packet)
+        text = report.markdown_report(packet, Path("context.json"))
+        for expected in ("时间窗口内的气泡事件", "第 1 天 12:00", "已发送说话气泡请求", "还有匹配事件", "历史内存发生过淘汰"):
+            self.assertIn(expected, text)
+        self.assertNotIn("旧版", text)
+        self.assertEqual(packet, original)
+
 
 if __name__ == "__main__":
     unittest.main()

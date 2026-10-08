@@ -1,6 +1,8 @@
 # ContextOverlay Python SDK
 
-SDK 版本 **2.3.0**，适配 API 2.x / schema 2。当前源码对应 ContextOverlay **0.11.0**，支持游戏内四层事件查询及结束时的分层文件；分层接口要求提供者声明 `event_views.query`。
+SDK 版本 **2.6.0**，适配 API 2.x / schema 2。当前源码对应 ContextOverlay **0.14.1**，支持游戏内四层事件查询及结束时的分层文件；分层接口要求提供者声明 `event_views.query`。需要读取人行道等地块外的当前实体时，检查 `context.zone_scope`；原生事件的区域范围由 `events.zone_scope` 声明。
+
+API 2.6.0 的 Context 气泡改为事件窗口，默认最近 5 个游戏分钟；读取 `value.events`，用 `first_observed_time` 取得发送时间。`balloon_window`、历史角色／访问筛选、落盘 Events 筛选分别要求 `context.balloon_window`、`history.membership`、`event_views.event_filters`，SDK 在调用前检查能力。完整示例与旧字段迁移见[气泡采集](../docs/balloons.md)。
 
 把 [context_overlay_client.py](context_overlay_client.py) 放进自己 MOD 的包里，再把示例中的 `my_overlay_mod` 换成你的包名。SDK 不单独放进 Mods 文件夹，也不会帮你调模型或创建界面。[文档入口](../docs/index.md)汇总安装、API 和验收路径；[快速接入](../docs/quickstart.md)有完整的读写过程。
 

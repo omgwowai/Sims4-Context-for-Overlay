@@ -114,6 +114,22 @@ class ContractChecks(unittest.TestCase):
         self.error("invalid_query", api.query_history, from_ticks=5, to_ticks=4)
         self.assertEqual(self.recorder.index.status()["snapshots"], 0)
 
+    def test_invalid_balloon_windows_and_old_sdk_capabilities_fail_explicitly(self):
+        for window in ({"from_ticks": 1}, {"from_ticks": 2, "to_ticks": 1}, {"past_sim_minutes": 0},
+                       {"past_sim_minutes": float("inf")}, {"past_sim_minutes": True}, {"limit": True},
+                       {"current": True}, {"from_ticks": 1, "to_ticks": 2, "past_sim_minutes": 5}):
+            self.error("invalid_query", api.get_context, fields=["balloons"], balloon_window=window)
+        self.error("invalid_request", api.get_context, fields=["identity"], balloon_window={})
+        self.assertEqual(self.adapter.reads, 0)
+        old = dict(api.get_api_info(), capabilities=["context.balloons", "event_views.query", "history.query"])
+        with patch.object(api, "get_api_info", return_value=old):
+            for method, options in (("get_context", {"balloon_window": {}}),
+                    ("query_history", {"entity_role": "subject"}),
+                    ("query_event_view", {"from_ticks": 1, "expected_session_id": "run-a"})):
+                with self.assertRaises(sdk.ContextOverlayError) as caught:
+                    getattr(sdk.Client(api), method)(**options)
+                self.assertEqual(caught.exception.code, "capability_unavailable")
+
     def test_disabled_or_failed_modules_remain_explicit(self):
         self.recorder.enabled = False
         self.runtime.collector.semantic_enabled = False

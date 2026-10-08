@@ -48,13 +48,18 @@ class Adapter:
         return entity("object", identifier, "食物")
 
     def scope(self):
-        return {"kind": "active_lot_instantiated", "off_lot": "excluded"}
+        return {"kind": "zone_instantiated", "off_lot": "included"}
 
     def clock(self):
         return {"ticks": "100", "display": "test time"}
 
+    def sim_minutes_to_ticks(self, minutes):
+        return int(minutes * 1500)
+
     def read(self, target, name):
         self.reads += 1
+        if name == "balloons":
+            return field({"events": [], "complete": True})
         return field(target if name == "identity" else self.shared)
 
 
@@ -68,6 +73,8 @@ def runtime_fixture(test, adapter=None, recorder=None, session_id="test-run", pr
         collector=Collector(adapter, recorder, provenance=provenance), provenance=provenance or {},
         session_id=recorder.session_id, simulation_thread_id=threading.get_ident(), api_ready=True, closed=False)
     runtime.sources, runtime.autonomy = EventSources(runtime), AutonomyCapture(runtime)
+    from context_overlay.balloons import BalloonCapture
+    runtime.balloons = BalloonCapture(runtime)
     for context in (patch.object(game_runtime, "_runtime", runtime),
                     patch.object(game_runtime, "_startup_error", None)):
         context.start()

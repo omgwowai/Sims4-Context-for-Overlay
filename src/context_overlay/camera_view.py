@@ -3,6 +3,7 @@
 import math
 import time
 
+from context_overlay import OBSERVATION_SCOPE
 from context_overlay.model import copy_data, entity, envelope, field, new_id
 
 
@@ -187,7 +188,7 @@ def collect(adapter, session_id, provenance, query):
             partial = partial or any(item["status"] != "available" for item in spatial.values())
             results.append(dict(hit, entity=reference, identity_status=identity_status, spatial=spatial,
                                 bounds=bounds, same_lot=same_lot,
-                                context_scope="active_lot_instantiated"))
+                                context_scope=OBSERVATION_SCOPE))
     except Exception:
         coverage["enumeration_complete"] = False
         coverage["reasons"]["enumeration_failed"] = 1

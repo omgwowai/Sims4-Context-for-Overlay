@@ -58,14 +58,14 @@ results[]
   containment              inside / intersects，针对使用的代理球或点
   bounds                   method / radius / source / render_bounds / fallback_reasons?
   same_lot                 是否在当前地块，带字段状态
-  context_scope            active_lot_instantiated
+  context_scope            zone_instantiated
 count / matched_count / matched_count_exact / truncated
 coverage / status
 ```
 
 球部分进入视锥即纳入，边界包含。球可能跨越相机所在平面，此时实体坐标点的 depth 可以为负。楼层与房间不参与筛选；不额外调用房间原生查询。
 
-地块外实体会出现在摘要中，但本次没有扩大 `get_context` 或历史采集范围。继续按 ID 查询详情时，其实时字段仍可能为 `out_of_scope`。第二次查询发生在稍后的时刻，同一 session 不能证明实体状态或视锥成员仍未变化。
+0.13.0 / API 2.5 起，地块外实体也纳入 `get_context` 和原生事件采集。继续按 ID 查询详情时，实体若已卸载、隐藏或切换区域，其实时字段仍可能为 `out_of_scope`。第二次查询发生在稍后的时刻，同一 session 不能证明实体状态或视锥成员仍未变化。
 
 ## 完整性和错误
 

@@ -11,7 +11,7 @@ import time
 from collections import Counter
 
 from context_overlay import SCHEMA_VERSION
-from context_overlay.history import deep_size, MIB
+from context_overlay.history import deep_size, MIB, ticks, HistoryIndex
 from context_overlay.model import new_id
 from context_overlay.view_source import ViewError, decode, packed, read_prefix, derivation_events
 from context_overlay.experience.event_sequence import EventSequence
@@ -58,12 +58,28 @@ class ViewStore:
         if type(value) is not int or not 1 <= value <= 100:
             raise ViewError("invalid_request", "page_size must be an integer from 1 to 100")
 
-    def query(self, view, entity_key, head, source_snapshot_id=None, profile=PROFILE, page_size=20):
+    def query(self, view, entity_key, head, source_snapshot_id=None, profile=PROFILE, page_size=20,
+              from_ticks=None, to_ticks=None, fields=None, entity_role=None, zone_visit=None, order="asc"):
         self._page_size(page_size)
         if view not in VIEWS or profile != PROFILE:
             raise ViewError("invalid_request", "Unsupported view or profile")
         if view == "recap" and not entity_key.startswith("sim:"):
             raise ViewError("invalid_request", "The recap profile currently requires a Sim")
+        lower, upper = ticks(from_ticks), ticks(to_ticks)
+        if lower is not None and upper is not None and lower >= upper:
+            raise ViewError("invalid_request", "Time range is [from, to), with from < to")
+        names = HistoryIndex._values(fields, "fields")
+        HistoryIndex.validate_membership(entity_key, entity_role, zone_visit)
+        if order not in ("asc", "desc"):
+            raise ViewError("invalid_request", "order must be asc or desc")
+        filters = None
+        if any(v is not None for v in (lower, upper, names, entity_role, zone_visit)) or order != "asc":
+            if view != "events":
+                raise ViewError("invalid_request", "Time and membership filters currently require the events view")
+            filters = {"from_ticks": str(lower) if lower is not None else None,
+                       "to_ticks": str(upper) if upper is not None else None,
+                       "fields": sorted(names) if names else None, "entity_role": entity_role,
+                       "zone_visit": zone_visit, "order": order, "time_field": "first_observed"}
         with self._lock:
             self._admit()
             if source_snapshot_id is not None:
@@ -79,7 +95,7 @@ class ViewStore:
                     source = {"id": new_id(), "sequence": sequence, "offset": offset,
                               "data": None, "projections": {}, "memory": 0, "head": dict(head)}
                     self._sources[source["id"]] = source
-            job = self._new_job(source["id"], view, entity_key, profile, page_size)
+            job = self._new_job(source["id"], view, entity_key, profile, page_size, filters=filters)
         return self.status(job["id"])
 
     def _live(self, job):
@@ -91,11 +107,11 @@ class ViewStore:
         if len(self._jobs) >= self.max_queries:
             raise ViewError("view_limit", "Close a view request before opening another")
 
-    def _new_job(self, source_id, view, entity, profile, page_size, explanation=None):
+    def _new_job(self, source_id, view, entity, profile, page_size, explanation=None, filters=None):
         job = {"id": new_id(), "source": source_id, "view": view, "entity": entity,
                "profile": profile, "page_size": page_size, "state": "building",
                "cancel": threading.Event(), "touched": time.monotonic(), "memory": 0,
-               "explanation": explanation}
+               "explanation": explanation, "filters": filters}
         self._jobs[job["id"]] = job
         self._queue.put(job)
         return job
@@ -271,6 +287,8 @@ class ViewStore:
                 identity = {"source": source["data"]["sha256"], "sequence": source["sequence"],
                             "entity": job["entity"], "view": job["view"], "profile": job["profile"] if job["view"] in ("organized", "recap", "explanation") else None,
                             "rules": metadata.get("rules"), "explanation": job["explanation"], "schema": SCHEMA}
+                if job["filters"] is not None:
+                    identity["filters"] = job["filters"]
                 snapshot = hashlib.sha256(packed(identity)).hexdigest()
                 encoded, lengths, charged = [], [], deep_size(members) + len(meta)
                 for row in rows:
@@ -380,6 +398,25 @@ class ViewStore:
             rows = (SourceRow("records", "record:" + str(seq), records[seq]) for seq in sorted(sequences))
             return rows, members, metadata
         if job["view"] == "events":
+            filters = job["filters"]
+            if filters is not None:
+                lower, upper = ticks(filters["from_ticks"]), ticks(filters["to_ticks"])
+                filtered = []
+                for key in selected:
+                    checkpoint()
+                    event = events[key]
+                    when = ticks(event.get("first_observed_time"))
+                    if when is None or lower is not None and when < lower or upper is not None and when >= upper:
+                        continue
+                    if filters["fields"] and event.get("field") not in filters["fields"]:
+                        continue
+                    if not HistoryIndex.membership_matches(event, entity, filters["entity_role"], filters["zone_visit"]):
+                        continue
+                    filtered.append((when, data["revisions"][key][0], key))
+                filtered.sort(reverse=filters["order"] == "desc")
+                selected = [row[2] for row in filtered]
+                metadata["scope"].update(time_window="first_observed_range", filters=filters,
+                                          selected_latest_events=len(selected))
             members = {key: {"events": [key], "units": []} for key in selected}
             return (SourceRow("events", key, records[data["revisions"][key][-1]]) for key in selected), members, metadata
         explanation = job["explanation"]
@@ -423,7 +460,7 @@ class ViewStore:
             return rows, members, metadata
         if job["view"] == "recap":
             rows = []
-            sections = ("activities", "results", "relationship_observations", "states", "review_actions")
+            sections = ("activities", "results", "relationship_observations", "states", "review_actions", "balloons")
             for section in sections:
                 for row in bundle["recap"][section]:
                     refs = [row["ref"]] if "ref" in row else row.get("refs", [r["ref"] for r in row.get("intervals", [])])

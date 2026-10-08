@@ -1,6 +1,6 @@
 # 文档入口
 
-当前源码版本为 **ContextOverlay 0.11.0**，公共 API / SDK 版本为 **2.3.0**，数据 schema 为 **2**。版本的唯一来源是 src/context_overlay/__init__.py、src/context_overlay/api.py 和 sdk/context_overlay_client.py；文档中的版本号只用于说明适用范围。
+当前源码版本为 **ContextOverlay 0.14.1**，公共 API / SDK 版本为 **2.6.0**，数据 schema 为 **2**。版本的唯一来源是 src/context_overlay/__init__.py、src/context_overlay/api.py 和 sdk/context_overlay_client.py；文档中的版本号只用于说明适用范围。
 
 初次阅读：[读取指南](reading-guide.md)选择能力 → [Nova 实例](event-layers-example.md)理解四层 → [快速接入](quickstart.md)动手调用。查精确契约再进入 API 参考；运行、维护和验收材料按需阅读。
 
@@ -12,6 +12,7 @@
 | --- | --- |
 | 安装源码构建或已有构建包、运行自检 | [安装与使用](install.md) |
 | 第一次接入自己的游戏内 MOD | [快速接入](quickstart.md) |
+| 读取最近气泡、发送历史与整理结果 | [气泡采集（待验证）](balloons.md) |
 | SDK 文件、示例和合成数据 | [SDK 说明](../sdk/README.md) |
 
 ### API 与运行数据

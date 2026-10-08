@@ -133,6 +133,9 @@ class Runtime:
         self.hooks = Hooks(self.fail)
         from context_overlay.event_sources import EventSources
         self.sources = EventSources(self)
+        from context_overlay.balloons import BalloonCapture
+        self.balloons = BalloonCapture(self)
+        self.adapter.balloon_capture = self.balloons
         from context_overlay.autonomy_capture import AutonomyCapture
         self.autonomy = AutonomyCapture(self)
         self.events = []
@@ -229,12 +232,15 @@ class Runtime:
             self.hooks.after(StateComponent, "_trigger_on_state_changed", self.state_changed)
             self.sources.install()
             self.autonomy.install()
+        if self.config["recorder_enabled"] or self.config["collector_enabled"]:
+            self.balloons.install()
         self.recorder.note("zone_entry" if self.resumed else "session_start", {
                                              "scope": self.initial_scope, "zone_visit": self.recorder.zone_visit,
                                              "config": self.config,
                                              "provenance": self.provenance,
                                              "event_coverage": self.sources.status(), "event_diagnostics": self.sources.diagnostics(),
                                              "autonomy": self.autonomy.status(),
+                                             "balloons": self.balloons.status(),
                                              "python": sys.version, "module_version": VERSION}, self.adapter.clock())
         self._remember_view_targets()
         self._save_run_report(self._run_report("active"))
@@ -356,6 +362,7 @@ class Runtime:
                 self.driver.poll()
             if self.closed:
                 return
+            self.balloons.prune_pending()
             if self.recorder.status()["state"] != "recording":
                 self._report_recording_failure()
                 return
@@ -396,6 +403,7 @@ class Runtime:
                 "event_coverage": self.sources.status(),
                 "event_diagnostics": self.sources.diagnostics(),
                 "autonomy": self.autonomy.status(),
+                "balloons": self.balloons.status() if getattr(self, "balloons", None) is not None else {"state": "not_installed"},
                 "poll_max_ms": self.poll_max_ms, "config": self.config,
                 "view_targets": getattr(self, "view_targets", {}),
                 "view_exports": self.view_exports.status() if getattr(self, "view_exports", None) is not None else {"state": "not_started"},
@@ -493,6 +501,7 @@ class Runtime:
             sequence = self.recorder.note("zone_exit" if preserve_history else "session_end", {
                             "reason": reason, "status": self.recorder.status(),
                             "event_coverage": self.sources.status(), "autonomy": self.autonomy.status(),
+                            "balloons": self.balloons.status() if getattr(self, "balloons", None) is not None else {"state": "not_installed"},
                             "event_diagnostics": self.sources.diagnostics()}, self.boundary_time)
             if not preserve_history:
                 self.session_end_sequence = sequence
@@ -508,6 +517,8 @@ class Runtime:
             attempt("cancel_alarm", cancel_alarm)
             self.alarm = None
         attempt("remove_hooks", self.hooks.remove)
+        if getattr(self, "balloons", None) is not None:
+            attempt("close_balloons", self.balloons.close)
         for event in self.events:
             attempt("unregister_" + str(event), lambda event=event: self.manager.unregister(self, (event,)))
         self.events[:] = []

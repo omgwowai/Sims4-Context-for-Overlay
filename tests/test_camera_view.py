@@ -33,6 +33,7 @@ class CameraChecks(unittest.TestCase):
         self.zone = SimpleNamespace(id=42, lot=SimpleNamespace(lot_id=84), is_zone_running=True)
         self.adapter = EAAdapter.__new__(EAAdapter)
         self.manager = SimpleNamespace(values=lambda: iter(self.objects),
+            get=lambda key: next((obj for obj in self.objects if obj.id == key), None),
             get_valid_objects_gen=lambda: (obj for obj in self.objects if not obj._hidden_flags))
         self.adapter.services = SimpleNamespace(current_zone=lambda: self.zone,
             object_manager=lambda: self.manager,
@@ -141,8 +142,8 @@ class CameraChecks(unittest.TestCase):
         self.assertEqual(self.ids(kinds=["sim"]), ["1"])
         row = self.query(kinds=["object"])["results"][0]
         self.assertFalse(row["same_lot"]["value"])
-        self.assertEqual(row["context_scope"], "active_lot_instantiated")
-        self.assertFalse(self.adapter.in_scope(self.objects[0]))
+        self.assertEqual(row["context_scope"], "zone_instantiated")
+        self.assertTrue(self.adapter.in_scope(self.objects[0]))
 
     def test_offset_footprint_scale_and_radius_fallbacks(self):
         obj = self.add(1, x=13)

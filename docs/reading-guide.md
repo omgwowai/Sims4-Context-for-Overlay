@@ -2,6 +2,8 @@
 
 这页帮助你选择读取路径。第一次接入看[快速接入](quickstart.md)，准确参数、默认值和错误看 [API 参考](public-api-v2.md)。适用版本见[文档入口](index.md)。
 
+0.13.0 起，Inspector、Context、附近查询和原生事件采集覆盖当前已加载区域内的非隐藏世界实例，包含门外、人行道和公共空间。库存内容及未加载区域不在当前状态范围内；已保留的历史仍可按已知 ID 查询。`scope.lot_id`、事件 `observation_scope.lot_id` 和 Context `location.lot_id` 是采集区域的活动地块信息，不代表人物实际在地块内。
+
 ## 先选读取路径
 
 | 想知道什么 | 首选入口 | 关键选择 |
@@ -27,8 +29,9 @@
 | `buffs` | 当前 Buff 及文本、来源状态 |
 | `relationships` | 当前可读取的关系与关系标记 |
 | `object_states` | 物件品质、新鲜度、清洁或损坏等状态 |
+| `balloons` | 按需从事件系统查询本次区域访问的气泡，默认最近 5 个游戏分钟；可指定时间窗口并分页，不代表此刻正在显示 |
 
-不传 `fields` 时，Sim 默认读前七项，Object 默认读 `identity/time/location/object_states`。例如只显示当前需求和 Buff：
+不传 `fields` 时，Sim 默认读前七项及 `balloons`，Object 默认读 `identity/time/location/object_states`。气泡内容、来源与覆盖边界见[气泡采集](balloons.md)。例如只显示当前需求和 Buff：
 
 ```python
 context = client.get_context(

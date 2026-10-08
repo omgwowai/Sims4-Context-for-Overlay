@@ -6738,6 +6738,208 @@
       },
       "role": "action",
       "family": "cooking_mentor"
+    },
+    {
+      "id": "9125",
+      "tuning_name": "watch-sports2",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "9e5449110e2bc7d1a510663b517a8b8390d95f9db8ba632190b8b7fe75ac3096",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "micro",
+      "family": "television"
+    },
+    {
+      "id": "14545",
+      "tuning_name": "watch-sports",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "d0f831073310a7cee53cfb297a812690809136683265cfd2dbdeeef4334d21f1",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "micro",
+      "family": "television"
+    },
+    {
+      "id": "9138",
+      "tuning_name": "watch-sports3",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "bd62324c3919e3fb77decc301f0ee147122adc781a61ad84e4ed22f052d95d5b",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "micro",
+      "family": "television"
+    },
+    {
+      "id": "227249",
+      "tuning_name": "stereo_listen",
+      "class_name": "ListenSuperInteraction",
+      "module": "objects.electronics.stereo",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "3d696bbc031686985ef754da540f3023fb489aa5ed7839d166dc0f3f995c731c",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "action",
+      "family": "music_listening"
+    },
+    {
+      "id": "14319",
+      "tuning_name": "stereo_listenPassive",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "1b0cece22836f5d2ab37f14cdee5e59aa5242c3e39d4371a4c0a2a86c6ce4b6d",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "micro",
+      "family": "music_listening"
+    },
+    {
+      "id": "14315",
+      "tuning_name": "stereo_Dance",
+      "class_name": "CancelOnStateChangeInteraction",
+      "module": "objects.electronics.stereo",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "78f8de074c4d77f2a5d153ab02a5e20bff572ade352d3a4cf6d542f77e7f3bed",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "action",
+      "family": "dancing"
+    },
+    {
+      "id": "14316",
+      "tuning_name": "stereo_danceActive",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "643902b3daf22e034553027aaad7ce8943befa0900c285e9bb0018a2609075b5",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "micro",
+      "family": "dancing"
+    },
+    {
+      "id": "40074",
+      "tuning_name": "computer_Browse_Art",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "0a2822406e3fd3e9670d0d7dbccb695a745dce6c118d84399683317f92cd4bc3",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "action",
+      "family": "computer"
+    },
+    {
+      "id": "13950",
+      "tuning_name": "shower_TakeShower",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "b3b2b36ecc6ba4983892c7bf966dcb713e1d0c240b111f6be3f19d503a9cb9ea",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "action",
+      "family": "showering"
+    },
+    {
+      "id": "35953",
+      "tuning_name": "art_Trait_Snob_SnobbilyAssess",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "06f9d95405ea43755bad4ae4ffe8dd8e9ee9b806be63d35486880b7730054b90",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "action",
+      "family": "art_appraisal"
+    },
+    {
+      "id": "100361",
+      "tuning_name": "painting_View_Critique",
+      "class_name": "MixerInteraction",
+      "module": "interactions.base.mixer_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "00c05883a9f84560180974d646be0fa9c15a77b6b4abdefc245b46067dc2cb49",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "micro",
+      "family": "art_appraisal"
+    },
+    {
+      "id": "99408",
+      "tuning_name": "phone_PlayGames_AutonomousOnly",
+      "class_name": "SuperInteraction",
+      "module": "interactions.base.super_interaction",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "07e2492058e9ddf965d37983be81eeef8caa762d9405dbf6f7ee456220bcf7f3",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers"
+      },
+      "role": "action",
+      "family": "phone_game"
+    },
+    {
+      "id": "14315",
+      "tuning_name": "[Join]stereo_Dance",
+      "class_name": "CancelOnStateChangeInteraction",
+      "module": "objects.electronics.stereo",
+      "source": {
+        "package": "Data/Simulation/SimulationPreload.package",
+        "tgi": "62E94D38:00000000:F1352E740C4710BA",
+        "source_sha256": "fcea7a85bb84eaae0e37fdcf07379cf274704bae7cb6406f222f692c14f83ee2",
+        "xml_sha256": "78f8de074c4d77f2a5d153ab02a5e20bff572ade352d3a4cf6d542f77e7f3bed",
+        "basis": "reviewed_expanded_tuning_identity_content_and_mixer_providers",
+        "mechanism": {
+          "path": "EA/simulation/objects/base_interactions.py",
+          "method": "ProxyInteraction.generate and JoinInteraction.proxy_name",
+          "reference_commit": "12718ed96470fc2edffbc7875d10cf537b1f0e57",
+          "sha256": "7cf85e10939ae2e1842ce6de1d2a63f4cdad108d9deceb9403e29e55182c398a",
+          "review": "Generated class inherits the exact stereo_Dance affordance. It remains a separate actor execution; a shared stereo is not evidence of shared activity ownership."
+        }
+      },
+      "role": "action",
+      "family": "dancing"
     }
   ]
 }

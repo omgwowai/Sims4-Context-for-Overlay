@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "module_version": "0.6.0",
+  "module_version": "0.14.1",
   "kind": "nearby_entities",
   "session_id": "nearby-run",
   "recorded_at": "2026-09-15T09:27:45.793694+00:00",
@@ -12,10 +12,10 @@
     "key": "sim:100"
   },
   "scope": {
-    "kind": "active_lot_instantiated",
+    "kind": "zone_instantiated",
     "zone_id": "42",
     "lot_id": "84",
-    "off_lot": "excluded"
+    "off_lot": "included", "hidden": "excluded", "inventory": "excluded"
   },
   "provenance": {
     "source": "fake_game",
@@ -129,7 +129,7 @@
         "same_lot": {
           "status": "available",
           "value": true,
-          "source": "active_lot_scope"
+          "source": "GameObject.is_on_active_lot"
         },
         "same_level": {
           "status": "available",
@@ -203,7 +203,7 @@
         "same_lot": {
           "status": "available",
           "value": true,
-          "source": "active_lot_scope"
+          "source": "GameObject.is_on_active_lot"
         },
         "same_level": {
           "status": "available",
@@ -241,5 +241,5 @@
     "display": "Synthetic game time (not a live reading)"
   },
   "status": "complete",
-  "api_version": "2.1.0"
+  "api_version": "2.6.0"
 }

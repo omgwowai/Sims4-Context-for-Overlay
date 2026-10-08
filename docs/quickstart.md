@@ -103,6 +103,7 @@ SDK 抛出的 `ContextOverlayError` 有 `code` 和 `details`，`to_dict()` 可�
 | 情况 | 先怎么处理 |
 | --- | --- |
 | `dependency_missing` / `incompatible_api` | 检查 MOD 是否安装、脚本是否启用，SDK 和提供方是否配套 |
+| `capability_unavailable` | 提供方未声明所用能力；检查 `details.required_capability`，尤其是气泡窗口、角色／访问和 Events 筛选 |
 | `not_ready` / `session_closed` | 等地块加载好，再确认 session；不要紧循环重试 |
 | `session_changed` | 已经换会话了，丢弃旧请求引用，重新读 Context |
 | `wrong_thread` | 把调用移回游戏线程 |
@@ -118,7 +119,7 @@ SDK 抛出的 `ContextOverlayError` 有 `code` 和 `details`，`to_dict()` 可�
 
 ## 帮我们试什么、怎么反馈
 
-接入时先确认安装、读写闭环，以及旅行或重试时的记录连续性。需要选择状态字段、历史筛选或经历总结时，看[读取指南](reading-guide.md)；四层结果的实际条数和样例见 [Nova 实例](event-layers-example.md)。
+接入时先确认安装、读写闭环，以及旅行或重试时的记录连续性。选择状态字段、历史筛选或经历总结时看[读取指南](reading-guide.md)；读取气泡及迁移旧 `recent` 字段时看[气泡事件与时间窗口](balloons.md)；四层结果的实际条数和样例见 [Nova 历史实例](event-layers-example.md)。
 
 有问题直接说“刚才做了什么、预期是什么、实际是什么”。方便的话附上游戏和 MOD 版本、错误码，以及相关的 `runtime.log` 片段。自检问题再带上 `ContextOverlay/api-self-test.json`；需要核对某条记录时给 session / event ID。日志里可能有角色名和你写入的内容，先挑相关部分即可，不用发整个存档。
 

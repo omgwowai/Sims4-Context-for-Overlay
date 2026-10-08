@@ -44,6 +44,7 @@
 | 制作、收藏、成长 | `crafting.completed` 的产物、recipe、品质、masterwork；`collection.acquired`；`progress.unlocked/item_unlocked`；`aspiration.goal_completed/stage_completed` | 原生通知没有具体目标时通过同步调用上下文补身份，仍缺失则显式 `missing_fields`。无 Sim 的制作通知不虚构制作者；不把原生通知宣称为全部收藏／配方路径 |
 | 库存 | `inventory.transfer`：插入、移除、拆堆、移入隐藏库存，记录容器、数量和产物 | 比较实际变化并验证返回；加载不生成，拆堆不当销毁。没有完整追踪建造模式家庭库存、所有销毁／出售／替换路径 |
 | 反应、广播 | `reaction.started` 来自实际开始的 REACTION 交互；`broadcast.effect` 来自通过外层测试后执行的效果回调 | 同一广播对象／效果／受影响实体持续执行更新同一事实的修订和次数，移除后再次施加为新事实。每个已观察回调更新次数；回调正常返回不自动证明效果成功，不推断目睹或理解 |
+| 气泡 | `balloon.sent`：成功提交给 Distributor 的发送请求，保留图标、类型、时间及明确来源；Context 读取同一事件索引的时间窗口 | 每次发送独立保留；没有客户端显示回执，不推断人物想法或对话。临时来源追踪与事件存储分别计量，详见[气泡事件说明](balloons.md) |
 | 事件金额 | `payment.completed`：FamilyFunds.add／try_remove_amount 的真实前后资金与 actual_amount，保留 reason、请求金额、参与者及可用来源 | 限定显式本地 Sim 或本地 Loot 操作，未归因家庭变动不写流水。与动作的关联只在有 resolver.interaction 时建立；不宣称全部交易已覆盖 |
 
 Hook 包装保留游戏原返回值与异常；采集异常单独报告并暂停采集。生成器实现不套用同步 Hook。Loot 与广播仅遍历安装时已经加载的具体子类，运行中才加载的实现需以后补适配；这项限制在能力状态中可见。

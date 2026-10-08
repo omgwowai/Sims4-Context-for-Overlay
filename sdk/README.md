@@ -2,7 +2,7 @@
 
 SDK 版本 **2.6.0**，适配 API 2.x / schema 2。当前源码对应 ContextOverlay **0.14.1**，支持游戏内四层事件查询及结束时的分层文件；分层接口要求提供者声明 `event_views.query`。需要读取人行道等地块外的当前实体时，检查 `context.zone_scope`；原生事件的区域范围由 `events.zone_scope` 声明。
 
-API 2.6.0 的 Context 气泡改为事件窗口，默认最近 5 个游戏分钟；读取 `value.events`，用 `first_observed_time` 取得发送时间。`balloon_window`、历史角色／访问筛选、落盘 Events 筛选分别要求 `context.balloon_window`、`history.membership`、`event_views.event_filters`，SDK 在调用前检查能力。完整示例与旧字段迁移见[气泡采集](../docs/balloons.md)。
+API 2.6.0 的 Context 气泡使用事件窗口，默认最近 5 个游戏分钟；读取 `value.events`，用 `first_observed_time` 取得发送时间。0.12／0.13 开发版使用的 `recent/game_time` 需要显式迁移；仅 API 主版本相同不足以保证旧气泡字段兼容，见[迁移说明](../docs/balloons.md#旧版-context-迁移)。
 
 把 [context_overlay_client.py](context_overlay_client.py) 放进自己 MOD 的包里，再把示例中的 `my_overlay_mod` 换成你的包名。SDK 不单独放进 Mods 文件夹，也不会帮你调模型或创建界面。[文档入口](../docs/index.md)汇总安装、API 和验收路径；[快速接入](../docs/quickstart.md)有完整的读写过程。
 
@@ -21,6 +21,14 @@ API 2.6.0 的 Context 气泡改为事件窗口，默认最近 5 个游戏分钟�
 
 需要准确参数时查 [API 参考](../docs/public-api-v2.md)。游戏本体的安装、升级和自检看[安装说明](../docs/install.md)。
 
-摄像机查询要求提供者声明 `context.camera_view`，范围和近似精度见[视锥查询契约](../docs/camera-view.md)。
+按所用能力检查提供方；SDK 会对新增参数检查相应能力并抛出 `capability_unavailable`：
 
-新接口的范围、预算和回查见[游戏内分层事件查询](../docs/event-views.md)，可执行的终端请求和 MOD 验收判据见[分层接口验收](../docs/event-views-validation.md)。
+| 用途 | 能力 |
+| --- | --- |
+| `get_context(..., balloon_window=...)` | `context.balloon_window` |
+| 历史 `entity_role/zone_visit` 筛选 | `history.membership` |
+| 落盘 Events 时间／字段／角色／访问筛选 | `event_views.event_filters` |
+| 当前区域地块外实体读取／原生采集 | `context.zone_scope` / `events.zone_scope`，调用方检查范围声明 |
+| 摄像机查询 | `context.camera_view`，精度见[视锥查询契约](../docs/camera-view.md) |
+
+分层接口的范围、预算和回查见[分层事件查询](../docs/event-views.md)，可执行请求和验收判据见[分层接口验收](../docs/event-views-validation.md)。

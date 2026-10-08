@@ -1,6 +1,6 @@
 # 摄像机视锥查询
 
-ContextOverlay 0.11.0 / API、SDK 2.3.0 新增 `context.camera_view`。调用方在游戏模拟线程按需调用 `get_camera_view`，取得当前区域中位于近似视锥内的实体摘要。查询本身不写历史、不创建分页快照、不启动轮询。
+调用方在游戏模拟线程按需调用 `get_camera_view`，取得当前区域中位于近似视锥内的实体摘要。查询本身不写历史、不创建分页快照、不启动轮询。能力标识为 `context.camera_view`，自 API 2.3.0 提供；当前适用版本见[文档入口](index.md)。
 
 接入前通过 `client.get_api_info()["capabilities"]` 检查 `context.camera_view`；SDK 会自动拒绝不支持此能力的提供者。完整示例见 [camera_view.py](../sdk/examples/camera_view.py)，复测步骤和已有证据见[视锥查询验收](camera-view-validation.md)。
 
@@ -36,7 +36,7 @@ complete = view["coverage"]["complete"]
 
 优先从 EA `get_fooptrint_polygon_bounds` 的局部占地边界及物体缩放，取得以实体世界坐标点为中心的近似球半径；其次使用可用的寻路半径；都不可用则使用坐标点。通用物体没有自己的 routing context 时，不把默认代理半径当成该物体尺寸。`bounds.method / radius / source / fallback_reasons` 记录实际依据。
 
-**占地与寻路半径均不是完整渲染包围盒**：高物体、动画中的 Sim、视觉模型偏移仍可能漏选；球与各平面的保守检测也可能在角落误选。`coverage.complete` 不承诺视觉精确。第一版支持范围是普通生活模式，包括暂停、旋转、缩放、跟随；建筑、购买、第一人称及 Tab 镜头不在首版保证范围。
+**占地与寻路半径均不是完整渲染包围盒**：高物体、动画中的 Sim、视觉模型偏移仍可能漏选；球与各平面的保守检测也可能在角落误选。`coverage.complete` 不承诺视觉精确。当前支持范围是普通生活模式，包括暂停、旋转、缩放、跟随；建筑、购买、第一人称及 Tab 镜头不在保证范围。
 
 `camera.freshness` 报告 `observed / unknown`、最近观测到客户端同步的 UTC 时间和墙钟秒数。监听 `camera.update` 仅记录常数大小的时效信息，不扫描实体。读档恢复、区域退出或不匹配的状态会清除／拒绝沿用旧时间；无法确认时效时仍可使用当前区域的有效 EA 状态，并标记 `unknown`（可能来自存档恢复）。不以超过某个时间阈值自动拒绝静止镜头，且 `render_frame_synchronized=False`。
 

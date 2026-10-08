@@ -1,12 +1,8 @@
 # 游戏内分层事件查询
 
-当前源码为 MOD 0.14.1，API / SDK 为 2.6.0。提供 `event_views.query`、`event_views.explain` 和 `event_views.durable_session`；公共方法从游戏线程调用，后台任务只处理日志和普通数据，无需游戏外服务。2.6.0 新增 `event_views.event_filters`，支持 Events 时间／字段／角色／访问筛选；Context 气泡改为事件窗口，新字段迁移见[气泡采集](balloons.md)。
+分层查询读取当前 session 已持久化的固定日志截点，提供 `records/events/organized/recap` 四个视图。公共方法从游戏线程调用，后台任务只处理日志和普通数据。适用版本见[文档入口](index.md)；基本能力为 `event_views.query`、`event_views.explain` 和 `event_views.durable_session`，Events 的时间／字段／角色／访问筛选另需 `event_views.event_filters`（API 2.6.0）。
 
-0.13.0 / API、SDK 2.5.0 起，原生采集范围扩至当前已加载区域内的非隐藏世界实例，包含地块外的人行道和公共空间；这些事件沿用 Records、Events、organized 和 recap 的整理路径。未加载区域的行为不会因此补录，旧日志的范围也不改写。
-
-0.13.1 补充观看运动比赛、听音乐、跳舞、电脑浏览、淋浴等活动及动画步骤规则，使用已记录的 mixer provider 身份归并气泡；未取得有效关系时保持独立。recap 气泡条目区分来源已知但活动未关联、来源事件不可用和未记录来源，具体字段见[气泡采集](balloons.md)。
-
-0.12.0 / API、SDK 2.4.0 增加[气泡采集](balloons.md)，0.12.1 修复原生请求的延迟来源关联：Records/Events 保存 `balloon.sent`，organized 将其列为 `balloon_signal` 事实，recap 增加 `balloons` 分区。气泡可以沿明确 cause 关联活动，分区条目及活动引用都能回查原事件修订；仅记录发送请求，不声称已显示或代表人物想法。
+原生采集覆盖当前已加载区域内的非隐藏世界实例，包含地块外的人行道和公共空间；未加载区域和旧日志缺失的事件不会补录。气泡在 Records／Events 中是 `balloon.sent`，organized 中是 `balloon_signal` 事实，recap 中有独立的 `balloons` 分区。活动关联规则见[整理与对账](event-quality.md)，气泡字段和迁移见[气泡事件与时间窗口](balloons.md)。
 
 先用 [Nova 的真实实例](event-layers-example.md)理解每层的条数、分类和来源关系。本页给出准确接口契约；实际调用与验收见[分层接口验收步骤](event-views-validation.md)。
 
@@ -17,7 +13,7 @@
 | `records` | `{item_id, record}`，record 是原日志 JSON | 人物最终关联事件的完整修订链、结构上关联的 observation、共享 session/zone 边界 |
 | `events` | `{item_id, event}`，event 是完整最新修订 | 按实体索引选中的事件，包含内部事件，不应用内存 FIFO |
 | `organized` | `{item_id, kind:"unit", lane, unit}` 或 `{item_id, kind:"standalone", event_id, revision, category, recap_disposition, evidence_ref}` | 全部来源具有单元成员关系或独立入口，补入依赖上下文 |
-| `recap` | `{item_id, section, value}` | 默认阅读内容；section 为 activities/results/relationship_observations/states/review_actions |
+| `recap` | `{item_id, section, value}` | 默认阅读内容；section 为 activities/results/relationship_observations/states/review_actions/balloons |
 
 组织层保留背景、技术细节、未知项、外部事件，并用引用压缩字段；完整候选评分、原始名称等从同源 events/revisions 回查。standalone 的 recap_disposition 表示默认阅读策略去向，不表示来源删除。实体索引相关不等于参与或知情。
 
@@ -41,9 +37,7 @@ organized = client.query_event_view(
 
 上述代码只创建请求。后续游戏回调中先调用 `get_event_view_status`，只有 `state=ready` 才取首个 cursor，再由后续回调使用 `get_event_view_page` 和 next_cursor 逐页读取；failed 时展示 error 并关闭请求。用完两层后分别 `close_event_view`。可直接采用[逐回调示例](../sdk/examples/event_views.py)，其 `tick()` 每次仅轮询状态或处理一页，同步 SDK 异常由调用方捕获。消费者处理并释放页面，避免把数千条完整记录同时保存在 UI 内存。
 
-签名：`query_event_view(view="recap", kind="sim", identifier="active", *, source="durable_session", source_snapshot_id=None, profile="recap_v1", page_size=20, expected_session_id, from_ticks=None, to_ticks=None, fields=None, entity_role=None, zone_visit=None, order="asc")`。支持 Sim/Object 的实例 ID，recap 首版仅支持 Sim。明确的历史 ID 不要求实例仍在地块或 FIFO；active 在请求开始时解析。
-
-新增筛选仅用于 `view="events"`：`from_ticks/to_ticks` 按 `first_observed_time` 的游戏 ticks 筛选，范围 `[from, to)`；`fields` 为非空且不重复的字段列表；`entity_role` 同时匹配目标 ID 与角色；`zone_visit` 限定一次区域访问；`order` 为 asc/desc。未指定的条件不筛选，事件缺少被要求的时间／角色／访问不匹配。气泡示例为 `fields=["balloon.sent"], entity_role="subject"`。条件写入页面 scope 和快照身份，空窗口正常返回 0 项，来源中根本没有目标人物则仍报 entity_not_recorded。组织层使用完整来源，不能在组织之前裁掉依赖事件，因此其他视图暂不接受这些筛选。
+签名：`query_event_view(view="recap", kind="sim", identifier="active", *, source="durable_session", source_snapshot_id=None, profile="recap_v1", page_size=20, expected_session_id, from_ticks=None, to_ticks=None, fields=None, entity_role=None, zone_visit=None, order="asc")`。支持 Sim/Object 的实例 ID，recap 当前仅支持 Sim。明确的历史 ID 不要求实例仍在当前区域或内存历史中；active 在请求开始时解析。
 
 状态包含 schema_version（2）、view_schema_version（event_views_v1）、session_id、request_id、source_snapshot_id、view、state。ready 提供 snapshot_id、total_matches、首个 cursor、build_ms；failed 提供 error.code/message，失败不会返回空数据成功。关闭 building 请求即取消构建，也可释放 ready/failed 请求。
 
@@ -52,6 +46,20 @@ organized = client.query_event_view(
 每页 1–100 项，默认 20；512 KiB 编码内容上限可使一页少于 page_size。按整个返回字典的紧凑 UTF-8 JSON 计费，包括元数据、快照身份、游标、items 数组和分隔符；预留足够的偏移数字空间后确定分页边界。单项连同返回字段无法容纳时明确报 view_budget，不截断字段。游标不可自行构造，与旧 history 游标不通用。
 
 organized 的单元按阅读引用 r1、r2、… 的数值顺序排列，再按 e1、e2、… 排列独立来源；lineage 也使用证据引用的数值顺序。首次构建、缓存命中和同源文件导出使用相同顺序，不依赖 JSON 对象键的迭代顺序。
+
+## Events 时间窗口筛选
+
+以下筛选仅用于 `view="events"`，要求能力 `event_views.event_filters`。不同条件取交集；未指定的条件不筛选。
+
+| 参数 | 约定 |
+| --- | --- |
+| `from_ticks/to_ticks` | 按 `first_observed_time` 的游戏 ticks 筛选，范围 `[from, to)`，None 不设该侧边界 |
+| `fields` | 非空且不重复的字段列表，例如 `["balloon.sent"]` |
+| `entity_role` | 同时匹配目标 ID 与角色，例如气泡所属人物用 `subject`；非空字符串，最长 64 字符 |
+| `zone_visit` | 非负整数，限定本 session 的某次区域访问 |
+| `order` | `asc` 或 `desc`，默认 asc；筛选结果按首次观测时间及首次记录顺序排序 |
+
+事件缺少被要求的时间／角色／访问时不匹配。条件写入页面 scope 和快照身份；人物在来源截点已有事件、筛选后无匹配时正常返回 0 项。来源截点没有该人物的任何事件时，Events 报 `entity_not_recorded`，即使已有该人物的状态观察。其余视图使用完整会话来源，不接受这些筛选或倒序参数，以免裁掉组织所需依赖；默认的 `order="asc"` 不改变其原有阅读顺序。实际窗口示例见[气泡查询](balloons.md)，逐项判据见[窗口验收](event-views-validation.md#气泡时间窗口与-events-筛选)。
 
 ## 同源解释
 
@@ -73,7 +81,7 @@ explanation = client.explain_event_view(
 | events | 关联来源完整最新事件，包括补入依赖 |
 | units | 关联组织单元 |
 
-活动解释包含明确挂接的结果、状态转移、决策。r54 等短引用可作当前 recap 快照的别名，持久主键用 item_id。条目不属于指定视图时报 item_not_in_view；需要先打开同源另一层，不可将另一层 ID 直接套用。
+活动解释包含明确挂接的结果、气泡、状态转移和决策。r54 等短引用可作当前 recap 快照的别名，持久主键用 item_id。条目不属于指定视图时报 item_not_in_view；需要先打开同源另一层，不可将另一层 ID 直接套用。
 
 ## 来源与预算
 

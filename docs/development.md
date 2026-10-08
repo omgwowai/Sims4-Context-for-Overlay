@@ -12,11 +12,11 @@
 
 视锥查询使用 `api_camera_view` 驱动操作，参数同样放在 `params`。几何、扫描预算与相机时效的回归入口，以及普通生活模式的实机复测步骤见[视锥查询验收](camera-view-validation.md)。
 
-游戏基线为 `1.126.73.1030`，嵌入式 Python 3.7，字节码魔数 `420d0d0a`。本机游戏在 `D:/Games/The Sims 4`，参考仓库在 `C:/sources/sims4-python`，主要源码为 `ea-source/EA/`；参考提交由 `src/context_overlay/__init__.py` 的 `EA_REFERENCE_COMMIT` 指定。
+游戏基线为 `1.126.73.1030`，嵌入式 Python 3.7，字节码魔数 `420d0d0a`。本文命令以游戏目录 `D:/Games/The Sims 4`、参考仓库 `C:/sources/sims4-python` 为例，请替换成自己的路径。参考仓库的主要源码位于 `ea-source/EA/`，提交由 `src/context_overlay/__init__.py` 的 `EA_REFERENCE_COMMIT` 指定。
 
 当前固定使用上述游戏版本开发与验收，尚不自动识别运行时游戏版本。MOD 的资源规则继续使用构建参考版本；实际升级游戏前，需要重新核对资源、分类规则与验收结果。
 
-先核对实际发送点、参数、返回、默认值、加载时机及反编译来源，必要时对照游戏字节码。Atlas 只用于定位，旧 Experience 只用于必要的实现经验；自研 MOD 示例不能当作游戏内置接口。是否可用最终由目标游戏版本中的行为验证。
+先核对实际发送点、参数、返回、默认值、加载时机及反编译来源，必要时对照游戏字节码。检索工具和其他 MOD 只能提供定位或实现线索，不能当作游戏内置接口证据。是否可用最终由目标游戏版本中的行为验证。
 
 ## 检查与构建
 
@@ -33,9 +33,9 @@ python -B -X utf8 -m unittest discover -s tests -v
 下面的解释器、游戏安装目录和参考仓库路径是开发机示例，换成自己的路径。在仓库根目录执行：
 
 ```powershell
-$py = "$env:LOCALAPPDATA/Sims4ContextDev/python37/python.exe"
-& $py -B -X utf8 scripts/build_resource_catalog.py --game "D:/Games/The Sims 4" --reference "C:/sources/sims4-python"
-& $py -B -X utf8 scripts/build.py --strings .local/resource-semantics/strings_zh.json --string-sources .local/resource-semantics/string_sources.json
+$coPython = "C:/path/to/python37.exe"
+& $coPython -B -X utf8 scripts/build_resource_catalog.py --game "D:/Games/The Sims 4" --reference "C:/sources/sims4-python"
+& $coPython -B -X utf8 scripts/build.py --game "D:/Games/The Sims 4" --strings .local/resource-semantics/strings_zh.json --string-sources .local/resource-semantics/string_sources.json
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install.ps1 -NonInteractive
 ```
 
@@ -70,6 +70,8 @@ JSONL 通过共用离线读取层扫描并计算整个输入文件的哈希，�
 
 输入约定为已完成日志或稳定副本，recap 生成额外重读哈希检查读取期间的变化。旧版仅有 hash、未记录 localization 证据的名称请使用 Git 中对应版本的工具处理。当前快照只有输入 Context 自身提供时才展示，不能从日志恢复完整历史时刻状态。
 
+0.14.1 支持只读展示 0.12／0.13 Context 导出的旧气泡 `recent/game_time`，保留“旧版气泡缓存快照”与截断提示；不将旧缓存转换成完整时间窗口。当前气泡接口形状见[迁移说明](balloons.md#旧版-context-迁移)。
+
 完整 JSON 必须显式选择 `--format json`，保留全部事件和原始事实，不受 Markdown 内部层筛选影响；输入文件不会被覆盖。旧的两个位置参数命令现在默认 Markdown，JSON 输出路径须同时加 `--format json`。
 
 可显式应用 v2 目录重新解析文本：
@@ -84,7 +86,7 @@ python -B -X utf8 scripts/translate.py "输入.json" "报告.md" --strings .loca
 
 `scripts/filter_events.py` 在最终修订之上再做一层规则筛选，用来研究哪些细节不需要单独出现在人物经历里。它保留离线命令入口，核心由分层 API 的 organized/recap 共用；旧游戏历史及 Context 接口不应用这些规则。
 
-输入目前只接受当前版本的一次运行 `journal.jsonl`，使用已结束运行的日志或稳定副本。包含全日志中已被内存淘汰的事件，以及内部层事件；按人物筛选采用实体关联索引，不等于该人物看见了这些事。
+输入是读取器支持结构的单次运行 `journal.jsonl`，使用已结束运行的日志或稳定副本；旧日志不会补出当时未捕获的事件。包含全日志中已被内存淘汰的事件，以及内部层事件；按人物筛选采用实体关联索引，不等于该人物看见了这些事。
 
 ```powershell
 python -B -X utf8 scripts/filter_events.py "某次运行/journal.jsonl" --entity sim:123
@@ -122,7 +124,7 @@ python -B -X utf8 scripts/experience_view.py "某次运行/journal.jsonl" --enti
 
 | 字段 | 用途 |
 | --- | --- |
-| `consumer_packet` | 供下游读取的紧凑事实摘要：活动内嵌结果和决策，状态按主体形成时间线，背景信号分组；时间按分钟展示 |
+| `consumer_packet` | 供下游读取的紧凑事实摘要：活动内嵌结果、气泡和决策，状态按主体形成时间线，背景信号分组；时间按分钟展示 |
 | `organized` | 详细的活动、结果、区间、决策和关联依据；保留原始时间精度 |
 | `details / review / external` | 默认摘要未展开的执行细节、未解释内容、外部事件引用；外部 payload 仍从原日志读取，不按游戏事实解释 |
 | `audit.evidence` | 短证据编号到事件 ID、修订、输出单元或省略原因的对应关系，标记从实体索引范围外补入的证据 |
@@ -143,7 +145,7 @@ Buff 按实际主体、资源和地块访问配对；缺失、重复或不连续
 
 ## 游戏调试
 
-常用命令见[安装与使用](install.md)。`co.export` 选择字段时用逗号分隔；`co.status` 核对当前 session、队列、记录器错误、窗口、事件源和 Autonomy 状态。`co.restart` 重读配置并开始新运行，旧查询失效。
+常用命令见[安装与使用](install.md)。`co.export` 选择字段时用逗号分隔；`co.status` 核对当前 session、队列、记录器错误、窗口、气泡来源追踪和 Autonomy 状态。`co.restart` 重读配置并开始新运行，旧查询失效。自定义气泡窗口和角色／访问筛选使用公共 API 或对应驱动参数，示例见[窗口验收](event-views-validation.md#气泡时间窗口与-events-筛选)。
 
 Overlay 手动自检使用 `co.api_test` → `co.api_verify` → `co.api_inspect`。普通旅行后只执行 `co.api_verify` 与 `co.api_inspect`，核对历史续接；不要先重跑自检覆盖基准。`tests/test_travel_history.py` 使用真实 Runtime／Journal 和 EA 服务替身覆盖旅行、往返、读档隔离、清理失败及查询连续性，实机复测按[安装说明的游戏内自检](install.md#游戏内自检)。
 
@@ -182,14 +184,15 @@ co.history_query [sim/object] [ID/active] [每页条数] [包含内部步骤] [�
 | `external_rate_per_second / external_burst` | 全部外部生产者共用：每现实秒 20 条 / 突发 40 条 |
 | `autonomy_top_n / autonomy_pending_capacity` | 每层 5 项 / 每组 256 条 |
 | `autonomy_pending_memory_mb / autonomy_pending_ttl_seconds` | 两组共 8 MiB / 600 秒现实时间 |
+| `export_views_on_stop` | true；正常结束后自动生成分层文件 |
 | `development_driver` | false |
 
-这些是不同预算，不可把 200000 条视为内存保证。旧 `record_need_changes`、`sample_interval_sim_minutes` 已不支持；需求与关系仅按 Context 请求读取当前值。
+这些是不同预算，不可把 200000 条视为内存保证。分层查询／导出配置集中在[来源与预算](event-views.md#来源与预算)。气泡 Context 没有独立最近缓存，临时请求来源的固定预算见[气泡说明](balloons.md#organized--recap)。旧 `record_need_changes`、`sample_interval_sim_minutes` 已不支持；需求与关系当前值通过 Context 读取，明确 Loot 操作中的直接数值通知另以事件记录，不是定时采样。
 
 ## 复测工具
 
 - `scripts/validate_run.py`：日志完整性和实际观察到的事件统计；不等于场景全部验收。
-- `scripts/audit_event_hooks.py`：用 Python 3.7 核验事件与 Autonomy 的原生字节码入口；受控行为测试统一由 `unittest` 运行。
+- `scripts/audit_event_hooks.py`：用 Python 3.7 核验事件、Autonomy 和气泡的原生字节码入口；受控行为测试统一由 `unittest` 运行。
 - `scripts/audit_localization.py`：使用资源目录对已有文本审计。
 - `scripts/benchmark.py`：同一负载下测量 FIFO、身份清理、近期查询与分页耗时。
 - `scripts/game_request.py`：向显式开启的开发驱动提交白名单请求，不能执行任意代码。

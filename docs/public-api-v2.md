@@ -2,7 +2,7 @@
 
 第一次接入先看[快速接入](quickstart.md)；不确定应该读取当前 Context、历史 Events 还是四层事件视图时，先看[读取指南与能力矩阵](reading-guide.md)。需要查准确参数时再回到这页。当前 API / SDK 是 **2.6.0**，schema 是 **2**；当前源码对应 **ContextOverlay 0.14.1**。
 
-新增的 records/events/organized/recap 查询使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。以下现有历史接口仍保持原语义。
+`records/events/organized/recap` 使用后台构建和同源分页，见[游戏内分层事件查询](event-views.md)。本页说明同步 Context、保留历史、增量、写入和空间查询；气泡窗口另有[完整示例与迁移说明](balloons.md)。
 
 直接调用用 `context_overlay.api`；希望统一处理“没安装、版本不匹配、分页关闭”等情况，可以用 `sdk/context_overlay_client.py`。两者提供同一套读写能力。
 
@@ -11,7 +11,9 @@ Context、历史、增量、附近实体与视锥查询同步返回普通 JSON �
 
 ## 版本与迁移边界
 
-当前 SDK 为 2.6.0，适配 API 2.6.0 / schema 2。API 2 默认混合历史，新增 `external_event` 类型和 `origin/producer` 字段；下游 MOD 应使用当前 SDK 和能力声明，不依赖已删除的 v1 契约。离线工具仍可按输入日志自身的 schema 处理旧数据，但旧日志不代表当前运行时兼容性。
+当前 SDK 为 2.6.0，按 API 主版本 2、schema 2 及具体能力协商，不要求提供方的 MOD 版本完全相同。API 2 默认混合游戏与外部历史；`external_event` 及 `origin/producer` 描述来源。离线工具按输入日志自身的 schema 处理旧数据；旧日志可读不代表运行时接口无需迁移。
+
+API 2.6.0 将此前 0.12／0.13 开发版本的气泡 Context 从 `value.recent/game_time` 改为 `value.events/first_observed_time`。这是需要显式迁移的字段变化，不能仅凭 API 主版本相同假定旧气泡读取代码仍兼容。通过 `context.balloon_window` 或 `balloons.context_format` 判断新格式，详见[旧版 Context 迁移](balloons.md#旧版-context-迁移)。
 
 `get_context`、`query_history` 的 `origins=None` 表示全部来源，`["game"]`／`["external"]` 表示只查一类；`producers=["example.overlay"]` 仅匹配对应外部生产者，与其余条件取交集。数组不能为空，最多 64 项且不重复。类型／结果等游戏专用筛选自然排除不具备对应字段的外部记录。
 
@@ -64,6 +66,8 @@ status = client.get_status()  # 有活动运行时须在游戏线程。
 | `capabilities` | 能力列表，例如 `context.read`、`history.query`、`events.append`、`history.changes`、`event_views.query`；按所用接口检查相应能力 |
 | `context_fields`、`default_fields` | 支持的字段与 Sim／Object 的默认选择 |
 | `nearby` | 附近查询类型、指标、单位、返回数、扫描预算和半径限制；能力为 `context.nearby_entities` |
+| `balloons` | 事件类别、窗口格式、默认游戏分钟和返回上限；`context_storage=canonical_events`，不提供当前屏幕可见性查询 |
+| `event_views` | 分层类型、解释能力及时间范围；只有 Events 支持时间／字段／角色／访问筛选 |
 | `resource_text` | 可选 name／description／tooltip 文本证据，能力为 `text.resource_details`；官方中文词表与 MOD 覆盖边界见[资源语义目录](architecture.md) |
 | `max_history_page_size`、`max_context_history_limit` | 请求单页／近期条数上限，各为 500 |
 | `thread_policy`、`transport` | `simulation_thread`、`in_process_python` |
@@ -75,7 +79,7 @@ API 2.5 增加 `context.zone_scope` 和 `events.zone_scope`：Context、附近�
 
 `ready=true` 表示运行初始化完成，不意味着记录器一定健康。`modules` 包含 `collector_enabled`、`recorder_enabled`、`semanticizer_enabled`；记录器的 `state/error/persistence` 单独报告。字段、资源名称和单条事件也有各自可用性，不应压成一个全局成功布尔值。
 
-SDK 检查 API 主版本为 2、schema 为 2，接受兼容的 2.x 小版本；不固定准确 MOD 版本。API 2.x 保持已公开的方法和现有字段含义，允许增加可选参数、字段和能力；消费者忽略未知附加字段，对状态／枚举保留未知分支。删除接口或改变既有语义需升级 API 主版本，数据不兼容变化需升级 schema。内部 Python 模块不属于这个承诺。
+SDK 检查主版本和 schema，并在调用新参数时检查对应能力：`balloon_window` 需要 `context.balloon_window`，历史角色／访问筛选需要 `history.membership`，落盘 Events 筛选需要 `event_views.event_filters`。消费者应忽略未知附加字段，对状态／枚举保留未知分支，并遵循上面的气泡迁移要求。内部 Python 模块不属于公共接口契约。
 
 ## 旅行与会话范围（API 2.1）
 
@@ -110,6 +114,8 @@ get_context(kind="sim", identifier="active", *, fields=None,
 | `include_internal` | 是否包含内部步骤，默认 false |
 | `representation` | `raw`、`text`、`both`；text/both 均附带原始证据及 rendered，并非返回单个字符串 |
 | `expected_session_id` | 可选运行约束；与当前运行不同则拒绝，不自动改用新存档的数据 |
+| `origins/producers` | 筛选附带的普通近期历史，不筛选当前字段或气泡窗口；None 为全部来源 |
+| `balloon_window` | 仅用于 Sim 且所选字段包含 `balloons`。`past_sim_minutes` 为正数、最多 10080；或同时提供 `from_ticks/to_ticks`，两者互斥。`limit` 为 1–500，默认 50；详见[气泡窗口](balloons.md) |
 
 全部字段为 `identity`、`location`、`time`、`interactions`、`needs`、`buffs`、`relationships`、`object_states`、`balloons`。默认 Sim 请求前七项及 `balloons`，Object 请求 `identity/time/location/object_states`。显式请求不适用的字段会得到 `not_applicable`，不会替换成 0。
 
@@ -129,9 +135,9 @@ history = {status, events, coverage?, target_observation?, limit?, truncated?, .
 rendered? = {language, rules_version, current, history} 或 {status:"disabled", reason}
 ```
 
-`complete` 仅表示本次请求没有被模块／字段不可用阻断，不保证名称全部翻译成功、历史完整或全部事件已写盘。字段状态包括 `available`、`not_present`、`not_applicable`、`unsupported`、`out_of_scope`、`disabled`、`error`；名称的 `unresolved_tokens/no_display_name` 等是另一层状态。
+`complete` 表示所请求的当前字段可用、请求的普通历史处于 recording 状态，且所查气泡窗口没有已报告的分页或保留缺口；请求 `text/both` 时还要求语义化已启用。它不保证名称全部翻译成功、普通近期历史完整或全部事件已写盘。字段状态包括 `available`、`not_present`、`not_applicable`、`unsupported`、`out_of_scope`、`disabled`、`error`；名称的 `unresolved_tokens/no_display_name` 等是另一层状态。
 
-关闭记录器或记录失败时，Context 仍可读取当前状态，所附历史明确标记 `disabled/failed`，包为 partial。关闭语义化时原始数据仍返回，rendered 标记 disabled。关闭 Collector 时 `get_context` 抛 `collector_disabled`，历史接口仍可调用。范围外实体的当前字段标为 out_of_scope，历史是否曾观测由 `target_observation` 说明。
+关闭记录器或记录失败时，Context 仍可读取当前状态，所附历史明确标记 `disabled/failed`，包为 partial。关闭语义化时，`text/both` 请求仍返回原始数据，rendered 标记 disabled，包为 partial；`raw` 请求不受该开关影响。关闭 Collector 时 `get_context` 抛 `collector_disabled`，历史接口仍可调用。范围外实体的当前字段标为 out_of_scope，历史是否曾观测由 `target_observation` 说明。
 
 返回值已复制为 JSON 数据，下游修改字典不会更改记录器。所有 ID 和 ticks 输出使用字符串以保留精度；数值需求是游戏内部单位，不是百分比。
 
@@ -453,10 +459,10 @@ EA Python 中存在 `build_buy.get_room_id` 原生别名，并在房间物件筛
 
 当前字段、事实关联及概率解释见[架构与采集语义](architecture.md)。SDK 包附带[Context 合成样例](../sdk/examples/context-packet.json)、[附近实体合成样例](../sdk/examples/nearby-packet.json)和消费代码示例；样例不作为实机证据。
 
-## 这轮怎么试
+## 接入验收与反馈
 
-先给团队接到自己的 MOD 里用：读一份 Context，写一条自己的 JSON，再查回来。接着试来源筛选、无实体记录、增量、重复提交和旅行。安装包带 SDK 和例子，模型与 UI 由自己的 Overlay 负责。[快速接入](quickstart.md)可以从头跟着做。
+按[快速接入](quickstart.md)在自己的 MOD 中读取 Context、写入一条 JSON 并查回，再验证来源筛选、无实体记录、增量、重复提交和旅行。事件窗口及同源四层的手动判据见[分层接口验收](event-views-validation.md)。
 
 游戏内现有实体历史窗口默认显示混合事件并支持来源筛选；外部行显示生产者、时间和关联实体，详情以纯文本 JSON 分段展示，不约定展示文本字段。无实体记录用全局 API 或离线报告查看。
 
-有问题就把操作步骤、版本、错误码和相关日志片段发回来，payload 只分享排查需要的部分。我们先收一轮接入反馈，再决定下一步。当前测过什么看[验证摘要](validation.md)。
+反馈包含操作步骤、版本、错误码和相关日志片段；payload 只分享排查需要的部分。当前实测与离线验证范围见[验证摘要](validation.md)。

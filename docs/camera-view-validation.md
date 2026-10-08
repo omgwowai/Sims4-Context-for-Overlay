@@ -1,6 +1,6 @@
 # 视锥查询验收
 
-当前复测步骤适用 MOD 0.13.0 / API、SDK 2.5.0 / schema 2；历史样本保留实际采集版本。接口参数、覆盖和近似约定见[视锥查询](camera-view.md)，项目其他能力的证据见[验证摘要](validation.md)。
+复测步骤适用[文档入口](index.md)标注的当前版本，需提供者声明 `context.camera_view`；历史样本保留实际采集版本。接口参数、覆盖和近似约定见[视锥查询](camera-view.md)，项目其他能力的证据见[验证摘要](validation.md)。
 
 ## 离线回归
 

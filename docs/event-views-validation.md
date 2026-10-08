@@ -1,6 +1,6 @@
 # 分层接口验收步骤
 
-适用 **MOD 0.10.10 / API、SDK 2.2.0 / schema 2 / event_views_v1**。本页给出可重复执行的验收步骤，实际通过范围和限制见[验证记录](validation.md)。可以由下游 MOD 开发者执行，也可以由测试者手动加载游戏后从终端发送请求，不需要 Computer Use。退出后还应检查[完整结束与自动分层文件](run-output.md)。
+适用 **MOD 0.14.1 / API、SDK 2.6.0 / schema 2 / event_views_v1**。本页提供四层、Events 时间窗口和证据回查的复测步骤，实际通过范围见[验证摘要](validation.md)。由下游 MOD 开发者在游戏回调中执行，或由测试者手动加载游戏后从终端发送请求；退出后检查[完整结束与自动分层文件](run-output.md)。
 
 ## 接口入口
 
@@ -19,7 +19,7 @@
 
 ## 准备手动游戏测试
 
-1. 从当前源码构建并安装 0.10.10，步骤见[开发说明](development.md#检查与构建)。使用与源码 manifest 匹配的构建包；不要拿旧版 ZIP 验收新接口。安装前退出游戏。
+1. 安装当前 0.14.1 发行包，或按[开发说明](development.md#检查与构建)构建与当前源码 manifest 匹配的脚本。通过 `api_info` 核对实际版本和能力；安装前退出游戏。
 2. 使用 MOD 自己的回调验收时不必打开开发驱动。要使用下方终端命令，在游戏用户目录 `ContextOverlay/config.json` 的现有对象中设 `"development_driver": true`，保留其他配置。先备份配置，测试后还原。使用复制存档隔离测试时也可采用[现有测试环境工具](development.md#实机测试环境与请求)。
 3. 手动启动游戏、加载可操控 Sim 的地块，正常运行一小段，确保产生了已落盘记录。以下命令在源码仓库根目录的 PowerShell 运行；SDK/Windows 分发包不包含开发请求脚本。
 
@@ -87,15 +87,17 @@ $coViews.GetEnumerator() | ForEach-Object {
 
 四个请求的 `source_snapshot_id` 必须相同；对应页面的 `scope.as_of_sequence/source_sha256/source_byte_offset` 也必须相同。不要靠连续发四次不带 source 的请求来假定同源。请求在闲置 300 秒后会过期，做下一步前及时读取；需要长时间停留时由 MOD 回调续读状态。
 
-0.10.6 的回归场景应包含约一游戏日的日志，保留 records 和 events 请求，再构建 organized 和 recap；在来源、内存及时间预算内，四层都应 ready。另开同源 organized 请求，完整读取并按顺序比较 item_id 与内容，再与相同 source_sha256、规则哈希的文件导出比较。不能只将数组转为字典后比较，否则会漏掉缓存顺序变化。实际预算失败仍必须明确报告，不以截断数据通过验收。
+完整分页和负载检查使用固定来源，按下表选择相称的场景。预算超限必须明确失败，不以截断数据通过验收。
 
-0.10.7 还应覆盖超过一游戏日、约 110 MB 的真实来源。先确认 metrics 中默认内存为 `4294967296` 字节；四人物分别完成四层全量分页、缓存命中和六类解释，与同源文件逐项按顺序相等。性能对照必须使用同一原始前缀，分别在独立 Python 3.7 进程运行旧包和新包，记录 Windows 峰值工作集及提交量，同时记录耗时。旧包为进入构建可显式设 4 GiB；新包使用默认值。实际 RunArtifacts worker 仍需在 120 秒及正常让步调度下完成。旧 512 MiB 的保守构建预留未重新标定，不应以实测工作集较低就宣布旧预算也可通过。
+| 场景 | 通过标准 |
+| --- | --- |
+| 一游戏日以上、多人物来源 | 保留 records／events 请求，再构建 organized／recap；在预算内全部 ready。同源重读按顺序比较 item_id 和内容，不能只转为字典比较 |
+| 解码缓存与受限预算 | `decoded_shared` 和 `decode_on_demand` 使用同一来源及 coverage，结果一致；缓存计入估算内存，取消、回收和新来源构建不破坏已发布页面 |
+| 大于 128 MiB 的来源 | 不因旧总字节上限拒绝；记录数、单行、内存和时间预算仍适用。旧 `event_view_source_mb` 配置不会恢复已取消的上限 |
+| 完整页面预算 | 四层及解释页的整个返回字典按紧凑 UTF-8 JSON 编码后不超过 512 KiB，包含元数据、游标和分隔符；与同源查询的内容和顺序一致 |
+| 性能对照 | 同一冻结前缀、独立 Python 3.7 进程，同时记录耗时、峰值工作集和提交量；不把旧版本样本写成当前游戏帧率保证 |
 
-0.10.8 增加两条路径的对照：默认预算下 `derivation_cache.mode=decoded_shared`，受限预算下为 `decode_on_demand`。使用同一完整来源和相同 coverage，逐字节比较全部内容文件。查询测试需覆盖多人物共享解码、解码中取消、预算紧张回收、加载新来源时回收、关闭后归零，以及上述情况下旧页面仍可读且不受调用者修改影响。不要把解码缓存排除在估算用量之外，也不要为启用缓存而减少原有构建预留。
-
-0.10.9 增加超过 128 MiB 来源的默认配置回归：四层必须完成分页，导出必须覆盖同一来源序号／字节截点，不能再因旧来源大小上限失败。旧配置文件含 `event_view_source_mb` 时仍能加载，且该字段不会恢复上限。低内存、取消、超时、记录／单行校验、页面及输出预算仍按原契约验收。
-
-0.10.10 补充完整页预算检查：对 get_event_view_page 返回的整个字典执行 `json.dumps(page, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")).encode("utf-8")`，长度不得超过 512 KiB；元数据、身份、游标及分隔符也计入。四层及解释接口均检查全部页面，内容应与相同来源的大页查询一致；专项回归另覆盖空页、单项页和恰好／不足 1 字节的预算。
+精确页编码使用 `json.dumps(page, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")).encode("utf-8")`。默认内存估算为 4 GiB、构建时限为 120 秒；预算含义见[来源与预算](event-views.md#来源与预算)。空页、单项页及恰好／不足 1 字节等边界由自动化夹具验证。
 
 完整遍历可用下面的终端循环。页面逐份保存到 `$coEvidence`，只保留当前页在内存中；最终项数必须等于各自 `total_matches`。`next_cursor=null` 表示遍历完成，不代表当前 session 的全部后续事件已经出现。
 
@@ -122,6 +124,50 @@ foreach ($view in @('records', 'events', 'organized', 'recap')) {
 ```
 
 完整四层遍历主要用于验收；实际 UI 默认请求 recap，按需展开详情。此循环每 30 秒续读各请求状态；使用 MOD 接入时也应由回调维持仍需保留的请求，避免超过闲置 TTL。
+
+## 气泡时间窗口与 Events 筛选
+
+先确认 `api_info.capabilities` 包含 `context.balloon_window`、`history.membership` 和 `event_views.event_filters`。沿用上面固定的人物和 session，读取一个最多返回 2 条的 60 游戏分钟窗口，再用返回的边界查询落盘 Events：
+
+```powershell
+$coContext = Invoke-Co api_context @{
+    kind = 'sim'; identifier = $coSimId; fields = @('balloons')
+    include_history = $false; expected_session_id = $coSession
+    balloon_window = @{ past_sim_minutes = 60; limit = 2 }
+}
+$coBalloonField = $coContext.snapshot.balloons
+if ($coBalloonField.status -ne 'available') { throw ($coBalloonField | ConvertTo-Json -Depth 20) }
+$coWindow = $coBalloonField.value
+$coBalloonView = Wait-CoView (Invoke-Co api_view @{
+    view = 'events'; kind = 'sim'; identifier = $coSimId; page_size = 2
+    from_ticks = $coWindow.window.from_ticks; to_ticks = $coWindow.window.to_ticks
+    fields = @('balloon.sent'); entity_role = 'subject'; zone_visit = $coWindow.zone_visit
+    order = 'desc'; expected_session_id = $coSession
+})
+try {
+    $coBalloonCursor = $coBalloonView.cursor
+    do {
+        $coBalloonPage = Invoke-Co api_view_page @{ cursor = $coBalloonCursor; expected_session_id = $coSession }
+        $coBalloonPage.items
+        $coBalloonCursor = $coBalloonPage.next_cursor
+    } while ($null -ne $coBalloonCursor)
+} finally {
+    Invoke-Co api_view_close @{ request_id = $coBalloonView.request_id; expected_session_id = $coSession }
+}
+```
+
+落盘截点可能落后于 Context 的 `as_of_sequence`，核对页面的 `scope.as_of_sequence` 后再比较。需要包含新近写盘的事件时重新打开请求，旧请求不会自动前进。另用 Context 返回的 `history_query` 参数建立保留历史查询，比较事件 ID、修订、payload 与 cause；持久化标记可以从 accepted 变为 written。
+
+| 检查 | 通过标准 |
+| --- | --- |
+| 时间、人物与访问 | 使用 `[from_ticks, to_ticks)` 和 `subject` 角色，只匹配该人物在指定 `zone_visit` 的发送；暂停不推进游戏时间窗口 |
+| 单次上限与完整性 | 超过 2 条时 `has_more=true`，Context 为 partial；分页后的匹配数与冻结查询的 total_matches 一致。上限不删除事件 |
+| 空窗口 | 人物在来源截点已有事件、筛选后无匹配时返回 0 项；没有任何事件时 Events 报 entity_not_recorded，仅有状态观察也不例外 |
+| 错层筛选 | 将时间／字段／角色／访问筛选用于 organized／recap／records，必须拒绝，不能静默裁掉依赖 |
+| 内存缺口 | Context 的 retention_gap 是保守提示；从落盘 Events 核对已持久化内容。淘汰故障使用离线夹具，不修改真实日志 |
+| 回查 | recap 的 balloons 条目均可解释到原事件／修订；来源已知但活动未关联时仍保留来源动作 |
+
+这组查询不能证明 Inspector 可点击或气泡当前可见；界面另按[Inspector 与气泡检查](install.md#inspector-与气泡检查)验收。
 
 ## 从阅读项回查依据
 

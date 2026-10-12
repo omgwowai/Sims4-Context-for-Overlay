@@ -125,11 +125,15 @@ Autonomy 是事件记录模块的新增采集源，默认开启，沿用当前�
 
 ### 文本依据
 
-资源名称与描述来自本机游戏资源，不按英文 tuning 名猜译，不使用 LLM。`scripts/build_resource_catalog.py` 直接读取安装目录中的官方 STBL 与 combined tuning，使用 `sims4-python/tools/dbpf.py` 和 `extract_tuning.py` 的只读解码器；输出中记录游戏版本、解码器／字段映射摘要和配置来源。
+资源名称与描述来自本机游戏资源，不按英文 tuning 名猜译，不使用 LLM。`scripts/build_resource_catalog.py` 直接读取安装目录中的官方 `CHS_CN`、`ENG_US` STBL 与 combined tuning，使用 `sims4-python/tools/dbpf.py` 和 `extract_tuning.py` 的只读解码器；输出中记录游戏版本、语言、解码器／字段映射摘要和配置来源。
 
 先按 `Resource.cfg`／`ResourceClient.cfg`／`ResourceSimulation.cfg` 的 `Priority` 选择**同一完整 TGI（type、group、instance）** 的资源。优先级相同且内容不同则保留冲突。之后才合并已选 STBL：不同有效 TGI 使用同一字符串键且文本不一致时，不以路径顺序选赢家。被整个资源覆盖的旧键不会从旧包补回来。
 
 这是“本机已安装官方资源”的目录，不证明运行时启用了所有资料片，也不自动识别其他 MOD 的同键文本覆盖。运行时名称字段仍来自实际已加载的对象／tuning。遇到第三方 MOD 提供的新 hash，可能出现 `string_key_missing`；同键覆盖尚不能自动确认，`string_source.third_party_overrides` 明确为 `not_verified`。
+
+对象名称采用有证据的分层回退：先用官方简体中文；简中 key 缺失、文本为空或资源冲突时，只有在官方英文词表中有可用且未冲突的文本才使用 `ENG_US`，并标记 `status=english_fallback`、`fallback_from` 和英文 `string_source`。这条英文回退只用于对象名称（包括 `ObjectName`／`ObjectCatalogName`），不会把英文悄悄替换到交互、Buff 或描述等其他文本角色中。
+
+官方两种语言都没有自然语言文本时，不把英文 tuning 名伪装成翻译：对象会显示 `未命名对象（内部标识）` 一类的技术回退，并标记 `status=technical_fallback`。经过人工核对的少量名称可以写入 `src/context_overlay/object_name_overrides.json`，按 `catalog_name_key` 或 `definition_id` 精确匹配，标记 `status=reviewed_override`；该表默认为空，不根据内部名自动生成中文。`EAAdapter` 还保留运行时读取入口与回退来源，便于区分官方文本、审核补充和技术身份。
 
 ### 三个文本角色
 
@@ -151,7 +155,7 @@ Buff 的普通描述文本若没有 tokens、且缺口全部是第 0 参数的 S
 
 交互的通用名称无法完整解析时，尝试从该 Sim 的 `UIManager._find_interaction` 读取同 ID 的 `display_name`；若有弱引用，还须指向同一交互实例。只采用完整解析的 UI 文本，不修改 UI，也不借用分组里其他交互的名称。来源为 `runtime_ui_queue`，失败的原名称证据保留在 `source.fallback_from`。UI 记录不可用或仍不能解析时维持原结果。
 
-每个文本对象保留 `text`、`status`、`hash`、`template`、`localization` 和 `source`。`localization.tokens` 是当时复制的证据；`string_source.sources` 是当前字典来源 ID，可在相同构建的 `string_sources.json` 中查询包名、TGI、资源摘要与配置优先级。构建与查询的 `provenance.string_sources_sha256` 标识这份目录。
+每个文本对象保留 `text`、`status`、`hash`、`template`、`localization` 和 `source`。`localization.tokens` 是当时复制的证据；`string_source.sources` 是当前字典来源 ID，可在相同构建的 `string_sources.json` 或 `string_sources_en.json` 中查询包名、TGI、资源摘要与配置优先级。脚本包的 `build_info` 同时保存 `string_sources_sha256` 与 `string_sources_en_sha256`，用于绑定两套词表的来源。
 
 ### 模板支持与缺口
 

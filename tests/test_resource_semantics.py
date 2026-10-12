@@ -67,6 +67,32 @@ class ResourceBuildChecks(unittest.TestCase):
             rules = builder.parse_config(path)
             self.assertEqual([(x["pattern"], x["priority"]) for x in rules], [("Strings_*.package", -30), ("delta.package", -9)])
 
+    def test_english_build_writes_english_outputs_and_manifest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            game, reference = root / "game", root / "reference"
+            (game / "Game/Bin").mkdir(parents=True)
+            (game / "Game/Bin/Default.ini").write_text("[Version]\ngameversion = test\n")
+            (reference / "tools").mkdir(parents=True)
+            for name in ("dbpf.py", "extract_tuning.py"):
+                (reference / "tools" / name).write_text("# synthetic decoder")
+            entry = SimpleNamespace(type=builder.STBL, group=0, instance=1, offset=0, size=4, compression=0)
+            modules = {"dbpf": SimpleNamespace(read_index=lambda path: [entry], read_resource=lambda *args: b"STBL"),
+                       "extract_tuning": SimpleNamespace(CombinedTuning=None)}
+            old_path = list(sys.path)
+            self.addCleanup(lambda: sys.path.__setitem__(slice(None), old_path))
+            packages = {"strings": {"path": "Strings_ENG_US.package", "priority": 0, "rules": []}}
+            with patch.dict(sys.modules, modules), patch.object(builder, "configured_packages", return_value=(packages, [])), \
+                    patch.object(builder, "parse_stbl", return_value={"K": "Object Spawner 40"}):
+                output = root / "output"
+                builder.build(game, reference, output, language="ENG_US", manifest_name="manifest_eng_us.json")
+            self.assertEqual(json.loads((output / "strings_en.json").read_text()), {"K": "Object Spawner 40"})
+            self.assertTrue((output / "string_sources_en.json").is_file())
+            manifest = json.loads((output / "manifest_eng_us.json").read_text())
+            self.assertEqual(manifest["provenance"]["language"], "ENG_US")
+            self.assertEqual(set(manifest["outputs"]), {"strings_en.json", "string_sources_en.json"})
+            self.assertFalse((output / "resource_catalog.json").exists())
+
     def test_whole_resource_override_precedes_string_key_merge(self):
         records = [record("base", "A", -30, "old"), record("delta", "A", -9, "new")]
         for audit in (False, True):

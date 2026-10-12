@@ -22,6 +22,7 @@ TOKEN_FIELDS = ("first_name", "last_name", "full_name_key", "is_female", "gender
                 "name_prefix_key", "name_prefix_string")
 DATE_FIELDS = ("seconds", "minutes", "hours", "date", "month", "full_year", "date_and_time_format_hash")
 FORMAT_PROFILE = "context_overlay_zh_CN_v1"
+OBJECT_NAME_STATUSES = ("resolved", "raw_text", "english_fallback", "reviewed_override")
 VALUE_TYPES = {
     "String": ("RAW_TEXT", "STRING"), "Number": ("NUMBER",), "Money": ("NUMBER",),
     "SimFirstName": ("SIM",), "SimLastName": ("SIM",), "SimName": ("SIM",),
@@ -128,7 +129,7 @@ def snapshot_localized(value, depth=0, budget=None):
 
 
 class Localizer:
-    def __init__(self, strings=None, metadata=None):
+    def __init__(self, strings=None, metadata=None, english_strings=None, english_metadata=None, overrides=None):
         if strings is None:
             try:
                 data = pkgutil.get_data("context_overlay", "strings_zh.json")
@@ -140,27 +141,126 @@ class Localizer:
             except OSError:
                 data = None
             metadata = json.loads(data.decode("utf-8")) if data else None
+        if english_strings is None:
+            try:
+                data = pkgutil.get_data("context_overlay", "strings_en.json")
+            except OSError:
+                data = None
+            english_strings = json.loads(data.decode("utf-8")) if data else {}
+        if english_metadata is None:
+            try:
+                data = pkgutil.get_data("context_overlay", "string_sources_en.json")
+            except OSError:
+                data = None
+            english_metadata = json.loads(data.decode("utf-8")) if data else None
+        if overrides is None:
+            try:
+                data = pkgutil.get_data("context_overlay", "object_name_overrides.json")
+            except OSError:
+                data = None
+            overrides = json.loads(data.decode("utf-8")) if data else None
         self.strings = strings
         self.metadata = metadata or {}
+        self.english_strings = english_strings or {}
+        self.english_metadata = english_metadata or {}
+        self.object_name_overrides = overrides or {}
         if self.metadata and self.metadata.get("format") != "string_sources_v1":
             raise ValueError("Unsupported string source metadata")
+        if self.english_metadata and self.english_metadata.get("format") != "string_sources_v1":
+            raise ValueError("Unsupported English string source metadata")
+        if self.object_name_overrides and self.object_name_overrides.get("format") != "object_name_overrides_v1":
+            raise ValueError("Unsupported object name override metadata")
 
     def name(self, localized, fallback=None):
         return self.from_evidence(snapshot_localized(localized), fallback)
 
-    def from_evidence(self, evidence, fallback=None, depth=0, budget=None):
+    def object_name(self, localized, fallback=None, definition_id=None, tuning_name=None):
+        """Resolve a world object name with reviewed and technical fallbacks."""
+        evidence = snapshot_localized(localized)
+        # Object labels are the one text role for which an official English
+        # resource is an intentional fallback.  This must also cover a direct
+        # localized key, not only a wrapper such as {0.ObjectName}.
+        result = self.from_evidence(evidence, fallback, allow_english=True)
+        token = (evidence.get("tokens") or [{}])[0]
+        if token.get("type") != "OBJECT" or token.get("custom_name"):
+            return result
+
+        override = self._definition_override(definition_id)
+        if override:
+            return self._override_result(result, override, "definition_id", str(definition_id),
+                                          definition_id, tuning_name)
+        if result.get("status") in OBJECT_NAME_STATUSES:
+            return result
+        if fallback:
+            technical = dict(result)
+            technical["text"] = "未命名对象（{}）".format(fallback)
+            technical["status"] = "technical_fallback"
+            technical["reason"] = "no_official_object_name"
+            technical["fallback"] = fallback
+            source = dict(technical.get("source", {}))
+            source.update({"kind": "technical_object_fallback",
+                           "definition_id": str(definition_id) if definition_id is not None else None,
+                           "tuning_name": tuning_name,
+                           "original_status": result.get("status")})
+            technical["source"] = source
+            return technical
+        return result
+
+    def _metadata_source(self, metadata, key, language):
+        source = metadata.get("keys", {}).get(key) if metadata else None
+        if isinstance(source, int):
+            source = metadata["groups"][source]
+        if not source:
+            return None
+        return dict(source, game_version=metadata.get("provenance", {}).get("game_version"),
+                    sources=list(source["sources"]), language=language, third_party_overrides="not_verified")
+
+    def _definition_override(self, definition_id):
+        if definition_id is None:
+            return None
+        return self.object_name_overrides.get("definitions", {}).get(str(definition_id))
+
+    def _catalog_override(self, key):
+        if not key:
+            return None
+        return self.object_name_overrides.get("catalog_keys", {}).get(key)
+
+    @staticmethod
+    def _override_result(result, override, basis, value, definition_id=None, tuning_name=None):
+        text = override.get("text")
+        if not isinstance(text, str) or not text.strip():
+            return result
+        resolved = dict(result)
+        resolved["text"] = text
+        resolved["status"] = override.get("status", "reviewed_override")
+        resolved["reason"] = override.get("reason", "project_object_name_override")
+        source = dict(resolved.get("source", {}))
+        source.update({"kind": "object_name_override", "basis": basis, "key": value,
+                       "definition_id": str(definition_id) if definition_id is not None else None,
+                       "tuning_name": tuning_name})
+        if "source" in override:
+            source["override_source"] = override["source"]
+        resolved["source"] = source
+        return resolved
+
+    def from_evidence(self, evidence, fallback=None, depth=0, budget=None, allow_english=False, object_key=False):
         budget = [MAX_NODES] if budget is None else budget
         budget[0] -= 1
         key = hash_key(evidence.get("hash"))
         result = {"hash": key, "localization": evidence}
-        source = self.metadata.get("keys", {}).get(key)
-        if isinstance(source, int):
-            source = self.metadata["groups"][source]
+        if object_key:
+            override = self._catalog_override(key)
+            if override:
+                return self._override_result(result, override, "catalog_name_key", key)
+        source = self._metadata_source(self.metadata, key, "CHS_CN")
+        blocked_reason = None
         if source:
-            result["string_source"] = dict(source, game_version=self.metadata.get("provenance", {}).get("game_version"),
-                                          sources=list(source["sources"]), language="CHS_CN", third_party_overrides="not_verified")
+            result["string_source"] = source
             if source["status"] != "selected":
-                return dict(result, text=fallback, status="unmapped", reason="string_key_overridden" if source["status"] == "overridden_only" else "string_resource_conflict")
+                blocked_reason = ("string_key_overridden" if source["status"] == "overridden_only"
+                                  else "string_resource_conflict")
+                if not allow_english:
+                    return dict(result, text=fallback, status="unmapped", reason=blocked_reason)
         if budget[0] < 0:
             return dict(result, text=fallback, status="unmapped", reason="localization_work_limit")
         if depth >= MAX_DEPTH or evidence.get("error"):
@@ -169,16 +269,41 @@ class Localizer:
             if len(evidence["raw_text"]) > MAX_TEXT:
                 return dict(result, text=fallback, status="unmapped", reason="localization_text_limit")
             return dict(result, text=evidence["raw_text"], status="raw_text")
-        template = self.strings.get(key)
         if not key or key == "0x00000000":
             return dict(result, text=fallback, status="no_display_name", reason="no_localized_string_key")
+        template = self.strings.get(key)
+        language = "CHS_CN"
+        if allow_english and (blocked_reason or template is None or not template.strip()):
+            english_template = self.english_strings.get(key)
+            english_source = self._metadata_source(self.english_metadata, key, "ENG_US")
+            english_blocked = english_source and english_source["status"] != "selected"
+            if isinstance(english_template, str) and english_template.strip() and not english_blocked:
+                template = english_template
+                language = "ENG_US"
+                result["string_source"] = english_source or {
+                    "language": language, "sources": [], "third_party_overrides": "not_verified"}
+                result["fallback_from"] = {"language": "CHS_CN", "key": key,
+                                            "reason": blocked_reason or (
+                                                "string_key_missing" if self.strings.get(key) is None
+                                                else "localized_text_empty")}
+                if source:
+                    result["fallback_from"]["string_source"] = source
+            elif blocked_reason:
+                return dict(result, text=fallback, status="unmapped", reason=blocked_reason)
         if template is None:
             return dict(result, text=fallback, status="unmapped", reason="string_key_missing")
         if len(template) > MAX_TEXT:
             return dict(result, text=fallback, status="unmapped", reason="localization_text_limit")
         missing = []
-        text = self._template(template, evidence.get("tokens", []), missing, depth, budget)
-        result.update(text=text, status="unresolved_tokens" if missing else "resolved",
+        nested_fallbacks = []
+        text = self._template(template, evidence.get("tokens", []), missing, depth, budget,
+                              nested_fallbacks=nested_fallbacks, allow_english=allow_english)
+        status = "unresolved_tokens" if missing else ("english_fallback" if language == "ENG_US" else "resolved")
+        if not missing and nested_fallbacks:
+            if any(item.get("status") == "english_fallback" for item in nested_fallbacks):
+                status = "english_fallback"
+            result["fallback_sources"] = nested_fallbacks
+        result.update(text=text, status=status,
                       format_profile=FORMAT_PROFILE)
         if not text.strip() and not missing:
             result.update(text=fallback, status="empty_display_name", reason="localized_text_empty", template=template)
@@ -194,7 +319,7 @@ class Localizer:
         missing.append(dict(expression=expression, reason=reason, category=gap_category(reason), **details))
         return "〈未解析：" + expression[:100] + "〉"
 
-    def _template(self, template, tokens, missing, depth, budget):
+    def _template(self, template, tokens, missing, depth, budget, nested_fallbacks=None, allow_english=False):
         if depth >= MAX_DEPTH:
             return self._unresolved("嵌套文本", missing, "localization_depth_limit")
         output, position, length = [], 0, 0
@@ -236,9 +361,12 @@ class Localizer:
                         value = self._unresolved(expression, missing, "unsupported_or_missing_gender")
                     else:
                         chosen = bool(token["is_female"]) == (selector.upper() == "F")
-                        value = self._template(attr, tokens, missing, depth + 1, budget) if chosen else ""
+                        value = self._template(attr, tokens, missing, depth + 1, budget,
+                                               nested_fallbacks=nested_fallbacks,
+                                               allow_english=allow_english) if chosen else ""
                 else:
-                    value = self._value(token, attr, missing, depth + 1, budget)
+                    value = self._value(token, attr, missing, depth + 1, budget,
+                                        nested_fallbacks=nested_fallbacks, allow_english=allow_english)
                     if value is None:
                         expected = VALUE_TYPES.get(attr)
                         reason = ("unsupported_token_format" if expected is None else
@@ -254,13 +382,18 @@ class Localizer:
             return self._unresolved("文本长度", missing, "localization_text_limit")
         return "".join(output)
 
-    def _key_text(self, key, missing, depth, budget):
-        result = self.from_evidence({"hash": key, "tokens": []}, depth=depth, budget=budget)
-        if result["status"] != "resolved":
+    def _key_text(self, key, missing, depth, budget, nested_fallbacks=None, allow_english=False, object_key=False):
+        result = self.from_evidence({"hash": key, "tokens": []}, depth=depth, budget=budget,
+                                    allow_english=allow_english, object_key=object_key)
+        if result["status"] not in OBJECT_NAME_STATUSES:
             return None
+        if nested_fallbacks is not None and result["status"] != "resolved":
+            nested_fallbacks.append({"hash": result.get("hash"), "status": result.get("status"),
+                                     "text": result.get("text"), "string_source": result.get("string_source"),
+                                     "source": result.get("source"), "fallback_from": result.get("fallback_from")})
         return result["text"]
 
-    def _value(self, token, attr, missing, depth, budget):
+    def _value(self, token, attr, missing, depth, budget, nested_fallbacks=None, allow_english=False):
         kind = token.get("type")
         if attr == "String":
             if kind == "RAW_TEXT":
@@ -306,13 +439,21 @@ class Localizer:
                 return token.get("last_name") or None
             if attr in ("SimName", "SimFullName", "ObjectName"):
                 if token.get("full_name_key"):
-                    return self._key_text(token["full_name_key"], missing, depth, budget)
+                    return self._key_text(token["full_name_key"], missing, depth, budget,
+                                          nested_fallbacks=nested_fallbacks)
                 if token.get("name_prefix_key") or token.get("name_prefix_string"):
                     return None  # Client-specific prefix formatting is not verified.
                 return " ".join(item for item in (token.get("first_name"), token.get("last_name")) if item) or None
         if kind == "OBJECT" and attr in ("ObjectName", "ObjectDescription", "ObjectCatalogName", "ObjectCatalogDescription"):
             custom, key = ("custom_name", "catalog_name_key") if attr in ("ObjectName", "ObjectCatalogName") else ("custom_description", "catalog_description_key")
+            object_name_key = attr in ("ObjectName", "ObjectCatalogName")
             if attr.startswith("ObjectCatalog"):
-                return self._key_text(token.get(key), missing, depth, budget)
-            return token.get(custom) or self._key_text(token.get(key), missing, depth, budget)
+                return self._key_text(token.get(key), missing, depth, budget,
+                                      nested_fallbacks=nested_fallbacks,
+                                      allow_english=allow_english or object_name_key,
+                                      object_key=object_name_key)
+            return token.get(custom) or self._key_text(token.get(key), missing, depth, budget,
+                                                       nested_fallbacks=nested_fallbacks,
+                                                       allow_english=allow_english or object_name_key,
+                                                       object_key=object_name_key)
         return None

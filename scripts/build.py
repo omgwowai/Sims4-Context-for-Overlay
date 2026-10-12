@@ -22,13 +22,25 @@ def main():
     parser.add_argument("--game", type=Path, default=Path("D:/Games/The Sims 4"))
     parser.add_argument("--strings", type=Path)
     parser.add_argument("--string-sources", type=Path, help="Matched string_sources.json from build_resource_catalog.py")
+    parser.add_argument("--strings-en", type=Path, help="Official English fallback string dictionary")
+    parser.add_argument("--string-sources-en", type=Path, help="Matched English string_sources_en.json")
     args = parser.parse_args()
     if args.string_sources and not args.strings:
         raise SystemExit("--string-sources requires --strings")
+    if args.string_sources_en and not args.strings_en:
+        raise SystemExit("--string-sources-en requires --strings-en")
     if args.string_sources:
         metadata = json.loads(args.string_sources.read_text(encoding="utf-8"))
         if metadata.get("format") != "string_sources_v1" or metadata.get("strings_sha256") != hashlib.sha256(args.strings.read_bytes()).hexdigest():
             raise SystemExit("String provenance does not match the supplied dictionary")
+    else:
+        metadata = None
+    if args.string_sources_en:
+        metadata_en = json.loads(args.string_sources_en.read_text(encoding="utf-8"))
+        if metadata_en.get("format") != "string_sources_v1" or metadata_en.get("strings_sha256") != hashlib.sha256(args.strings_en.read_bytes()).hexdigest():
+            raise SystemExit("English string provenance does not match the supplied dictionary")
+    else:
+        metadata_en = None
     if sys.version_info[:2] != (3, 7):
         raise SystemExit("Build with CPython 3.7, not the host default interpreter")
     gameplay = args.game / "Data/Simulation/Gameplay/simulation.zip"
@@ -40,8 +52,10 @@ def main():
     game_config = configparser.ConfigParser()
     game_config.read(str(args.game / "Game/Bin/Default.ini"), encoding="utf-8-sig")
     game_version = game_config.get("Version", "gameversion")
-    if args.string_sources and metadata.get("provenance", {}).get("game_version") != game_version:
+    if metadata and metadata.get("provenance", {}).get("game_version") != game_version:
         raise SystemExit("String resources were extracted for a different game version; rebuild the resource catalog")
+    if metadata_en and metadata_en.get("provenance", {}).get("game_version") != game_version:
+        raise SystemExit("English string resources were extracted for a different game version; rebuild the resource catalog")
     dist = ROOT / "dist"
     dist.mkdir(exist_ok=True)
     output = dist / "ContextOverlay.ts4script"
@@ -73,13 +87,24 @@ def main():
             data = args.string_sources.read_bytes()
             archive.writestr("context_overlay/string_sources.json", data)
             manifest["string_sources_sha256"] = hashlib.sha256(data).hexdigest()
+        if args.strings_en:
+            data = args.strings_en.read_bytes()
+            json.loads(data.decode("utf-8"))
+            archive.writestr("context_overlay/strings_en.json", data)
+            manifest["strings_en_sha256"] = hashlib.sha256(data).hexdigest()
+        if args.string_sources_en:
+            data = args.string_sources_en.read_bytes()
+            archive.writestr("context_overlay/string_sources_en.json", data)
+            manifest["string_sources_en_sha256"] = hashlib.sha256(data).hexdigest()
         build_info = {"module_version": VERSION, "public_api_version": API_VERSION, "schema_version": SCHEMA_VERSION, "build_game_version": game_version,
                       "game_version_source": "Game/Bin/Default.ini at build time",
                       "game_bytecode_magic": game_magic.hex(),
                       "ea_reference_project": "sims4-python", "ea_reference_commit": EA_REFERENCE_COMMIT,
                       "source_sha256": hashlib.sha256(json.dumps(manifest["files"], sort_keys=True).encode("utf-8")).hexdigest(),
                       "strings_sha256": manifest.get("strings_sha256"),
-                      "string_sources_sha256": manifest.get("string_sources_sha256")}
+                      "string_sources_sha256": manifest.get("string_sources_sha256"),
+                      "strings_en_sha256": manifest.get("strings_en_sha256"),
+                      "string_sources_en_sha256": manifest.get("string_sources_en_sha256")}
         archive.writestr("context_overlay/build_info.json", json.dumps(build_info, sort_keys=True))
         manifest["build_info"] = build_info
     manifest["package_sha256"] = hashlib.sha256(output.read_bytes()).hexdigest()

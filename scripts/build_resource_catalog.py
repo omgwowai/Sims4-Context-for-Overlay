@@ -62,8 +62,9 @@ def parse_config(path):
     return rules
 
 
-def configured_packages(game):
+def configured_packages(game, language="CHS_CN"):
     # Deliberately restrict this builder to official Client/Simulation configs.
+    language_package = "Strings_{}.package".format(language)
     configs = [game / "Data/Client/Resource.cfg", game / "Data/Simulation/Resource.cfg"]
     configs += sorted(game.glob("*/ResourceClient.cfg")) + sorted(game.glob("*/ResourceSimulation.cfg"))
     configs += sorted(game.glob("Delta/*/ResourceClient.cfg")) + sorted(game.glob("Delta/*/ResourceSimulation.cfg"))
@@ -75,14 +76,14 @@ def configured_packages(game):
         inputs[relative] = digest(config.read_bytes())
         for rule in parse_config(config):
             for path in sorted(config.parent.glob(rule["pattern"])):
-                if not path.is_file() or not (path.name == "Strings_CHS_CN.package" or path.name.startswith("Simulation")):
+                if not path.is_file() or not (path.name == language_package or path.name.startswith("Simulation")):
                     continue
                 key = path.relative_to(game).as_posix()
                 evidence = dict(rule, config=relative)
                 item = packages.setdefault(key, {"path": key, "priority": rule["priority"], "rules": []})
                 item["priority"] = max(item["priority"], rule["priority"])
                 item["rules"].append(evidence)
-    missing = sorted(p.relative_to(game).as_posix() for p in game.rglob("Strings_CHS_CN.package")
+    missing = sorted(p.relative_to(game).as_posix() for p in game.rglob(language_package)
                      if p.relative_to(game).as_posix() not in packages)
     if missing:
         raise ValueError("Unconfigured official language packages: " + repr(missing))
@@ -234,20 +235,27 @@ def extract_tuning(root, source_id):
     return entries
 
 
-def build(game, reference, output, audit=False):
+def build(game, reference, output, audit=False, language="CHS_CN", manifest_name=None):
+    if language not in ("CHS_CN", "ENG_US"):
+        raise ValueError("Unsupported language: " + language)
+    language_package = "Strings_{}.package".format(language)
+    if manifest_name is None:
+        manifest_name = "manifest.json" if language == "CHS_CN" else "manifest_{}.json".format(language.lower())
     sys.path.insert(0, str(reference / "tools"))
     from dbpf import read_index, read_resource
     from extract_tuning import CombinedTuning
     config = configparser.ConfigParser()
     config.read(str(game / "Game/Bin/Default.ini"), encoding="utf-8-sig")
-    packages, configs = configured_packages(game)
+    packages, configs = configured_packages(game, language)
     records, tables, tuning_locations = [], {}, {}
     for package in packages.values():
         path = game / package["path"]
         for entry in read_index(path):
             if entry.type not in (STBL, COMBINED):
                 continue
-            if entry.type == STBL and path.name != "Strings_CHS_CN.package":
+            if entry.type == STBL and path.name != language_package:
+                continue
+            if language != "CHS_CN" and entry.type != STBL:
                 continue
             data = read_resource(path, entry)
             source_id = "r{:04d}".format(len(records))
@@ -264,27 +272,28 @@ def build(game, reference, output, audit=False):
     selection = select_resources(records)
     strings, keys = merge_strings(records, selection, tables, audit=audit)
     entries, conflicts = {}, {}
-    for record in records:
-        if record["type"] != COMBINED or record["source_id"] not in selection[record["tgi"]]["selected"]:
-            continue
-        data = read_resource(*tuning_locations[record["source_id"]])
-        if data.startswith(b"<"):
-            root = ET.fromstring(data)
-        else:
-            stream = io.StringIO()
-            CombinedTuning(data).write(stream)
-            root = ET.fromstring(stream.getvalue())
-        for key, item in extract_tuning(root, record["source_id"]).items():
-            previous = entries.get(key)
-            if previous and any(previous[k] != item[k] for k in ("tuning_name", "class", "fields")):
-                conflicts.setdefault(key, [previous]).append(item)
-            elif previous:
-                previous["source_ids"].extend(item["source_ids"])
+    if language == "CHS_CN":
+        for record in records:
+            if record["type"] != COMBINED or record["source_id"] not in selection[record["tgi"]]["selected"]:
+                continue
+            data = read_resource(*tuning_locations[record["source_id"]])
+            if data.startswith(b"<"):
+                root = ET.fromstring(data)
             else:
-                entries[key] = item
-    for key in conflicts:
-        entries.pop(key, None)
-    provenance = {"game_version": config.get("Version", "gameversion"), "language": "CHS_CN",
+                stream = io.StringIO()
+                CombinedTuning(data).write(stream)
+                root = ET.fromstring(stream.getvalue())
+            for key, item in extract_tuning(root, record["source_id"]).items():
+                previous = entries.get(key)
+                if previous and any(previous[k] != item[k] for k in ("tuning_name", "class", "fields")):
+                    conflicts.setdefault(key, [previous]).append(item)
+                elif previous:
+                    previous["source_ids"].extend(item["source_ids"])
+                else:
+                    entries[key] = item
+        for key in conflicts:
+            entries.pop(key, None)
+    provenance = {"game_version": config.get("Version", "gameversion"), "language": language,
                   "scope": "installed_official_resources", "runtime_pack_entitlement_not_verified": True,
                   "third_party_mods": "not_scanned", "configs": configs,
                   "builder_sha256": digest(Path(__file__).read_bytes()),
@@ -298,22 +307,26 @@ def build(game, reference, output, audit=False):
                            "overridden_only_keys": sum(v["status"] == "overridden_only" for v in keys.values()),
                            "tuning_entries": len(entries), "tuning_conflicts": len(conflicts)},
                 "policy": "Highest cfg Priority for identical TGI; tied different payloads unresolved. Distinct active TGI with differing text for a string key remain unresolved. No path-order tie breaker."}
-    catalog = {"format": "typed_resource_semantics_v2", "provenance": provenance,
-               "entries": entries, "conflicts": conflicts,
-               "sources": manifest["sources"],
-               "limits": ["No explicit XML field is not proof of no game text: defaults, inheritance and client-only fields are not expanded.",
-                          "Static alternatives do not identify the runtime-selected variant or historical dynamic tokens."]}
     output.mkdir(parents=True, exist_ok=True)
-    strings_hash = write_json(output / "strings_zh.json", strings)
+    strings_name = "strings_zh.json" if language == "CHS_CN" else "strings_en.json"
+    sources_name = "string_sources.json" if language == "CHS_CN" else "string_sources_en.json"
+    strings_hash = write_json(output / strings_name, strings)
     metadata = {"format": "string_sources_v1", "provenance": provenance, "sources": manifest["sources"],
                 **compact_sources(keys), "strings_sha256": strings_hash}
-    manifest["outputs"] = {"strings_zh.json": strings_hash,
-                           "string_sources.json": write_json(output / "string_sources.json", metadata),
-                           "resource_catalog.json": write_json(output / "resource_catalog.json", catalog)}
-    audit_path = output / "string-candidates.json"
+    manifest["outputs"] = {strings_name: strings_hash,
+                           sources_name: write_json(output / sources_name, metadata)}
+    if language == "CHS_CN":
+        catalog = {"format": "typed_resource_semantics_v2", "provenance": provenance,
+                   "entries": entries, "conflicts": conflicts,
+                   "sources": manifest["sources"],
+                   "limits": ["No explicit XML field is not proof of no game text: defaults, inheritance and client-only fields are not expanded.",
+                              "Static alternatives do not identify the runtime-selected variant or historical dynamic tokens."]}
+        manifest["outputs"]["resource_catalog.json"] = write_json(output / "resource_catalog.json", catalog)
+    audit_name = "string-candidates.json" if language == "CHS_CN" else "string-candidates-en.json"
+    audit_path = output / audit_name
     if audit:
         manifest["outputs"][audit_path.name] = write_json(audit_path, keys)
-    write_json(output / "manifest.json", manifest)
+    write_json(output / manifest_name, manifest)
     if not audit and audit_path.exists():
         audit_path.unlink()
     print(json.dumps(manifest["counts"], sort_keys=True), flush=True)
@@ -329,7 +342,8 @@ def main():
     for source in (args.game.resolve(), args.reference.resolve()):
         if source == args.output.resolve() or source in args.output.resolve().parents:
             raise SystemExit("Output must be outside game and reference inputs")
-    build(args.game, args.reference, args.output, audit=args.audit)
+    build(args.game, args.reference, args.output, audit=args.audit, language="CHS_CN")
+    build(args.game, args.reference, args.output, audit=False, language="ENG_US")
 
 
 if __name__ == "__main__":

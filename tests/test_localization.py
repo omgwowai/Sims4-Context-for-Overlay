@@ -66,6 +66,46 @@ class LocalizationChecks(unittest.TestCase):
         self.assertEqual(self.localizer.name(None, "internal")["status"], "no_display_name")
         self.assertEqual(self.localizer.name(0xFF, "missing")["reason"], "string_key_missing")
 
+    def test_object_name_uses_english_only_when_chinese_catalog_text_is_empty(self):
+        localizer = Localizer({"0x00000001": "", "0x00000002": "{0.ObjectName}"},
+                              english_strings={"0x00000001": "Object Spawner 40"})
+        evidence = {"hash": 2, "tokens": [{"type": "OBJECT", "catalog_name_key": 1}]}
+        result = localizer.object_name(evidence, "object_spawner", 40, "object_spawner")
+        self.assertEqual(result["text"], "Object Spawner 40")
+        self.assertEqual(result["status"], "english_fallback")
+        self.assertEqual(result["fallback_sources"][0]["string_source"]["language"], "ENG_US")
+        self.assertEqual(result["fallback_sources"][0]["fallback_from"]["reason"], "localized_text_empty")
+
+    def test_direct_object_key_uses_english_fallback(self):
+        localizer = Localizer({}, english_strings={"0x00000001": "Object Spawner 40"})
+        result = localizer.object_name(1, "object_spawner", 40, "object_spawner")
+        self.assertEqual(result["text"], "Object Spawner 40")
+        self.assertEqual(result["status"], "english_fallback")
+        self.assertEqual(result["fallback_from"]["reason"], "string_key_missing")
+
+    def test_object_name_keeps_chinese_over_english(self):
+        localizer = Localizer({"0x00000001": "中文名称", "0x00000002": "{0.ObjectName}"},
+                              english_strings={"0x00000001": "English Name"})
+        result = localizer.object_name({"hash": 2, "tokens": [{"type": "OBJECT", "catalog_name_key": 1}]},
+                                       "object_name", 40, "object_name")
+        self.assertEqual(result["text"], "中文名称")
+        self.assertEqual(result["status"], "resolved")
+
+    def test_object_name_uses_definition_override_or_technical_fallback(self):
+        evidence = {"hash": 2, "tokens": [{"type": "OBJECT", "catalog_name_key": 0}]}
+        localizer = Localizer({"0x00000002": "{0.ObjectName}"})
+        result = localizer.object_name(evidence, "object_stairs", 5956, "object_stairs")
+        self.assertEqual(result["text"], "未命名对象（object_stairs）")
+        self.assertEqual(result["status"], "technical_fallback")
+        self.assertEqual(result["source"]["definition_id"], "5956")
+
+        overrides = {"format": "object_name_overrides_v1", "catalog_keys": {},
+                     "definitions": {"5956": {"text": "楼梯（内部对象）"}}}
+        localizer = Localizer({"0x00000002": "{0.ObjectName}"}, overrides=overrides)
+        result = localizer.object_name(evidence, "object_stairs", 5956, "object_stairs")
+        self.assertEqual(result["text"], "楼梯（内部对象）")
+        self.assertEqual(result["status"], "reviewed_override")
+
     def test_protobuf_uses_present_fields_and_runtime_enum_names(self):
         # Simulates a newer descriptor with a different numeric enum value.
         token = SimpleNamespace(type=42, first_name="Lina", last_name="", is_female=False)
@@ -156,6 +196,19 @@ class LocalizationChecks(unittest.TestCase):
         self.assertEqual(result["id"], "20")
         self.assertEqual(result["definition_id"], "30")
         self.assertEqual(result["name"]["reason"], "label_read_failed")
+
+    def test_object_reference_preserves_object_name_resolution_source(self):
+        adapter = EAAdapter.__new__(EAAdapter)
+        adapter.localizer = Localizer({"0x00000002": "{0.ObjectName}"})
+        obj = SimpleNamespace(id=20, definition=SimpleNamespace(id=30, name="object_stairs"))
+        helper = SimpleNamespace(get_object_name=lambda item: {
+            "hash": 2, "tokens": [{"type": "OBJECT", "catalog_name_key": 0}]})
+        modules = {"sims4": SimpleNamespace(), "sims4.localization": SimpleNamespace(LocalizationHelperTuning=helper)}
+        with patch.dict(sys.modules, modules):
+            result = adapter.reference(obj)
+        self.assertEqual(result["name"]["status"], "technical_fallback")
+        self.assertEqual(result["name"]["source"]["kind"], "runtime_object")
+        self.assertEqual(result["name"]["source"]["resolution_kind"], "technical_object_fallback")
 
     def test_currency_and_clock_use_explicit_chinese_profile(self):
         localizer = Localizer({"0x00000001": "报酬：{0.Money}；{1.DayOfWeekLong} {1.TimeShort}"})

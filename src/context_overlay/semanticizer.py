@@ -40,6 +40,8 @@ FIELD_NAMES.update({"object_states." + identifier: entry[1] for identifier, entr
 FIELD_NAMES.update({"target": "对象", "tracks": "关系数值", "bits": "关系标记"})
 STATUS_NAMES = {"not_present": "未实例化", "not_applicable": "不适用", "unsupported": "尚未支持",
                 "out_of_scope": "不在观测范围", "disabled": "已停用", "error": "读取失败"}
+NAME_FALLBACK_SUFFIXES = {"english_fallback": "（官方英文回退）", "reviewed_override": "（项目审核补充）",
+                          "inferred_name": "（项目推断名称）", "technical_fallback": "（技术回退）"}
 DETAIL_BASES = {"static_reference_not_historical_observation": "静态参考，未确认当时使用",
                 "base_description_overrides_not_evaluated": "基础说明，未判断年龄或特征覆盖",
                 "observed_buff_owner_context": "按持有者解析",
@@ -79,7 +81,7 @@ def display(value):
                 absent = "参考资源未显式指定名称" if value.get("reason") == "no_name_in_reference_tuning" else "未取得显示名称"
                 return "{}（{}{}）".format(value["text"], "隐藏资源，" if value.get("visible") is False else "", absent)
             suffix = "（名称未完整解析，待解释）" if value.get("status") in ("unmapped", "unresolved_tokens") else ""
-            return value["text"] + suffix
+            return value["text"] + (NAME_FALLBACK_SUFFIXES.get(value.get("status"), "") or suffix)
         if value.get("label"):
             return value["label"]
         if "value" in value:

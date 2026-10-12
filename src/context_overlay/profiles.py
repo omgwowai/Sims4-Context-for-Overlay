@@ -37,7 +37,8 @@ RESOURCE_LABELS = dict(OBJECT_STATES, **{
 
 
 def resource_name(identifier, tuning_name, raw_name):
-    if raw_name.get("status") in ("resolved", "raw_text", "unresolved_tokens"):
+    if raw_name.get("status") in ("resolved", "raw_text", "unresolved_tokens", "english_fallback",
+                                   "reviewed_override", "inferred_name", "technical_fallback"):
         return raw_name
     entry = RESOURCE_LABELS.get(str(identifier))
     if entry is None or entry[0] != tuning_name:

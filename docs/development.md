@@ -35,21 +35,25 @@ python -B -X utf8 -m unittest discover -s tests -v
 ```powershell
 $coPython = "C:/path/to/python37.exe"
 & $coPython -B -X utf8 scripts/build_resource_catalog.py --game "D:/Games/The Sims 4" --reference "C:/sources/sims4-python"
-& $coPython -B -X utf8 scripts/build.py --game "D:/Games/The Sims 4" --strings .local/resource-semantics/strings_zh.json --string-sources .local/resource-semantics/string_sources.json
+& $coPython -B -X utf8 scripts/build.py --game "D:/Games/The Sims 4" --strings .local/resource-semantics/strings_zh.json --string-sources .local/resource-semantics/string_sources.json --strings-en .local/resource-semantics/strings_en.json --string-sources-en .local/resource-semantics/string_sources_en.json
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/install.ps1 -NonInteractive
 ```
 
-资源构建只读游戏及参考文件，按配置优先级和完整 TGI 选择官方简体中文 STBL／combined tuning，保存来源与冲突；不扫描第三方 MOD。输出位于忽略目录 `.local/resource-semantics/`：
+资源构建只读游戏及参考文件，按配置优先级和完整 TGI 选择官方简体中文 STBL／combined tuning，同时提取官方英文 `ENG_US` STBL；两种语言都保存来源与冲突，不扫描第三方 MOD。输出位于忽略目录 `.local/resource-semantics/`：
 
 | 文件 | 用途 |
 | --- | --- |
 | `strings_zh.json` | 已选文本字典，供构建与离线解析 |
 | `string_sources.json` | 来源、冲突及字典哈希，随脚本包嵌入 |
+| `strings_en.json` | 已选官方英文文本字典，仅作为物件名称缺少简中时的回退 |
+| `string_sources_en.json` | 英文词表的来源、冲突及字典哈希，随脚本包嵌入 |
 | `resource_catalog.json` | v2 类型目录，包含名称／描述／tooltip 引用 |
 | `manifest.json` | 游戏版本、来源与输出摘要 |
+| `manifest_eng_us.json` | 英文词表的游戏版本、来源与输出摘要 |
 | `string-candidates.json` | 只有 `--audit` 才生成的完整候选文本审计 |
+| `string-candidates-en.json` | 英文词表的候选文本审计，只有 `--audit` 才生成 |
 
-换游戏版本应重新提取资源；构建检查字典与来源元数据、游戏版本和编译魔数。普通构建仅保留文本选择、冲突和来源所需数据；逐条候选详情仅在 `--audit` 下生成。不带 `--audit` 的资源构建成功后，会清理输出目录中旧的候选文本审计文件。
+换游戏版本应重新提取资源；构建检查两套字典与来源元数据、游戏版本和编译魔数。普通构建仅保留文本选择、冲突和来源所需数据；逐条候选详情仅在 `--audit` 下生成。不带 `--audit` 的资源构建成功后，会清理输出目录中旧的候选文本审计文件。
 
 编译使用自动清理的临时目录，只在 `dist/` 留下 `ContextOverlay.ts4script` 与 `build-manifest.json`。manifest 保存所有源文件、包、字典及来源摘要。安装前必须确认当前源码一致，游戏运行时不安装或关闭游戏。
 

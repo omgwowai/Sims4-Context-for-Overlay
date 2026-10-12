@@ -263,19 +263,31 @@ class EAAdapter:
             # Uses the actual object's localization token, including name
             # component overrides, instead of only its catalog definition.
             localized = LocalizationHelperTuning.get_object_name(obj)
-            name = self.localizer.name(localized, str(fallback))
-            name["source"] = {"kind": "runtime_object", "attribute": "LocalizationHelperTuning.get_object_name"}
+            name = self.localizer.object_name(localized, str(fallback),
+                                              definition_id=getattr(definition, "id", None),
+                                              tuning_name=getattr(definition, "name", None))
+            source = dict(name.get("source", {}))
+            if source.get("kind") and source.get("kind") != "runtime_object":
+                source["resolution_kind"] = source["kind"]
+            source.update({"kind": "runtime_object", "attribute": "LocalizationHelperTuning.get_object_name"})
+            name["source"] = source
         except Exception as exc:
             try:
                 localized = getattr(obj, "custom_name", None)
                 if not localized and definition is not None:
                     import build_buy
                     localized = build_buy.get_object_catalog_name(definition.id)
-                name = self.localizer.name(localized, str(fallback))
+                name = self.localizer.object_name(localized, str(fallback),
+                                                  definition_id=getattr(definition, "id", None),
+                                                  tuning_name=getattr(definition, "name", None))
             except Exception as fallback_exc:
                 name = {"text": str(fallback), "status": "unmapped", "reason": "label_read_failed",
                         "error": str(fallback_exc)}
-            name["source"] = {"kind": "catalog_fallback", "object_name_error": str(exc)}
+            source = dict(name.get("source", {}))
+            if source.get("kind") and source.get("kind") != "catalog_fallback":
+                source["resolution_kind"] = source["kind"]
+            source.update({"kind": "catalog_fallback", "object_name_error": str(exc)})
+            name["source"] = source
         return entity("object", obj.id, name, getattr(definition, "id", None))
 
     def event_reference(self, value):

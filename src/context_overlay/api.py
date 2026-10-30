@@ -17,13 +17,15 @@ from context_overlay.localization import FORMAT_PROFILE
 from context_overlay.nearby import MAX_RESULTS, MAX_SCANNED, NearbyError, validate as validate_nearby
 from context_overlay.view_source import ViewError
 from context_overlay import camera_view
+from context_overlay import scene_entities
 
 
 API_VERSION = "2.6.0"
 __all__ = ["API_VERSION", "APIError", "get_api_info", "get_status", "get_context",
            "query_history", "get_history_page", "close_history", "get_nearby_entities",
            "append_event", "read_event_changes", "query_event_view", "get_event_view_status",
-           "get_event_view_page", "explain_event_view", "close_event_view", "get_camera_view"]
+           "get_event_view_page", "explain_event_view", "close_event_view", "get_camera_view",
+           "get_scene_entities"]
 
 
 class APIError(RuntimeError):
@@ -134,9 +136,14 @@ def get_api_info():
     """Pure capability/version discovery, safe before game load or on a worker."""
     from context_overlay.semanticizer import LABELS
     return {"api_version": API_VERSION, "module_version": VERSION, "schema_version": SCHEMA_VERSION,
+            "local_extensions": {"get_scene_entities": scene_entities.LOCAL_EXTENSION},
+            "scene_entities": {"scope": "active_lot_instantiated", "anchor_required": False,
+                               "max_scanned": scene_entities.MAX_SCANNED, "max_results": None,
+                               "off_lot": "excluded", "hidden": "excluded", "inventory": "excluded",
+                               "uninstantiated": "excluded", "levels": "all", "rooms": "all"},
             "capabilities": ["context.read", "history.query", "history.page", "history.close", "text.zh-CN",
                              "history.effects", "history.retained_identity", "history.fifo", "events.gameplay",
-                             "context.nearby_entities", "context.camera_view", "text.resource_details", "events.autonomy_decision",
+                             "context.nearby_entities", "context.camera_view", "context.scene_entities", "text.resource_details", "events.autonomy_decision",
                              "context.balloons", "context.balloon_window", "events.balloons", "context.zone_scope", "events.zone_scope",
                              "event_views.event_filters", "history.membership",
                              "events.append", "history.sources", "history.global", "history.changes", "history.travel",
@@ -267,6 +274,24 @@ def get_camera_view(*, kinds=("sim", "object"), vertical_fov=None, aspect_ratio=
     if not runtime.collector.enabled:
         raise APIError("collector_disabled", "Context collection is disabled")
     packet = camera_view.collect(runtime.adapter, runtime.session_id, runtime.provenance, query)
+    packet["api_version"] = API_VERSION
+    return packet
+
+
+@_endpoint
+def get_scene_entities(identifier="active", *, kinds=("sim", "object"), expected_session_id=None):
+    """Local scene_archive/2 discovery; identifier is validated but never resolved.
+
+    Read every eligible instantiated entity on the active lot, across rooms and
+    levels. Inspect scope, coverage, truncated and per-field errors; this does
+    not claim to enumerate inventories, hidden objects or unloaded SimInfos.
+    """
+    _identifier("sim", identifier)
+    validate_nearby(kinds, 1000000, "horizontal", False, False, True, MAX_RESULTS)
+    runtime = _current(expected_session_id)
+    if not runtime.collector.enabled:
+        raise APIError("collector_disabled", "Context collection is disabled")
+    packet = scene_entities.collect(runtime.adapter, runtime.session_id, runtime.provenance, kinds)
     packet["api_version"] = API_VERSION
     return packet
 

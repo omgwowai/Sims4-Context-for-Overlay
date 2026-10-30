@@ -86,6 +86,11 @@ class EAAdapter:
     def nearby_objects(self):
         return self.services.object_manager().get_valid_objects_gen()
 
+    def scene_objects(self):
+        # A lazy manager view also counts hidden entries against the scan cap.
+        # Eligibility and the active-lot predicate are checked by the consumer.
+        return self.services.object_manager().values()
+
     def nearby_eligible(self, obj):
         return self.in_scope(obj)
 
@@ -252,10 +257,31 @@ class EAAdapter:
         except Exception:
             return field(status="error", source=source, reason="room_read_failed")
 
+    def sim_reference(self, info):
+        """Resolve localized NPC names without changing the string name contract."""
+        plain_name = " ".join(str(part) for part in
+                              (getattr(info, "first_name", ""), getattr(info, "last_name", "")) if part)
+        result = entity("sim", info.sim_id, plain_name)
+        # SimInfoBaseWrapper.populate_localization_token supplies full_name_key;
+        # it takes precedence over first/last name in the game's SIM token.
+        key = getattr(info, "full_name_key", 0)
+        if not key:
+            return result
+        try:
+            detail = self.localizer.name(key)
+        except Exception as exc:
+            detail = {"text": None, "status": "unmapped", "reason": "label_read_failed",
+                      "error": str(exc)}
+        detail["source"] = {"kind": "runtime_sim", "attribute": "SimInfo.full_name_key",
+                            "full_name_key": int(key)}
+        result["name_detail"] = detail
+        if detail.get("status") == "resolved" and detail.get("text"):
+            result["name"] = detail["text"]
+        return result
+
     def reference(self, obj):
         if getattr(obj, "is_sim", False):
-            info = obj.sim_info
-            return entity("sim", info.sim_id, " ".join(value for value in (info.first_name, info.last_name) if value))
+            return self.sim_reference(obj.sim_info)
         definition = getattr(obj, "definition", None)
         fallback = getattr(definition, "name", None) or type(obj).__name__
         try:
@@ -295,8 +321,7 @@ class EAAdapter:
         if value is None:
             return None
         if hasattr(value, "sim_id"):
-            return entity("sim", value.sim_id, " ".join(str(part) for part in
-                (getattr(value, "first_name", ""), getattr(value, "last_name", "")) if part))
+            return self.sim_reference(value)
         if getattr(value, "id", None):
             # Services, broadcasters, definitions and interactions also have ids.
             # Only actual world objects belong in the entity index.

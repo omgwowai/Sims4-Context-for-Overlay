@@ -58,6 +58,7 @@ class Client:
     def _call(self, method, *args, **kwargs):
         provider, info = self._api()
         required = {"get_nearby_entities": "context.nearby_entities", "get_camera_view": "context.camera_view",
+                    "get_scene_entities": "context.scene_entities",
                     "append_event": "events.append",
                     "read_event_changes": "history.changes"}.get(method)
         if method in ("query_event_view", "get_event_view_status", "get_event_view_page", "close_event_view", "explain_event_view"):
@@ -111,6 +112,10 @@ class Client:
     def get_camera_view(self, **options):
         """Read approximate camera-view summaries; inspect coverage and camera freshness."""
         return self._call("get_camera_view", **options)
+
+    def get_scene_entities(self, identifier="active", **options):
+        """Read active-lot discovery; never fall back to an anchor-nearby query."""
+        return self._call("get_scene_entities", identifier, **options)
 
     def query_history(self, kind="sim", identifier="active", **options):
         """Low-level first page; caller owns explicit close_history cleanup."""

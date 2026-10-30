@@ -19,7 +19,7 @@ from context_overlay.api import API_VERSION
 
 
 DOCS = ("docs/index.md", "docs/reading-guide.md", "docs/event-layers-example.md",
-        "docs/quickstart.md", "docs/install.md", "docs/public-api-v2.md",
+        "docs/quickstart.md", "docs/install.md", "docs/public-api-v2.md", "docs/scene-entities.md",
         "docs/architecture.md", "docs/validation.md", "docs/validation-history.md", "docs/development.md", "docs/future.md",
         "docs/event-views.md", "docs/camera-view.md", "docs/camera-view-validation.md",
         "docs/event-views-validation.md", "docs/run-output.md", "docs/event-quality.md", "docs/balloons.md",

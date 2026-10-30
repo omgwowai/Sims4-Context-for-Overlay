@@ -6,6 +6,8 @@
 
 直接调用用 `context_overlay.api`；希望统一处理“没安装、版本不匹配、分页关闭”等情况，可以用 `sdk/context_overlay_client.py`。两者提供同一套读写能力。
 
+本地 `scene_archive/2` 扩展另提供[当前活动地块枚举](scene-entities.md)，通过明确能力声明识别；不使用主角附近查询代替场景枚举。
+
 Context、历史、增量、附近实体与视锥查询同步返回普通 JSON 数据；游戏对象读取在模拟线程进行。SDK 不调用模型、不创建窗口、不发网络请求，也不自动跨线程调度或重试。默认历史同时包含游戏事件和外部事件。
 
 
@@ -50,6 +52,8 @@ packet = api.get_context("sim", "active", fields=["identity", "needs"], history_
 直接入口抛出 `api.APIError`；SDK 转成 `ContextOverlayError`。接入时使用这两个公开入口，内部 `_runtime` 等对象会随实现调整。读写示例见 [quickstart.py](../sdk/examples/quickstart.py)，窗口回调示例见 [consumer.py](../sdk/examples/consumer.py)。
 
 ## 版本与能力发现
+
+Sim 实体引用的 `name` 仍为字符串。若 `SimInfo.full_name_key` 非零，优先使用已加载官方中文词表解析该本地化姓名（例如死神），并在可选的 `name_detail` 中保留 key、解析状态及来源；快照和事件参与者使用同一规则。普通人物沿用 `first_name` / `last_name`，未知键或解析失败保留诊断并回退到已有普通姓名，不按角色别名猜名。名称不等同于已验证的特殊 NPC 身份。
 
 ```python
 info = client.get_api_info()
